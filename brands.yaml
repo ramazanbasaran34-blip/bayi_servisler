@@ -22,9 +22,14 @@
 # ============================================================================
 
 ayarlar:
-  bekleme: 1.5
-  marka_arasi_saniye: 120
+  bekleme: 1.5                # bir site içinde istekler arası saniye
+  marka_arasi_saniye: 120     # markadan markaya geçerken nefes payı
   cache_saat: 6
+  periyot_saat: 168           # her marka haftada bir taranır
+
+# Markalar haftanın günlerine dağıtılır (marka adından hesaplanır), böylece
+# her gece yaklaşık 9 marka taranır. Haftalık tazelik korunur ama tek gecede
+# 63 siteye gidilmez.
 
 markalar:
 
