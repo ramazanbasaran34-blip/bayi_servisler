@@ -21,7 +21,7 @@ import yaml
 
 from .fetch import Fetcher
 from .normalize import IL_KODU, ILLER, fold
-from .parse import finalize, parse_html, parse_json
+from .parse import finalize, parse_html, parse_json, parse_oto
 from .store import commit_tarama, db, marka_bilgi, now, tarama_hatasi
 
 
@@ -74,7 +74,7 @@ def tara_marka(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600):
         try:
             if mode == "browser":
                 body = fetcher.render(url, cfg.get("wait_selector"), max_age=max_age)
-                ham = parse_html(body, cfg)
+                ham = parse_oto(body, cfg) if not cfg.get("row") else parse_html(body, cfg)
             elif mode == "json":
                 body = fetcher.get(url, method=cfg.get("method", "GET"),
                                    data=cfg.get("data"), headers=cfg.get("headers"),
@@ -84,7 +84,8 @@ def tara_marka(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600):
                 body = fetcher.get(url, method=cfg.get("method", "GET"),
                                    data=cfg.get("data"), max_age=max_age,
                                    encoding=cfg.get("encoding"))
-                ham = parse_html(body, cfg)
+                # row verilmemişse otomatik çıkarıma düş
+                ham = parse_html(body, cfg) if cfg.get("row") else parse_oto(body, cfg)
             basarili_url += 1
         except Exception as e:                                    # noqa: BLE001
             ilk_hata = ilk_hata or e
