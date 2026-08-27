@@ -21,6 +21,7 @@ import yaml
 
 from .fetch import Fetcher
 from .normalize import IL_KODU, ILLER, fold
+from .otomatik import il_baglantilari, json_gomulu
 from .parse import finalize, parse_html, parse_json, parse_oto
 from .store import commit_tarama, db, marka_bilgi, now, tarama_hatasi
 
@@ -59,43 +60,42 @@ def _urls_for(cfg: dict) -> list[tuple[str, str]]:
     return [(url, "")]
 
 
-def tara_marka(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600):
-    """Tek markayı tarar.
+def _sayfayi_coz(body, cfg, mode):
+    """Bir sayfadan kayıt çıkarmayı sırayla dener.
 
-    Döner: (kayitlar, kapsam)  —  kapsam = başarılı URL / toplam URL
+    1. El yazması tarif (row verilmişse)
+    2. Gömülü JSON — veri script etiketinde olabilir, tarayıcıya gerek kalmaz
+    3. Otomatik yapı tespiti
     """
+    if mode == "json":
+        return parse_json(body, cfg)
+    if cfg.get("row"):
+        return parse_html(body, cfg)
+    gomulu = json_gomulu(body)
+    if len(gomulu) >= 3:
+        return gomulu
+    return parse_oto(body, cfg)
+
+
+def tara_marka(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=None):
+    """Tek markayı tarar. Döner: (kayitlar, kapsam)
+
+    Boş dönerse pes etmez, kademeli olarak şunları dener:
+      · sayfa bir il dizini mi? → 81 il bağlantısını tek tek gez
+      · tarayıcı gerekiyor mu?  → gerçek tarayıcıyla yeniden aç
+    """
+    log = log or (lambda m: None)
     mode = cfg.get("mode", "html")
     kayitlar, gorulen = [], set()
     urls = _urls_for(cfg)
     basarili_url = 0
     ilk_hata = None
 
-    for url, url_ili in urls:
-        try:
-            if mode == "browser":
-                body = fetcher.render(url, cfg.get("wait_selector"), max_age=max_age)
-                ham = parse_oto(body, cfg) if not cfg.get("row") else parse_html(body, cfg)
-            elif mode == "json":
-                body = fetcher.get(url, method=cfg.get("method", "GET"),
-                                   data=cfg.get("data"), headers=cfg.get("headers"),
-                                   max_age=max_age, encoding=cfg.get("encoding"))
-                ham = parse_json(body, cfg)
-            else:
-                body = fetcher.get(url, method=cfg.get("method", "GET"),
-                                   data=cfg.get("data"), max_age=max_age,
-                                   encoding=cfg.get("encoding"))
-                # row verilmemişse otomatik çıkarıma düş
-                ham = parse_html(body, cfg) if cfg.get("row") else parse_oto(body, cfg)
-            basarili_url += 1
-        except Exception as e:                                    # noqa: BLE001
-            ilk_hata = ilk_hata or e
-            if len(urls) == 1:
-                raise RuntimeError(f"{marka}: {e}") from e
-            continue          # çok sayfalı taramada devam et, ama kapsamı düşür
-
+    def ekle(ham, url, url_ili, zorla_il=False):
         for r in ham:
-            # Sayfada il yazmıyorsa URL'deki ilden doldur
-            if cfg.get("il_url_den") and url_ili and not r.get("il"):
+            # il_url_den: tarifte belirtilmiş
+            # zorla_il  : ili bağlantı metninden kesin biliyoruz (il dizini)
+            if url_ili and not r.get("il") and (zorla_il or cfg.get("il_url_den")):
                 r["il"] = url_ili
             rec = finalize(r, marka, url, cfg)
             if not rec:
@@ -106,8 +106,69 @@ def tara_marka(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600):
             gorulen.add(imza)
             kayitlar.append(rec)
 
+    def cek(url, tarayici=False):
+        if tarayici or mode == "browser":
+            return fetcher.render(url, cfg.get("wait_selector"), max_age=max_age)
+        return fetcher.get(url, method=cfg.get("method", "GET"),
+                           data=cfg.get("data"), headers=cfg.get("headers"),
+                           max_age=max_age, encoding=cfg.get("encoding"))
+
+    # --- 1. tur: tarifteki adres(ler) ---
+    ilk_body = None
+    for url, url_ili in urls:
+        try:
+            body = cek(url)
+            basarili_url += 1
+            if ilk_body is None:
+                ilk_body = body
+        except Exception as e:                                    # noqa: BLE001
+            ilk_hata = ilk_hata or e
+            if len(urls) == 1:
+                raise RuntimeError(f"{marka}: {e}") from e
+            continue
+        ekle(_sayfayi_coz(body, cfg, mode), url, url_ili)
+
     kapsam = basarili_url / len(urls) if urls else 0.0
-    return kayitlar, kapsam
+    if kayitlar or ilk_body is None:
+        return kayitlar, kapsam
+
+    # --- 2. tur: sayfa bir il dizini mi? ---
+    if len(urls) == 1:
+        iller = il_baglantilari(ilk_body, urls[0][0])
+        if iller:
+            log(f"     il dizini bulundu: {len(iller)} il geziliyor")
+            basarili = 0
+            for il_adi, il_url in iller.items():
+                try:
+                    ekle(_sayfayi_coz(cek(il_url), cfg, mode), il_url, il_adi,
+                         zorla_il=True)
+                    basarili += 1
+                except Exception:                                 # noqa: BLE001
+                    continue
+            if kayitlar:
+                return kayitlar, basarili / len(iller)
+
+    # --- 3. tur: tarayıcı gerekiyor olabilir ---
+    if mode != "browser":
+        try:
+            log("     statik sayfada kayıt yok, tarayıcı deneniyor")
+            body = cek(urls[0][0], tarayici=True)
+            ekle(_sayfayi_coz(body, cfg, "html"), urls[0][0], urls[0][1])
+            if kayitlar:
+                return kayitlar, 1.0
+            iller = il_baglantilari(body, urls[0][0])
+            if iller:
+                log(f"     tarayıcıda il dizini: {len(iller)} il")
+                for il_adi, il_url in iller.items():
+                    try:
+                        ekle(_sayfayi_coz(cek(il_url, True), cfg, "html"),
+                             il_url, il_adi, zorla_il=True)
+                    except Exception:                             # noqa: BLE001
+                        continue
+        except Exception as e:                                    # noqa: BLE001
+            log(f"     tarayıcı denemesi başarısız: {str(e)[:60]}")
+
+    return kayitlar, (1.0 if kayitlar else kapsam)
 
 
 # ============================================================================
@@ -223,7 +284,7 @@ def tara_hepsi(config_path="brands.yaml", sadece=None, db_path="bayiler.db",
             bas = now()
             log(f"→ {marka} taranıyor...")
             try:
-                kayitlar, kapsam = tara_marka(marka, cfg, fetcher, max_age)
+                kayitlar, kapsam = tara_marka(marka, cfg, fetcher, max_age, log)
                 sonuc = commit_tarama(con, marka, kayitlar, kapsam, bas)
             except Exception as e:                                # noqa: BLE001
                 sonuc = tarama_hatasi(con, marka, bas, str(e))
