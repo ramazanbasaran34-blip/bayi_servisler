@@ -170,3 +170,27 @@ def phone_display(s: str) -> str:
         return s
     d = s[3:]
     return f"0{d[:3]} {d[3:6]} {d[6:8]} {d[8:]}"
+
+
+def il_ara(metin: str) -> str:
+    """Serbest metinde geçen il adını bulur. Bulamazsa boş döner.
+
+    Adresten il çıkarırken kullanılır. "son parçayı il say" yaklaşımı
+    "Kılıçlaslan Mah. Eski Buğday Pazarı Cad." gibi çöp üretiyordu; bu
+    fonksiyon yalnızca 81 ilden biri gerçekten geçiyorsa kabul eder.
+    """
+    if not metin:
+        return ""
+    f = " " + fold(metin) + " "
+    bulunan = ""
+    for anahtar, ad in IL_BY_FOLD.items():
+        if f" {anahtar} " in f:
+            # En uzun eşleşme kazanır: "afyonkarahisar" > "afyon"
+            if len(anahtar) > len(fold(bulunan)):
+                bulunan = ad
+    if not bulunan:
+        for takma, ad in IL_ALIAS.items():
+            if f" {takma} " in f:
+                bulunan = ad
+                break
+    return bulunan
