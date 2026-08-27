@@ -91,10 +91,17 @@ body{background:var(--kagit);color:var(--murekkep);font-family:var(--d);
   font-size:14px;line-height:1.4;-webkit-font-smoothing:antialiased}
 button,input{font:inherit;color:inherit}
 
-.rail{background:var(--murekkep);color:#EDEAE3;padding:11px 20px;display:flex;
-  align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:40}
-.rail h1{font-size:15px;font-weight:600;margin:0;letter-spacing:.02em}
-.rail .veri{font-family:var(--m);font-size:11px;color:#8B9BAA}
+.rail{background:var(--murekkep);color:#EDEAE3;padding:16px 22px;display:flex;
+  align-items:center;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:40}
+.rail h1{font-size:24px;font-weight:700;margin:0;letter-spacing:-.015em;
+  line-height:1.1;display:flex;align-items:baseline;gap:11px}
+.rail h1 .alt{font-size:12px;font-weight:400;color:#8B9BAA;letter-spacing:.04em;
+  font-family:var(--m);text-transform:uppercase}
+.rail .veri{font-family:var(--m);font-size:11.5px;color:#8B9BAA}
+@media (max-width:600px){
+  .rail h1{font-size:19px}
+  .rail h1 .alt{display:none}
+}
 .sek{margin-left:auto;display:flex;gap:6px}
 .sek button{background:none;border:1px solid #35404C;color:#9FB0BF;border-radius:4px;
   padding:5px 11px;cursor:pointer;font-size:12.5px}
@@ -188,7 +195,7 @@ h2{font-size:16px;font-weight:600;margin:0 0 3px}
 <body>
 
 <header class="rail">
-  <h1>MOTOSİKLET BAYİLERİ</h1>
+  <h1>Motosiklet Bayileri<span class="alt">Türkiye</span></h1>
   <span class="veri" id="veriBilgi"></span>
   <nav class="sek">
     <button id="sekIl" class="aktif">İller</button>
@@ -201,6 +208,9 @@ h2{font-size:16px;font-weight:600;margin:0 0 3px}
   <section id="vIl">
     <h2>İl seçin</h2>
     <p class="notm">Seçtiğiniz ilin markaları alt alta listelenir.</p>
+    <div class="altbar" id="ilUstbar" style="display:none;margin:0 0 12px">
+      <button class="btn ana" id="btnTumIlXls">Tüm illeri Excel indir</button>
+    </div>
     <input class="ara" id="araIl" type="search" placeholder="İl ara" autocomplete="off">
     <div class="liste" id="ilListe"></div>
     <div class="bos" id="ilBos" style="display:none">Bu isimde il yok.</div>
@@ -214,14 +224,15 @@ h2{font-size:16px;font-weight:600;margin:0 0 3px}
       <button class="kop" id="kopyala">İl adını kopyala</button>
     </div>
     <div class="cipler" id="ilceCipler"></div>
-    <input class="ara" id="araMarka" type="search" placeholder="Marka ara" autocomplete="off">
-    <div class="liste" id="markaListe"></div>
-    <div class="bos" id="markaBos" style="display:none">Bu isimde marka yok.</div>
-    <div class="altbar" id="altbar" style="display:none">
-      <button class="btn ana" id="btnXls">Excel indir</button>
+    <div class="altbar" id="ustbar" style="display:none;margin:0 0 12px">
+      <button class="btn ana" id="btnXls">Bu ilin tüm bayilerini Excel indir</button>
       <button class="btn" id="btnCsv">CSV</button>
       <button class="btn" id="btnYaz">Yazdır / PDF</button>
     </div>
+    <input class="ara" id="araMarka" type="search" placeholder="Marka ara" autocomplete="off">
+    <div class="liste" id="markaListe"></div>
+    <div class="bos" id="markaBos" style="display:none">Bu isimde marka yok.</div>
+
   </section>
 
   <!-- MARKA DETAYI -->
@@ -298,6 +309,7 @@ function ilSayisi(ilAdi){
   return D.bayiler.reduce((n,b)=> n + (b[B_IL]===ilAdi?1:0), 0);
 }
 function cizIl(){
+  $("#ilUstbar").style.display = VAR_VERI ? "flex" : "none";
   const q = kat($("#araIl").value);
   const l = D.iller.filter(i=>!q || kat(i.ad).includes(q) || i.plaka.startsWith(q));
   $("#ilBos").style.display = l.length?"none":"block";
@@ -369,7 +381,7 @@ function cizMarka(){
         </div>`).join("")}</div>` : "");
   }).join("");
 
-  $("#altbar").style.display = VAR_VERI && D.bayiler.some(b=>b[B_IL]===IL.ad)
+  $("#ustbar").style.display = VAR_VERI && D.bayiler.some(b=>b[B_IL]===IL.ad)
     ? "flex" : "none";
 }
 $("#markaListe").onclick = e => {
@@ -528,12 +540,51 @@ async function excelIndir(kapsam){
   } else if(kapsam.tip === "bolge"){
     veri = D.bayiler.filter(b=>b[B_IL]===kapsam.il && (!kapsam.ilce||b[B_ILCE]===kapsam.ilce));
     ad = `bayiler-${kat(kapsam.il).replace(/ /g,"")}${kapsam.ilce?"-"+kat(kapsam.ilce).replace(/ /g,""):""}`;
+
+    // 1. sayfa: hangi markanın kaç bayisi var
     const say = {};
     veri.forEach(b => say[b[B_MARKA]] = (say[b[B_MARKA]]||0)+1);
-    const kirilim = [["Marka","Bayi Sayısı"]];
+    const kirilim = [[`${kapsam.il}${kapsam.ilce?" / "+kapsam.ilce:""} — Marka Dağılımı`],
+                     [], ["Marka","Bayi Sayısı"]];
     Object.entries(say).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>kirilim.push([k,v]));
-    kirilim.push([], ["TOPLAM", veri.length]);
-    sayfaEkle(wb, "Marka Kırılımı", kirilim, [{wch:20},{wch:14}]);
+    kirilim.push([], ["TOPLAM", veri.length],
+                 ["Marka çeşidi", Object.keys(say).length],
+                 ["İlçe sayısı", new Set(veri.map(b=>b[B_ILCE]).filter(Boolean)).size]);
+    sayfaEkle(wb, "Marka Dağılımı", kirilim, [{wch:24},{wch:14}]);
+
+    // 2. sayfa: ilçe kırılımı (ilçe seçilmemişse anlamlı)
+    if(!kapsam.ilce){
+      const isay = {};
+      veri.forEach(b => { const i=b[B_ILCE]||"—"; isay[i]=(isay[i]||0)+1; });
+      const ik = [["İlçe","Bayi Sayısı","Marka Çeşidi"]];
+      Object.entries(isay).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>
+        ik.push([k, v, new Set(veri.filter(b=>(b[B_ILCE]||"—")===k)
+                                   .map(b=>b[B_MARKA])).size]));
+      sayfaEkle(wb, "İlçe Kırılımı", ik, [{wch:22},{wch:14},{wch:14}]);
+    }
+  } else if(kapsam.tip === "tum_iller"){
+    veri = D.bayiler;
+    ad = "bayiler-il-il";
+    const iller = [...new Set(veri.map(b=>b[B_IL]).filter(Boolean))]
+      .sort((a,b)=>a.localeCompare(b,"tr"));
+    const ozet = [["İl","Bayi Sayısı","Marka Çeşidi","İlçe Sayısı"]];
+    iller.forEach(il=>{
+      const alt = veri.filter(b=>b[B_IL]===il);
+      ozet.push([il, alt.length, new Set(alt.map(b=>b[B_MARKA])).size,
+                 new Set(alt.map(b=>b[B_ILCE]).filter(Boolean)).size]);
+    });
+    ozet.push([], ["TOPLAM", veri.length,
+                   new Set(veri.map(b=>b[B_MARKA])).size, ""]);
+    sayfaEkle(wb, "İl Özeti", ozet, [{wch:20},{wch:14},{wch:14},{wch:13}]);
+    sayfaEkle(wb, "Tüm Bayiler", [BASLIK, ...veri], EN);
+    iller.forEach(il=>{
+      const alt = veri.filter(b=>b[B_IL]===il);
+      if(alt.length) sayfaEkle(wb, il, [BASLIK, ...alt], EN);
+    });
+    const d=new Date(), pd=n=>String(n).padStart(2,"0");
+    XLSX.writeFile(wb, `${ad}-${d.getFullYear()}${pd(d.getMonth()+1)}${pd(d.getDate())}.xlsx`);
+    if(btn){ btn.textContent = eski; btn.disabled = false; }
+    return;
   } else {
     veri = D.bayiler;
     ad = "bayiler-tum-turkiye";
@@ -560,6 +611,7 @@ async function excelIndir(kapsam){
 $("#btnOzetXls").onclick  = () => excelIndir({tip:"tum"});
 $("#btnMarkaXls").onclick = () => excelIndir({tip:"marka", ad:MD.ad});
 $("#btnXls").onclick      = () => excelIndir({tip:"bolge", il:IL.ad, ilce:ILCE});
+$("#btnTumIlXls").onclick = () => excelIndir({tip:"tum_iller"});
 
 /* ---------- dışa aktarma ---------- */
 $("#btnYaz").onclick = () => window.print();
