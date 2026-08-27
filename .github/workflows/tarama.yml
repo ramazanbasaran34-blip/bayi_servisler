@@ -1,0 +1,90 @@
+name: Bayileri tara ve siteyi yayınla
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+    inputs:
+      markalar:
+        description: "Sadece belirli markalar (boş = periyodu dolanlar)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: bayi-tarama
+  cancel-in-progress: false
+
+jobs:
+  tara:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Paketleri kur
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Tarayıcı kur
+        run: |
+          pip install playwright
+          playwright install --with-deps chromium
+        continue-on-error: true
+
+      - name: Markaları tara
+        run: |
+          if [ -n "${{ github.event.inputs.markalar }}" ]; then
+            python cli.py tara --marka ${{ github.event.inputs.markalar }}
+          else
+            python cli.py tara --zamanlanmis
+          fi
+        continue-on-error: true
+
+      - name: Durum özeti
+        run: python cli.py durum
+
+      - name: Siteyi üret
+        run: |
+          mkdir -p site
+          python uret_index.py site/index.html
+          python cli.py rapor || true
+          cp -f ciktilar/BAYI-LISTESI.xlsx site/ 2>/dev/null || true
+
+      - name: Veritabanını depoya geri yaz
+        run: |
+          git config user.name  "bayi-radar-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add -f bayiler.db
+          git diff --staged --quiet || git commit -m "Veri güncellendi: $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
+        continue-on-error: true
+
+      - name: Sayfayı hazırla
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  yayinla:
+    needs: tara
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.yayin.outputs.page_url }}
+    steps:
+      - name: GitHub Pages'e yayınla
+        id: yayin
+        uses: actions/deploy-pages@v4
