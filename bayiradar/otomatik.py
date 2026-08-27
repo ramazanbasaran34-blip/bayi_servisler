@@ -173,3 +173,117 @@ def cikar(html: str) -> list[dict]:
         if len(kayitlar) >= max(2, len(elemanlar) * 0.5):
             return kayitlar
     return []
+
+
+# ============================================================================
+#  İL DİZİNİ TESPİTİ
+# ============================================================================
+def il_baglantilari(html: str, temel_url: str) -> dict:
+    """Sayfa bir il dizini mi? Öyleyse {il: url} döner.
+
+    Arora (/bayiler/Ankara), Kral (/kategori/bayiler/adana) gibi siteler ana
+    bayi sayfasında bayi göstermiyor; 81 ile giden bağlantı listesi sunuyor.
+    Bu sayfada bayi aramak boş sonuç verir — bağlantıları izlemek gerekir.
+    """
+    from urllib.parse import urljoin, urlparse
+
+    from .normalize import ILLER, fold
+
+    soup = BeautifulSoup(html, "html.parser")
+    il_fold = {fold(i): i for i in ILLER}
+    il_fold["afyon"] = "Afyonkarahisar"
+    il_fold["icel"] = "Mersin"
+    il_fold["urfa"] = "Şanlıurfa"
+
+    bulunan = {}
+    ana_alan = urlparse(temel_url).netloc
+    for a in soup.find_all("a", href=True):
+        metin = fold(a.get_text(" ", strip=True))
+        href = a["href"]
+        # Bağlantı metni ya da adresin son parçası bir il adı mı?
+        aday = il_fold.get(metin)
+        if not aday:
+            son = fold(href.rstrip("/").split("/")[-1].split("?")[0])
+            aday = il_fold.get(son)
+        if not aday:
+            continue
+        tam = urljoin(temel_url, href)
+        if urlparse(tam).netloc != ana_alan:
+            continue
+        bulunan.setdefault(aday, tam)
+
+    # En az 20 il varsa bu gerçekten bir dizin sayfasıdır
+    return bulunan if len(bulunan) >= 20 else {}
+
+
+# ============================================================================
+#  GÖMÜLÜ JSON
+# ============================================================================
+def json_gomulu(html: str) -> list[dict]:
+    """HTML içine gömülü JSON'dan bayi listesi çıkarır.
+
+    Modern siteler (Next.js, Nuxt, Vue) veriyi __NEXT_DATA__ gibi bir script
+    etiketinde gönderiyor. Sayfa görsel olarak JS ile çiziliyor ama veri
+    aslında HTML'in içinde — tarayıcı açmaya gerek yok.
+    """
+    import json as _json
+
+    ADAY_ANAHTAR = ("phone", "telefon", "tel", "gsm")
+    ADRES_ANAHTAR = ("address", "adres", "adres1")
+
+    def kayit_mi(d):
+        if not isinstance(d, dict):
+            return False
+        k = {x.lower() for x in d}
+        return (any(a in k for a in ADAY_ANAHTAR)
+                and any(a in k for a in ADRES_ANAHTAR))
+
+    def gez(o, bulunan):
+        if isinstance(o, list):
+            uygun = [x for x in o if kayit_mi(x)]
+            if len(uygun) >= 3:
+                bulunan.append(uygun)
+            for x in o:
+                gez(x, bulunan)
+        elif isinstance(o, dict):
+            for v in o.values():
+                gez(v, bulunan)
+
+    soup = BeautifulSoup(html, "html.parser")
+    kumeler = []
+    for sc in soup.find_all("script"):
+        ham = sc.string or sc.get_text() or ""
+        if not ham or len(ham) < 60:
+            continue
+        for parca in re.findall(r"(\{.*\}|\[.*\])", ham, re.S)[:3]:
+            try:
+                gez(_json.loads(parca), kumeler)
+            except Exception:
+                continue
+
+    if not kumeler:
+        return []
+    en_buyuk = max(kumeler, key=len)
+
+    def al(d, adaylar):
+        for a in adaylar:
+            for k, v in d.items():
+                if k.lower() == a and v:
+                    return str(v)
+        return ""
+
+    out = []
+    for d in en_buyuk:
+        ad = al(d, ("name", "title", "unvan", "bayi", "dealername", "firma"))
+        if not ad:
+            continue
+        out.append({
+            "bayi_adi": ad,
+            "il": al(d, ("city", "il", "sehir", "province")),
+            "ilce": al(d, ("district", "ilce", "town", "county")),
+            "adres": al(d, ADRES_ANAHTAR),
+            "telefon": al(d, ADAY_ANAHTAR),
+            "email": al(d, ("email", "eposta", "mail")),
+            "website": al(d, ("website", "web", "url", "site")),
+        })
+    return out
