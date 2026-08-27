@@ -25,6 +25,14 @@ ADRES = re.compile(r"\b(mah|mh|mahalle|mahallesi|cad|cd|cadde|caddesi|sok|sk|"
 GURULTU = {"script", "style", "noscript", "svg", "head", "meta", "link",
            "iframe", "footer", "nav"}
 
+# Ticari ünvan işaretleri — bayi adını ilçe adından ayırmak için
+TICARI = re.compile(
+    r"\b(motor|motorlu|motosiklet|moto|bisiklet|oto|otomotiv|ticaret|tic|"
+    r"ltd|şti|sti|san|sanayi|a\.?ş|as|koll|kollektif|grup|group|market|"
+    r"merkez[iı]|servis|plaza|center|garage|garaj|makina|makine|traktör|"
+    r"yedek|aksesuar|show\s*room|showroom|kardeşler|ve\s+o[gğ]ullar[iı]|"
+    r"limited|anonim)\b", re.I)
+
 # Bayi adı olamayacak metinler
 COP = {"ara", "detay", "harita", "yol tarifi al", "yol tarifi", "devamı",
        "daha fazla", "iletişim", "bilgi al", "göster", "adres", "telefon",
@@ -124,16 +132,27 @@ def _kaydi_cikar(kap):
             continue
         kalan.append((c, re.sub(r"\s+", " ", m).strip()))
 
-    # Bayi adı en uzun olan. Şirket ünvanları da büyük harf olduğu için
-    # "büyük harf = ilçe" varsayımı yanlış; uzunluk çok daha güvenilir ayraç.
+    # Bayi adı ile ilçeyi ayır.
+    #
+    # Uzunluk tek başına yetmiyor: "EYÜP SULTAN" (ilçe) ile "Ctn Motor" (bayi)
+    # örneğinde uzun olan ilçeydi. Daha güvenilir ayraç: bayi adları neredeyse
+    # her zaman bir ticari kelime içerir, ilçe adları hiç içermez.
     if not kalan:
         return None
-    kalan.sort(key=lambda x: -len(x[1]))
-    rec["bayi_adi"] = kalan[0][1]
 
-    # İlçe: kalanlar içinde kısa olan, tercihen başlık ya da tamamı büyük harf
-    for c, m in kalan[1:]:
-        if len(m) <= 28:
+    ticari = [(c, m) for c, m in kalan if TICARI.search(m)]
+    if len(ticari) == 1:
+        rec["bayi_adi"] = ticari[0][1]
+        digerleri = [m for c, m in kalan if c is not ticari[0][0]]
+    else:
+        # Ticari kelime yok ya da birden çok var → uzunluğa düş
+        sirali = sorted(kalan, key=lambda x: -len(x[1]))
+        rec["bayi_adi"] = sirali[0][1]
+        digerleri = [m for _, m in sirali[1:]]
+
+    # İlçe: kalanlar içinde kısa ve ticari kelime içermeyen
+    for m in digerleri:
+        if len(m) <= 30 and not TICARI.search(m):
             rec["ilce"] = m
             break
 
