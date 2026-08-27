@@ -1,873 +1,304 @@
 # ============================================================================
 #  BAYİ RADAR — 63 Motosiklet Markası
-#  Kaynak dosya: markalar_ve_web_siteleri.xlsx
-#  Üretim: 27.08.2026
+#  Kaynak: markalar_ve_web_siteleri.xlsx
 # ----------------------------------------------------------------------------
-#  63 marka var ama 59 farklı kaynak sayfa: bazı markalar aynı distribütörün
-#  bayi sayfasını paylaşıyor (Bajaj+Kanuni, Peugeot+Horwin+Lambretta,
-#  Ducati+Triumph). O sayfaların tarifi bir kez yazılır, birden çok markayı besler.
+#  ÇALIŞMA MANTIĞI
+#  Hiçbir markada CSS seçici yazılı DEĞİL. Sistem sayfadaki tekrar eden yapıyı
+#  kendisi buluyor (bayiradar/otomatik.py): telefon ve adres içeren, kardeşleri
+#  aynı sınıfa sahip kapları arıyor, en yüksek puanlıyı seçiyor.
 #
-#  DURUM
-#    dogrulandi: "..."  → sayfa gerçekten açıldı ve seçiciler test edildi
-#    pasif: true        → URL doğru, tarif henüz yazılmadı
+#  Bir markada tutmazsa (0 kayıt) sistem onu 'hatali' işaretler ve eski verisini
+#  korur. O zaman o markaya elle 'row' + 'fields' yazılır; yazıldığı anda
+#  otomatik mod devre dışı kalır ve el yazması tarif kullanılır.
 #
-#  BİR MARKAYI DEVREYE ALMAK
-#    1. Bayi sayfasını aç, F12 → Network → XHR sekmesi
-#         Bayileri içeren JSON isteği var mı?  → mode: json   (en sağlamı)
-#         Ctrl+U kaynağında bayi adları var mı? → mode: html
-#         İkisi de yok (JS çiziyor)             → mode: browser
-#    2. Seçicileri yaz
-#    3. python cli.py test --marka "Marka Adı"
-#    4. Doğru çıkınca 'pasif: true' satırını sil
+#  ALANLAR
+#    url          bayi sayfası; {il_slug} varsa 81 il tek tek gezilir
+#    iterate      il_slug | il_kodlari | sayfa
+#    mode         html (varsayılan) | json | browser
+#    encoding     Türkçe karakter bozuksa windows-1254
+#    bekleme      bu siteye istekler arası saniye
+#    periyot_saat kaç saatte bir taransın (varsayılan 24)
+#    row/fields   sadece otomatik mod tutmazsa doldurulur
 # ============================================================================
 
 ayarlar:
   bekleme: 1.5
-  marka_arasi_saniye: 180
+  marka_arasi_saniye: 120
   cache_saat: 6
 
 markalar:
 
   #  1. HONDA  ·  JAPONYA  ·  www.honda.com.tr
   "Honda":
-    pasif: true
-    mode: html
     url: "https://www.honda.com.tr/motosiklet/bayiler-ve-servisler"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   #  2. YAMAHA  ·  JAPONYA  ·  www.yamaha-motor.eu
-  #      NOT: Avrupa geneli dealer-locator. JSON API olma ihtimali yüksek,
-    #      ülke filtresi (TR) gerekebilir.
   "Yamaha":
-    pasif: true
-    mode: html
     url: "https://www.yamaha-motor.eu/tr/tr/dealer-locator/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
+    mode: browser   # liste JS ile çiziliyor
+    bekleme: 3.0
 
   #  3. BAJAJ  ·  HINDISTAN  ·  www.ekuralkan.com
-  #      NOT: ekuralkan.com — KANUNI ile aynı sayfa. Tek tarif iki markayı besler.
   "Bajaj":
-    pasif: true
-    mode: html
     url: "https://www.ekuralkan.com/motosiklet-satis-noktalari"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   #  4. KANUNI  ·  TURKIYE-CIN  ·  www.ekuralkan.com
-  #      NOT: BAJAJ ile aynı sayfa (ekuralkan.com).
   "Kanuni":
-    pasif: true
-    mode: html
     url: "https://www.ekuralkan.com/motosiklet-satis-noktalari"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   #  5. MONDIAL  ·  TURKIYE-CIN  ·  www.mondialmotor.com.tr
   "Mondial":
-    dogrulandi: "27.08.2026 — sayfa açıldı, tablo yapısı test edildi"
-    mode: html
-    encoding: windows-1254      # site Türkçe karakterleri bu kodlamayla veriyor
+    dogrulandi: "27.08.2026 — tablo yapısı sayfada doğrulandı"
     url: "https://www.mondialmotor.com.tr/bayilerimiz?sehir={il_slug}"
-    iterate: il_slug            # 81 ilin tamamı tek tek gezilir
-    il_url_den: true            # sayfada il yazmıyor, URL'deki ilden alınır
+    iterate: il_slug
+    il_url_den: true
+    encoding: windows-1254
     bekleme: 2.0
     oncelik: 2
-    row: "table tbody tr"
-    fields:
-      bayi_adi: "td:nth-child(1)"
-      adres:    "td:nth-child(2)"
-      ilce:     "td:nth-child(3)"
-      telefon:  "td:nth-child(4)"
 
   #  6. CFMOTO  ·  CIN  ·  www.cfmoto.com.tr
   "CFMoto":
-    pasif: true
-    mode: html
     url: "https://www.cfmoto.com.tr/satis-noktalari"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   #  7. KUBA  ·  TURKIYE-CIN  ·  www.kubamotor.com.tr
-  #      NOT: JS ile yükleniyor (il/ilçe seç + ARA butonu). mode: browser gerekir
-    #      ya da F12/Network'te ARA'ya basınca çıkan XHR adresi bulunmalı.
   "Kuba":
-    pasif: true
-    mode: html
     url: "https://www.kubamotor.com.tr/bayi-servis/kubamotor"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
+    mode: browser   # liste JS ile çiziliyor
+    bekleme: 3.0
 
   #  8. RKS  ·  TURKIYE-CIN  ·  www.rksmotor.com.tr
-  #      NOT: Kuba ile aynı altyapı (mj.com.tr) — Kuba'nın tarifi çözülünce
-    #      buraya birebir uyarlanabilir.
   "RKS":
-    pasif: true
-    mode: html
     url: "https://www.rksmotor.com.tr/bayi-servis/rksmotor.html"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
+    mode: browser   # liste JS ile çiziliyor
+    bekleme: 3.0
 
   #  9. ARORA  ·  TURKIYE-CIN  ·  arora.com.tr
   "Arora":
-    pasif: true
-    mode: html
     url: "https://arora.com.tr/hizmet-noktalari"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 10. YUKI  ·  TURKIYE-CIN  ·  yukimotor.com.tr
   "Yuki":
-    pasif: true
-    mode: html
     url: "https://yukimotor.com.tr/satis-noktalari/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 11. VOGE  ·  CIN  ·  www.vogeturkiye.com.tr
   "Voge":
-    pasif: true
-    mode: html
     url: "https://www.vogeturkiye.com.tr/yetkili-satici/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 12. PIAGGIO  ·  ITALYA  ·  www.piaggio.com.tr
   "Piaggio":
-    pasif: true
-    mode: html
     url: "https://www.piaggio.com.tr/tr/yetkili-saticilar.html"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 13. VESPA  ·  ITALYA  ·  www.vespa.com.tr
   "Vespa":
-    pasif: true
-    mode: html
     url: "https://www.vespa.com.tr/tr/yetkili-saticilar.html"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 14. KYMCO  ·  TAYVAN  ·  www.kymco.com.tr
   "Kymco":
-    pasif: true
-    mode: html
     url: "https://www.kymco.com.tr/tr/satis-servis-agi.html"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 15. APRILIA  ·  ITALYA-CIN  ·  www.aprilia.com.tr
   "Aprilia":
-    pasif: true
-    mode: html
     url: "https://www.aprilia.com.tr/tr/yetkili-saticilar.html"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 16. HERO  ·  HINDISTAN  ·  www.heromotor.com.tr
   "Hero":
-    pasif: true
-    mode: html
     url: "https://www.heromotor.com.tr/bayiler/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 17. BMW  ·  ALMANYA-CIN  ·  www.bmw-motorrad.com.tr
-  #      NOT: Global bayi bulucu altyapısı, JSON API muhtemel.
   "BMW":
-    pasif: true
-    mode: html
     url: "https://www.bmw-motorrad.com.tr/tr/ssl/yetkili-satici-ve-servisler.html"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
+    mode: browser   # liste JS ile çiziliyor
+    bekleme: 3.0
 
   # 18. FALCON  ·  TURKIYE-CIN  ·  falconmotosiklet.com
   "Falcon":
-    pasif: true
-    mode: html
     url: "https://falconmotosiklet.com/bayi-servis-agi/motosiklet"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 19. VOLTA  ·  TURKIYE-CIN  ·  volta.com.tr
   "Volta":
-    pasif: true
-    mode: html
     url: "https://volta.com.tr/pages/bayiler"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 20. SYM  ·  TAYVAN-CIN  ·  www.sym-tr.com
   "SYM":
-    pasif: true
-    mode: html
     url: "https://www.sym-tr.com/bayiler/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 21. SUZUKI  ·  JAPONYA  ·  www.suzuki.com.tr
   "Suzuki":
-    pasif: true
-    mode: html
     url: "https://www.suzuki.com.tr/tr/motosiklet/satis.html"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 22. PEUGEOT  ·  FRANSA  ·  www.isotlarmotor.com
-  #      NOT: isotlarmotor.com — HORWIN ve LAMBRETTA ile aynı sayfa.
   "Peugeot":
-    pasif: true
-    mode: html
     url: "https://www.isotlarmotor.com/bayiler/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 23. HORWIN  ·  CIN  ·  www.isotlarmotor.com
-  #      NOT: PEUGEOT/LAMBRETTA ile aynı sayfa.
   "Horwin":
-    pasif: true
-    mode: html
     url: "https://www.isotlarmotor.com/bayiler/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 24. LAMBRETTA  ·  ITALYA  ·  www.isotlarmotor.com
-  #      NOT: PEUGEOT/HORWIN ile aynı sayfa.
   "Lambretta":
-    pasif: true
-    mode: html
     url: "https://www.isotlarmotor.com/bayiler/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 25. MOTOLUX  ·  TURKIYE-CIN  ·  motolux.com.tr
-  #      NOT: URL '/sehir/' ile bitiyor — muhtemelen /bayiler/sehir/istanbul
-    #      şeklinde il eklenmesi gerekiyor.
   "Motolux":
-    pasif: true
-    mode: html
-    url: "https://motolux.com.tr/bayiler/sehir/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
+    dogrulandi: "27.08.2026 — her il ayrı sayfa, sunucuda hazır"
+    url: "https://motolux.com.tr/bayiler/sehir/{il_slug}/"
+    iterate: il_slug
+    il_url_den: true
+    bekleme: 2.0
+    oncelik: 2
 
   # 26. KRAL  ·  TURKIYE-CIN  ·  kralmotor.tr
   "Kral":
-    pasif: true
-    mode: html
     url: "https://kralmotor.tr/SalesDealer"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 27. ALTAI  ·  TURKIYE-CIN  ·  www.altai.com.tr
   "Altai":
-    pasif: true
-    mode: html
     url: "https://www.altai.com.tr/tr/bayiler"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 28. DUCATI  ·  ITALYA  ·  korlas.com.tr
-  #      NOT: korlas.com.tr — TRIUMPH ile aynı sayfa.
   "Ducati":
-    pasif: true
-    mode: html
     url: "https://korlas.com.tr/bayi/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 29. TRIUMPH  ·  INGILTERE  ·  korlas.com.tr
-  #      NOT: DUCATI ile aynı sayfa (korlas.com.tr).
   "Triumph":
-    pasif: true
-    mode: html
     url: "https://korlas.com.tr/bayi/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 30. KTM  ·  AVUSTURYA  ·  www.spormoto.com
-  #      NOT: spormoto.com — HUSQVARNA ile aynı altyapı, farklı yol.
   "KTM":
-    pasif: true
-    mode: html
     url: "https://www.spormoto.com/ktm/bayiler/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 31. HUSQVARNA  ·  AVUSTURYA  ·  www.spormoto.com
-  #      NOT: spormoto.com — KTM ile aynı altyapı.
   "Husqvarna":
-    pasif: true
-    mode: html
     url: "https://www.spormoto.com/husqvarna/bayiler/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 32. CSN  ·  TURKIYE-CIN  ·  csnmotor.com.tr
   "CSN":
-    pasif: true
-    mode: html
     url: "https://csnmotor.com.tr/satis-noktalarimiz/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 33. KAWASAKI  ·  JAPONYA  ·  www.kawasaki.com.tr
   "Kawasaki":
-    pasif: true
-    mode: html
     url: "https://www.kawasaki.com.tr/Home/YetkiliSatici"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
+    mode: browser   # liste JS ile çiziliyor
 
   # 34. STMAX  ·  TURKIYE-CIN  ·  stmax.com.tr
   "STMax":
-    pasif: true
-    mode: html
     url: "https://stmax.com.tr/yetkili-servisler/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 35. ABUSH  ·  TURKIYE-CIN  ·  abush.com.tr
   "Abush":
-    pasif: true
-    mode: html
     url: "https://abush.com.tr/tr/bayiler"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 36. REGAL RAPTOR  ·  CIN  ·  regalraptor.com.tr
   "Regal Raptor":
-    pasif: true
-    mode: html
     url: "https://regalraptor.com.tr/tr/bayiler"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 37. HARLEY DAVIDSON  ·  ABD  ·  www.harley-davidson.com
-  #      NOT: Global bayi bulucu, harita tabanlı. Büyük ihtimalle JSON API'si var.
   "Harley-Davidson":
-    pasif: true
-    mode: html
     url: "https://www.harley-davidson.com/tr/tr/tools/find-a-dealer.html"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
+    mode: browser   # liste JS ile çiziliyor
+    bekleme: 3.0
 
   # 38. INDIAN  ·  ABD  ·  www.indianmotorcycle.com.tr
-  #      NOT: 'map-view' — harita tabanlı, JSON API araması gerekir.
   "Indian":
-    pasif: true
-    mode: html
     url: "https://www.indianmotorcycle.com.tr/find-a-dealer/map-view/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
+    mode: browser   # liste JS ile çiziliyor
 
   # 39. APACHI  ·  TURKIYE-CIN  ·  www.isildar.com.tr
-  #      NOT: Bayi sayfası isildar.com.tr üzerinde (farklı alan adı).
   "Apachi":
-    pasif: true
-    mode: html
     url: "https://www.isildar.com.tr/Bayiler"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 40. REWACO  ·  ALMANYA  ·  rewaco.com.tr
   "Rewaco":
-    pasif: true
-    mode: html
     url: "https://rewaco.com.tr/bayiler/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 41. NANOK  ·  TURKIYE-CIN  ·  nanok.com.tr
   "Nanok":
-    pasif: true
-    mode: html
     url: "https://nanok.com.tr/bayilerimiz"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 42. MOBILETTE  ·  CIN  ·  www.mobilette.com.tr
   "Mobilette":
-    pasif: true
-    mode: html
     url: "https://www.mobilette.com.tr/tr/bayiler"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 43. AODES  ·  ABD-CIN  ·  www.aodes.com.tr
   "Aodes":
-    pasif: true
-    mode: html
     url: "https://www.aodes.com.tr/tr/bayiler"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 44. MILYON  ·  CIN  ·  www.milyonmoto.com.tr
   "Milyon":
-    pasif: true
-    mode: html
     url: "https://www.milyonmoto.com.tr/bayi-servisler.html"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 45. RUTEC  ·  CIN  ·  www.rutec.com.tr
   "Rutec":
-    pasif: true
-    mode: html
     url: "https://www.rutec.com.tr/satis-noktalari.html"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 46. ACCO  ·  TURKIYE-CIN  ·  actiomobilite.com
   "Acco":
-    pasif: true
-    mode: html
     url: "https://actiomobilite.com/bayiler"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 47. MUSATTI  ·  CIN  ·  musattimotor.com
   "Musatti":
-    pasif: true
-    mode: html
     url: "https://musattimotor.com/bayi-bul"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 48. GOE  ·  CIN  ·  www.goemobility.com
   "GOE":
-    pasif: true
-    mode: html
     url: "https://www.goemobility.com/satis-noktalari"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 49. MEKA MOTOR  ·  CIN  ·  www.mekamotor.com.tr
   "Meka Motor":
-    pasif: true
-    mode: html
     url: "https://www.mekamotor.com.tr/bayi-ve-servis"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 50. ZELSUN  ·  CIN  ·  www.zelsunmotor.com
   "Zelsun":
-    pasif: true
-    mode: html
     url: "https://www.zelsunmotor.com/Bayilerimiz.aspx"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 51. SFM  ·  TURKIYE-CIN  ·  www.sfmmotor.com.tr
   "SFM":
-    pasif: true
-    mode: html
     url: "https://www.sfmmotor.com.tr/bayi-servis/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 52. KOVE  ·  CIN  ·  www.kovemoto.com.tr
   "Kove":
-    pasif: true
-    mode: html
     url: "https://www.kovemoto.com.tr/yetkilisat%C4%B1c%C4%B1lar"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 53. FCM  ·  CIN  ·  fcmmotor.com
   "FCM":
-    pasif: true
-    mode: html
     url: "https://fcmmotor.com/bayiler"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 54. AKESO  ·  TURKIYE-CIN  ·  www.akesomotors.com
   "Akeso":
-    pasif: true
-    mode: html
     url: "https://www.akesomotors.com/bayilerimiz/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 55. YİBEN  ·  ÇİN  ·  yibenmotosiklet.com.tr
   "Yiben":
-    pasif: true
-    mode: html
     url: "https://yibenmotosiklet.com.tr/tr/sayfa/bayi-agi"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 56. KİMMİ  ·  ÇİN  ·  www.kimmimotor.com
   "Kimmi":
-    pasif: true
-    mode: html
     url: "https://www.kimmimotor.com/bayiler/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 57. AXİON MOTOR  ·  ÇİN  ·  axionmotor.com.tr
   "Axion Motor":
-    pasif: true
-    mode: html
     url: "https://axionmotor.com.tr/hizmet-noktalarimiz/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 58. REBAT  ·  ÇİN  ·  rebatmotor.com
   "Rebat":
-    pasif: true
-    mode: html
     url: "https://rebatmotor.com/satis-ve-servisler-cloned-111-2/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 59. LİFAN  ·  ÇİN  ·  www.lifanmotor.com.tr
   "Lifan":
-    pasif: true
-    mode: html
     url: "https://www.lifanmotor.com.tr/bayiler/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 60. KAROVAL MOTOR  ·  ÇİN  ·  karoval.com
   "Karoval Motor":
-    pasif: true
-    mode: html
     url: "https://karoval.com/satis-noktalarimiz/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 61. ARNİCA  ·  ÇİN  ·  arnicamotor.com
   "Arnica":
-    pasif: true
-    mode: html
     url: "https://arnicamotor.com/bayiler?lang=tr"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 62. LEKSAS  ·  ÇİN  ·  www.leksas.com.tr
   "Leksas":
-    pasif: true
-    mode: html
     url: "https://www.leksas.com.tr/bayi-servis/"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
 
   # 63. TAKTAS  ·  ÇİN  ·  taktas.com.tr
   "Taktas":
-    pasif: true
-    mode: html
     url: "https://taktas.com.tr/bayi-ve-servis"
-    row: ""
-    fields:
-      bayi_adi:  ""
-      il:        ""
-      ilce:      ""
-      adres:     ""
-      telefon:   ""
