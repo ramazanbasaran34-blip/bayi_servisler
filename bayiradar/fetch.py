@@ -99,7 +99,17 @@ class Fetcher:
 
         if self._browser is None:
             self._pw = sync_playwright().start()
-            self._browser = self._pw.chromium.launch(headless=True)
+            try:
+                self._browser = self._pw.chromium.launch(headless=True)
+            except Exception:
+                # Chromium indirilmemişse bir kez kendisi kursun. İş akışındaki
+                # kurulum adımı atlanmış olabilir; buna bağlı kalmıyoruz.
+                import subprocess
+                import sys as _sys
+                subprocess.run([_sys.executable, "-m", "playwright",
+                                "install", "--with-deps", "chromium"],
+                               check=False, timeout=600)
+                self._browser = self._pw.chromium.launch(headless=True)
         page = self._browser.new_page(user_agent=UA, locale="tr-TR")
         try:
             page.goto(url, timeout=self.timeout * 1000, wait_until="domcontentloaded")
