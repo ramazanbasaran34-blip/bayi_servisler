@@ -9,7 +9,9 @@ import re
 
 from bs4 import BeautifulSoup
 
-from .normalize import clean_phone, clean_text, resolve_il, split_il_ilce, title_tr
+from .normalize import (clean_phone, clean_text, il_ara, resolve_il,
+                         split_il_ilce, title_tr)
+from .otomatik import cikar as otomatik_cikar
 
 ALANLAR = ["bayi_adi", "il", "ilce", "adres", "telefon", "email", "website"]
 
@@ -105,10 +107,10 @@ def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
     if birlesik and rec.get(birlesik):
         il, ilce = split_il_ilce(rec[birlesik])
         rec["il"], rec["ilce"] = il or rec.get("il", ""), ilce or rec.get("ilce", "")
-    elif not rec.get("il") and rec.get("adres"):
-        # son çare: adresin içinden il yakalamayı dene
-        il, ilce = split_il_ilce(rec["adres"].split(",")[-1])
-        rec["il"] = rec["il"] or il
+    elif not rec.get("il"):
+        # Son çare: adres ya da ilçe alanında GERÇEK bir il adı geçiyor mu?
+        # Geçmiyorsa boş bırakılır — uydurma il yazmak listeyi bozar.
+        rec["il"] = il_ara(rec.get("adres", "")) or il_ara(rec.get("ilce", ""))
 
     ad = clean_text(rec.get("bayi_adi", ""))
     if not ad:
@@ -125,3 +127,9 @@ def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
         "website": clean_text(rec.get("website", "")),
         "kaynak_url": kaynak_url,
     }
+
+
+# --------------------------------------------------------------- OTOMATİK
+def parse_oto(html: str, cfg: dict) -> list[dict]:
+    """Tarif yok — yapıyı sayfadan çıkar. Ayrıntı: bayiradar/otomatik.py"""
+    return otomatik_cikar(html)
