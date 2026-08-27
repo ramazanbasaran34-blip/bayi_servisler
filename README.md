@@ -42,10 +42,27 @@ Dört katmanlı koruma: toptan çökme, kısmi çökme (sayfaların bir kısmı
 gelmemesi), anomali eşiği (kayıt sayısının çakılması), kayıp sayacı
 (bir bayi 3 sağlıklı taramada görünmezse düşmüş sayılır).
 
-## Marka tarifi eklemek
+## Tarif yazmak gerekmiyor
 
-`brands.yaml` dosyasını düzenle. Her marka 5-10 satırlık bir tarif.
-Kod değişmez. Ayrıntı dosyanın başındaki açıklamada.
+63 markanın hiçbirinde CSS seçici yazılı değil. Sistem sayfadaki tekrar eden
+yapıyı kendisi buluyor: telefon ve adres içeren, kardeşleri aynı sınıfa sahip
+kapları arıyor, en yüksek puanlıyı seçiyor, alanları ayıklıyor.
+Ayrıntı: [bayiradar/otomatik.py](bayiradar/otomatik.py)
+
+Tablo, kart ızgarası, article ve WordPress kalıplarında test edildi; bayi
+listesi olmayan sayfalarda kayıt üretmiyor.
+
+Bir markada tutmazsa sistem 0 kayıt görüp `hatali` işaretler ve eski veriyi
+korur. Sadece o markaya elle `row` + `fields` yazılır — yazıldığı anda otomatik
+mod devre dışı kalır.
+
+Tek bir sayfayı incelemek için:
+
+```bash
+python kesfet.py "https://ornek.com/bayiler"
+```
+
+Actions sekmesindeki **Marka keşfi** iş akışı bunu bulutta çalıştırır.
 
 ## Yerelde çalıştırmak (isteğe bağlı)
 
