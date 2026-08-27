@@ -174,28 +174,63 @@ def tara_marka(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=None):
 # ============================================================================
 #  ZAMANLAMA
 # ============================================================================
-def tarama_gerekiyor_mu(bilgi: dict, cfg: dict) -> tuple[bool, str]:
+_GUN_HARITASI: dict[str, int] = {}
+
+
+def gun_haritasi(config_path="brands.yaml") -> dict:
+    """Markaları haftanın günlerine EŞİT dağıtır (0=Pazartesi ... 6=Pazar).
+
+    Marka adının harflerinden hesaplamak dengesiz sonuç veriyordu (bir güne
+    14, diğerine 3 marka). Bunun yerine alfabetik sıraya göre sırayla
+    dağıtıyoruz: 63 marka → her güne 9.
+
+    Haftada bir tazelik korunur ama tek gecede 63 siteye gidilmez; hem karşı
+    tarafa yük binmez hem de aynı IP'den yoğun trafik görünmez.
+    """
+    global _GUN_HARITASI
+    if not _GUN_HARITASI:
+        markalar = sorted(load_config(config_path).get("markalar", {}))
+        _GUN_HARITASI = {m: i % 7 for i, m in enumerate(markalar)}
+    return _GUN_HARITASI
+
+
+def _gun_yuvasi(marka: str) -> int:
+    return gun_haritasi().get(marka, 0)
+
+
+def tarama_gerekiyor_mu(bilgi: dict, cfg: dict, marka: str = "") -> tuple[bool, str]:
     """Bu marka şimdi taranmalı mı? (evet_mi, gerekçe)"""
-    periyot = cfg.get("periyot_saat", 24)
+    periyot = cfg.get("periyot_saat", 168)      # varsayılan: haftalık
     son = bilgi.get("son_basarili")
     if not son:
         return True, "hiç başarılı tarama yok"
 
-    yas = datetime.now(timezone.utc) - datetime.fromisoformat(son)
+    simdi = datetime.now(timezone.utc)
+    yas = simdi - datetime.fromisoformat(son)
 
-    # Son deneme hata verdiyse 24 saat bekleme, daha erken tekrar dene
+    # Son deneme başarısızsa periyodu bekleme, artan aralıkla tekrar dene
     if bilgi.get("son_deneme_durum") in ("hatali", "kismi", "karantina"):
         son_deneme = bilgi.get("son_deneme")
         if son_deneme:
-            bekleme_saat = min(2 ** bilgi.get("ardisik_hata", 1), 12)
-            gecen = datetime.now(timezone.utc) - datetime.fromisoformat(son_deneme)
+            bekleme_saat = min(2 ** bilgi.get("ardisik_hata", 1), 24)
+            gecen = simdi - datetime.fromisoformat(son_deneme)
             if gecen < timedelta(hours=bekleme_saat):
                 return False, f"hata sonrası {bekleme_saat} saat bekleniyor"
         return True, "önceki deneme başarısızdı, tekrar deneniyor"
 
-    if yas >= timedelta(hours=periyot):
-        return True, f"{yas.days * 24 + yas.seconds // 3600} saattir taranmadı"
-    return False, f"{periyot} saatlik periyot dolmadı"
+    if yas < timedelta(hours=periyot):
+        gun = int(yas.total_seconds() // 86400)
+        return False, f"{gun} gün önce tarandı, periyot {int(periyot/24)} gün"
+
+    # Periyot dolmuş. Haftalık markalarda ayrıca gün yuvası tutmalı ki
+    # 63 marka aynı geceye yığılmasın.
+    if marka and periyot >= 168 and not cfg.get("oncelik") == 1:
+        if simdi.weekday() != _gun_yuvasi(marka):
+            gunler = ["Pazartesi","Salı","Çarşamba","Perşembe","Cuma",
+                      "Cumartesi","Pazar"]
+            return False, f"sırası {gunler[_gun_yuvasi(marka)]} günü"
+
+    return True, f"{yas.days} gündür taranmadı"
 
 
 def plan_olustur(config_path="brands.yaml", db_path="bayiler.db",
@@ -217,7 +252,7 @@ def plan_olustur(config_path="brands.yaml", db_path="bayiler.db",
             if cfg.get("pasif"):
                 continue
             bilgi = marka_bilgi(con, marka)
-            gerek, sebep = tarama_gerekiyor_mu(bilgi, cfg)
+            gerek, sebep = tarama_gerekiyor_mu(bilgi, cfg, marka)
             if zamanlanmis and not gerek:
                 continue
 
@@ -268,7 +303,7 @@ def tara_hepsi(config_path="brands.yaml", sadece=None, db_path="bayiler.db",
         sirali = sorted(markalar.items(), key=lambda kv: kv[1].get("oncelik", 5))
         for i, (marka, cfg) in enumerate(sirali):
             if zamanlanmis:
-                gerek, sebep = tarama_gerekiyor_mu(marka_bilgi(con, marka), cfg)
+                gerek, sebep = tarama_gerekiyor_mu(marka_bilgi(con, marka), cfg, marka)
                 if not gerek:
                     ozet["atlanan"].append((marka, sebep))
                     log(f"⏭  {marka} atlandı — {sebep}")
