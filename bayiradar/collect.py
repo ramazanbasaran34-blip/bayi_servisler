@@ -20,6 +20,7 @@ from datetime import datetime, timedelta, timezone
 import yaml
 
 from .fetch import Fetcher
+from .koordinat import sorgu_noktalari
 from .normalize import IL_KODU, ILLER, fold
 from .otomatik import il_baglantilari, json_gomulu
 from .parse import finalize, parse_html, parse_json, parse_oto
@@ -49,11 +50,20 @@ def _urls_for(cfg: dict) -> list[tuple[str, str]]:
     if it in ("il_kodlari",) or (isinstance(it, dict) and it.get("type") == "il_kodlari"):
         return [(url.format(il_kodu=k, il_adi=v, il_slug=il_slug(v)), v)
                 for k, v in IL_KODU.items()]
+    if it in ("koordinat", "harita"):
+        # Harita tabanlı bulucular il adı değil enlem/boylam istiyor.
+        # 81 il merkezini sırayla sorguluyoruz; yarıçaplar örtüştüğü için
+        # Türkiye'de boşluk kalmıyor.
+        yaricap = cfg.get("yaricap_km", 120)
+        return [(url.format(lat=la, lng=lo, enlem=la, boylam=lo,
+                            yaricap=yaricap, yaricap_m=yaricap * 1000,
+                            il_slug=il_slug(il), il_adi=il), il)
+                for il, la, lo in sorgu_noktalari(yaricap)]
     if it in ("il_slug", "il_adi"):
         return [(url.format(il_slug=il_slug(v), il_adi=v,
                             il_kodu=i + 1), v) for i, v in enumerate(ILLER)]
-    if isinstance(it, dict) and it.get("type") == "sayfa":
-        return [(url.format(sayfa=i), "")
+    if isinstance(it, dict) and it.get("type") in ("sayfa", "sayi"):
+        return [(url.format(sayfa=i, sayi=i, deger=i), "")
                 for i in range(it.get("baslangic", 1), it["bitis"] + 1)]
     if isinstance(it, list):
         return [(url.format(deger=d), "") for d in it]
@@ -77,7 +87,22 @@ def _sayfayi_coz(body, cfg, mode):
     return parse_oto(body, cfg)
 
 
-def tara_marka(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=None):
+def kaynaklari_coz(cfg: dict) -> list[dict]:
+    """Markanın taranacak kaynaklarını döner: [{rol, url, ...}, ...]
+
+    Yeni biçim 'kaynaklar' listesi kullanıyor. Eski tek-url biçimi de
+    çalışmaya devam etsin diye ona da destek var.
+    """
+    if cfg.get("kaynaklar"):
+        out = []
+        for k in cfg["kaynaklar"]:
+            alt = {**{x: v for x, v in cfg.items() if x != "kaynaklar"}, **k}
+            out.append(alt)
+        return out
+    return [{**cfg, "rol": cfg.get("rol", "satis")}]
+
+
+def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=None):
     """Tek markayı tarar. Döner: (kayitlar, kapsam)
 
     Boş dönerse pes etmez, kademeli olarak şunları dener:
@@ -128,6 +153,9 @@ def tara_marka(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=None):
             continue
         ekle(_sayfayi_coz(body, cfg, mode), url, url_ili)
 
+    for r in kayitlar:
+        r["rol"] = cfg.get("rol", "satis")
+
     kapsam = basarili_url / len(urls) if urls else 0.0
     if kayitlar or ilk_body is None:
         return kayitlar, kapsam
@@ -168,7 +196,28 @@ def tara_marka(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=None):
         except Exception as e:                                    # noqa: BLE001
             log(f"     tarayıcı denemesi başarısız: {str(e)[:60]}")
 
+    for r in kayitlar:
+        r["rol"] = cfg.get("rol", "satis")
     return kayitlar, (1.0 if kayitlar else kapsam)
+
+
+def tara_marka(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=None):
+    """Markanın tüm kaynaklarını (satış + servis) tarar ve birleştirir."""
+    log = log or (lambda m: None)
+    kaynaklar = kaynaklari_coz(cfg)
+    hepsi, kapsamlar = [], []
+    for k in kaynaklar:
+        if len(kaynaklar) > 1:
+            log(f"     [{k.get('rol','satis')}] {k['url'][:60]}")
+        try:
+            kay, kap = tara_marka_tek(marka, k, fetcher, max_age, log)
+        except Exception as e:                                    # noqa: BLE001
+            log(f"     kaynak başarısız: {str(e)[:60]}")
+            kapsamlar.append(0.0)
+            continue
+        hepsi.extend(kay)
+        kapsamlar.append(kap)
+    return hepsi, (sum(kapsamlar) / len(kapsamlar) if kapsamlar else 0.0)
 
 
 # ============================================================================
