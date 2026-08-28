@@ -1,0 +1,439 @@
+{
+ "Honda": [
+  {
+   "url": "https://www.honda.com.tr/motosiklet/bayiler-ve-servisler",
+   "boyut": 1361581,
+   "telefon_sayisi": 64,
+   "gomulu_json_kayit": 59,
+   "gomulu_ornek": [
+    {
+     "bayi_adi": "1uj",
+     "il": "1ut",
+     "ilce": "1ux",
+     "adres": "1uk",
+     "telefon": "1ul",
+     "email": "",
+     "website": ""
+    },
+    {
+     "bayi_adi": "1v0",
+     "il": "1v8",
+     "ilce": "1vb",
+     "adres": "1v1",
+     "telefon": "1v2",
+     "email": "",
+     "website": ""
+    }
+   ],
+   "il_secici": 0,
+   "il_secici_ornek": [],
+   "il_dizini": 0,
+   "kap_adaylari": [
+    {
+     "secici": "li.flt__block > ul > li.filter-list",
+     "adet": 7,
+     "puan": 11.0,
+     "ornek_metin": [
+      "Honda Motosiklet Açar Pendik Şimdi arayın 0216 222 09 06 Yol tarifi alın Bahçelievler Mah. D-100 Güney Yanyolu No:56/1, 34893 Pendik/İstanbul İletişime geçin WhatsApp ile bayiye ul",
+      "Honda Motosiklet Ayışığı Üsküdar Şimdi arayın 0216 559 05 00 Yol tarifi alın Altunizade, Kısıklı Cd. No:17/A, 34662 Üsküdar/İstanbul, Türkiye İletişime geçin WhatsApp ile bayiye ul"
+     ],
+     "ornek_html": "<li class=\"filter-list\"><div class=\"f-list__head\"><div class=\"list__h-txt\"><p class=\"f-list-tt\">Honda Motosiklet Açar</p><span>Pendik</span></div><span class=\"chvrn\"></span></div><!--qv --><div class=\"web-info has-wp\"><div class=\"w-info__left\"><!--qv --><a class=\"w-info__phone\" href=\"tel:02162220906\"><!--qv q:key q:sref=25az q:s--><span>Şimdi arayın</span><p>0216 222 09 06</p><span class=\"chvrn r short\"></span><!--/qv--></a><!--/qv--><!--qv --><a class=\"w-info__gps\" href=\"https://www.google.com/maps/place/Honda+Acar+Plaza/@40.8913859,29.232149,19z/data=!4m6!3m5!1s0x14cadb8d11dbf361:0xd634dfdeba014208!8m2!3d40.891744!4d29.2331156!16s%2Fg%2F11ym8rs95z?entry=ttu&amp;g_ep=EgoyMDI1MTEwNS4wIKXMDSoASAFQAw%3D%3D\" rel=\"noreferrer\" target=\"_blank\"><!--qv q:key q:sref=25b0 q:s--><span>Yol tarifi alın</span><p>Bahçelievler Mah. D-100 Güney Yanyolu No:56/1, 34893 Pendik/İstanbul</p><span class=\"chvrn r short\"></span><!--/qv--></a><!--/qv--><!--qv --><a aria-label=\"WhatsApp ile bayiye ulaşın\" class=\"w-info__whatsapp\" href=\"https://wa.me/905498540906\" rel=\"noreferrer\" target=\"_blank\"><!--qv q:key q:sref=25b1 q:s--><div class=\"w-info__wp-txt\"><span>İletişime geçin</span><p>WhatsApp ile bayiye ulaş"
+    },
+    {
+     "secici": "li.flt__block > ul > li.filter-list",
+     "adet": 4,
+     "puan": 11.0,
+     "ornek_metin": [
+      "Honda Motosiklet Çamkıran Gaziemir Şimdi arayın 0232 265 55 55 Yol tarifi alın Emrez Mah. Akçay Cad. No: 72 /1 İç Kapı No:101 Gaziemir / İzmir İletişime geçin WhatsApp ile bayiye u",
+      "Honda Motosiklet Delikanlı Tire Şimdi arayın 0232 512 75 42 Yol tarifi alın Adnan Menderes Mahallesi , Faik Tokluoğlu Bulvarı No:55A Tire/İZMİR İletişime geçin WhatsApp ile bayiye "
+     ],
+     "ornek_html": "<li class=\"filter-list\"><div class=\"f-list__head\"><div class=\"list__h-txt\"><p class=\"f-list-tt\">Honda Motosiklet Çamkıran</p><span>Gaziemir</span></div><span class=\"chvrn\"></span></div><!--qv --><div class=\"web-info has-wp\"><div class=\"w-info__left\"><!--qv --><a class=\"w-info__phone\" href=\"tel:02322655555\"><!--qv q:key q:sref=25bo q:s--><span>Şimdi arayın</span><p>0232 265 55 55</p><span class=\"chvrn r short\"></span><!--/qv--></a><!--/qv--><!--qv --><a class=\"w-info__gps\" href=\"https://www.google.com/maps/place/Honda+Motosiklet+Çamkıran/@38.3520822,27.1303972,17z/data=!4m7!3m6!1s0x14bbdf0020bdb571:0xd48aec6617b33c7e!8m2!3d38.3521146!4d27.1332857!15sChtIb25kYSDDp2Fta8SxcmFuIG1vdG9zaWtsZXQiA4gBAZIBEW1vdG9yY3ljbGVfZGVhbGVy4AEA!16s%2Fg%2F11n3yf_185?entry=tts&amp;g_ep=EgoyMDI2MDIxOC4wIPu8ASoASAFQAw%3D%3D&amp;skid=cf9ad93f-32fa-48a2-ad0f-0386c917f347\" rel=\"noreferrer\" target=\"_blank\"><!--qv q:key q:sref=25bp q:s--><span>Yol tarifi alın</span><p>Emrez Mah. Akçay Cad. No: 72 /1 İç Kapı No:101 Gaziemir / İzmir</p><span class=\"chvrn r short\"></span><!--/qv--></a><!--/qv--><!--qv --><a aria-label=\"WhatsApp ile bayiye ulaşın\" class=\"w-info__whatsapp\" href=\"https://wa.me/905358783969\" rel=\"nore"
+    },
+    {
+     "secici": "li.flt__block > ul > li.filter-list",
+     "adet": 4,
+     "puan": 11.0,
+     "ornek_metin": [
+      "Honda Motosiklet Alanya Alanya Şimdi arayın 0 242 525 40 50 Yol tarifi alın Fığla Mah. Bağcı Cad. No:4 Alanya / Antalya İletişime geçin WhatsApp ile bayiye ulaşın. Honda ile konuşu",
+      "Honda Motosiklet Ataberk - Kepez Kepez Şimdi arayın 0242 311 44 07 Yol tarifi alın Teoman Paşa Mah.Gazi Bulvarı.369/5 Kepez ANTALYA İletişime geçin WhatsApp ile bayiye ulaşın. Hond"
+     ],
+     "ornek_html": "<li class=\"filter-list\"><div class=\"f-list__head\"><div class=\"list__h-txt\"><p class=\"f-list-tt\">Honda Motosiklet Alanya</p><span>Alanya</span></div><span class=\"chvrn\"></span></div><!--qv --><div class=\"web-info has-wp\"><div class=\"w-info__left\"><!--qv --><a class=\"w-info__phone\" href=\"tel:02425254050\"><!--qv q:key q:sref=25cc q:s--><span>Şimdi arayın</span><p>0 242 525 40 50</p><span class=\"chvrn r short\"></span><!--/qv--></a><!--/qv--><!--qv --><a class=\"w-info__gps\" href=\"https://www.google.com/maps/place/Honda+Alanya+Motor/@36.5458333,32.0216971,17.52z/data=!4m6!3m5!1s0x14dc9968156b82bd:0x41f094f2b32c3988!8m2!3d36.5458449!4d32.0218546!16s%2Fg%2F11trg_hq5q\" rel=\"noreferrer\" target=\"_blank\"><!--qv q:key q:sref=25cd q:s--><span>Yol tarifi alın</span><p>Fığla Mah. Bağcı Cad. No:4 Alanya / Antalya </p><span class=\"chvrn r short\"></span><!--/qv--></a><!--/qv--><!--qv --><a aria-label=\"WhatsApp ile bayiye ulaşın\" class=\"w-info__whatsapp\" href=\"https://wa.me/905411504050\" rel=\"noreferrer\" target=\"_blank\"><!--qv q:key q:sref=25ce q:s--><div class=\"w-info__wp-txt\"><span>İletişime geçin</span><p>WhatsApp ile bayiye ulaşın.</p></div><span class=\"chvrn r short\"></span><!--/qv--></a><!--/qv-"
+    },
+    {
+     "secici": "li.flt__block > ul > li.filter-list",
+     "adet": 4,
+     "puan": 11.0,
+     "ornek_metin": [
+      "Honda Motosiklet Ordu - Merkez Şehzadeler Şimdi arayın 0236 229 29 29 Yol tarifi alın 2. Anafartalar Mahallesi Mimar Sinan Bulvarı 1527 Sokak No:18/A Manisa İletişime geçin WhatsAp",
+      "Honda Motosiklet Ordu - Turgutlu Turgutlu Şimdi arayın 0 236 229 29 14 Yol tarifi alın Atatürk Bulvarı Subaşı Mahallesi No:260 Turgutlu/Manisa İletişime geçin WhatsApp ile bayiye u"
+     ],
+     "ornek_html": "<li class=\"filter-list\"><div class=\"f-list__head\"><div class=\"list__h-txt\"><p class=\"f-list-tt\">Honda Motosiklet Ordu - Merkez </p><span>Şehzadeler</span></div><span class=\"chvrn\"></span></div><!--qv --><div class=\"web-info has-wp\"><div class=\"w-info__left\"><!--qv --><a class=\"w-info__phone\" href=\"tel:02362292929\"><!--qv q:key q:sref=25dy q:s--><span>Şimdi arayın</span><p>0236 229 29 29</p><span class=\"chvrn r short\"></span><!--/qv--></a><!--/qv--><!--qv --><a class=\"w-info__gps\" href=\"https://www.google.com/maps/place/Honda+Motosiklet+Ordu+A.%C5%9E.+-+Manisa/@38.6255059,27.4357224,19.31z/data=!4m14!1m7!3m6!1s0x14b99c0bb1feb347:0x1b171edc395b3918!2s2.+Anafartalar+Mh,+Mimar+Sinan+Blv.+18A+D:a,+45020+%C5%9Eehzadeler%2FManisa,+T%C3%BCrkiye!3b1!8m2!3d38.6257411!4d27.4358938!3m5!1s0x14b99de6e1375f09:0x77b14bc96297ec05!8m2!3d38.6252145!4d27.4366744!16s%2Fg%2F11y5ftyzn1?hl=en&amp;entry=ttu&amp;g_ep=EgoyMDI0MTExOC4wIKXMDSoASAFQAw%3D%3D\" rel=\"noreferrer\" target=\"_blank\"><!--qv q:key q:sref=25dz q:s--><span>Yol tarifi alın</span><p>2. Anafartalar Mahallesi Mimar Sinan Bulvarı 1527 Sokak No:18/A Manisa</p><span class=\"chvrn r short\"></span><!--/qv--></a><!--/qv--><!--qv --><a aria-label=\"What"
+    }
+   ],
+   "rol": "satis_servis"
+  }
+ ],
+ "Bajaj": [
+  {
+   "url": "https://www.ekuralkan.com/motosiklet-satis-noktalari?city=",
+   "boyut": 800457,
+   "telefon_sayisi": 102,
+   "gomulu_json_kayit": 0,
+   "gomulu_ornek": [],
+   "il_secici": 0,
+   "il_secici_ornek": [],
+   "il_dizini": 0,
+   "kap_adaylari": [
+    {
+     "secici": "div.space-y-6.p-4 > div.space-y-3 > div.cursor-pointer.rounded-lg.border",
+     "adet": 21,
+     "puan": 11.0,
+     "ornek_metin": [
+      "AHMET KİREMİTÇİ Satış , Çavuşbaşı, Merkez, Çavuşbaşı Cd. no:33/A, 34782 Çekmeköy/İstanbul, ÇEKMEKÖY 05413950367 yasarticaret34@gmail.com Bayi detayı",
+      "AHMET KİREMİTÇİ Satış Yamanevler Mah. Sanayi Cad. B Blok No:2 BA Ümraniye, UMRANIYE +905469306210 yasarticaret34@gmail.com Bayi detayı"
+     ],
+     "ornek_html": "<div class=\"cursor-pointer rounded-lg border bg-card p-4 transition-colors border-border hover:border-muted-foreground/25\" data-dealer-id=\"68\"><h3 class=\"text-sm font-medium leading-snug text-foreground\">AHMET KİREMİTÇİ</h3><div class=\"mt-2 flex flex-wrap gap-1.5\"><span class=\"inline-flex items-center gap-1 rounded-md border border-border px-2 py-0.5 text-xs text-muted-foreground\">Satış</span></div><div class=\"mt-3 space-y-1.5 text-sm\"><div class=\"flex items-start gap-2 text-muted-foreground\"><span class=\"text-xs leading-relaxed\">, Çavuşbaşı, Merkez, Çavuşbaşı Cd. no:33/A, 34782 Çekmeköy/İstanbul, ÇEKMEKÖY</span></div><div class=\"flex items-center gap-2\"><a class=\"text-xs font-medium hover:text-primary\" href=\"tel:05413950367\">05413950367</a></div><div class=\"flex items-center gap-2\"><a class=\"truncate text-xs hover:text-primary\" href=\"mailto:yasarticaret34@gmail.com\">yasarticaret34@gmail.com</a></div></div><a href=\"/motosiklet-satis-noktalari/68-ahmet-kiremiti\"><button class=\"inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all cursor-pointer disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-even"
+    },
+    {
+     "secici": "div.space-y-6.p-4 > div.space-y-3 > div.cursor-pointer.rounded-lg.border",
+     "adet": 9,
+     "puan": 11.0,
+     "ornek_metin": [
+      "ALİ KEMAL YİĞİTBAŞ- KARDEŞLER MOTOR Satış Servis FIDANLIK MAH. 40. SK. KARDESLER MOTOR NO: 10, REYHANLI +905334113628 alikyigitbas@gmail.com Bayi detayı",
+      "HURİYE-ŞERA ATEŞOĞLU ORT Satış NUMUNE EVLER MAH. INÖNÜ CAD. NO: 27, DORTYOL +905324632702 atesoglu_ticaret@hotmail.com Bayi detayı"
+     ],
+     "ornek_html": "<div class=\"cursor-pointer rounded-lg border bg-card p-4 transition-colors border-border hover:border-muted-foreground/25\" data-dealer-id=\"10\"><h3 class=\"text-sm font-medium leading-snug text-foreground\">ALİ KEMAL YİĞİTBAŞ- KARDEŞLER MOTOR</h3><div class=\"mt-2 flex flex-wrap gap-1.5\"><span class=\"inline-flex items-center gap-1 rounded-md border border-border px-2 py-0.5 text-xs text-muted-foreground\">Satış</span><span class=\"inline-flex items-center gap-1 rounded-md border border-border px-2 py-0.5 text-xs text-muted-foreground\">Servis</span></div><div class=\"mt-3 space-y-1.5 text-sm\"><div class=\"flex items-start gap-2 text-muted-foreground\"><span class=\"text-xs leading-relaxed\">FIDANLIK MAH. 40. SK. KARDESLER MOTOR NO: 10, REYHANLI</span></div><div class=\"flex items-center gap-2\"><a class=\"text-xs font-medium hover:text-primary\" href=\"tel:+905334113628\">+905334113628</a></div><div class=\"flex items-center gap-2\"><a class=\"truncate text-xs hover:text-primary\" href=\"mailto:alikyigitbas@gmail.com\">alikyigitbas@gmail.com</a></div></div><a href=\"/motosiklet-satis-noktalari/10-ali-kemal-yiitba-kardeler-motor\"><button class=\"inline-flex items-center justify-center whitespace-nowrap text-"
+    },
+    {
+     "secici": "div.space-y-6.p-4 > div.space-y-3 > div.cursor-pointer.rounded-lg.border",
+     "adet": 6,
+     "puan": 11.0,
+     "ornek_metin": [
+      "FIRAT AKYÜREK - İnci Motor Satış ÇINAR MAH. 5003 SK. İZMİR EĞİTİM VE HİZMET VAKFI NO:4 B BORNOVA İZMİR, BORNOVA +905416197517 incimotor35@gmail.com Bayi detayı",
+      "FIRAT AKYÜREK - İnci Motor Satış Meriç Mah. 5746 Sk. No: 4/2, BORNOVA +905416197517 incimotor35@gmail.com Bayi detayı"
+     ],
+     "ornek_html": "<div class=\"cursor-pointer rounded-lg border bg-card p-4 transition-colors border-border hover:border-muted-foreground/25\" data-dealer-id=\"272\"><h3 class=\"text-sm font-medium leading-snug text-foreground\">FIRAT AKYÜREK - İnci Motor</h3><div class=\"mt-2 flex flex-wrap gap-1.5\"><span class=\"inline-flex items-center gap-1 rounded-md border border-border px-2 py-0.5 text-xs text-muted-foreground\">Satış</span></div><div class=\"mt-3 space-y-1.5 text-sm\"><div class=\"flex items-start gap-2 text-muted-foreground\"><span class=\"text-xs leading-relaxed\">ÇINAR MAH. 5003 SK. İZMİR EĞİTİM VE HİZMET VAKFI NO:4 B BORNOVA İZMİR, BORNOVA</span></div><div class=\"flex items-center gap-2\"><a class=\"text-xs font-medium hover:text-primary\" href=\"tel:+905416197517\">+905416197517</a></div><div class=\"flex items-center gap-2\"><a class=\"truncate text-xs hover:text-primary\" href=\"mailto:incimotor35@gmail.com\">incimotor35@gmail.com</a></div></div><a href=\"/motosiklet-satis-noktalari/272-frat-akyrek-inci-motor\"><button class=\"inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all cursor-pointer disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&am"
+    },
+    {
+     "secici": "div.space-y-6.p-4 > div.space-y-3 > div.cursor-pointer.rounded-lg.border",
+     "adet": 4,
+     "puan": 11.0,
+     "ornek_metin": [
+      "FAVORİ MOTO GARAJ İNŞAAT OTOM. SAN. VE TİC.LTD.ŞTİ. Satış Servis GÖKKUŞAĞI MAH. 1164 CAD. NO: 9 C, CANKAYA +905322425186 favorimotogaraj@hotmail.com Bayi detayı",
+      "FAVORİ MOTO GARAJ İNŞAAT OTOM. SAN. VE TİC.LTD.ŞTİ. Satış Servis Yeni Bağlıca Mah. Etimesgut Blv. Kapı No 29 /11 Daire No 11, ETİMESGUT 05324796284 favorimotogaraj@hotmail.com Bayi"
+     ],
+     "ornek_html": "<div class=\"cursor-pointer rounded-lg border bg-card p-4 transition-colors border-border hover:border-muted-foreground/25\" data-dealer-id=\"252\"><h3 class=\"text-sm font-medium leading-snug text-foreground\">FAVORİ MOTO GARAJ İNŞAAT OTOM. SAN. VE TİC.LTD.ŞTİ.</h3><div class=\"mt-2 flex flex-wrap gap-1.5\"><span class=\"inline-flex items-center gap-1 rounded-md border border-border px-2 py-0.5 text-xs text-muted-foreground\">Satış</span><span class=\"inline-flex items-center gap-1 rounded-md border border-border px-2 py-0.5 text-xs text-muted-foreground\">Servis</span></div><div class=\"mt-3 space-y-1.5 text-sm\"><div class=\"flex items-start gap-2 text-muted-foreground\"><span class=\"text-xs leading-relaxed\">GÖKKUŞAĞI MAH. 1164 CAD. NO: 9 C, CANKAYA</span></div><div class=\"flex items-center gap-2\"><a class=\"text-xs font-medium hover:text-primary\" href=\"tel:+905322425186\">+905322425186</a></div><div class=\"flex items-center gap-2\"><a class=\"truncate text-xs hover:text-primary\" href=\"mailto:favorimotogaraj@hotmail.com\">favorimotogaraj@hotmail.com</a></div></div><a href=\"/motosiklet-satis-noktalari/252-favori-moto-garaj-inaat-otom-san-ve-ticltdti\"><button class=\"inline-flex items-center justify-ce"
+    }
+   ],
+   "rol": "satis"
+  },
+  {
+   "url": "https://www.ekuralkan.com/motosiklet-servis-noktalari?city=",
+   "boyut": 44466,
+   "telefon_sayisi": 0,
+   "gomulu_json_kayit": 0,
+   "gomulu_ornek": [],
+   "il_secici": 0,
+   "il_secici_ornek": [],
+   "il_dizini": 0,
+   "kap_adaylari": [],
+   "rol": "servis"
+  }
+ ],
+ "Voge": [
+  {
+   "url": "https://www.vogeturkiye.com.tr/yetkili-satici/",
+   "boyut": 290062,
+   "telefon_sayisi": 187,
+   "gomulu_json_kayit": 0,
+   "gomulu_ornek": [],
+   "il_secici": 42,
+   "il_secici_ornek": [
+    "https://www.vogeturkiye.com.tr/yetkili-satici/?dm-il-filter=ADANA",
+    "https://www.vogeturkiye.com.tr/yetkili-satici/?dm-il-filter=AFYONKARAH%C4%B0SAR"
+   ],
+   "il_dizini": 0,
+   "kap_adaylari": [
+    {
+     "secici": "div.dm-list-scroll > div.dm-il-group > div.dm-dealer-card",
+     "adet": 24,
+     "puan": 11.0,
+     "ornek_metin": [
+      "ALAÇATI BİSİKLET Bayi + Servis İlçe: ÇEŞME Tel: 0232 716 89 70 – 0532 396 63 73 Adres: İSMETİNÖNÜ MAH. 2001 SK. NO: 160/A",
+      "ALİAĞA ATILIM MOBİLYA Bayi + Servis İlçe: ALİAĞA Tel: 0539 937 90 61 – 0232 617 27 27 Adres: KÜLTÜR MH. İSTİKLAL CAD. NO: 24"
+     ],
+     "ornek_html": "<div class=\"dm-dealer-card\" data-id=\"47\">\n<div class=\"dm-dealer-name-wrap\">\n<div class=\"dm-dealer-name\">ALAÇATI BİSİKLET</div>\n</div>\n<div class=\"dm-dealer-info\">\n<span class=\"dm-tip dm-tip-bayi_servis\">Bayi + Servis</span>\n</div>\n<div class=\"dm-dealer-meta\">\n<div><strong>İlçe:</strong> ÇEŞME</div>\n<div><strong>Tel:</strong> <a href=\"tel:0232 716 89 70 – 0532 396 63 73\">0232 716 89 70 – 0532 396 63 73</a></div>\n<div><strong>Adres:</strong> İSMETİNÖNÜ MAH. 2001 SK. NO: 160/A</div>\n</div>\n</div>"
+    },
+    {
+     "secici": "div.dm-list-scroll > div.dm-il-group > div.dm-dealer-card",
+     "adet": 16,
+     "puan": 11.0,
+     "ornek_metin": [
+      "AK-PA TEMEL GIDA SANAYİ TURİZM VE TİC. LTD. ŞTİ. Bayi + Servis İlçe: İNCİRLİOVA Tel: 0532 273 54 84 Adres: CUMHURİYET MAH. GÜRSEL CAD. NO: 3 -5C",
+      "BOSTANCILAR TEKS. DAY. TÜK. MAL. İNŞ. GIDA MOT. T. LTD. ŞTİ. Bayi + Servis İlçe: YENİPAZAR Tel: 0549 730 12 76 Adres: ÇARŞI MAH. AVŞAR SK. NO:12/A"
+     ],
+     "ornek_html": "<div class=\"dm-dealer-card\" data-id=\"89\">\n<div class=\"dm-dealer-name-wrap\">\n<div class=\"dm-dealer-name\">AK-PA TEMEL GIDA SANAYİ TURİZM VE TİC. LTD. ŞTİ.</div>\n</div>\n<div class=\"dm-dealer-info\">\n<span class=\"dm-tip dm-tip-bayi_servis\">Bayi + Servis</span>\n</div>\n<div class=\"dm-dealer-meta\">\n<div><strong>İlçe:</strong> İNCİRLİOVA</div>\n<div><strong>Tel:</strong> <a href=\"tel:0532 273 54 84\">0532 273 54 84</a></div>\n<div><strong>Adres:</strong> CUMHURİYET MAH. GÜRSEL CAD. NO: 3 -5C</div>\n</div>\n</div>"
+    },
+    {
+     "secici": "div.dm-list-scroll > div.dm-il-group > div.dm-dealer-card",
+     "adet": 13,
+     "puan": 11.0,
+     "ornek_metin": [
+      "ACAR MOTORS- EMRAH ACAR Bayi + Servis İlçe: BAĞLARBAŞI Tel: 0507 377 53 03 – 0538 545 44 44 Adres: BARBOROS MAHALLESİ NUH KUYUSU CADDESİ NO 30",
+      "AFŞİN MOTORLU ARAÇLAR SAN. TİC. LTD. ŞTİ Bayi + Servis İlçe: AVCILAR Tel: 0212 695 48 24 - 0507 114 27 99 Adres: GÜMÜŞPALA MAH. RIZABEY SK: NO: 4"
+     ],
+     "ornek_html": "<div class=\"dm-dealer-card\" data-id=\"7\">\n<div class=\"dm-dealer-name-wrap\">\n<div class=\"dm-dealer-name\">ACAR MOTORS- EMRAH ACAR</div>\n</div>\n<div class=\"dm-dealer-info\">\n<span class=\"dm-tip dm-tip-bayi_servis\">Bayi + Servis</span>\n</div>\n<div class=\"dm-dealer-meta\">\n<div><strong>İlçe:</strong> BAĞLARBAŞI</div>\n<div><strong>Tel:</strong> <a href=\"tel:0507 377 53 03 – 0538 545 44 44\">0507 377 53 03 – 0538 545 44 44</a></div>\n<div><strong>Adres:</strong> BARBOROS MAHALLESİ NUH KUYUSU CADDESİ NO 30</div>\n</div>\n</div>"
+    },
+    {
+     "secici": "div.dm-list-scroll > div.dm-il-group > div.dm-dealer-card",
+     "adet": 10,
+     "puan": 11.0,
+     "ornek_metin": [
+      "DENİZHANLAR Bayi + Servis İlçe: BODRUM Tel: 0252 382 33 27 – 0506 776 57 58 Adres: MEHMET HİLMİ CAD.NO:13/B",
+      "EMRE ÖZTÜRK Bayi + Servis İlçe: MARMARİS Tel: 0507 624 30 30 Adres: TEPE MAHALLESİ YENİYOL CAD. ARAS KARGO NO: 56 / B"
+     ],
+     "ornek_html": "<div class=\"dm-dealer-card\" data-id=\"93\">\n<div class=\"dm-dealer-name-wrap\">\n<div class=\"dm-dealer-name\">DENİZHANLAR</div>\n</div>\n<div class=\"dm-dealer-info\">\n<span class=\"dm-tip dm-tip-bayi_servis\">Bayi + Servis</span>\n</div>\n<div class=\"dm-dealer-meta\">\n<div><strong>İlçe:</strong> BODRUM</div>\n<div><strong>Tel:</strong> <a href=\"tel:0252 382 33 27 – 0506 776 57 58\">0252 382 33 27 – 0506 776 57 58</a></div>\n<div><strong>Adres:</strong> MEHMET HİLMİ CAD.NO:13/B</div>\n</div>\n</div>"
+    }
+   ],
+   "rol": "satis_servis"
+  }
+ ],
+ "SYM": [
+  {
+   "url": "https://www.sym-tr.com/bayiler/",
+   "boyut": 187369,
+   "telefon_sayisi": 179,
+   "gomulu_json_kayit": 0,
+   "gomulu_ornek": [],
+   "il_secici": 0,
+   "il_secici_ornek": [],
+   "il_dizini": 45,
+   "kap_adaylari": [
+    {
+     "secici": "div.vc_tta-panel > div.vc_tta-panel-body > div.vc_row.wpb_row.vc_inner",
+     "adet": 9,
+     "puan": 11.0,
+     "ornek_metin": [
+      "İSTANBUL / ANADOLU _ ATAŞEHİR ZAFER LEVENTOĞLU Z GARAJ KÜÇÜKBAKKALKÖY MAH. TEVFİK FİKRET CAD. NO:24 DÜKKAN :1 0 216 576 00 65 / 0552 835 06 34 İSTANBUL / ANADOLU _ ATAŞEHİR MOTOTAL",
+      "İSTANBUL / AVRUPA _ BAŞAKŞEHİR ÇINAR MOTORS BAŞAKŞEHİR MAHALLESI TOROS CADDESI ARTERIUM AVM NO:1 0 555 196 45 67 İSTANBUL / ANADOLU _ BEYKOZ MOTOZONE ESMOTO MOTO LTD. ŞTİ GÖZTEPE M"
+     ],
+     "ornek_html": "<div class=\"vc_row wpb_row vc_inner vc_row-fluid\"><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n<p><strong>İSTANBUL / ANADOLU _ ATAŞEHİR</strong></p>\n<p>ZAFER LEVENTOĞLU Z GARAJ</p>\n<p>KÜÇÜKBAKKALKÖY MAH. TEVFİK FİKRET CAD. NO:24 DÜKKAN :1</p>\n<p>0 216 576 00 65 / 0552 835 06 34</p>\n</div>\n</div>\n</div></div></div><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n<p><strong>İSTANBUL / ANADOLU _ ATAŞEHİR</strong></p>\n<p>MOTOTAL .LTD.ŞTİ</p>\n<p>ÖRNEK MAHALLESİ FEHMİ TOKAY CADDESİ NO:14/A  ATAŞEHİR</p>\n<p>0 216 347 61 71 / 0533 453 18 87</p>\n</div>\n</div>\n</div></div></div><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height"
+    },
+    {
+     "secici": "div.vc_tta-panel > div.vc_tta-panel-body > div.vc_row.wpb_row.vc_inner",
+     "adet": 4,
+     "puan": 11.0,
+     "ornek_metin": [
+      "MUGLA / BODRUM_5S TURCAN EĞLENCE TİC. LTD. ŞTİ. YOKUŞBAŞI MAH. KIBRIS ŞEHİTLERİ CAD. NO:2 0 252 313 06 62 / 0532 409 59 55 MUGLA / BODRUM_5S MotoPunto CEVAT SAKIR MAH SALDIR SAH CA",
+      "MUGLA / DALAMAN_GÖCEK_5S UÇUM .LTD.ŞTİ. HÜRRİYET MAH.GAZİ BULVARI NO 118/A 0 532 587 17 50 MUGLA / FETHİYE_5S VİVA MOTOSİKLET MEHMET TERZİ AKARCA MAH. MUSTAFA KEMAL (AKR) BLV. NO:1"
+     ],
+     "ornek_html": "<div class=\"vc_row wpb_row vc_inner vc_row-fluid\"><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n<p><strong>MUGLA / BODRUM_5S</strong></p>\n<p>TURCAN EĞLENCE TİC. LTD. ŞTİ.</p>\n<p>YOKUŞBAŞI MAH. KIBRIS ŞEHİTLERİ CAD. NO:2</p>\n<p>0 252 313 06 62 / 0532 409 59 55</p>\n</div>\n</div>\n</div></div></div><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n<p><strong>MUGLA / BODRUM_5S</strong></p>\n<p>MotoPunto</p>\n<p>CEVAT SAKIR MAH SALDIR SAH CAD. 56 A1</p>\n<p>0 549 399 39 30</p>\n</div>\n</div>\n</div></div></div><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb"
+    },
+    {
+     "secici": "div.vc_tta-panel-body > div.vc_row.wpb_row.vc_inner > div.wpb_column.vc_column_container.vc_col-sm-4",
+     "adet": 3,
+     "puan": 11.0,
+     "ornek_metin": [
+      "OSTİM DURAN MOTOR / MURAT ERGISI 1207 SOK.NO 2 0 543 144 47 45 0 542 727 18 26",
+      "ETİMESGUT DURAN MOTOR / MURAT ERGISI SÜVARİ MAH.İSTASYON CAD.NO 164 0 542 727 18 26 0 543 144 47 45"
+     ],
+     "ornek_html": "<div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n<p><strong>OSTİM </strong></p>\n<p>DURAN MOTOR / MURAT ERGISI</p>\n<p>1207 SOK.NO 2</p>\n<p>0 543 144 47 45</p>\n<p>0 542 727 18 26</p>\n</div>\n</div>\n</div></div></div>"
+    },
+    {
+     "secici": "div.vc_tta-panel-body > div.vc_row.wpb_row.vc_inner > div.wpb_column.vc_column_container.vc_col-sm-4",
+     "adet": 3,
+     "puan": 11.0,
+     "ornek_metin": [
+      "MERKEZ ERCİYES LTD.ŞTİ. YENİGÜN MAH. KIZILIRMAK CAD.SEFA PLAZA NO:30/26 MURATPAŞA 0 242 311 54 55 0 532 276 68 32",
+      "MANAVGAT MANAVGAT MOTOR / YASİN AĞGEDİK MİMAR SİNAN MAH. 6045 SOK. ÜMÜKSÜZ APT. NO:11 0 242 742 34 26"
+     ],
+     "ornek_html": "<div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n<p><strong>MERKEZ </strong></p>\n<p>ERCİYES LTD.ŞTİ.</p>\n<p>YENİGÜN MAH. KIZILIRMAK CAD.SEFA PLAZA NO:30/26 MURATPAŞA</p>\n<p>0 242 311 54 55</p>\n<p>0 532 276 68 32</p>\n</div>\n</div>\n</div></div></div>"
+    }
+   ],
+   "rol": "satis"
+  },
+  {
+   "url": "https://www.sym-tr.com/servis/",
+   "boyut": 234780,
+   "telefon_sayisi": 242,
+   "gomulu_json_kayit": 0,
+   "gomulu_ornek": [],
+   "il_secici": 0,
+   "il_secici_ornek": [],
+   "il_dizini": 58,
+   "kap_adaylari": [
+    {
+     "secici": "div.vc_tta-panel > div.vc_tta-panel-body > div.vc_row.wpb_row.vc_inner",
+     "adet": 10,
+     "puan": 11.0,
+     "ornek_metin": [
+      "İZMİR-TORBALI ALİ BULUT EGERCİ CADDESİ NO:28 0 (232) 856 41 05 İZMİR-ALİAĞA AYNUR CEYLAN KAZIM DİRİK MAH. AHMET BALCI SOKAK NO:12 0507 675 4708 İZMİR-ALİAĞA ALİAĞA MOTOSİKLET ATATÜ",
+      "MERKEZ-ALSANCAK ZAFER MOTOR ZAFER SANCAR UMURBEY MAH.1525 SOK.NO:4 0 (507) 564 13 56 MERKEZ-BALÇOVA UMUT SIKEL ALPASLAN SOK NO:25/A 0 (535) 768 86 52 MERKEZ-BALÇOVA BİLAL TİKBIYIK "
+     ],
+     "ornek_html": "<div class=\"vc_row wpb_row vc_inner vc_row-fluid\"><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n<p><strong>İZMİR-TORBALI</strong></p>\n<p>ALİ BULUT</p>\n<p>EGERCİ CADDESİ NO:28</p>\n<p>0 (232) 856 41 05</p>\n</div>\n</div>\n</div></div></div><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n<p><strong>İZMİR-ALİAĞA</strong></p>\n<p>AYNUR CEYLAN</p>\n<p>KAZIM DİRİK MAH. AHMET BALCI SOKAK NO:12</p>\n<p>0507 675 4708</p>\n</div>\n</div>\n</div></div></div><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n"
+    },
+    {
+     "secici": "div.vc_tta-panel > div.vc_tta-panel-body > div.vc_row.wpb_row.vc_inner",
+     "adet": 9,
+     "puan": 11.0,
+     "ornek_metin": [
+      "ATAŞEHİR-İSTANBUL ÜMRANİYE/ KADIKÖY/ MALTEPE/ SANCAKTEPE ZAFER LEVENTOĞLU Z GARAJ KÜÇÜKBAKKALKÖY MAH. TEVFİK FİKRET CAD. NO:24 DÜKKAN :1 0 (216) 576 00 65 BAĞCILAR-İSTANBUL BAHÇELİ",
+      "BEYKOZ-İSTANBUL ÜSKÜDAR/ ÜMRANİYE/ ATAŞEHİR(KUZEY KESİM)/ ÇEKMEKÖY MOTOZONE – ESMOTO  MOTORLU TAŞITLAR TİC. LTD. ŞTİ GÖZTEPE MAH. ATATÜRK CAD. NO:4/2 0533  718 82 28 BEYLİKDÜZÜ-İST"
+     ],
+     "ornek_html": "<div class=\"vc_row wpb_row vc_inner vc_row-fluid\"><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n<p><em><strong>ATAŞEHİR-İSTANBUL</strong> </em></p>\n<p><strong> ÜMRANİYE/ KADIKÖY/ MALTEPE/ SANCAKTEPE</strong></p>\n<p>ZAFER LEVENTOĞLU Z GARAJ</p>\n<p>KÜÇÜKBAKKALKÖY MAH. TEVFİK FİKRET CAD. NO:24 DÜKKAN :1</p>\n<p>0 (216) 576 00 65</p>\n</div>\n</div>\n</div></div></div><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n<p><strong>BAĞCILAR-İSTANBUL</strong></p>\n<p>BAHÇELİEVLER/ KÜÇÜKÇEKMECE/ BAŞAKŞEHİR/ ESENLER/ BAYRAMPAŞA/ ZEYTİNBURNU/ AVCILAR</p>\n<p>ERA MOTOR-GÜNEŞLİ</p>\n<p>GÜNEŞLİ MAHMUT BEY CADDESİ NO:221 DA</p>\n<p>0530 642 94 61</p>\n</div>\n</div>\n</div></div></div><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div "
+    },
+    {
+     "secici": "div.vc_tta-panel > div.vc_tta-panel-body > div.vc_row.wpb_row.vc_inner",
+     "adet": 4,
+     "puan": 11.0,
+     "ornek_metin": [
+      "MERKEZ YASİN KUYUM. MOT.ARAÇ.LTD.ŞTİ İHSANİYE MAH. 111 SOK. H.ORANLI APT. NO:24/F 0 (324) 336 49 83 MERKEZ MOTO KAÇAR İSA KAÇAR YENİ MAH.117.CAD. NO:49/D İMAM HATİP LİSESİ YANI 0 (",
+      "ANAMUR ANOK OTOMOTİV TAR.TAŞ.TUR.EMLAK TİC.VE SAN.LTD.ŞTİ. YEŞİLYURT MAH. ALPARSLAN TÜRKEŞ BULV. NO:144/A 0 (532) 438 38 88 MEZİTLİ ÜMİT OTO TIC.LTD.STI. SITELER MAH. AKDENIZ CAD. "
+     ],
+     "ornek_html": "<div class=\"vc_row wpb_row vc_inner vc_row-fluid\"><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n<p><strong>MERKEZ </strong></p>\n<p>YASİN KUYUM. MOT.ARAÇ.LTD.ŞTİ</p>\n<p>İHSANİYE MAH. 111 SOK. H.ORANLI APT. NO:24/F</p>\n<p>0 (324) 336 49 83</p>\n</div>\n</div>\n</div></div></div><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n<p><strong>MERKEZ</strong></p>\n<p>MOTO KAÇAR İSA KAÇAR</p>\n<p>YENİ MAH.117.CAD. NO:49/D İMAM HATİP LİSESİ YANI</p>\n<p>0 (324) 233 35 11</p>\n</div>\n</div>\n</div></div></div><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_col"
+    },
+    {
+     "secici": "div.vc_tta-panel > div.vc_tta-panel-body > div.vc_row.wpb_row.vc_inner",
+     "adet": 4,
+     "puan": 11.0,
+     "ornek_metin": [
+      "BODRUM TURCAN EĞLENCE TİC. LTD. ŞTİ. TARIK AKAN YOKUŞBAŞI MAH. KIBRIS ŞEHİTLERİ CAD. NO:2 0 (252) 313 06 62 BODRUM DENİZHANLAR LTD. ŞTİ. M.HİLMİ CAD.KARABAĞLI PASAJI.TURGUT REİS 0 ",
+      "DATÇA EFKAN YİGİT REŞADİYE MAH.DÖRTYOL MEVKİ 0 (252) 712 45 42 FETHİYE MEHMET TERZİ AKARCA MAH. GÖNÜLÇELEN RESTAURANT NO:150 0 539 428 84 82 FETHİYE SELAHATTİN GÖKÇAYIR GÖKÇAYIR MO"
+     ],
+     "ornek_html": "<div class=\"vc_row wpb_row vc_inner vc_row-fluid\"><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n<p><strong>BODRUM </strong></p>\n<p>TURCAN EĞLENCE TİC. LTD. ŞTİ. TARIK AKAN</p>\n<p>YOKUŞBAŞI MAH. KIBRIS ŞEHİTLERİ CAD. NO:2</p>\n<p>0 (252) 313 06 62</p>\n</div>\n</div>\n</div></div></div><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_column wpb_content_element\">\n<div class=\"wpb_wrapper\">\n<p><strong>BODRUM </strong></p>\n<p>DENİZHANLAR LTD. ŞTİ.</p>\n<p>M.HİLMİ CAD.KARABAĞLI PASAJI.TURGUT REİS</p>\n<p>0 (252) 382 33 27</p>\n</div>\n</div>\n</div></div></div><div class=\"wpb_column vc_column_container vc_col-sm-4\"><div class=\"vc_column-inner\"><div class=\"wpb_wrapper\"><div class=\"vc_empty_space\" style=\"height: 22px\"><span class=\"vc_empty_space_inner\"></span></div>\n<div class=\"wpb_text_c"
+    }
+   ],
+   "rol": "servis"
+  }
+ ],
+ "Motolux": [
+  {
+   "url": "https://motolux.com.tr/bayiler/sehir/",
+   "boyut": 620675,
+   "telefon_sayisi": 2,
+   "gomulu_json_kayit": 0,
+   "gomulu_ornek": [],
+   "il_secici": 0,
+   "il_secici_ornek": [],
+   "il_dizini": 0,
+   "kap_adaylari": [],
+   "rol": "satis_servis"
+  }
+ ],
+ "Kral": [
+  {
+   "url": "https://kralmotor.tr/SalesDealer",
+   "boyut": 200151,
+   "telefon_sayisi": 0,
+   "gomulu_json_kayit": 445,
+   "gomulu_ornek": [
+    {
+     "bayi_adi": "APAYDIN DTM.VE MOT.TAŞ.LTD.ŞTİ.",
+     "il": "ADANA",
+     "ilce": "CEYHAN",
+     "adres": "ATATÜRK CAD. NO:223",
+     "telefon": "",
+     "email": "",
+     "website": ""
+    },
+    {
+     "bayi_adi": "AYSAN EMLAK İNŞAAT TİC.LTD.ŞTİ.",
+     "il": "ADANA",
+     "ilce": "ÇUKUROVA",
+     "adres": "YÜZÜNCÜYIL MAH.HACI BEKTAŞ VELİ BLV.NO:131 B",
+     "telefon": "",
+     "email": "",
+     "website": ""
+    }
+   ],
+   "il_secici": 75,
+   "il_secici_ornek": [
+    "https://kralmotor.tr/SalesDealer?citySelect=Adana",
+    "https://kralmotor.tr/SalesDealer?citySelect=Ad%C4%B1yaman"
+   ],
+   "il_dizini": 0,
+   "kap_adaylari": [],
+   "rol": "satis"
+  },
+  {
+   "url": "https://kralmotor.tr/Service",
+   "boyut": 182759,
+   "telefon_sayisi": 0,
+   "gomulu_json_kayit": 412,
+   "gomulu_ornek": [
+    {
+     "bayi_adi": "ANADOLU MOTOR YAŞAR ANADOLU",
+     "il": "ADANA",
+     "ilce": "CEYHAN",
+     "adres": "HÜRRİYET MAH. FEVZİ ÇAKMAK BLV NO:14/F CEYHAN",
+     "telefon": "",
+     "email": "",
+     "website": ""
+    },
+    {
+     "bayi_adi": "ALİ KAYA ALICI",
+     "il": "ADANA",
+     "ilce": "ÇUKUROVA",
+     "adres": "BELEDİYE EVLERİ MAH 84053 SK NO 4 / 01",
+     "telefon": "",
+     "email": "",
+     "website": ""
+    }
+   ],
+   "il_secici": 77,
+   "il_secici_ornek": [
+    "https://kralmotor.tr/Service?citySelect=Adana",
+    "https://kralmotor.tr/Service?citySelect=Ad%C4%B1yaman"
+   ],
+   "il_dizini": 0,
+   "kap_adaylari": [],
+   "rol": "servis"
+  }
+ ],
+ "Apachi": [
+  {
+   "url": "https://www.isildar.com.tr/Bayiler",
+   "boyut": 340324,
+   "telefon_sayisi": 1,
+   "gomulu_json_kayit": 0,
+   "gomulu_ornek": [],
+   "il_secici": 80,
+   "il_secici_ornek": [
+    "https://www.isildar.com.tr/Bayiler?id=3",
+    "https://www.isildar.com.tr/Bayiler?id=4"
+   ],
+   "il_dizini": 0,
+   "kap_adaylari": [],
+   "rol": "satis"
+  },
+  {
+   "url": "https://www.isildar.com.tr/Servisler/",
+   "boyut": 319449,
+   "telefon_sayisi": 1,
+   "gomulu_json_kayit": 0,
+   "gomulu_ornek": [],
+   "il_secici": 80,
+   "il_secici_ornek": [
+    "https://www.isildar.com.tr/Servisler/?id=3",
+    "https://www.isildar.com.tr/Servisler/?id=4"
+   ],
+   "il_dizini": 0,
+   "kap_adaylari": [],
+   "rol": "servis"
+  }
+ ],
+ "Rutec": [
+  {
+   "url": "https://www.rutec.com.tr/satis-noktalari.html",
+   "boyut": 13324,
+   "telefon_sayisi": 0,
+   "gomulu_json_kayit": 0,
+   "gomulu_ornek": [],
+   "il_secici": 0,
+   "il_secici_ornek": [],
+   "il_dizini": 0,
+   "kap_adaylari": [],
+   "rol": "satis_servis"
+  }
+ ]
+}
