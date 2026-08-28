@@ -455,3 +455,57 @@ def json_gomulu(html: str) -> list[dict]:
             kayit["rol"] = rol
         out.append(kayit)
     return out
+
+
+# ============================================================================
+#  İL SEÇİCİ KEŞFİ
+# ============================================================================
+def il_secicileri_bul(html: str, temel_url: str) -> list[tuple[str, str]]:
+    """Sayfada il seçen bir açılır liste var mı? Varsa (url, il) çiftleri üretir.
+
+    Neden gerekli: çoğu bayi sayfası parametresiz açıldığında listenin sadece
+    bir dilimini gösteriyor. Mondial'de 390 kayıt gelirken 600 servisin hiçbiri
+    gelmemişti; sebep servis sayfasına il parametresi verilmemesiydi.
+
+    Elle her markaya parametre yazmak yerine sayfadaki <select> içinde il
+    adlarını arıyoruz. Bulursak seçeneğin değerini ve alanın adını kullanarak
+    81 il için adres üretiyoruz.
+    """
+    from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
+
+    from .normalize import ILLER, fold
+
+    soup = BeautifulSoup(html, "html.parser")
+    il_fold = {fold(i): i for i in ILLER}
+    il_fold.update({"afyon": "Afyonkarahisar", "icel": "Mersin",
+                    "mersin icel": "Mersin", "urfa": "Şanlıurfa",
+                    "k maras": "Kahramanmaraş"})
+
+    en_iyi = None
+    for sec in soup.find_all("select"):
+        secenekler = []
+        for o in sec.find_all("option"):
+            metin = fold(o.get_text(" ", strip=True))
+            deger = (o.get("value") or "").strip()
+            if not deger or deger.lower() in ("", "0", "-1", "sec", "seciniz"):
+                continue
+            il = il_fold.get(metin)
+            if il:
+                secenekler.append((deger, il))
+        # En az 20 il tanınıyorsa bu gerçekten il seçicisidir
+        if len(secenekler) >= 20:
+            ad = (sec.get("name") or sec.get("id") or "").strip()
+            if ad and (en_iyi is None or len(secenekler) > len(en_iyi[1])):
+                en_iyi = (ad, secenekler)
+
+    if not en_iyi:
+        return []
+
+    alan, secenekler = en_iyi
+    parca = urlparse(temel_url)
+    out = []
+    for deger, il in secenekler:
+        q = dict(parse_qsl(parca.query))
+        q[alan] = deger
+        out.append((urlunparse(parca._replace(query=urlencode(q))), il))
+    return out
