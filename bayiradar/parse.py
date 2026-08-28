@@ -9,7 +9,7 @@ import re
 
 from bs4 import BeautifulSoup
 
-from .normalize import (clean_phone, clean_text, il_ara, resolve_il,
+from .normalize import (clean_phone, clean_text, fold, il_ara, resolve_il,
                          split_il_ilce, title_tr)
 from .otomatik import cikar as otomatik_cikar
 
@@ -110,13 +110,18 @@ def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
     elif not rec.get("il"):
         # Son çare: adres ya da ilçe alanında GERÇEK bir il adı geçiyor mu?
         # Geçmiyorsa boş bırakılır — uydurma il yazmak listeyi bozar.
-        rec["il"] = il_ara(rec.get("adres", "")) or il_ara(rec.get("ilce", ""))
+        ilce_ili = il_ara(rec.get("ilce", ""))
+        rec["il"] = ilce_ili or il_ara(rec.get("adres", ""))
+        # "İlçe" alanında aslında il adı varsa (Rutec'te olduğu gibi) orayı
+        # boşalt — yoksa "Adana / Adana" gibi anlamsız kayıt çıkıyor.
+        if ilce_ili and fold(rec.get("ilce", "")) == fold(ilce_ili):
+            rec["ilce"] = ""
 
     ad = clean_text(rec.get("bayi_adi", ""))
     if not ad:
         return None
 
-    return {
+    out = {
         "marka": marka,
         "bayi_adi": ad,
         "il": resolve_il(rec.get("il", "")),
@@ -127,6 +132,9 @@ def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
         "website": clean_text(rec.get("website", "")),
         "kaynak_url": kaynak_url,
     }
+    if rec.get("rol"):
+        out["rol"] = rec["rol"]
+    return out
 
 
 # --------------------------------------------------------------- OTOMATİK
