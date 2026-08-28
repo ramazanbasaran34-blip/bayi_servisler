@@ -17,6 +17,8 @@ from collections import defaultdict
 
 from bs4 import BeautifulSoup
 
+from .normalize import IL_BY_FOLD, fold
+
 TEL = re.compile(r"(?:\+90|0)?[\s\(]*\d{3}[\)\s\.\-]*\d{3}[\s\.\-]*\d{2}[\s\.\-]*\d{2}"
                  r"|\b0?\d{10}\b")
 ADRES = re.compile(r"\b(mah|mh|mahalle|mahallesi|cad|cd|cadde|caddesi|sok|sk|"
@@ -33,14 +35,17 @@ GURULTU = {"script", "style", "noscript", "svg", "head", "meta", "link",
 # Doğrudan Türkçe karakterle regex yazmak kelime sınırı (\b) davranışı yüzünden
 # şaşırtıyordu; katlama hem daha basit hem daha güvenilir.
 TUR_ESLEME = [
+    # Sıra önemli: birleşik ifadeler önce denenmeli ki "satis servis" ifadesi
+    # yalnızca "servis" diye okunmasın.
+    ("satis_servis", ("satis ve servis", "bayi ve servis", "satis servis",
+                      "satis / servis", "bayi servis", "satis+servis",
+                      "bayi ve yetkili servis", "satis noktasi ve servis")),
     ("servis", ("yetkili servis", "servis noktasi", "teknik servis",
                 "servis agi", "sadece servis", "servis merkezi",
-                "authorized service", "service point")),
-    ("satis_servis", ("satis ve servis", "bayi ve servis", "satis servis",
-                      "satis / servis", "bayi servis", "satis+servis")),
+                "authorized service", "service point", "servis")),
     ("satis", ("satis noktasi", "bolge bayisi", "yetkili bayi", "yetkili satici",
                "teslimat noktasi", "showroom", "bayi", "satici", "magaza",
-               "dealer", "sales point", "satis magazasi")),
+               "dealer", "sales point", "satis magazasi", "satis")),
 ]
 
 
@@ -53,7 +58,6 @@ def tur_coz(metin: str) -> str:
     """
     if not metin or len(metin) > 32:
         return ""
-    from .normalize import fold
     f = fold(metin)
     if not f:
         return ""
@@ -97,11 +101,37 @@ def _puan(metin):
 
 def kaplari_bul(soup, en_az=3):
     """Bayi kaydına benzeyen, tekrar eden eleman gruplarını puanlayarak döner."""
+    # Kartları önce ebeveyne göre grupla...
     gruplar = defaultdict(list)
     for el in soup.find_all(True):
         if el.name in GURULTU or el.parent is None:
             continue
         gruplar[(id(el.parent),) + _sinif_anahtari(el)].append(el)
+
+    # ...sonra AYNI sınıfa sahip olanları sayfa genelinde birleştir.
+    #
+    # Neden: siteler bayileri il/harf başlıkları altında ayrı bloklara bölüyor.
+    # Bajaj'da kartlar 21 ve 9 diye iki grupta duruyordu; sadece birini alınca
+    # 98 nokta yerine 18 kayıt çıkıyordu. Voge'de 24+16, SYM'de 9+4 aynı durum.
+    birlesik = defaultdict(list)
+    for anahtar, elemanlar in gruplar.items():
+        sinif = anahtar[1:]          # (etiket, sınıflar) — ebeveyni at
+        if sinif[1]:                 # sınıfı olanları birleştir
+            birlesik[sinif].extend(elemanlar)
+    for sinif, elemanlar in birlesik.items():
+        # Aynı eleman birden çok gruptan gelebilir; kimliğe göre tekilleştir
+        tekil, gorulen = [], set()
+        for e in elemanlar:
+            if id(e) not in gorulen:
+                gorulen.add(id(e))
+                tekil.append(e)
+        # İç içe geçmiş aynı sınıflı kutularda dıştakini at, yoksa her kayıt
+        # iki kez çıkıyor (SYM'de böyleydi).
+        kumeler = {id(e) for e in tekil}
+        yaprak = [e for e in tekil
+                  if not any(id(alt) in kumeler for alt in e.find_all(True))]
+        if len(yaprak) > 3:
+            gruplar[("birlesik",) + sinif] = yaprak
 
     adaylar = []
     for elemanlar in gruplar.values():
@@ -126,8 +156,15 @@ def _yapraklar(kap):
         if any(x.get_text(strip=True) for x in c.find_all(True)):
             continue
         m = c.get_text(" ", strip=True)
-        if m and len(m) < 400:
-            out.append((c, m))
+        if not m or len(m) >= 400:
+            continue
+        # "İlçe:", "Tel:", "Adres:" gibi salt etiketler alan değeri değil
+        if m.rstrip().endswith((":", "：")) and len(m) < 24:
+            continue
+        if any(k.match(m) and not m[k.match(m).end():].strip(" :：-–")
+               for k in ETIKET.values()):
+            continue
+        out.append((c, m))
     return out
 
 
@@ -158,6 +195,44 @@ def _ilk_telefon(m: str) -> str:
     return e.group(0) if e else ""
 
 
+ETIKET = {
+    "ilce": re.compile(r"^\s*(il[çc]e|semt|b[öo]lge)\s*[:：]", re.I),
+    "il": re.compile(r"^\s*(il|[şs]ehir|province)\s*[:：]", re.I),
+    "telefon": re.compile(r"^\s*(tel|telefon|gsm|cep|phone)\s*[:：]", re.I),
+    "adres": re.compile(r"^\s*(adres|address)\s*[:：]", re.I),
+    "email": re.compile(r"^\s*(e-?posta|e-?mail|mail)\s*[:：]", re.I),
+}
+
+
+def _etiketli_alanlar(kap, rec):
+    """'İlçe: ÇEŞME' gibi etiketli satırları okur.
+
+    Voge ve benzeri siteler alanları açıkça etiketliyor. Bunu okumak, metin
+    uzunluğuna bakıp tahmin etmekten çok daha güvenilir.
+    """
+    bulundu = set()
+    # Kısa metinden uzuna: en içteki eleman kazansın. Dıştaki kutu
+    # "İlçe: ÇEŞME Tel: ... Adres: ..." diye hepsini kapsıyor ve önce
+    # eşleşirse ilçeye telefon da yapışıyordu.
+    adaylar = [(d, d.get_text(" ", strip=True))
+               for d in kap.find_all(["div", "p", "li", "span", "td"])]
+    for d, m in sorted(adaylar, key=lambda x: len(x[1])):
+        if not m or len(m) > 300:
+            continue
+        for alan, kalip in ETIKET.items():
+            if alan in bulundu:
+                continue
+            e = kalip.match(m)
+            if e:
+                deger = m[e.end():].strip(" :：-–")
+                if deger:
+                    rec[alan] = (_ilk_telefon(deger) if alan == "telefon"
+                                 else deger)
+                    bulundu.add(alan)
+                break
+    return bulundu
+
+
 def _kaydi_cikar(kap):
     """Tek bir kaptan bayi kaydı çıkarır. Çıkaramazsa None."""
     rec = {"bayi_adi": "", "il": "", "ilce": "", "adres": "",
@@ -165,10 +240,19 @@ def _kaydi_cikar(kap):
     kullanildi = set()
     yap = _yapraklar(kap)
 
+    # Önce etiketli alanları oku — en güvenilir kaynak
+    etiketli = _etiketli_alanlar(kap, rec)
+    if etiketli:
+        # Etiketli değerleri aday havuzundan çıkar ki ad seçimini bozmasın
+        degerler = {fold(rec[a]) for a in etiketli if rec.get(a)}
+        yap = [(c, m) for c, m in yap if fold(m) not in degerler
+               and not any(fold(m).startswith(fold(v)) for v in degerler if v)]
+
     # Telefon — tel: bağlantısı varsa en güvenilir
     tel = kap.select_one("a[href^='tel:']")
     if tel:
-        rec["telefon"] = tel.get("href", "")[4:]
+        # href de çoklu olabiliyor: tel:"0232 716 89 70 – 0532 396 63 73"
+        rec["telefon"] = _ilk_telefon(tel.get("href", "")[4:]) or tel.get("href", "")[4:]
     else:
         for c, m in yap:
             if TEL.search(m):
@@ -191,7 +275,6 @@ def _kaydi_cikar(kap):
             break
 
     # Kalan adaylar: telefon/adres olmayan anlamlı metinler
-    from .normalize import IL_BY_FOLD, fold
     kalan, il_adaylari = [], []
     for c, m in yap:
         if id(c) in kullanildi or TEL.search(m) or ADRES.search(m):
@@ -229,20 +312,37 @@ def _kaydi_cikar(kap):
     # Türkiye'de ~970 ilçe var ve listesini taşımak yerine şu ipucunu
     # kullanıyoruz: ilçe adı neredeyse her zaman kaydın ADRESİNDE de geçiyor,
     # firma adı ise geçmiyor. Adreste geçen tek kelimelik adaylar konum sayılır.
+    from .normalize import il_ara
     adres_f = fold(rec.get("adres", ""))
     konum_gibi, gercek = [], []
     for c, m in kalan:
         f = fold(m)
-        tek_kelime = len(f.split()) <= 2
-        if (adres_f and f and tek_kelime and f in adres_f
-                and not TICARI.search(m)):
-            konum_gibi.append((c, m))
-        else:
+        if TICARI.search(m):
             gercek.append((c, m))
+            continue
+        # a) Adresin içinde geçen kısa ifade → ilçe adı
+        if adres_f and f and len(f.split()) <= 2 and f in adres_f:
+            konum_gibi.append((c, m))
+            continue
+        # b) İçinde gerçek bir il adı geçiyor → konum başlığı
+        #    ("İZMİR-TORBALI", "MUĞLA / BODRUM" firma adı sanılıyordu)
+        if len(f.split()) <= 3 and il_ara(m):
+            konum_gibi.append((c, m))
+            continue
+        gercek.append((c, m))
     if gercek:
         kalan = gercek
-        if konum_gibi and not rec.get("ilce"):
-            rec["ilce"] = konum_gibi[0][1]
+        if konum_gibi:
+            for _, km in konum_gibi:
+                bulunan = il_ara(km)
+                if bulunan and not rec.get("il"):
+                    rec["il"] = bulunan
+                    kalan_parca = re.split(r"[_/\-–]", km)[-1].strip()
+                    if kalan_parca and fold(kalan_parca) != fold(bulunan) \
+                            and not rec.get("ilce"):
+                        rec["ilce"] = kalan_parca
+                elif not rec.get("ilce"):
+                    rec["ilce"] = km
 
     ticari = [(c, m) for c, m in kalan if TICARI.search(m)]
     if len(ticari) == 1:
@@ -262,6 +362,15 @@ def _kaydi_cikar(kap):
 
     if il_adaylari and not rec.get("il"):
         rec["il"] = il_adaylari[0]
+
+    # İlçe alanı "İL / BÖLGE _ İLÇE" gibi birleşik gelmiş olabilir
+    if rec.get("ilce") and not rec.get("il"):
+        from .normalize import il_ara
+        bulunan = il_ara(rec["ilce"])
+        if bulunan:
+            rec["il"] = bulunan
+            son = re.split(r"[_/\-–]", rec["ilce"])[-1].strip()
+            rec["ilce"] = son if son and fold(son) != fold(bulunan) else ""
 
     if not rec["telefon"] and not rec["adres"]:
         return None
@@ -433,6 +542,7 @@ def json_gomulu(html: str) -> list[dict]:
 
     out = []
     yurtdisi = 0
+    cop = 0
     for d in en_buyuk:
         ad = al(d, ("name", "title", "unvan", "bayi", "dealername", "firma"))
         if not ad:
@@ -473,9 +583,19 @@ def json_gomulu(html: str) -> list[dict]:
             "email": al(d, ("email", "eposta", "mail")),
             "website": al(d, ("website", "web", "url", "site")),
         }
+        # Bazı siteler (Honda) JSON'da gerçek değer yerine iç referans kodu
+        # taşıyor: {"name":"1uj","city":"1ut"}. Bunlar veri değil, işaretçi.
+        # Ad 4 karakterden kısaysa ya da harf/rakam karışık kısa jetonsa at.
+        if not COP_JETON(ad) or (kayit["adres"] and not COP_JETON(kayit["adres"])):
+            cop += 1
+            continue
         if rol:
             kayit["rol"] = rol
         out.append(kayit)
+
+    # Kayıtların çoğu çöpse bu JSON bayi listesi değildir
+    if cop > len(en_buyuk) * 0.5:
+        return []
     return out
 
 
