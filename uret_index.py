@@ -247,6 +247,21 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   background:#F0F4FA;border-bottom:1px solid var(--hat2)}
 .baslikcubuk .sagb{margin-left:auto}
 
+.kutular{display:grid;gap:11px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  margin-bottom:16px}
+.kutu{background:var(--kart);border:1px solid var(--hat2);border-radius:9px;
+  padding:13px 15px;box-shadow:var(--golge)}
+.kutu .n{font-family:var(--m);font-size:26px;font-weight:500;line-height:1;display:block}
+.kutu .e{font-size:11px;font-family:var(--m);letter-spacing:.08em;text-transform:uppercase;
+  color:var(--celik);margin-top:5px;display:block}
+.kutu.satis  .n{color:var(--satis)}
+.kutu.servis .n{color:var(--servis)}
+.kutu.ikisi  .n{color:var(--ikisi)}
+.ikili{display:grid;gap:16px;grid-template-columns:1fr 1fr}
+@media (max-width:820px){.ikili{grid-template-columns:1fr}}
+.bslk{font-size:13.5px;font-weight:600;margin:0 0 7px;display:flex;gap:8px;
+  align-items:baseline}
+.bslk span{font-family:var(--m);font-size:11px;color:var(--celik);font-weight:400}
 .altbar{display:flex;gap:8px;margin:0 0 14px;flex-wrap:wrap}
 .btn{border:1px solid var(--hat2);background:#fff;border-radius:7px;padding:8px 14px;
   cursor:pointer;font-size:13px;font-weight:500;box-shadow:var(--golge)}
@@ -297,12 +312,54 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   <span>Veri: <b id="veriTarih">—</b></span>
   <span id="veriOzet"></span>
   <nav class="sek">
+    <button id="sekOzet">Özet</button>
     <button id="sekIl" class="aktif">İller</button>
     <button id="sekMarka">Markalar</button>
   </nav>
 </div>
 
 <div class="sar" id="sar">
+
+  <section id="vOzet" style="display:none">
+    <h2>Genel Özet</h2>
+    <p class="notm">Satırlara tıklayarak ayrıntıya inebilirsiniz.</p>
+    <div class="kutular" id="kutular"></div>
+    <div class="altbar">
+      <button class="btn ana" id="btnOzetTumXls">Tümünü Excel indir</button>
+      <button class="btn" id="btnOzetYaz2">Yazdır / PDF</button>
+    </div>
+    <div class="ikili">
+      <div>
+        <h3 class="bslk">İllere göre <span id="ilAdet"></span></h3>
+        <div class="liste">
+          <div class="baslikcubuk"><span>İl</span>
+            <span class="sagb" style="min-width:52px;text-align:right">Satış</span>
+            <span style="min-width:52px;text-align:right">Servis</span>
+            <span style="min-width:52px;text-align:right">Toplam</span></div>
+          <div id="ozetIl"></div>
+        </div>
+      </div>
+      <div>
+        <h3 class="bslk">Markalara göre <span id="mrkAdet"></span></h3>
+        <div class="liste">
+          <div class="baslikcubuk"><span>Marka</span>
+            <span class="sagb" style="min-width:52px;text-align:right">Satış</span>
+            <span style="min-width:52px;text-align:right">Servis</span>
+            <span style="min-width:52px;text-align:right">Toplam</span></div>
+          <div id="ozetMarka"></div>
+        </div>
+      </div>
+    </div>
+    <h3 class="bslk" style="margin-top:20px">İlçe dağılımı <span id="ilceAdet"></span></h3>
+    <div class="liste">
+      <div class="baslikcubuk"><span>İl / İlçe</span>
+        <span class="sagb" style="min-width:52px;text-align:right">Satış</span>
+        <span style="min-width:52px;text-align:right">Servis</span>
+        <span style="min-width:60px;text-align:right">Marka</span>
+        <span style="min-width:52px;text-align:right">Toplam</span></div>
+      <div id="ozetIlce"></div>
+    </div>
+  </section>
 
   <section id="vIl">
     <h2>İl seçin</h2>
@@ -424,16 +481,107 @@ const rolGecer = b => ROL==="tum" || ROL_SINIF[b[B_ROL]]===ROL;
 
 /* ---------- ekranlar ---------- */
 function ekran(v){
-  ["vIl","vMarkalar","vTumMarka","vMarkaDetay"].forEach(x=>$("#"+x).style.display="none");
+  ["vOzet","vIl","vMarkalar","vTumMarka","vMarkaDetay"].forEach(x=>$("#"+x).style.display="none");
   $("#"+v).style.display="block";
   $("#sekIl").classList.toggle("aktif", v==="vIl"||v==="vMarkalar");
   $("#sekMarka").classList.toggle("aktif", v==="vTumMarka"||v==="vMarkaDetay");
   window.scrollTo(0,0);
 }
+$("#sekOzet").onclick  = () => { cizOzet(); ekran("vOzet"); };
 $("#sekIl").onclick    = () => ekran(IL?"vMarkalar":"vIl");
 $("#sekMarka").onclick = () => { cizTum(); ekran("vTumMarka"); };
 $("#geri").onclick     = () => { IL=null; ILCE=""; ROL="tum"; $("#araMarka").value=""; ekran("vIl"); };
 $("#geriMarka").onclick= () => { ROL="tum"; cizTum(); ekran("vTumMarka"); };
+
+/* ---------- ÖZET ---------- */
+function sayRol(veri){
+  const c={satis:0,servis:0,ikisi:0};
+  veri.forEach(b=>c[ROL_SINIF[b[B_ROL]]]++);
+  // "Satış + Servis" olanlar hem satışa hem servise dahil
+  return {satis:c.satis+c.ikisi, servis:c.servis+c.ikisi,
+          ikisi:c.ikisi, toplam:veri.length};
+}
+function cizOzet(){
+  const t=sayRol(D.bayiler);
+  const iller=new Set(D.bayiler.map(b=>b[B_IL]).filter(Boolean));
+  const ilceler=new Set(D.bayiler.filter(b=>b[B_ILCE]).map(b=>b[B_IL]+"/"+b[B_ILCE]));
+  const markalar=new Set(D.bayiler.map(b=>b[B_MARKA]));
+  const bicim=n=>n.toLocaleString("tr-TR");
+
+  $("#kutular").innerHTML=`
+    <div class="kutu"><span class="n">${bicim(t.toplam)}</span><span class="e">Toplam Nokta</span></div>
+    <div class="kutu satis"><span class="n">${bicim(t.satis)}</span><span class="e">Satış Noktası</span></div>
+    <div class="kutu servis"><span class="n">${bicim(t.servis)}</span><span class="e">Servis Noktası</span></div>
+    <div class="kutu ikisi"><span class="n">${bicim(t.ikisi)}</span><span class="e">Satış + Servis</span></div>
+    <div class="kutu"><span class="n">${markalar.size}</span><span class="e">Marka</span></div>
+    <div class="kutu"><span class="n">${iller.size}</span><span class="e">İl</span></div>
+    <div class="kutu"><span class="n">${ilceler.size}</span><span class="e">İlçe</span></div>`;
+
+  // İllere göre
+  const ilG={};
+  D.bayiler.forEach(b=>{ if(b[B_IL]) (ilG[b[B_IL]]||=[]).push(b); });
+  const ilS=Object.entries(ilG).sort((a,b)=>b[1].length-a[1].length);
+  $("#ilAdet").textContent=`${ilS.length} il`;
+  $("#ozetIl").innerHTML=ilS.map(([il,v])=>{
+    const c=sayRol(v), p=(D.iller.find(x=>x.ad===il)||{}).plaka||"";
+    return `<button class="sat" data-il="${esc(il)}">
+      <span class="plaka"><span class="tr">TR</span><span class="kod">${p}</span></span>
+      <span class="ad">${esc(il)}</span>
+      <span class="sag">
+        <span class="sayi" style="min-width:52px;color:var(--satis)">${c.satis}</span>
+        <span class="sayi" style="min-width:52px;color:var(--servis)">${c.servis}</span>
+        <span class="sayi" style="min-width:52px;font-weight:700">${c.toplam}</span>
+        <span class="ok">›</span></span></button>`;}).join("");
+
+  // Markalara göre
+  const mG={};
+  D.bayiler.forEach(b=>(mG[b[B_MARKA]]||=[]).push(b));
+  const mS=Object.entries(mG).sort((a,b)=>b[1].length-a[1].length);
+  $("#mrkAdet").textContent=`${mS.length} marka`;
+  $("#ozetMarka").innerHTML=mS.map(([m,v])=>{
+    const c=sayRol(v);
+    return `<button class="sat" data-mrk="${esc(m)}">
+      <span class="ad">${esc(m)}</span>
+      <span class="sag">
+        <span class="sayi" style="min-width:52px;color:var(--satis)">${c.satis}</span>
+        <span class="sayi" style="min-width:52px;color:var(--servis)">${c.servis}</span>
+        <span class="sayi" style="min-width:52px;font-weight:700">${c.toplam}</span>
+        <span class="ok">›</span></span></button>`;}).join("");
+
+  // İlçe dağılımı — ilk 60, en yoğundan
+  const iG={};
+  D.bayiler.forEach(b=>{ if(b[B_ILCE]) (iG[b[B_IL]+"|"+b[B_ILCE]]||=[]).push(b); });
+  const iS=Object.entries(iG).sort((a,b)=>b[1].length-a[1].length).slice(0,60);
+  $("#ilceAdet").textContent=`en yoğun ${iS.length} ilçe · toplam ${ilceler.size}`;
+  $("#ozetIlce").innerHTML=iS.map(([k,v])=>{
+    const [il,ilce]=k.split("|"), c=sayRol(v);
+    return `<button class="sat" data-il="${esc(il)}" data-ilce="${esc(ilce)}">
+      <span class="ad">${esc(ilce)}</span>
+      <span class="men">${esc(il)}</span>
+      <span class="sag">
+        <span class="sayi" style="min-width:52px;color:var(--satis)">${c.satis}</span>
+        <span class="sayi" style="min-width:52px;color:var(--servis)">${c.servis}</span>
+        <span class="sayi" style="min-width:60px">${new Set(v.map(x=>x[B_MARKA])).size}</span>
+        <span class="sayi" style="min-width:52px;font-weight:700">${c.toplam}</span>
+        <span class="ok">›</span></span></button>`;}).join("");
+  yazdirBilgiGuncelle("Genel Özet", D.bayiler.length);
+}
+function ozetTiklama(e){
+  const b=e.target.closest("button.sat"); if(!b) return;
+  if(b.dataset.mrk){ markaAc(b.dataset.mrk); return; }
+  if(b.dataset.il){
+    IL=D.iller.find(x=>x.ad===b.dataset.il); if(!IL) return;
+    ILCE=b.dataset.ilce||""; ROL="tum";
+    $("#kod").textContent=IL.plaka; $("#ilAdi").textContent=IL.ad;
+    cizIlce();
+    if(ILCE){ [...$("#ilceCipler").children].forEach(c=>
+      c.classList.toggle("secili", c.dataset.i===ILCE)); }
+    cizMarka(); ekran("vMarkalar");
+  }
+}
+["#ozetIl","#ozetMarka","#ozetIlce"].forEach(x=>$(x).onclick=ozetTiklama);
+$("#btnOzetTumXls").onclick = e => excelIndir({tip:"tum"},e.target);
+$("#btnOzetYaz2").onclick = () => window.print();
 
 /* ---------- iller ---------- */
 function cizIl(){
