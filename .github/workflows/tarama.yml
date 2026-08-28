@@ -25,7 +25,9 @@ concurrency:
 jobs:
   tara:
     runs-on: ubuntu-latest
-    timeout-minutes: 330        # 5.5 saat; ücretsiz sınır 6 saat
+    timeout-minutes: 355        # GitHub'ın iş başına üst sınırı 6 saat
+    # Not: il seçici keşfi devreye girdikten sonra birçok marka 81 sayfa
+    # geziyor (satış + servis için ayrı ayrı). Süre bu yüzden uzadı.
 
     steps:
       - name: Depoyu indir
