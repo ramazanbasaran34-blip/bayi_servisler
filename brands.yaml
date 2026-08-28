@@ -142,6 +142,7 @@ markalar:
 
   # 12. PIAGGIO  ·  İtalya  ·  www.piaggio.com.tr
   "Piaggio":
+    beklenen: [42, 120]   # Vespa ile aynı distribütör, benzer ağ varsayıldı
     kaynaklar:
       - rol: satis
         url: "https://www.piaggio.com.tr/tr/yetkili-saticilar.html"
@@ -150,6 +151,7 @@ markalar:
 
   # 13. VESPA  ·  İtalya  ·  www.vespa.com.tr
   "Vespa":
+    beklenen: [42, 120]   # saha ~40 bayi ~60 servis · motorcular.com: 32 bayi 54 servis
     kaynaklar:
       - rol: satis
         url: "https://www.vespa.com.tr/tr/yetkili-saticilar.html"
@@ -165,6 +167,7 @@ markalar:
 
   # 15. APRILIA  ·  İtalya-Çin  ·  www.aprilia.com.tr
   "Aprilia":
+    beklenen: [28, 78]   # Vespa/Piaggio'dan küçük ağ varsayıldı
     kaynaklar:
       - rol: satis
         url: "https://www.aprilia.com.tr/tr/yetkili-saticilar.html"
