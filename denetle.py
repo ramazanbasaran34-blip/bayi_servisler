@@ -56,6 +56,10 @@ def kontroller(kayitlar):
         # 5. Firma adı telefon numarası mı
         elif TEL.fullmatch(ad.strip()):
             sorunlar["ad_telefon"].append(k)
+        # 6. Firma adı aslında bir konum mu? (adresin içinde geçiyorsa)
+        elif (k["adres"] and fad and len(fad.split()) <= 2
+              and fad in fold(k["adres"])):
+            sorunlar["ad_konum"].append(k)
 
         # 6. İlçe alanında tür etiketi ya da il adı
         ilce = k["ilce"] or ""
@@ -110,6 +114,7 @@ ACIKLAMA = {
     "ad_il_adi": "Firma adı bir il adı",
     "ad_cok_kisa": "Firma adı çok kısa",
     "ad_telefon": "Firma adı telefon numarası",
+    "ad_konum": "Firma adı aslında konum (adreste geçiyor)",
     "ilce_tur_etiketi": "İlçe alanında tür etiketi",
     "ilce_il_adi": "İlçe alanında il adı",
     "ilce_gurultu": "İlçe alanında gürültü",
@@ -122,7 +127,7 @@ ACIKLAMA = {
 }
 # Kaydı kullanılamaz yapan ağır sorunlar
 AGIR = {"ad_tur_etiketi", "ad_gurultu", "ad_il_adi", "ad_cok_kisa",
-        "ad_telefon", "iletisim_yok", "ad_tekrari"}
+        "ad_telefon", "iletisim_yok", "ad_tekrari", "ad_konum"}
 
 
 def main():
