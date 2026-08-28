@@ -1,309 +1,496 @@
 # ============================================================================
-#  BAYİ RADAR — 63 Motosiklet Markası
-#  Kaynak: markalar_ve_web_siteleri.xlsx
+#  BAYİ RADAR — 62 Motosiklet Markası · Satış ve Servis
+#  Kaynak: markalar_ve_web_siteleri_bayiler_ve_servisler_linkleri_28_08_2026.xlsx
 # ----------------------------------------------------------------------------
-#  ÇALIŞMA MANTIĞI
-#  Hiçbir markada CSS seçici yazılı DEĞİL. Sistem sayfadaki tekrar eden yapıyı
-#  kendisi buluyor (bayiradar/otomatik.py): telefon ve adres içeren, kardeşleri
-#  aynı sınıfa sahip kapları arıyor, en yüksek puanlıyı seçiyor.
+#  ROL MANTIĞI
+#    Her markanın bir ya da iki kaynağı var:
+#      satis_servis → bayi ve servis linki AYNI. Site ikisini birlikte veriyor,
+#                     kayıtlar doğrudan "Satış + Servis" sayılıyor. (25 marka)
+#      satis + servis → linkler AYRI, ikisi ayrı taranıyor. (37 marka)
 #
-#  Bir markada tutmazsa (0 kayıt) sistem onu 'hatali' işaretler ve eski verisini
-#  korur. O zaman o markaya elle 'row' + 'fields' yazılır; yazıldığı anda
-#  otomatik mod devre dışı kalır ve el yazması tarif kullanılır.
+#    Ayrı taranan markalarda aynı firma iki listede de çıkabilir. Sistem bunu
+#    telefon, ad çekirdeği ve adres benzerliğiyle tanıyıp TEK kayda birleştirir
+#    ve rolünü "Satış + Servis" yapar. (bayiradar/eslestir.py)
 #
-#  ALANLAR
-#    url          bayi sayfası; {il_slug} varsa 81 il tek tek gezilir
-#    iterate      il_slug | il_kodlari | sayfa
-#    mode         html (varsayılan) | json | browser
-#    encoding     Türkçe karakter bozuksa windows-1254
-#    bekleme      bu siteye istekler arası saniye
-#    periyot_saat kaç saatte bir taransın (varsayılan 24)
-#    row/fields   sadece otomatik mod tutmazsa doldurulur
+#  TARİF GEREKMİYOR
+#    CSS seçici yazılı değil; yapı sayfadan otomatik çözülüyor.
+#    Tutmazsa marka 'hatali' işaretlenir, eski verisi korunur.
 # ============================================================================
 
 ayarlar:
-  bekleme: 1.5                # bir site içinde istekler arası saniye
-  marka_arasi_saniye: 120     # markadan markaya geçerken nefes payı
+  bekleme: 1.5
+  marka_arasi_saniye: 120
   cache_saat: 6
-  periyot_saat: 168           # her marka haftada bir taranır
-
-# Markalar haftanın günlerine dağıtılır (marka adından hesaplanır), böylece
-# her gece yaklaşık 9 marka taranır. Haftalık tazelik korunur ama tek gecede
-# 63 siteye gidilmez.
+  periyot_saat: 168
 
 markalar:
 
-  #  1. HONDA  ·  JAPONYA  ·  www.honda.com.tr
+  #  1. HONDA  ·  Japonya  ·  www.honda.com.tr
   "Honda":
-    url: "https://www.honda.com.tr/motosiklet/bayiler-ve-servisler"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.honda.com.tr/motosiklet/bayiler-ve-servisler"
 
-  #  2. YAMAHA  ·  JAPONYA  ·  www.yamaha-motor.eu
+  #  2. YAMAHA  ·  Japonya  ·  www.yamaha-motor.eu
   "Yamaha":
-    url: "https://www.yamaha-motor.eu/tr/tr/dealer-locator/"
-    mode: browser   # liste JS ile çiziliyor
-    bekleme: 3.0
+    mode: browser
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.yamaha-motor.eu/tr/tr/dealer-locator/"
 
-  #  3. BAJAJ  ·  HINDISTAN  ·  www.ekuralkan.com
+  #  3. BAJAJ  ·  Hindistan  ·  www.ekuralkan.com
   "Bajaj":
-    url: "https://www.ekuralkan.com/motosiklet-satis-noktalari"
+    mode: browser
+    bekleme: 1.5
+    kaynaklar:
+      - rol: satis
+        url: "https://www.ekuralkan.com/motosiklet-satis-noktalari?city={sayi}"
+        iterate: {bitis: 81, type: sayi}
+      - rol: servis
+        url: "https://www.ekuralkan.com/motosiklet-servis-noktalari?city={sayi}"
+        iterate: {bitis: 81, type: sayi}
 
-  #  4. KANUNI  ·  TURKIYE-CIN  ·  www.ekuralkan.com
+  #  4. KANUNI  ·  Türkiye-Çin  ·  www.ekuralkan.com
   "Kanuni":
-    url: "https://www.ekuralkan.com/motosiklet-satis-noktalari"
+    mode: browser
+    bekleme: 1.5
+    kaynaklar:
+      - rol: satis
+        url: "https://www.ekuralkan.com/motosiklet-satis-noktalari?city={sayi}"
+        iterate: {bitis: 81, type: sayi}
+      - rol: servis
+        url: "https://www.ekuralkan.com/motosiklet-servis-noktalari?city={sayi}"
+        iterate: {bitis: 81, type: sayi}
 
-  #  5. MONDIAL  ·  TURKIYE-CIN  ·  www.mondialmotor.com.tr
+  #  5. MONDIAL  ·  Türkiye-Çin  ·  www.mondialmotor.com.tr
   "Mondial":
-    dogrulandi: "27.08.2026 — tablo yapısı sayfada doğrulandı"
-    url: "https://www.mondialmotor.com.tr/bayilerimiz?sehir={il_slug}"
-    iterate: il_slug
-    il_url_den: true
     encoding: windows-1254
     bekleme: 2.0
-    oncelik: 2
+    kaynaklar:
+      - rol: satis
+        url: "https://www.mondialmotor.com.tr/bayilerimiz?sehir={il_slug}"
+        iterate: il_slug
+        il_url_den: true
+      - rol: servis
+        url: "https://www.mondialmotor.com.tr/servis-noktalari"
 
-  #  6. CFMOTO  ·  CIN  ·  www.cfmoto.com.tr
+  #  6. CFMOTO  ·  Çin  ·  www.cfmoto.com.tr
   "CFMoto":
-    url: "https://www.cfmoto.com.tr/satis-noktalari"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.cfmoto.com.tr/satis-noktalari"
+      - rol: servis
+        url: "https://www.cfmoto.com.tr/servis-noktalari"
 
-  #  7. KUBA  ·  TURKIYE-CIN  ·  www.kubamotor.com.tr
+  #  7. KUBA  ·  Türkiye-Çin  ·  www.kubamotor.com.tr
   "Kuba":
-    url: "https://www.kubamotor.com.tr/bayi-servis/kubamotor"
-    mode: browser   # liste JS ile çiziliyor
-    bekleme: 3.0
+    mode: browser
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.kubamotor.com.tr/bayi-servis/kubamotor"
 
-  #  8. RKS  ·  TURKIYE-CIN  ·  www.rksmotor.com.tr
+  #  8. RKS  ·  Türkiye-Çin  ·  www.rksmotor.com.tr
   "RKS":
-    url: "https://www.rksmotor.com.tr/bayi-servis/rksmotor.html"
-    mode: browser   # liste JS ile çiziliyor
-    bekleme: 3.0
+    mode: browser
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.rksmotor.com.tr/bayi-servis/rksmotor.html"
 
-  #  9. ARORA  ·  TURKIYE-CIN  ·  arora.com.tr
+  #  9. ARORA  ·  Türkiye-Çin  ·  arora.com.tr
   "Arora":
-    url: "https://arora.com.tr/hizmet-noktalari"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://arora.com.tr/hizmet-noktalari"
 
-  # 10. YUKI  ·  TURKIYE-CIN  ·  yukimotor.com.tr
+  # 10. YUKI  ·  Türkiye-Çin  ·  yukimotor.com.tr
   "Yuki":
-    url: "https://yukimotor.com.tr/satis-noktalari/"
+    kaynaklar:
+      - rol: satis
+        url: "https://yukimotor.com.tr/satis-noktalari/"
+      - rol: servis
+        url: "https://yukimotor.com.tr/servis-noktalari/"
 
-  # 11. VOGE  ·  CIN  ·  www.vogeturkiye.com.tr
+  # 11. VOGE  ·  Çin  ·  www.vogeturkiye.com.tr
   "Voge":
-    url: "https://www.vogeturkiye.com.tr/yetkili-satici/"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.vogeturkiye.com.tr/yetkili-satici/"
 
-  # 12. PIAGGIO  ·  ITALYA  ·  www.piaggio.com.tr
+  # 12. PIAGGIO  ·  İtalya  ·  www.piaggio.com.tr
   "Piaggio":
-    url: "https://www.piaggio.com.tr/tr/yetkili-saticilar.html"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.piaggio.com.tr/tr/yetkili-saticilar.html"
+      - rol: servis
+        url: "https://www.piaggio.com.tr/tr/yetkili-servisler.html"
 
-  # 13. VESPA  ·  ITALYA  ·  www.vespa.com.tr
+  # 13. VESPA  ·  İtalya  ·  www.vespa.com.tr
   "Vespa":
-    url: "https://www.vespa.com.tr/tr/yetkili-saticilar.html"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.vespa.com.tr/tr/yetkili-saticilar.html"
+      - rol: servis
+        url: "https://www.vespa.com.tr/tr/yetkili-servisler.html"
 
-  # 14. KYMCO  ·  TAYVAN  ·  www.kymco.com.tr
+  # 14. KYMCO  ·  Tayvan  ·  www.kymco.com.tr
   "Kymco":
-    url: "https://www.kymco.com.tr/tr/satis-servis-agi.html"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.kymco.com.tr/tr/satis-servis-agi.html"
 
-  # 15. APRILIA  ·  ITALYA-CIN  ·  www.aprilia.com.tr
+  # 15. APRILIA  ·  İtalya-Çin  ·  www.aprilia.com.tr
   "Aprilia":
-    url: "https://www.aprilia.com.tr/tr/yetkili-saticilar.html"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.aprilia.com.tr/tr/yetkili-saticilar.html"
+      - rol: servis
+        url: "https://www.aprilia.com.tr/tr/yetkili-servisler.html"
 
-  # 16. HERO  ·  HINDISTAN  ·  www.heromotor.com.tr
+  # 16. HERO  ·  Hindistan  ·  www.heromotor.com.tr
   "Hero":
-    url: "https://www.heromotor.com.tr/bayiler/"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.heromotor.com.tr/bayiler/"
+      - rol: servis
+        url: "https://www.heromotor.com.tr/servisler/"
 
-  # 17. BMW  ·  ALMANYA-CIN  ·  www.bmw-motorrad.com.tr
+  # 17. BMW  ·  Almanya-Çin  ·  www.bmw-motorrad.com.tr
   "BMW":
-    url: "https://www.bmw-motorrad.com.tr/tr/ssl/yetkili-satici-ve-servisler.html"
-    mode: browser   # liste JS ile çiziliyor
-    bekleme: 3.0
+    mode: browser
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.bmw-motorrad.com.tr/tr/ssl/yetkili-satici-ve-servisler.html"
 
-  # 18. FALCON  ·  TURKIYE-CIN  ·  falconmotosiklet.com
+  # 18. FALCON  ·  Türkiye-Çin  ·  falconmotosiklet.com
   "Falcon":
-    url: "https://falconmotosiklet.com/bayi-servis-agi/motosiklet"
+    kaynaklar:
+      - rol: satis
+        url: "https://falconmotosiklet.com/bayi-servis-agi/motosiklet"
+      - rol: servis
+        url: "https://falconmotosiklet.com/bayi-servis-agi/servis"
 
-  # 19. VOLTA  ·  TURKIYE-CIN  ·  volta.com.tr
+  # 19. VOLTA  ·  Türkiye-Çin  ·  volta.com.tr
   "Volta":
-    url: "https://volta.com.tr/pages/bayiler"
+    kaynaklar:
+      - rol: satis
+        url: "https://volta.com.tr/pages/bayiler"
+      - rol: servis
+        url: "https://volta.com.tr/pages/servis-noktalari"
 
-  # 20. SYM  ·  TAYVAN-CIN  ·  www.sym-tr.com
+  # 20. SYM  ·  Tayvan-Çin  ·  www.sym-tr.com
   "SYM":
-    url: "https://www.sym-tr.com/bayiler/"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.sym-tr.com/bayiler/"
+      - rol: servis
+        url: "https://www.sym-tr.com/servis/"
 
-  # 21. SUZUKI  ·  JAPONYA  ·  www.suzuki.com.tr
+  # 21. SUZUKI  ·  Japonya  ·  www.suzuki.com.tr
   "Suzuki":
-    url: "https://www.suzuki.com.tr/tr/motosiklet/satis.html"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.suzuki.com.tr/tr/motosiklet/satis.html"
+      - rol: servis
+        url: "https://www.suzuki.com.tr/tr/motosiklet/yetkili-servisler.html"
 
-  # 22. PEUGEOT  ·  FRANSA  ·  www.isotlarmotor.com
+  # 22. PEUGEOT  ·  Fransa  ·  www.isotlarmotor.com
   "Peugeot":
-    url: "https://www.isotlarmotor.com/bayiler/"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.isotlarmotor.com/bayiler/"
 
-  # 23. HORWIN  ·  CIN  ·  www.isotlarmotor.com
+  # 23. HORWIN  ·  Çin  ·  www.isotlarmotor.com
   "Horwin":
-    url: "https://www.isotlarmotor.com/bayiler/"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.isotlarmotor.com/bayiler/"
 
-  # 24. LAMBRETTA  ·  ITALYA  ·  www.isotlarmotor.com
+  # 24. LAMBRETTA  ·  İtalya  ·  www.isotlarmotor.com
   "Lambretta":
-    url: "https://www.isotlarmotor.com/bayiler/"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.isotlarmotor.com/bayiler/"
 
-  # 25. MOTOLUX  ·  TURKIYE-CIN  ·  motolux.com.tr
+  # 25. MOTOLUX  ·  Türkiye-Çin  ·  motolux.com.tr
   "Motolux":
-    dogrulandi: "27.08.2026 — her il ayrı sayfa, sunucuda hazır"
-    url: "https://motolux.com.tr/bayiler/sehir/{il_slug}/"
-    iterate: il_slug
-    il_url_den: true
     bekleme: 2.0
-    oncelik: 2
+    kaynaklar:
+      - rol: satis
+        url: "https://motolux.com.tr/bayiler/sehir/{il_slug}/"
+        iterate: il_slug
+        il_url_den: true
+      - rol: servis
+        url: "https://motolux.com.tr/bayiler/sehir/"
 
-  # 26. KRAL  ·  TURKIYE-CIN  ·  kralmotor.tr
+  # 26. KRAL  ·  Türkiye-Çin  ·  kralmotor.tr
   "Kral":
-    url: "https://kralmotor.tr/SalesDealer"
+    kaynaklar:
+      - rol: satis
+        url: "https://kralmotor.tr/SalesDealer"
+      - rol: servis
+        url: "https://kralmotor.tr/Service"
 
-  # 27. ALTAI  ·  TURKIYE-CIN  ·  www.altai.com.tr
+  # 27. ALTAI  ·  Türkiye-Çin  ·  www.altai.com.tr
   "Altai":
-    url: "https://www.altai.com.tr/tr/bayiler"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.altai.com.tr/tr/bayiler"
+      - rol: servis
+        url: "https://www.altai.com.tr/tr/servisler"
 
-  # 28. DUCATI  ·  ITALYA  ·  korlas.com.tr
+  # 28. DUCATI  ·  İtalya  ·  korlas.com.tr
   "Ducati":
-    url: "https://korlas.com.tr/bayi/"
+    kaynaklar:
+      - rol: satis
+        url: "https://korlas.com.tr/bayi/"
+      - rol: servis
+        url: "https://korlas.com.tr/servis/"
 
-  # 29. TRIUMPH  ·  INGILTERE  ·  korlas.com.tr
+  # 29. TRIUMPH  ·  İngiltere  ·  korlas.com.tr
   "Triumph":
-    url: "https://korlas.com.tr/bayi/"
+    kaynaklar:
+      - rol: satis
+        url: "https://korlas.com.tr/bayi/"
+      - rol: servis
+        url: "https://korlas.com.tr/servis/"
 
-  # 30. KTM  ·  AVUSTURYA  ·  www.spormoto.com
+  # 30. KTM  ·  Avusturya  ·  www.spormoto.com
   "KTM":
-    url: "https://www.spormoto.com/ktm/bayiler/"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.spormoto.com/ktm/bayiler/"
+      - rol: servis
+        url: "https://www.spormoto.com/ktm/ktm-servisler/"
 
-  # 31. HUSQVARNA  ·  AVUSTURYA  ·  www.spormoto.com
+  # 31. HUSQVARNA  ·  Avusturya  ·  www.spormoto.com
   "Husqvarna":
-    url: "https://www.spormoto.com/husqvarna/bayiler/"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.spormoto.com/husqvarna/bayiler/"
+      - rol: servis
+        url: "https://www.spormoto.com/husqvarna/husqvarna-servisler/"
 
-  # 32. CSN  ·  TURKIYE-CIN  ·  csnmotor.com.tr
+  # 32. CSN  ·  Türkiye-Çin  ·  csnmotor.com.tr
   "CSN":
-    url: "https://csnmotor.com.tr/satis-noktalarimiz/"
+    kaynaklar:
+      - rol: satis
+        url: "https://csnmotor.com.tr/satis-noktalarimiz/"
+      - rol: servis
+        url: "https://csnmotor.com.tr/servis-noktalarimiz/"
 
-  # 33. KAWASAKI  ·  JAPONYA  ·  www.kawasaki.com.tr
+  # 33. KAWASAKI  ·  Japonya  ·  www.kawasaki.com.tr
   "Kawasaki":
-    url: "https://www.kawasaki.com.tr/Home/YetkiliSatici"
-    mode: browser   # liste JS ile çiziliyor
+    mode: browser
+    kaynaklar:
+      - rol: satis
+        url: "https://www.kawasaki.com.tr/Home/YetkiliSatici"
+      - rol: servis
+        url: "https://www.kawasaki.com.tr/Home/YetkiliServis"
 
-  # 34. STMAX  ·  TURKIYE-CIN  ·  stmax.com.tr
+  # 34. STMAX  ·  Türkiye-Çin  ·  stmax.com.tr
   "STMax":
-    url: "https://stmax.com.tr/yetkili-servisler/"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://stmax.com.tr/yetkili-servisler/"
 
-  # 35. ABUSH  ·  TURKIYE-CIN  ·  abush.com.tr
+  # 35. ABUSH  ·  Türkiye-Çin  ·  abush.com.tr
   "Abush":
-    url: "https://abush.com.tr/tr/bayiler"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://abush.com.tr/tr/bayiler"
 
-  # 36. REGAL RAPTOR  ·  CIN  ·  regalraptor.com.tr
+  # 36. REGAL RAPTOR  ·  Çin  ·  regalraptor.com.tr
   "Regal Raptor":
-    url: "https://regalraptor.com.tr/tr/bayiler"
+    kaynaklar:
+      - rol: satis
+        url: "https://regalraptor.com.tr/tr/bayiler"
+      - rol: servis
+        url: "https://regalraptor.com.tr/tr/servisler"
 
   # 37. HARLEY DAVIDSON  ·  ABD  ·  www.harley-davidson.com
   "Harley-Davidson":
-    url: "https://www.harley-davidson.com/tr/tr/tools/find-a-dealer.html"
-    mode: browser   # liste JS ile çiziliyor
-    bekleme: 3.0
+    mode: browser
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.harley-davidson.com/tr/tr/tools/find-a-dealer.html"
 
   # 38. INDIAN  ·  ABD  ·  www.indianmotorcycle.com.tr
   "Indian":
-    url: "https://www.indianmotorcycle.com.tr/find-a-dealer/map-view/"
-    mode: browser   # liste JS ile çiziliyor
+    mode: browser
+    kaynaklar:
+      - rol: satis
+        url: "https://www.indianmotorcycle.com.tr/find-a-dealer/map-view/"
+      - rol: servis
+        url: "https://www.indianmotorcycle.com.tr/find-a-dealer/list-teknik-servisler/"
 
-  # 39. APACHI  ·  TURKIYE-CIN  ·  www.isildar.com.tr
+  # 39. APACHI  ·  Türkiye-Çin  ·  www.isildar.com.tr
   "Apachi":
-    url: "https://www.isildar.com.tr/Bayiler"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.isildar.com.tr/Bayiler"
+      - rol: servis
+        url: "https://www.isildar.com.tr/Servisler/"
 
-  # 40. REWACO  ·  ALMANYA  ·  rewaco.com.tr
+  # 40. REWACO  ·  Almanya  ·  rewaco.com.tr
   "Rewaco":
-    url: "https://rewaco.com.tr/bayiler/"
+    kaynaklar:
+      - rol: satis
+        url: "https://rewaco.com.tr/bayiler/"
+      - rol: servis
+        url: "https://rewaco.com.tr/servis/"
 
-  # 41. NANOK  ·  TURKIYE-CIN  ·  nanok.com.tr
+  # 41. NANOK  ·  Türkiye-Çin  ·  nanok.com.tr
   "Nanok":
-    url: "https://nanok.com.tr/bayilerimiz"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://nanok.com.tr/bayilerimiz"
 
-  # 42. MOBILETTE  ·  CIN  ·  www.mobilette.com.tr
+  # 42. MOBILETTE  ·  Çin  ·  www.mobilette.com.tr
   "Mobilette":
-    url: "https://www.mobilette.com.tr/tr/bayiler"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.mobilette.com.tr/tr/bayiler"
+      - rol: servis
+        url: "https://www.mobilette.com.tr/tr/servisler"
 
-  # 43. AODES  ·  ABD-CIN  ·  www.aodes.com.tr
+  # 43. AODES  ·  ABD-Çin  ·  www.aodes.com.tr
   "Aodes":
-    url: "https://www.aodes.com.tr/tr/bayiler"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.aodes.com.tr/tr/bayiler"
+      - rol: servis
+        url: "https://www.aodes.com.tr/tr/servisler"
 
-  # 44. MILYON  ·  CIN  ·  www.milyonmoto.com.tr
-  "Milyon":
-    url: "https://www.milyonmoto.com.tr/bayi-servisler.html"
-
-  # 45. RUTEC  ·  CIN  ·  www.rutec.com.tr
+  # 44. RUTEC  ·  Türkiye-Çin  ·  www.rutec.com.tr
   "Rutec":
-    url: "https://www.rutec.com.tr/satis-noktalari.html"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.rutec.com.tr/satis-noktalari.html"
 
-  # 46. ACCO  ·  TURKIYE-CIN  ·  actiomobilite.com
+  # 45. ACCO  ·  Türkiye-Çin  ·  actiomobilite.com
   "Acco":
-    url: "https://actiomobilite.com/bayiler"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://actiomobilite.com/bayiler"
 
-  # 47. MUSATTI  ·  CIN  ·  musattimotor.com
+  # 46. MUSATTI  ·  Türkiye-Çin  ·  musattimotor.com
   "Musatti":
-    url: "https://musattimotor.com/bayi-bul"
+    kaynaklar:
+      - rol: satis
+        url: "https://musattimotor.com/bayi-bul"
+      - rol: servis
+        url: "https://musattimotor.com/servis-bul"
 
-  # 48. GOE  ·  CIN  ·  www.goemobility.com
+  # 47. GOE  ·  Çin  ·  www.goemobility.com
   "GOE":
-    url: "https://www.goemobility.com/satis-noktalari"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.goemobility.com/satis-noktalari"
 
-  # 49. MEKA MOTOR  ·  CIN  ·  www.mekamotor.com.tr
+  # 48. MEKA MOTOR  ·  Türkiye-Çin  ·  www.mekamotor.com.tr
   "Meka Motor":
-    url: "https://www.mekamotor.com.tr/bayi-ve-servis"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.mekamotor.com.tr/bayi-ve-servis"
 
-  # 50. ZELSUN  ·  CIN  ·  www.zelsunmotor.com
+  # 49. ZELSUN  ·  Türkiye-Çin  ·  www.zelsunmotor.com
   "Zelsun":
-    url: "https://www.zelsunmotor.com/Bayilerimiz.aspx"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.zelsunmotor.com/Bayilerimiz.aspx"
+      - rol: servis
+        url: "https://www.zelsunmotor.com/Servislerimiz.aspx"
 
-  # 51. SFM  ·  TURKIYE-CIN  ·  www.sfmmotor.com.tr
+  # 50. SFM  ·  Türkiye-Çin  ·  www.sfmmotor.com.tr
   "SFM":
-    url: "https://www.sfmmotor.com.tr/bayi-servis/"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.sfmmotor.com.tr/bayi-servis/"
 
-  # 52. KOVE  ·  CIN  ·  www.kovemoto.com.tr
+  # 51. KOVE  ·  Çin  ·  www.kovemoto.com.tr
   "Kove":
-    url: "https://www.kovemoto.com.tr/yetkilisat%C4%B1c%C4%B1lar"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.kovemoto.com.tr/yetkilisat%C4%B1c%C4%B1lar"
+      - rol: servis
+        url: "https://www.kovemoto.com.tr/yetkiliservisler"
 
-  # 53. FCM  ·  CIN  ·  fcmmotor.com
+  # 52. FCM  ·  Türkiye-Çin  ·  fcmmotor.com
   "FCM":
-    url: "https://fcmmotor.com/bayiler"
+    kaynaklar:
+      - rol: satis
+        url: "https://fcmmotor.com/bayiler"
+      - rol: servis
+        url: "https://fcmmotor.com/yetkili-servisler"
 
-  # 54. AKESO  ·  TURKIYE-CIN  ·  www.akesomotors.com
+  # 53. AKESO  ·  Türkiye-Çin  ·  www.akesomotors.com
   "Akeso":
-    url: "https://www.akesomotors.com/bayilerimiz/"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.akesomotors.com/bayilerimiz/"
 
-  # 55. YİBEN  ·  ÇİN  ·  yibenmotosiklet.com.tr
+  # 54. YİBEN  ·  Türkiye-Çin  ·  yibenmotosiklet.com.tr
   "Yiben":
-    url: "https://yibenmotosiklet.com.tr/tr/sayfa/bayi-agi"
+    kaynaklar:
+      - rol: satis
+        url: "https://yibenmotosiklet.com.tr/tr/sayfa/bayi-agi"
+      - rol: servis
+        url: "https://yibenmotosiklet.com.tr/tr/sayfa/servis-agi"
 
-  # 56. KİMMİ  ·  ÇİN  ·  www.kimmimotor.com
+  # 55. KİMMİ  ·  Türkiye-Çin  ·  www.kimmimotor.com
   "Kimmi":
-    url: "https://www.kimmimotor.com/bayiler/"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.kimmimotor.com/bayiler/"
+      - rol: servis
+        url: "https://www.kimmimotor.com/servisler/"
 
-  # 57. AXİON MOTOR  ·  ÇİN  ·  axionmotor.com.tr
+  # 56. AXİON MOTOR  ·  Türkiye-Çin  ·  axionmotor.com.tr
   "Axion Motor":
-    url: "https://axionmotor.com.tr/hizmet-noktalarimiz/"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://axionmotor.com.tr/hizmet-noktalarimiz/"
 
-  # 58. REBAT  ·  ÇİN  ·  rebatmotor.com
+  # 57. REBAT  ·  Türkiye-Çin  ·  rebatmotor.com
   "Rebat":
-    url: "https://rebatmotor.com/satis-ve-servisler-cloned-111-2/"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://rebatmotor.com/satis-ve-servisler-cloned-111-2/"
 
-  # 59. LİFAN  ·  ÇİN  ·  www.lifanmotor.com.tr
+  # 58. LİFAN  ·  Türkiye-Çin  ·  www.lifanmotor.com.tr
   "Lifan":
-    url: "https://www.lifanmotor.com.tr/bayiler/"
+    kaynaklar:
+      - rol: satis
+        url: "https://www.lifanmotor.com.tr/bayiler/"
+      - rol: servis
+        url: "https://www.lifanmotor.com.tr/servisler/"
 
-  # 60. KAROVAL MOTOR  ·  ÇİN  ·  karoval.com
+  # 59. KAROVAL MOTOR  ·  Türkiye-Çin  ·  karoval.com
   "Karoval Motor":
-    url: "https://karoval.com/satis-noktalarimiz/"
+    kaynaklar:
+      - rol: satis
+        url: "https://karoval.com/satis-noktalarimiz/"
+      - rol: servis
+        url: "https://karoval.com/servis-noktalarimiz/"
 
-  # 61. ARNİCA  ·  ÇİN  ·  arnicamotor.com
+  # 60. ARNİCA  ·  Türkiye-Çin  ·  arnicamotor.com
   "Arnica":
-    url: "https://arnicamotor.com/bayiler?lang=tr"
+    kaynaklar:
+      - rol: satis
+        url: "https://arnicamotor.com/bayiler?lang=tr"
+      - rol: servis
+        url: "https://arnicamotor.com/servisler?lang=tr&sehir_id=3&sehir_id=6&sehir_id=3&sehir_id=2"
 
-  # 62. LEKSAS  ·  ÇİN  ·  www.leksas.com.tr
+  # 61. LEKSAS  ·  Türkiye-Çin  ·  www.leksas.com.tr
   "Leksas":
-    url: "https://www.leksas.com.tr/bayi-servis/"
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://www.leksas.com.tr/bayi-servis/"
 
-  # 63. TAKTAS  ·  ÇİN  ·  taktas.com.tr
+  # 62. TAKTAS  ·  Türkiye-Çin  ·  taktas.com.tr
   "Taktas":
-    url: "https://taktas.com.tr/bayi-ve-servis"
+    kaynaklar:
+      - rol: satis
+        url: "https://taktas.com.tr/bayi-ve-servis"
+      - rol: servis
+        url: "https://taktas.com.tr/servislerimiz"
