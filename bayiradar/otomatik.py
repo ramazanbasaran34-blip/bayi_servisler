@@ -25,6 +25,46 @@ ADRES = re.compile(r"\b(mah|mh|mahalle|mahallesi|cad|cd|cadde|caddesi|sok|sk|"
 GURULTU = {"script", "style", "noscript", "svg", "head", "meta", "link",
            "iframe", "footer", "nav"}
 
+# Kayıt türü etiketleri. Bazı siteler (Rutec gibi) her noktanın türünü
+# açıkça yazıyor: "Satış Noktası", "Yetkili Servis", "Bölge Bayisi".
+# Bunlar firma adı ya da ilçe DEĞİL — rol bilgisi. Ayrıştırıcı bunları
+# tanımazsa "Yetkili Servis" adında bir bayi uyduruyor.
+# Etiketler ASCII'ye katlanarak karşılaştırılıyor: "Satış Noktası" -> "satis noktasi".
+# Doğrudan Türkçe karakterle regex yazmak kelime sınırı (\b) davranışı yüzünden
+# şaşırtıyordu; katlama hem daha basit hem daha güvenilir.
+TUR_ESLEME = [
+    ("servis", ("yetkili servis", "servis noktasi", "teknik servis",
+                "servis agi", "sadece servis", "servis merkezi",
+                "authorized service", "service point")),
+    ("satis_servis", ("satis ve servis", "bayi ve servis", "satis servis",
+                      "satis / servis", "bayi servis", "satis+servis")),
+    ("satis", ("satis noktasi", "bolge bayisi", "yetkili bayi", "yetkili satici",
+               "teslimat noktasi", "showroom", "bayi", "satici", "magaza",
+               "dealer", "sales point", "satis magazasi")),
+]
+
+
+def tur_coz(metin: str) -> str:
+    """Metin bir kayıt türü etiketi mi? Öyleyse rolü döner, değilse boş.
+
+    Rutec gibi siteler her noktanın türünü açıkça yazıyor ("Satış Noktası",
+    "Yetkili Servis", "Bölge Bayisi"). Bunlar firma adı ya da ilçe DEĞİL.
+    Tanınmazsa "Yetkili Servis" adında bir bayi uydurulmuş oluyor.
+    """
+    if not metin or len(metin) > 32:
+        return ""
+    from .normalize import fold
+    f = fold(metin)
+    if not f:
+        return ""
+    for rol, etiketler in TUR_ESLEME:
+        for e in etiketler:
+            # Tam eşleşme ya da etiketin metnin tamamını kaplaması
+            if f == e or (e in f and len(f) <= len(e) + 10):
+                return rol
+    return ""
+
+
 # Ticari ünvan işaretleri — bayi adını ilçe adından ayırmak için
 TICARI = re.compile(
     r"\b(motor|motorlu|motosiklet|moto|bisiklet|oto|otomotiv|ticaret|tic|"
@@ -91,6 +131,33 @@ def _yapraklar(kap):
     return out
 
 
+def COP_JETON(m: str) -> bool:
+    """Metin gerçek bir isim mi? CSS artığı / rakam yığını değil mi?
+
+    Honda'nın sayfasında ayrıştırıcı '243', '24d', '24h' gibi jetonları
+    firma adı sanmıştı; bunlar sınıf adlarıydı.
+    """
+    t = m.strip()
+    if len(t) < 4:
+        return False
+    harf = sum(1 for c in t if c.isalpha())
+    if harf < 3:
+        return False
+    # Harf/rakam karışık kısa jetonlar ("24d", "a1b2")
+    if len(t) <= 8 and re.fullmatch(r"[a-z0-9]+", t, re.I) and any(c.isdigit() for c in t):
+        return False
+    return True
+
+
+def _ilk_telefon(m: str) -> str:
+    """Birleşik yazılmış telefonlardan ilkini alır.
+
+    Voge'de '0232 716 89 70 – 0532 396 63 73' tek alan olarak geliyordu.
+    """
+    e = TEL.search(m)
+    return e.group(0) if e else ""
+
+
 def _kaydi_cikar(kap):
     """Tek bir kaptan bayi kaydı çıkarır. Çıkaramazsa None."""
     rec = {"bayi_adi": "", "il": "", "ilce": "", "adres": "",
@@ -105,7 +172,7 @@ def _kaydi_cikar(kap):
     else:
         for c, m in yap:
             if TEL.search(m):
-                rec["telefon"] = TEL.search(m).group(0)
+                rec["telefon"] = _ilk_telefon(m)
                 kullanildi.add(id(c))
                 break
 
@@ -124,13 +191,28 @@ def _kaydi_cikar(kap):
             break
 
     # Kalan adaylar: telefon/adres olmayan anlamlı metinler
-    kalan = []
+    from .normalize import IL_BY_FOLD, fold
+    kalan, il_adaylari = [], []
     for c, m in yap:
         if id(c) in kullanildi or TEL.search(m) or ADRES.search(m):
             continue
         if len(m) < 3 or m.strip().lower().rstrip(":") in COP:
             continue
-        kalan.append((c, re.sub(r"\s+", " ", m).strip()))
+        temiz = re.sub(r"\s+", " ", m).strip()
+        # Tür etiketi mi? Öyleyse rol olarak al, ad/ilçe adayı sayma.
+        rol = tur_coz(temiz)
+        if rol and not rec.get("rol"):
+            rec["rol"] = rol
+            continue
+        # İl adı mı? Firma adı olamaz — il alanına yazılır.
+        # (Kove'de "BALIKESİR" firma adı sanılıyordu, gerçek ad ilçeye düşüyordu.)
+        if fold(temiz) in IL_BY_FOLD:
+            il_adaylari.append(temiz)
+            continue
+        # Anlamsız jeton mu? ("243", "24d" gibi CSS artıkları)
+        if not COP_JETON(temiz):
+            continue
+        kalan.append((c, temiz))
 
     # Bayi adı ile ilçeyi ayır.
     #
@@ -156,6 +238,9 @@ def _kaydi_cikar(kap):
             rec["ilce"] = m
             break
 
+    if il_adaylari and not rec.get("il"):
+        rec["il"] = il_adaylari[0]
+
     if not rec["telefon"] and not rec["adres"]:
         return None
     return rec
@@ -167,12 +252,44 @@ def cikar(html: str) -> list[dict]:
     for g in soup(list(GURULTU)):
         g.decompose()
 
-    for _, _, elemanlar in kaplari_bul(soup)[:3]:
+    en_iyi, en_iyi_puan = [], 0.0
+    for _, _, elemanlar in kaplari_bul(soup)[:5]:
         kayitlar = [r for r in (_kaydi_cikar(e) for e in elemanlar) if r]
-        # En az yarısından kayıt çıkabiliyorsa bu kap doğrudur
-        if len(kayitlar) >= max(2, len(elemanlar) * 0.5):
+        if len(kayitlar) < max(2, len(elemanlar) * 0.5):
+            continue
+        puan = _kalite(kayitlar)
+        # Yeterince temizse doğrudan kabul et
+        if puan >= 0.75:
             return kayitlar
-    return []
+        # Değilse en iyisini akılda tut, sonraki adaya bak
+        if puan > en_iyi_puan:
+            en_iyi, en_iyi_puan = kayitlar, puan
+    # Hiçbiri temiz değilse en iyisini ver — ama çok kötüyse hiç verme.
+    # Honda'da ayrıştırıcı CSS sınıf adlarını firma sanmıştı; böyle bir kap
+    # artık reddediliyor ve marka 'hatali' işaretlenip eski verisi korunuyor.
+    return en_iyi if en_iyi_puan >= 0.45 else []
+
+
+def _kalite(kayitlar) -> float:
+    """Çıkan kayıtlar ne kadar inandırıcı? 0-1 arası.
+
+    Kaplardan hangisinin doğru olduğunu ayırt etmek için. Sadece "kaç kayıt
+    çıktı" bakmak yetmiyor; çöp de kayıt gibi görünebiliyor.
+    """
+    if not kayitlar:
+        return 0.0
+    n = len(kayitlar)
+    p = 0.0
+    # Adı inandırıcı olanların oranı
+    p += 0.45 * sum(1 for k in kayitlar if len(k["bayi_adi"]) >= 6
+                    and " " in k["bayi_adi"].strip()) / n
+    # Telefonu olanlar
+    p += 0.25 * sum(1 for k in kayitlar if k["telefon"]) / n
+    # Adresi olanlar
+    p += 0.20 * sum(1 for k in kayitlar if len(k["adres"]) > 12) / n
+    # Adlar birbirinden farklı mı (aynı etiket çoğaltılmamış)
+    p += 0.10 * (len({k["bayi_adi"] for k in kayitlar}) / n)
+    return p
 
 
 # ============================================================================
@@ -311,6 +428,13 @@ def json_gomulu(html: str) -> list[dict]:
             if not il:
                 il = en_yakin_il(lat, lng)
 
+        # Kayıt türü alanı: rolü doğrudan kaynağından al
+        rol = ""
+        tur = al(d, ("type", "tur", "tür", "tip", "kategori", "category",
+                     "nokta_turu", "dealertype", "pointtype"))
+        if tur:
+            rol = tur_coz(tur)
+
         # Ülke alanı varsa ona da bak
         ulke = al(d, ("country", "countrycode", "ulke", "iso"))
         if ulke and ulke.strip().lower() not in (
@@ -318,7 +442,7 @@ def json_gomulu(html: str) -> list[dict]:
             yurtdisi += 1
             continue
 
-        out.append({
+        kayit = {
             "bayi_adi": ad,
             "il": il or "",
             "ilce": al(d, ("district", "ilce", "county", "region")),
@@ -326,5 +450,8 @@ def json_gomulu(html: str) -> list[dict]:
             "telefon": al(d, ADAY_ANAHTAR),
             "email": al(d, ("email", "eposta", "mail")),
             "website": al(d, ("website", "web", "url", "site")),
-        })
+        }
+        if rol:
+            kayit["rol"] = rol
+        out.append(kayit)
     return out
