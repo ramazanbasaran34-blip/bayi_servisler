@@ -27,6 +27,7 @@ markalar:
 
   #  1. HONDA  ·  Japonya  ·  www.honda.com.tr
   "Honda":
+    beklenen: [50, 55]   # saha bilgisi
     mode: browser
     kaynaklar:
       - rol: satis_servis
@@ -34,6 +35,7 @@ markalar:
 
   #  2. YAMAHA  ·  Japonya  ·  www.yamaha-motor.eu
   "Yamaha":
+    beklenen: [40, 50]   # saha bilgisi
     mode: browser
     kaynaklar:
       - rol: satis_servis
@@ -41,6 +43,7 @@ markalar:
 
   #  3. BAJAJ  ·  Hindistan  ·  www.ekuralkan.com
   "Bajaj":
+    beklenen: [250, 350]   # saha bilgisi
     mode: browser
     bekleme: 1.5
     kaynaklar:
@@ -53,6 +56,7 @@ markalar:
 
   #  4. KANUNI  ·  Türkiye-Çin  ·  www.ekuralkan.com
   "Kanuni":
+    beklenen: [250, 350]   # saha bilgisi
     mode: browser
     bekleme: 1.5
     kaynaklar:
@@ -65,6 +69,7 @@ markalar:
 
   #  5. MONDIAL  ·  Türkiye-Çin  ·  www.mondialmotor.com.tr
   "Mondial":
+    beklenen: [800, 1100]   # saha bilgisi
     encoding: windows-1254
     bekleme: 2.0
     kaynaklar:
@@ -73,7 +78,9 @@ markalar:
         iterate: il_slug
         il_url_den: true
       - rol: servis
-        url: "https://www.mondialmotor.com.tr/servis-noktalari"
+        url: "https://www.mondialmotor.com.tr/servis-noktalari?sehir={il_slug}"
+        iterate: il_slug
+        il_url_den: true
 
   #  6. CFMOTO  ·  Çin  ·  www.cfmoto.com.tr
   "CFMoto":
@@ -85,6 +92,7 @@ markalar:
 
   #  7. KUBA  ·  Türkiye-Çin  ·  www.kubamotor.com.tr
   "Kuba":
+    beklenen: [800, 1100]   # saha bilgisi
     mode: browser
     kaynaklar:
       - rol: satis_servis
@@ -216,14 +224,13 @@ markalar:
 
   # 25. MOTOLUX  ·  Türkiye-Çin  ·  motolux.com.tr
   "Motolux":
+    beklenen: [500, 700]   # saha bilgisi
     bekleme: 2.0
     kaynaklar:
-      - rol: satis
+      - rol: satis_servis
         url: "https://motolux.com.tr/bayiler/sehir/{il_slug}/"
         iterate: il_slug
         il_url_den: true
-      - rol: servis
-        url: "https://motolux.com.tr/bayiler/sehir/"
 
   # 26. KRAL  ·  Türkiye-Çin  ·  kralmotor.tr
   "Kral":
@@ -367,6 +374,7 @@ markalar:
 
   # 44. RUTEC  ·  Türkiye-Çin  ·  www.rutec.com.tr
   "Rutec":
+    beklenen: [25, 60]   # saha bilgisi
     kaynaklar:
       - rol: satis_servis
         url: "https://www.rutec.com.tr/satis-noktalari.html"
