@@ -222,6 +222,28 @@ def _kaydi_cikar(kap):
     if not kalan:
         return None
 
+    # Konum adı mı, firma adı mı?
+    #
+    # İl adlarını yukarıda eledik ama ilçe adları da bayi adı sanılabiliyor
+    # (Antalya'da "ALANYA", "MANAVGAT" firma adı olarak kaydediliyordu).
+    # Türkiye'de ~970 ilçe var ve listesini taşımak yerine şu ipucunu
+    # kullanıyoruz: ilçe adı neredeyse her zaman kaydın ADRESİNDE de geçiyor,
+    # firma adı ise geçmiyor. Adreste geçen tek kelimelik adaylar konum sayılır.
+    adres_f = fold(rec.get("adres", ""))
+    konum_gibi, gercek = [], []
+    for c, m in kalan:
+        f = fold(m)
+        tek_kelime = len(f.split()) <= 2
+        if (adres_f and f and tek_kelime and f in adres_f
+                and not TICARI.search(m)):
+            konum_gibi.append((c, m))
+        else:
+            gercek.append((c, m))
+    if gercek:
+        kalan = gercek
+        if konum_gibi and not rec.get("ilce"):
+            rec["ilce"] = konum_gibi[0][1]
+
     ticari = [(c, m) for c, m in kalan if TICARI.search(m)]
     if len(ticari) == 1:
         rec["bayi_adi"] = ticari[0][1]
