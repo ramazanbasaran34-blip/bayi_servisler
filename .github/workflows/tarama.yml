@@ -1,15 +1,18 @@
 name: Bayileri tara ve siteyi yayınla
 
+# NE ZAMAN ÇALIŞIR
 on:
   schedule:
+    # Her gece Türkiye saatiyle 03:00 (UTC 00:00)
     - cron: "0 0 * * *"
-  workflow_dispatch:
+  workflow_dispatch:      # "Run workflow" butonuyla elle de başlatılabilir
     inputs:
       markalar:
         description: "Sadece belirli markalar (boş = periyodu dolanlar)"
         required: false
         default: ""
 
+# Sayfayı yayınlamak ve veritabanını geri yazmak için gerekli izinler
 permissions:
   contents: write
   pages: write
@@ -17,12 +20,12 @@ permissions:
 
 concurrency:
   group: bayi-tarama
-  cancel-in-progress: false
+  cancel-in-progress: false     # yarım kalan taramayı iptal etme
 
 jobs:
   tara:
     runs-on: ubuntu-latest
-    timeout-minutes: 330
+    timeout-minutes: 330        # 5.5 saat; ücretsiz sınır 6 saat
 
     steps:
       - name: Depoyu indir
@@ -39,11 +42,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Tarayıcı kur
+      - name: Tarayıcı kur (browser modundaki markalar için)
         run: |
           pip install playwright
           playwright install --with-deps chromium
-        continue-on-error: true
+        continue-on-error: true   # kurulamazsa html/json markaları yine çalışsın
 
       - name: Markaları tara
         run: |
@@ -52,7 +55,7 @@ jobs:
           else
             python cli.py tara --zamanlanmis
           fi
-        continue-on-error: true
+        continue-on-error: true   # bir marka patlarsa iş akışı durmasın
 
       - name: Durum özeti
         run: python cli.py durum
@@ -65,18 +68,47 @@ jobs:
           cp -f ciktilar/BAYI-LISTESI.xlsx site/ 2>/dev/null || true
 
       - name: Veritabanını depoya geri yaz
+        # Toplanan veri kaybolmasın: her tarama sonrası commit edilir.
+        #
+        # ÖNEMLİ: tarama saatler sürüyor ve bu sürede depoya kod yüklenmiş
+        # olabilir. O durumda düz "git push" reddedilir ve tüm taramanın
+        # sonucu sessizce kaybolur (bir kez başımıza geldi). Bu yüzden önce
+        # uzaktaki değişiklikleri alıp üzerine biniyoruz, sonra deniyoruz.
         run: |
           git config user.name  "bayi-radar-bot"
           git config user.email "bot@users.noreply.github.com"
           git add -f bayiler.db
-          git diff --staged --quiet || git commit -m "Veri güncellendi: $(date -u +'%Y-%m-%d %H:%M UTC')"
-          git push
-        continue-on-error: true
+          git diff --staged --quiet && { echo "Veride değişiklik yok."; exit 0; }
+          git commit -m "Veri güncellendi: $(date -u +'%Y-%m-%d %H:%M UTC')"
+          for deneme in 1 2 3 4 5; do
+            git fetch origin "${GITHUB_REF_NAME}"
+            # Veritabanı ikili dosya: çakışmada bizimki (yeni tarama) kazanır
+            git rebase -X ours "origin/${GITHUB_REF_NAME}" || {
+              git checkout --ours bayiler.db && git add bayiler.db && git rebase --continue
+            }
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              echo "Veri kaydedildi (deneme $deneme)."
+              exit 0
+            fi
+            echo "Push reddedildi, tekrar deneniyor..."
+            sleep 5
+          done
+          echo "::error::Veritabanı kaydedilemedi — tarama sonucu kayıp!"
+          exit 1
 
       - name: Sayfayı hazırla
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
+
+      - name: Veritabanını yedek olarak sakla
+        # Kaydetme yine de başarısız olursa veri buradan kurtarılabilir
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bayiler-db
+          path: bayiler.db
+          retention-days: 14
 
   yayinla:
     needs: tara
