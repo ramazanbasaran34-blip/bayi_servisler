@@ -22,7 +22,7 @@ import yaml
 from .fetch import Fetcher
 from .koordinat import sorgu_noktalari
 from .normalize import IL_KODU, ILLER, fold
-from .otomatik import il_baglantilari, json_gomulu
+from .otomatik import il_baglantilari, il_secicileri_bul, json_gomulu
 from .parse import finalize, parse_html, parse_json, parse_oto
 from .store import commit_tarama, db, marka_bilgi, now, tarama_hatasi
 
@@ -159,10 +159,33 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
         r.setdefault("rol", cfg.get("rol", "satis"))
 
     kapsam = basarili_url / len(urls) if urls else 0.0
-    if kayitlar or ilk_body is None:
+    if ilk_body is None:
+        return kayitlar, kapsam
+    # Kayıt geldiyse bile, tarifte il döngüsü yoksa seçici olup olmadığına bak:
+    # tek sayfadan gelen kayıtlar listenin tamamı olmayabilir.
+    if kayitlar and (cfg.get("iterate") or len(urls) > 1):
         return kayitlar, kapsam
 
-    # --- 2. tur: sayfa bir il dizini mi? ---
+    # --- 2. tur: sayfada il seçen açılır liste var mı? ---
+    # Çoğu sayfa parametresiz açıldığında listenin sadece bir dilimini veriyor.
+    # Seçiciyi bulup 81 ili tek tek geziyoruz. Bu adım kayıt VARSA da çalışır,
+    # çünkü "az kayıt geldi ama hepsi temiz" en sinsi hata biçimi.
+    if len(urls) == 1 and not cfg.get("iterate"):
+        il_urls = il_secicileri_bul(ilk_body, urls[0][0])
+        if il_urls:
+            log(f"     il seçici bulundu: {len(il_urls)} il geziliyor")
+            basarili = 0
+            for il_url, il_adi in il_urls:
+                try:
+                    ekle(_sayfayi_coz(cek(il_url), cfg, mode), il_url, il_adi,
+                         zorla_il=True)
+                    basarili += 1
+                except Exception:                                 # noqa: BLE001
+                    continue
+            if kayitlar:
+                return kayitlar, basarili / len(il_urls)
+
+    # --- 3. tur: sayfa bir il dizini mi? ---
     if len(urls) == 1:
         iller = il_baglantilari(ilk_body, urls[0][0])
         if iller:
@@ -178,7 +201,7 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
             if kayitlar:
                 return kayitlar, basarili / len(iller)
 
-    # --- 3. tur: tarayıcı gerekiyor olabilir ---
+    # --- 4. tur: tarayıcı gerekiyor olabilir ---
     if mode != "browser":
         try:
             log("     statik sayfada kayıt yok, tarayıcı deneniyor")
@@ -186,6 +209,17 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
             ekle(_sayfayi_coz(body, cfg, "html"), urls[0][0], urls[0][1])
             if kayitlar:
                 return kayitlar, 1.0
+            il_urls = il_secicileri_bul(body, urls[0][0])
+            if il_urls:
+                log(f"     tarayıcıda il seçici: {len(il_urls)} il")
+                for il_url, il_adi in il_urls:
+                    try:
+                        ekle(_sayfayi_coz(cek(il_url, True), cfg, "html"),
+                             il_url, il_adi, zorla_il=True)
+                    except Exception:                             # noqa: BLE001
+                        continue
+                if kayitlar:
+                    return kayitlar, 1.0
             iller = il_baglantilari(body, urls[0][0])
             if iller:
                 log(f"     tarayıcıda il dizini: {len(iller)} il")
