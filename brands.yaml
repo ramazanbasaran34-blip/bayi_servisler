@@ -30,7 +30,7 @@
 
 ayarlar:
   bekleme: 1.5
-  marka_arasi_saniye: 120
+  marka_arasi_saniye: 45
   cache_saat: 6
   periyot_saat: 168
 
