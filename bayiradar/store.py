@@ -55,7 +55,6 @@ CREATE INDEX IF NOT EXISTS ix_il    ON bayiler(il_key);
 CREATE INDEX IF NOT EXISTS ix_ilce  ON bayiler(ilce_key);
 CREATE INDEX IF NOT EXISTS ix_mrk   ON bayiler(marka);
 CREATE INDEX IF NOT EXISTS ix_durum ON bayiler(durum);
-CREATE INDEX IF NOT EXISTS ix_rol   ON bayiler(rol);
 
 CREATE TABLE IF NOT EXISTS marka_durum (
     marka             TEXT PRIMARY KEY,
@@ -100,12 +99,35 @@ def now():
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
+# Şemaya sonradan eklenen sütunlar. CREATE TABLE IF NOT EXISTS mevcut tabloyu
+# değiştirmediği için, yeni sütunlar burada tek tek eklenir. Eski veritabanı
+# silinmeden yeni sürüme geçebilsin diye.
+EK_SUTUNLAR = [
+    ("rol", "TEXT DEFAULT 'satis'"),
+    ("kaynak_satis", "TEXT"),
+    ("kaynak_servis", "TEXT"),
+]
+
+
+def _goc(con):
+    """Eksik sütunları ekler ve indeksleri kurar."""
+    var = {r[1] for r in con.execute("PRAGMA table_info(bayiler)")}
+    if not var:
+        return          # tablo henüz yok, SCHEMA zaten kuracak
+    for ad, tanim in EK_SUTUNLAR:
+        if ad not in var:
+            con.execute(f"ALTER TABLE bayiler ADD COLUMN {ad} {tanim}")
+    con.execute("CREATE INDEX IF NOT EXISTS ix_rol ON bayiler(rol)")
+
+
 @contextmanager
 def db(path=DB_PATH):
     con = sqlite3.connect(path)
     con.row_factory = sqlite3.Row
     try:
         con.executescript(SCHEMA)
+        _goc(con)
+        con.commit()
         yield con
         con.commit()
     finally:
