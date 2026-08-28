@@ -27,6 +27,7 @@ markalar:
 
   #  1. HONDA  ·  Japonya  ·  www.honda.com.tr
   "Honda":
+    mode: browser
     kaynaklar:
       - rol: satis_servis
         url: "https://www.honda.com.tr/motosiklet/bayiler-ve-servisler"
@@ -98,6 +99,7 @@ markalar:
 
   #  9. ARORA  ·  Türkiye-Çin  ·  arora.com.tr
   "Arora":
+    mode: browser
     kaynaklar:
       - rol: satis_servis
         url: "https://arora.com.tr/hizmet-noktalari"
@@ -112,6 +114,7 @@ markalar:
 
   # 11. VOGE  ·  Çin  ·  www.vogeturkiye.com.tr
   "Voge":
+    mode: browser
     kaynaklar:
       - rol: satis_servis
         url: "https://www.vogeturkiye.com.tr/yetkili-satici/"
@@ -264,6 +267,7 @@ markalar:
 
   # 31. HUSQVARNA  ·  Avusturya  ·  www.spormoto.com
   "Husqvarna":
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://www.spormoto.com/husqvarna/bayiler/"
@@ -383,6 +387,7 @@ markalar:
 
   # 47. GOE  ·  Çin  ·  www.goemobility.com
   "GOE":
+    mode: browser
     kaynaklar:
       - rol: satis_servis
         url: "https://www.goemobility.com/satis-noktalari"
@@ -409,6 +414,7 @@ markalar:
 
   # 51. KOVE  ·  Çin  ·  www.kovemoto.com.tr
   "Kove":
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://www.kovemoto.com.tr/yetkilisat%C4%B1c%C4%B1lar"
@@ -439,6 +445,7 @@ markalar:
 
   # 55. KİMMİ  ·  Türkiye-Çin  ·  www.kimmimotor.com
   "Kimmi":
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://www.kimmimotor.com/bayiler/"
@@ -459,6 +466,7 @@ markalar:
 
   # 58. LİFAN  ·  Türkiye-Çin  ·  www.lifanmotor.com.tr
   "Lifan":
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://www.lifanmotor.com.tr/bayiler/"
