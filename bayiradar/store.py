@@ -16,6 +16,7 @@ import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 
+from .eslestir import ayni_firma_mi, eslesme_anahtarlari, rolleri_birlestir
 from .normalize import fold
 
 DB_PATH = "bayiler.db"
@@ -45,12 +46,16 @@ CREATE TABLE IF NOT EXISTS bayiler (
     ilk_gorulme  TEXT,
     son_gorulme  TEXT,
     durum        TEXT DEFAULT 'aktif',
-    kayip_sayaci INTEGER DEFAULT 0
+    kayip_sayaci INTEGER DEFAULT 0,
+    rol          TEXT DEFAULT 'satis',   -- satis | servis | satis_servis
+    kaynak_satis  TEXT,                  -- satış listesinde göründüğü adres
+    kaynak_servis TEXT                   -- servis listesinde göründüğü adres
 );
 CREATE INDEX IF NOT EXISTS ix_il    ON bayiler(il_key);
 CREATE INDEX IF NOT EXISTS ix_ilce  ON bayiler(ilce_key);
 CREATE INDEX IF NOT EXISTS ix_mrk   ON bayiler(marka);
 CREATE INDEX IF NOT EXISTS ix_durum ON bayiler(durum);
+CREATE INDEX IF NOT EXISTS ix_rol   ON bayiler(rol);
 
 CREATE TABLE IF NOT EXISTS marka_durum (
     marka             TEXT PRIMARY KEY,
@@ -218,37 +223,69 @@ def _basarisiz(con, marka, baslangic, t, beklenen, kapsam, mesaj):
             "supheli": 0, "mesaj": mesaj}
 
 
+def _ayni_firmayi_bul(con, rec, marka):
+    """Aynı firmanın önceden kaydedilmiş halini arar.
+
+    Telefon tutmayabilir (bayi sayfasında sabit hat, servis sayfasında cep).
+    Bu yüzden aynı marka+il içindeki adayları çekip ad/adres benzerliğine
+    bakıyoruz. Ayrıntı: bayiradar/eslestir.py
+    """
+    adaylar = con.execute(
+        "SELECT * FROM bayiler WHERE marka=? AND il_key=?",
+        (marka, fold(rec.get("il", "")))).fetchall()
+    for a in adaylar:
+        ok, _ = ayni_firma_mi(rec, dict(a))
+        if ok:
+            return a
+    return None
+
+
 def _upsert(con, kayitlar, marka, t):
-    yeni = guncel = 0
+    yeni = guncel = birlesen = 0
     gorulen = set()
     for rec in kayitlar:
         k = tekil_key(rec)
         gorulen.add(k)
         row = con.execute(
-            "SELECT id, durum, adres, telefon FROM bayiler WHERE tekil_key=?",
-            (k,)).fetchone()
+            "SELECT * FROM bayiler WHERE tekil_key=?", (k,)).fetchone()
+        if not row:
+            # Telefonla bulunamadı — ad/adres benzerliğiyle ara
+            row = _ayni_firmayi_bul(con, rec, marka)
+            if row:
+                gorulen.add(row["tekil_key"])
+                birlesen += 1
         vals = (rec["marka"], rec["bayi_adi"], rec["il"], rec["ilce"], rec["adres"],
                 rec["telefon"], rec["email"], rec["website"], rec["kaynak_url"],
                 fold(rec["il"]), fold(rec["ilce"]))
+        rol = rec.get("rol", "satis")
+        ks = rec.get("kaynak_url", "") if rol in ("satis", "satis_servis") else None
+        kv = rec.get("kaynak_url", "") if rol in ("servis", "satis_servis") else None
+
         if row:
             if row["durum"] != "aktif":
                 _log_degisim(con, marka, "geri_geldi", rec,
                              f"önceki durum: {row['durum']}")
             elif row["adres"] != rec["adres"] or row["telefon"] != rec["telefon"]:
                 _log_degisim(con, marka, "guncellendi", rec, "adres/telefon değişti")
+            yeni_rol = rolleri_birlestir(row["rol"] or "", rol)
+            if yeni_rol != (row["rol"] or ""):
+                _log_degisim(con, marka, "rol_degisti", rec,
+                             f"{row['rol']} → {yeni_rol}")
             con.execute(
                 """UPDATE bayiler SET marka=?,bayi_adi=?,il=?,ilce=?,adres=?,
                    telefon=?,email=?,website=?,kaynak_url=?,il_key=?,ilce_key=?,
-                   son_gorulme=?, durum='aktif', kayip_sayaci=0 WHERE id=?""",
-                vals + (t, row["id"]))
+                   son_gorulme=?, durum='aktif', kayip_sayaci=0, rol=?,
+                   kaynak_satis=COALESCE(?,kaynak_satis),
+                   kaynak_servis=COALESCE(?,kaynak_servis) WHERE id=?""",
+                vals + (t, yeni_rol, ks, kv, row["id"]))
             guncel += 1
         else:
             con.execute(
                 """INSERT INTO bayiler (marka,bayi_adi,il,ilce,adres,telefon,email,
                    website,kaynak_url,il_key,ilce_key,tekil_key,ilk_gorulme,
-                   son_gorulme,durum,kayip_sayaci)
-                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,'aktif',0)""",
-                vals + (k, t, t))
+                   son_gorulme,durum,kayip_sayaci,rol,kaynak_satis,kaynak_servis)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,'aktif',0,?,?,?)""",
+                vals + (k, t, t, rol, ks, kv))
             _log_degisim(con, marka, "eklendi", rec)
             yeni += 1
     return yeni, guncel, gorulen
