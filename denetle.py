@@ -132,6 +132,14 @@ def main():
     ap.add_argument("--db", default="bayiler.db")
     a = ap.parse_args()
 
+    # Saha bilgisinden beklenen aralıklar
+    import yaml
+    try:
+        cfg = yaml.safe_load(open("brands.yaml", encoding="utf-8"))["markalar"]
+    except Exception:
+        cfg = {}
+    beklenen = {m: v["beklenen"] for m, v in cfg.items() if v.get("beklenen")}
+
     with db(a.db) as con:
         q = "SELECT * FROM bayiler WHERE durum!='kaldirildi'"
         p = []
@@ -146,7 +154,7 @@ def main():
 
     print(f"\n{len(kayitlar)} kayıt · {len(gruplar)} marka\n")
     print(f"{'MARKA':<18}{'KAYIT':>6}{'AĞIR':>6}{'HAFİF':>7}  {'İL%':>5}{'İLÇE%':>7}"
-          f"{'TEL%':>6}  DURUM")
+          f"{'TEL%':>6}  {'DURUM':<14}BEKLENEN")
     print("─" * 92)
 
     toplam_agir = 0
@@ -160,11 +168,22 @@ def main():
         oran = agir / oz["adet"] if oz["adet"] else 0
         durum = ("BOZUK" if oran > 0.5 else "sorunlu" if oran > 0.1
                  else "kontrol" if agir else "temiz")
+        # Beklenen sayıyla karşılaştır: sayfa açıldı ama yarısı alındıysa
+        # kayıtlar temiz görünür, eksiklik ancak burada yakalanır.
+        bek = beklenen.get(marka)
+        if bek:
+            if oz["adet"] < bek[0] * 0.5:
+                durum = "ÇOK AZ"
+            elif oz["adet"] > bek[1] * 2:
+                durum = "ÇOK FAZLA"
+            elif not (bek[0] * 0.7 <= oz["adet"] <= bek[1] * 1.4) and durum == "temiz":
+                durum = "sayı şüpheli"
         if durum != "temiz":
             sorunlu_markalar.append((marka, so, oz, oran))
+        bek_str = f"{bek[0]}-{bek[1]}" if bek else ""
         print(f"{marka:<18}{oz['adet']:>6}{agir:>6}{hafif:>7}  "
               f"{oz['il_kapsama']*100:>4.0f}%{oz['ilce_kapsama']*100:>6.0f}%"
-              f"{oz['tel_kapsama']*100:>5.0f}%  {durum}")
+              f"{oz['tel_kapsama']*100:>5.0f}%  {durum:<14}{bek_str}")
 
     print("─" * 92)
     print(f"Toplam ağır sorunlu kayıt: {toplam_agir} / {len(kayitlar)}")
