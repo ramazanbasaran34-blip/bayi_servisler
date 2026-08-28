@@ -208,6 +208,7 @@ markalar:
 
   # 20. SYM  ·  Tayvan-Çin  ·  www.sym-tr.com
   "SYM":
+    mode: browser
     beklenen: [70, 240]   # saha: ~100 bayi, ~100 servis
     kaynaklar:
       - rol: satis
@@ -253,6 +254,7 @@ markalar:
 
   # 26. KRAL  ·  Türkiye-Çin  ·  kralmotor.tr
   "Kral":
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://kralmotor.tr/SalesDealer"
@@ -355,6 +357,7 @@ markalar:
 
   # 39. APACHI  ·  Türkiye-Çin  ·  www.isildar.com.tr
   "Apachi":
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://www.isildar.com.tr/Bayiler"
@@ -393,6 +396,7 @@ markalar:
 
   # 44. RUTEC  ·  Türkiye-Çin  ·  www.rutec.com.tr
   "Rutec":
+    mode: browser
     beklenen: [21, 45]   # saha: ~30 bayi, ~30 servis
     kaynaklar:
       - rol: satis_servis
