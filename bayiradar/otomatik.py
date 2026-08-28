@@ -228,15 +228,35 @@ def json_gomulu(html: str) -> list[dict]:
     """
     import json as _json
 
-    ADAY_ANAHTAR = ("phone", "telefon", "tel", "gsm")
-    ADRES_ANAHTAR = ("address", "adres", "adres1")
+    from .koordinat import en_yakin_il, turkiyede_mi
+
+    ADAY_ANAHTAR = ("phone", "telefon", "tel", "gsm", "phonenumber", "telephone")
+    ADRES_ANAHTAR = ("address", "adres", "adres1", "street", "addressline1")
+    LAT_ANAHTAR = ("lat", "latitude", "enlem", "y")
+    LNG_ANAHTAR = ("lng", "lon", "long", "longitude", "boylam", "x")
+
+    def _bul(d, adaylar):
+        for a in adaylar:
+            for k, v in d.items():
+                if k.lower() == a and v not in (None, ""):
+                    return v
+        return None
 
     def kayit_mi(d):
+        """Bayi kaydına benziyor mu?
+
+        İki kalıp var:
+          klasik → telefon + adres
+          harita → ad + koordinat  (Yamaha, BMW gibi harita tabanlı bulucular
+                   telefon vermeyebiliyor ama koordinat hep var)
+        """
         if not isinstance(d, dict):
             return False
         k = {x.lower() for x in d}
-        return (any(a in k for a in ADAY_ANAHTAR)
-                and any(a in k for a in ADRES_ANAHTAR))
+        if any(a in k for a in ADAY_ANAHTAR) and any(a in k for a in ADRES_ANAHTAR):
+            return True
+        adli = any(a in k for a in ("name", "title", "unvan", "dealername", "firma"))
+        return adli and any(a in k for a in LAT_ANAHTAR) and any(a in k for a in LNG_ANAHTAR)
 
     def gez(o, bulunan):
         if isinstance(o, list):
@@ -273,14 +293,35 @@ def json_gomulu(html: str) -> list[dict]:
         return ""
 
     out = []
+    yurtdisi = 0
     for d in en_buyuk:
         ad = al(d, ("name", "title", "unvan", "bayi", "dealername", "firma"))
         if not ad:
             continue
+
+        lat, lng = _bul(d, LAT_ANAHTAR), _bul(d, LNG_ANAHTAR)
+        il = al(d, ("city", "il", "sehir", "province", "town"))
+
+        # Global bulucular komşu ülke bayilerini de döndürüyor. Koordinat
+        # varsa Türkiye dışındakileri burada eliyoruz.
+        if lat is not None and lng is not None:
+            if not turkiyede_mi(lat, lng):
+                yurtdisi += 1
+                continue
+            if not il:
+                il = en_yakin_il(lat, lng)
+
+        # Ülke alanı varsa ona da bak
+        ulke = al(d, ("country", "countrycode", "ulke", "iso"))
+        if ulke and ulke.strip().lower() not in (
+                "tr", "tur", "turkey", "türkiye", "turkiye", "türkei"):
+            yurtdisi += 1
+            continue
+
         out.append({
             "bayi_adi": ad,
-            "il": al(d, ("city", "il", "sehir", "province")),
-            "ilce": al(d, ("district", "ilce", "town", "county")),
+            "il": il or "",
+            "ilce": al(d, ("district", "ilce", "county", "region")),
             "adres": al(d, ADRES_ANAHTAR),
             "telefon": al(d, ADAY_ANAHTAR),
             "email": al(d, ("email", "eposta", "mail")),
