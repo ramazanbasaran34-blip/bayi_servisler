@@ -153,8 +153,10 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
             continue
         ekle(_sayfayi_coz(body, cfg, mode), url, url_ili)
 
+    # Sayfa kaydın türünü kendisi söylediyse (Rutec gibi) ona güven;
+    # söylemediyse tarifteki rolü uygula.
     for r in kayitlar:
-        r["rol"] = cfg.get("rol", "satis")
+        r.setdefault("rol", cfg.get("rol", "satis"))
 
     kapsam = basarili_url / len(urls) if urls else 0.0
     if kayitlar or ilk_body is None:
@@ -197,7 +199,7 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
             log(f"     tarayıcı denemesi başarısız: {str(e)[:60]}")
 
     for r in kayitlar:
-        r["rol"] = cfg.get("rol", "satis")
+        r.setdefault("rol", cfg.get("rol", "satis"))
     return kayitlar, (1.0 if kayitlar else kapsam)
 
 
