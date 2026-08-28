@@ -12,6 +12,17 @@
 #    telefon, ad çekirdeği ve adres benzerliğiyle tanıyıp TEK kayda birleştirir
 #    ve rolünü "Satış + Servis" yapar. (bayiradar/eslestir.py)
 #
+#  BEKLENEN SAYI
+#    Bazı markalarda saha bilgisinden beklenen kayıt aralığı yazılı. Denetim
+#    aracı gelen sayıyı bununla karşılaştırıyor. Amaç, "kayıtlar temiz görünüyor
+#    ama listenin yarısı hiç gelmemiş" durumunu yakalamak — Mondial'de tam bu
+#    oldu: 390 tertemiz kayıt vardı, 600 servisin hiçbiri yoktu.
+#
+#    Aralık kaynak yapısına göre hesaplandı. Bayi ve servis AYNI sayfadaysa
+#    kayıtlar zaten birleşik geliyor, beklenen ~büyük olan sayı kadar. AYRI
+#    sayfadaysa aynı firma iki listede çıkabilir; sistem birleştirse de sonuç
+#    "büyük olan" ile "toplam" arasında bir yerde oluyor.
+#
 #  TARİF GEREKMİYOR
 #    CSS seçici yazılı değil; yapı sayfadan otomatik çözülüyor.
 #    Tutmazsa marka 'hatali' işaretlenir, eski verisi korunur.
@@ -27,7 +38,7 @@ markalar:
 
   #  1. HONDA  ·  Japonya  ·  www.honda.com.tr
   "Honda":
-    beklenen: [50, 55]   # saha bilgisi
+    beklenen: [36, 78]   # saha: ~52 bayi, ~52 servis
     mode: browser
     kaynaklar:
       - rol: satis_servis
@@ -35,7 +46,7 @@ markalar:
 
   #  2. YAMAHA  ·  Japonya  ·  www.yamaha-motor.eu
   "Yamaha":
-    beklenen: [40, 50]   # saha bilgisi
+    beklenen: [31, 67]   # saha: ~45 bayi, ~45 servis
     mode: browser
     kaynaklar:
       - rol: satis_servis
@@ -43,7 +54,7 @@ markalar:
 
   #  3. BAJAJ  ·  Hindistan  ·  www.ekuralkan.com
   "Bajaj":
-    beklenen: [250, 350]   # saha bilgisi
+    beklenen: [140, 396]   # saha: ~130 bayi, ~200 servis
     mode: browser
     bekleme: 1.5
     kaynaklar:
@@ -56,7 +67,7 @@ markalar:
 
   #  4. KANUNI  ·  Türkiye-Çin  ·  www.ekuralkan.com
   "Kanuni":
-    beklenen: [250, 350]   # saha bilgisi
+    beklenen: [140, 384]   # saha: ~120 bayi, ~200 servis
     mode: browser
     bekleme: 1.5
     kaynaklar:
@@ -69,7 +80,7 @@ markalar:
 
   #  5. MONDIAL  ·  Türkiye-Çin  ·  www.mondialmotor.com.tr
   "Mondial":
-    beklenen: [800, 1100]   # saha bilgisi
+    beklenen: [420, 1200]   # saha: ~400 bayi, ~600 servis
     encoding: windows-1254
     bekleme: 2.0
     kaynaklar:
@@ -84,6 +95,7 @@ markalar:
 
   #  6. CFMOTO  ·  Çin  ·  www.cfmoto.com.tr
   "CFMoto":
+    beklenen: [350, 1200]   # saha: ~500 bayi, ~500 servis
     kaynaklar:
       - rol: satis
         url: "https://www.cfmoto.com.tr/satis-noktalari"
@@ -92,7 +104,7 @@ markalar:
 
   #  7. KUBA  ·  Türkiye-Çin  ·  www.kubamotor.com.tr
   "Kuba":
-    beklenen: [800, 1100]   # saha bilgisi
+    beklenen: [420, 900]   # saha: ~400 bayi, ~600 servis
     mode: browser
     kaynaklar:
       - rol: satis_servis
@@ -107,6 +119,7 @@ markalar:
 
   #  9. ARORA  ·  Türkiye-Çin  ·  arora.com.tr
   "Arora":
+    beklenen: [350, 750]   # saha: ~400 bayi, ~500 servis
     mode: browser
     kaynaklar:
       - rol: satis_servis
@@ -145,6 +158,7 @@ markalar:
 
   # 14. KYMCO  ·  Tayvan  ·  www.kymco.com.tr
   "Kymco":
+    beklenen: [49, 105]   # saha: ~50 bayi, ~70 servis
     kaynaklar:
       - rol: satis_servis
         url: "https://www.kymco.com.tr/tr/satis-servis-agi.html"
@@ -182,6 +196,7 @@ markalar:
 
   # 19. VOLTA  ·  Türkiye-Çin  ·  volta.com.tr
   "Volta":
+    beklenen: [140, 360]   # saha: ~100 bayi, ~200 servis
     kaynaklar:
       - rol: satis
         url: "https://volta.com.tr/pages/bayiler"
@@ -190,6 +205,7 @@ markalar:
 
   # 20. SYM  ·  Tayvan-Çin  ·  www.sym-tr.com
   "SYM":
+    beklenen: [70, 240]   # saha: ~100 bayi, ~100 servis
     kaynaklar:
       - rol: satis
         url: "https://www.sym-tr.com/bayiler/"
@@ -224,7 +240,7 @@ markalar:
 
   # 25. MOTOLUX  ·  Türkiye-Çin  ·  motolux.com.tr
   "Motolux":
-    beklenen: [500, 700]   # saha bilgisi
+    beklenen: [210, 450]   # saha: ~300 bayi, ~300 servis
     bekleme: 2.0
     kaynaklar:
       - rol: satis_servis
@@ -374,7 +390,7 @@ markalar:
 
   # 44. RUTEC  ·  Türkiye-Çin  ·  www.rutec.com.tr
   "Rutec":
-    beklenen: [25, 60]   # saha bilgisi
+    beklenen: [21, 45]   # saha: ~30 bayi, ~30 servis
     kaynaklar:
       - rol: satis_servis
         url: "https://www.rutec.com.tr/satis-noktalari.html"
@@ -387,6 +403,7 @@ markalar:
 
   # 46. MUSATTI  ·  Türkiye-Çin  ·  musattimotor.com
   "Musatti":
+    beklenen: [210, 720]   # saha: ~300 bayi, ~300 servis
     kaynaklar:
       - rol: satis
         url: "https://musattimotor.com/bayi-bul"
@@ -416,6 +433,7 @@ markalar:
 
   # 50. SFM  ·  Türkiye-Çin  ·  www.sfmmotor.com.tr
   "SFM":
+    beklenen: [210, 450]   # saha: ~300 bayi, ~300 servis
     kaynaklar:
       - rol: satis_servis
         url: "https://www.sfmmotor.com.tr/bayi-servis/"
