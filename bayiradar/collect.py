@@ -15,6 +15,7 @@
 
 import random
 import time
+import time
 from datetime import datetime, timedelta, timezone
 
 import yaml
@@ -175,7 +176,11 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
         if il_urls:
             log(f"     il seçici bulundu: {len(il_urls)} il geziliyor")
             basarili = 0
+            il_bas = time.monotonic()
             for il_url, il_adi in il_urls:
+                if time.monotonic() - il_bas > MARKA_AZAMI_SANIYE * 0.6:
+                    log(f"     süre doldu, {basarili}/{len(il_urls)} il tarandı")
+                    break
                 try:
                     ekle(_sayfayi_coz(cek(il_url), cfg, mode), il_url, il_adi,
                          zorla_il=True)
@@ -191,7 +196,11 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
         if iller:
             log(f"     il dizini bulundu: {len(iller)} il geziliyor")
             basarili = 0
+            dz_bas = time.monotonic()
             for il_adi, il_url in iller.items():
+                if time.monotonic() - dz_bas > MARKA_AZAMI_SANIYE * 0.6:
+                    log(f"     süre doldu, {basarili}/{len(iller)} il tarandı")
+                    break
                 try:
                     ekle(_sayfayi_coz(cek(il_url), cfg, mode), il_url, il_adi,
                          zorla_il=True)
@@ -253,12 +262,24 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
     return kayitlar, (1.0 if kayitlar else kapsam)
 
 
+# Bir marka en fazla bu kadar sürebilir. Aşarsa o ana kadar toplananla
+# yetinip sonrakine geçilir.
+#
+# Neden: cevap vermeyen tek bir site bütün grubu kilitliyordu. 17. taramada
+# bir grup 168 dakika takıldı, diğer dokuz grup 23-79 dakikada bitmişti.
+MARKA_AZAMI_SANIYE = 1800        # 30 dakika
+
+
 def tara_marka(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=None):
     """Markanın tüm kaynaklarını (satış + servis) tarar ve birleştirir."""
     log = log or (lambda m: None)
     kaynaklar = kaynaklari_coz(cfg)
     hepsi, kapsamlar = [], []
+    baslangic = time.monotonic()
     for k in kaynaklar:
+        if time.monotonic() - baslangic > MARKA_AZAMI_SANIYE:
+            log(f"     süre sınırı aşıldı, kalan kaynaklar atlandı")
+            break
         if len(kaynaklar) > 1:
             log(f"     [{k.get('rol','satis')}] {k['url'][:60]}")
         try:
