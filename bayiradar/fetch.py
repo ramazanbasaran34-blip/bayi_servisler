@@ -83,7 +83,7 @@ class Fetcher:
         raise RuntimeError(f"{url} çekilemedi: {last}")
 
     # -------------------------------------------------------------- browser
-    def render(self, url, wait_selector=None, wait_ms=6000, max_age=3600):
+    def render(self, url, wait_selector=None, wait_ms=3000, max_age=3600):
         """JS ile dolan sayfalar için. Playwright kurulu değilse anlaşılır hata verir."""
         key = f"RENDER:{url}"
         hit = self._cached(key, max_age)
@@ -122,15 +122,15 @@ class Fetcher:
             # Arka plan istekleri bitene kadar bekle — liste çoğu sitede
             # sayfa açıldıktan sonra AJAX ile geliyor.
             try:
-                page.wait_for_load_state("networkidle", timeout=20000)
+                page.wait_for_load_state("networkidle", timeout=12000)
             except Exception:                                     # noqa: BLE001
                 pass
             # Tembel yüklenen listeler için sayfayı sonuna kadar kaydır
             try:
                 onceki = 0
-                for _ in range(8):
-                    page.mouse.wheel(0, 4000)
-                    page.wait_for_timeout(700)
+                for _ in range(6):
+                    page.mouse.wheel(0, 5000)
+                    page.wait_for_timeout(400)
                     yukseklik = page.evaluate("document.body.scrollHeight")
                     if yukseklik == onceki:
                         break
@@ -212,10 +212,10 @@ class Fetcher:
                                 pass
                             break
                     try:
-                        page.wait_for_load_state("networkidle", timeout=12000)
+                        page.wait_for_load_state("networkidle", timeout=5000)
                     except Exception:                             # noqa: BLE001
                         pass
-                    page.wait_for_timeout(900)
+                    page.wait_for_timeout(350)
                     cikti.append((il, page.content()))
                 except Exception as e:                            # noqa: BLE001
                     log(f"     {il}: {str(e)[:50]}")
