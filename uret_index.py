@@ -247,8 +247,26 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   background:#F0F4FA;border-bottom:1px solid var(--hat2)}
 .baslikcubuk .sagb{margin-left:auto}
 
-.kutular{display:grid;gap:11px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+.kutular{display:grid;gap:11px;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
   margin-bottom:16px}
+/* çubuk grafik */
+.cubuk{position:relative;display:block;height:5px;border-radius:3px;background:var(--hat);
+  margin-top:5px;overflow:hidden}
+.cubuk i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;display:block}
+.cubuk i.s{background:var(--satis)} .cubuk i.v{background:var(--servis)}
+.sat .govde{flex:1;min-width:0}
+.sat .ustsatir{display:flex;align-items:center;gap:9px}
+/* hızlı arama */
+.hizli{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.hizli input{flex:1;min-width:220px;border:1px solid var(--hat2);background:#fff;
+  border-radius:7px;padding:9px 12px;outline:none;font-size:13.5px}
+.hizli input:focus{border-color:var(--vurgu);box-shadow:0 0 0 3px rgba(24,100,171,.15)}
+.oneri{background:#fff;border:1px solid var(--hat2);border-radius:8px;margin-top:-8px;
+  margin-bottom:14px;max-height:280px;overflow:auto;box-shadow:var(--golge)}
+.oneri:empty{display:none}
+.kapsam{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--celik);
+  font-family:var(--m);margin-bottom:14px}
+.kapsam b{color:var(--murekkep);font-weight:500}
 .kutu{background:var(--kart);border:1px solid var(--hat2);border-radius:9px;
   padding:13px 15px;box-shadow:var(--golge)}
 .kutu .n{font-family:var(--m);font-size:26px;font-weight:500;line-height:1;display:block}
@@ -321,9 +339,15 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 <div class="sar" id="sar">
 
   <section id="vOzet" style="display:none">
-    <h2>Genel Özet</h2>
+    <h2>Genel Durum</h2>
     <p class="notm">Satırlara tıklayarak ayrıntıya inebilirsiniz.</p>
+    <div class="hizli">
+      <input id="hizliAra" type="search"
+             placeholder="İl, ilçe, marka veya bayi adı ara — doğrudan git">
+    </div>
+    <div class="oneri" id="oneriKutu"></div>
     <div class="kutular" id="kutular"></div>
+    <div class="kapsam" id="kapsam"></div>
     <div class="altbar">
       <button class="btn ana" id="btnOzetTumXls">Tümünü Excel indir</button>
       <button class="btn" id="btnOzetYaz2">Yazdır / PDF</button>
@@ -480,13 +504,66 @@ function rolBagla(hedef, ciz){
 const rolGecer = b => ROL==="tum" || ROL_SINIF[b[B_ROL]]===ROL;
 
 /* ---------- ekranlar ---------- */
-function ekran(v){
+/* Ekranı gösterir. gecmis=true ise adres etiketine yazar; böylece tarayıcının
+   geri tuşu sayfadan çıkmak yerine bir önceki ekrana döner. */
+function ekran(v, gecmis=true){
   ["vOzet","vIl","vMarkalar","vTumMarka","vMarkaDetay"].forEach(x=>$("#"+x).style.display="none");
   $("#"+v).style.display="block";
+  $("#sar").classList.toggle("genis", v==="vTumMarka"||v==="vMarkaDetay"||v==="vOzet");
+  $("#sekOzet").classList.toggle("aktif", v==="vOzet");
   $("#sekIl").classList.toggle("aktif", v==="vIl"||v==="vMarkalar");
   $("#sekMarka").classList.toggle("aktif", v==="vTumMarka"||v==="vMarkaDetay");
   window.scrollTo(0,0);
+  if(gecmis) durumYaz(v);
 }
+
+/* ---------- tarayıcı geçmişi ----------
+   Adres etiketi (#) kullanıyoruz: pushState dosya olarak açılan sayfalarda
+   geçmiş kaydı oluşturmuyor, hash her ortamda çalışıyor. Ayrıca kullanıcı
+   bulunduğu ekranın bağlantısını paylaşabiliyor. */
+let _kendiYazdi = false;
+
+function durumYaz(v){
+  const p = new URLSearchParams();
+  p.set("e", v);
+  if(IL) p.set("il", IL.ad);
+  if(ILCE) p.set("ilce", ILCE);
+  if(MD && v === "vMarkaDetay") p.set("marka", MD.ad);
+  if(ROL && ROL !== "tum") p.set("rol", ROL);
+  const h = "#" + p.toString();
+  if(location.hash === h) return;
+  _kendiYazdi = true;
+  location.hash = h;
+  setTimeout(() => { _kendiYazdi = false; }, 0);
+}
+
+function hashUygula(){
+  const p = new URLSearchParams(location.hash.slice(1));
+  const v = p.get("e") || "vOzet";
+  ROL = p.get("rol") || "tum";
+  const marka = p.get("marka"), il = p.get("il"), ilce = p.get("ilce") || "";
+
+  if(v === "vMarkaDetay" && marka){
+    MD = OZET.find(m => m.ad === marka);
+    if(MD){ cizMD(); ekran("vMarkaDetay", false); return; }
+  }
+  if(v === "vMarkalar" && il){
+    const bulunan = D.iller.find(x => x.ad === il);
+    if(bulunan){
+      IL = bulunan; ILCE = ilce;
+      $("#kod").textContent = IL.plaka; $("#ilAdi").textContent = IL.ad;
+      cizIlce();
+      if(ILCE) [...$("#ilceCipler").children].forEach(
+        c => c.classList.toggle("secili", c.dataset.i === ILCE));
+      cizMarka(); ekran("vMarkalar", false); return;
+    }
+  }
+  if(v === "vTumMarka"){ cizTum(); ekran("vTumMarka", false); return; }
+  if(v === "vIl"){ cizIl(); ekran("vIl", false); return; }
+  cizOzet(); ekran("vOzet", false);
+}
+
+window.addEventListener("hashchange", () => { if(!_kendiYazdi) hashUygula(); });
 $("#sekOzet").onclick  = () => { cizOzet(); ekran("vOzet"); };
 $("#sekIl").onclick    = () => ekran(IL?"vMarkalar":"vIl");
 $("#sekMarka").onclick = () => { cizTum(); ekran("vTumMarka"); };
@@ -517,36 +594,50 @@ function cizOzet(){
     <div class="kutu"><span class="n">${iller.size}</span><span class="e">İl</span></div>
     <div class="kutu"><span class="n">${ilceler.size}</span><span class="e">İlçe</span></div>`;
 
-  // İllere göre
+  // Kapsama bilgisi
+  const telli=D.bayiler.filter(b=>b[B_TEL]).length;
+  const ilceli=D.bayiler.filter(b=>b[B_ILCE]).length;
+  const eski=D.bayiler.filter(b=>b[B_DURUM]!=="Güncel").length;
+  $("#kapsam").innerHTML=
+    `<span>Telefonu olan: <b>%${Math.round(telli/t.toplam*100)}</b></span>
+     <span>İlçesi belirli: <b>%${Math.round(ilceli/t.toplam*100)}</b></span>
+     <span>Kapsanan il: <b>${iller.size}/81</b></span>
+     ${eski?`<span style="color:var(--uyari)">Doğrulanamayan: <b>${eski}</b></span>`:""}`;
+
+  // Satır çizici — yanında oransal çubuk
+  const enCok = v => Math.max(1, ...v.map(x=>x[1].length));
+  function satirlar(veri, tip){
+    const m=enCok(veri);
+    return veri.map(([ad,v])=>{
+      const c=sayRol(v);
+      const p=(D.iller.find(x=>x.ad===ad)||{}).plaka;
+      return `<button class="sat" data-${tip}="${esc(ad)}">
+        ${p?`<span class="plaka"><span class="tr">TR</span><span class="kod">${p}</span></span>`:""}
+        <span class="govde">
+          <span class="ustsatir"><span class="ad">${esc(ad)}</span></span>
+          <span class="cubuk">
+            <i class="s" style="width:${c.satis/m*100}%"></i>
+            <i class="v" style="left:${c.satis/m*100}%;width:${c.servis/m*100}%"></i>
+          </span>
+        </span>
+        <span class="sag">
+          <span class="sayi" style="min-width:46px;color:var(--satis)">${c.satis}</span>
+          <span class="sayi" style="min-width:46px;color:var(--servis)">${c.servis}</span>
+          <span class="sayi" style="min-width:46px;font-weight:700">${c.toplam}</span>
+          <span class="ok">›</span></span></button>`;}).join("");
+  }
+
   const ilG={};
   D.bayiler.forEach(b=>{ if(b[B_IL]) (ilG[b[B_IL]]||=[]).push(b); });
   const ilS=Object.entries(ilG).sort((a,b)=>b[1].length-a[1].length);
   $("#ilAdet").textContent=`${ilS.length} il`;
-  $("#ozetIl").innerHTML=ilS.map(([il,v])=>{
-    const c=sayRol(v), p=(D.iller.find(x=>x.ad===il)||{}).plaka||"";
-    return `<button class="sat" data-il="${esc(il)}">
-      <span class="plaka"><span class="tr">TR</span><span class="kod">${p}</span></span>
-      <span class="ad">${esc(il)}</span>
-      <span class="sag">
-        <span class="sayi" style="min-width:52px;color:var(--satis)">${c.satis}</span>
-        <span class="sayi" style="min-width:52px;color:var(--servis)">${c.servis}</span>
-        <span class="sayi" style="min-width:52px;font-weight:700">${c.toplam}</span>
-        <span class="ok">›</span></span></button>`;}).join("");
+  $("#ozetIl").innerHTML=satirlar(ilS,"il");
 
-  // Markalara göre
   const mG={};
   D.bayiler.forEach(b=>(mG[b[B_MARKA]]||=[]).push(b));
   const mS=Object.entries(mG).sort((a,b)=>b[1].length-a[1].length);
   $("#mrkAdet").textContent=`${mS.length} marka`;
-  $("#ozetMarka").innerHTML=mS.map(([m,v])=>{
-    const c=sayRol(v);
-    return `<button class="sat" data-mrk="${esc(m)}">
-      <span class="ad">${esc(m)}</span>
-      <span class="sag">
-        <span class="sayi" style="min-width:52px;color:var(--satis)">${c.satis}</span>
-        <span class="sayi" style="min-width:52px;color:var(--servis)">${c.servis}</span>
-        <span class="sayi" style="min-width:52px;font-weight:700">${c.toplam}</span>
-        <span class="ok">›</span></span></button>`;}).join("");
+  $("#ozetMarka").innerHTML=satirlar(mS,"mrk");
 
   // İlçe dağılımı — ilk 60, en yoğundan
   const iG={};
@@ -580,6 +671,45 @@ function ozetTiklama(e){
   }
 }
 ["#ozetIl","#ozetMarka","#ozetIlce"].forEach(x=>$(x).onclick=ozetTiklama);
+
+/* ---------- hızlı arama: her şeyde ara, doğrudan git ---------- */
+let zh;
+$("#hizliAra").oninput = () => { clearTimeout(zh); zh=setTimeout(hizliCiz,140); };
+function hizliCiz(){
+  const q=kat($("#hizliAra").value);
+  if(q.length<2){ $("#oneriKutu").innerHTML=""; return; }
+  const out=[];
+  D.iller.filter(i=>kat(i.ad).includes(q)).slice(0,4).forEach(i=>{
+    const n=D.bayiler.filter(b=>b[B_IL]===i.ad).length;
+    out.push(`<button class="sat" data-il="${esc(i.ad)}">
+      <span class="plaka"><span class="tr">TR</span><span class="kod">${i.plaka}</span></span>
+      <span class="ad">${esc(i.ad)}</span>
+      <span class="sag"><span class="men">İL</span>
+      <span class="sayi">${n}</span><span class="ok">›</span></span></button>`);});
+  OZET.filter(m=>kat(m.ad).includes(q)&&m.toplam).slice(0,4).forEach(m=>
+    out.push(`<button class="sat" data-mrk="${esc(m.ad)}">
+      <span class="ad">${esc(m.ad)}</span>
+      <span class="sag"><span class="men">MARKA</span>
+      <span class="sayi">${m.toplam}</span><span class="ok">›</span></span></button>`));
+  const ilceler=[...new Set(D.bayiler.filter(b=>b[B_ILCE]&&kat(b[B_ILCE]).includes(q))
+    .map(b=>b[B_IL]+"|"+b[B_ILCE]))].slice(0,4);
+  ilceler.forEach(k=>{
+    const [il,ilce]=k.split("|");
+    const n=D.bayiler.filter(b=>b[B_IL]===il&&b[B_ILCE]===ilce).length;
+    out.push(`<button class="sat" data-il="${esc(il)}" data-ilce="${esc(ilce)}">
+      <span class="ad">${esc(ilce)}</span><span class="men">${esc(il)}</span>
+      <span class="sag"><span class="men">İLÇE</span>
+      <span class="sayi">${n}</span><span class="ok">›</span></span></button>`);});
+  const bayiler=D.bayiler.filter(b=>kat(b[B_AD]).includes(q)).slice(0,5);
+  bayiler.forEach(b=>out.push(`<button class="sat" data-il="${esc(b[B_IL])}"
+      data-ilce="${esc(b[B_ILCE])}">
+      <span class="ad">${esc(b[B_AD])}</span>
+      <span class="men">${esc(b[B_MARKA])} · ${esc(b[B_ILCE]||b[B_IL])}</span>
+      <span class="sag"><span class="ok">›</span></span></button>`));
+  $("#oneriKutu").innerHTML = out.join("") ||
+    `<div class="bos">Sonuç yok.</div>`;
+}
+$("#oneriKutu").onclick = e => { ozetTiklama(e); $("#hizliAra").value=""; $("#oneriKutu").innerHTML=""; };
 $("#btnOzetTumXls").onclick = e => excelIndir({tip:"tum"},e.target);
 $("#btnOzetYaz2").onclick = () => window.print();
 
@@ -895,7 +1025,9 @@ $("#btnCsv").onclick=()=>{
         dosyaAdi(kat(IL.ad).replace(/ /g,""),"csv"));
 };
 
-cizIl();
+cizOzet();
+ekran('vOzet', false);
+try{ history.replaceState({ekran:'vOzet'},''); }catch(e){}
 </script>
 </body>
 </html>
