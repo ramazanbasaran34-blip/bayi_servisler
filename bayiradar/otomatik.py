@@ -141,10 +141,16 @@ def kaplari_bul(soup, en_az=3):
         telli = sum(1 for m in metinler if TEL.search(m))
         if telli < max(2, len(elemanlar) * 0.4):
             continue
-        adaylar.append((sum(_puan(m) for m in metinler) / len(elemanlar),
-                        len(elemanlar), elemanlar))
+        # Sıralama ölçütü: kaç elemanda telefon var.
+        #
+        # Ortalama puan kullanmak yanıltıyordu: ızgara düzenli sayfalarda boş
+        # hücreler ortalamayı düşürüp doğru grubu (FCM'de 285 kartlık) alt
+        # sıralara itiyordu. "Telefon taşıyan eleman sayısı" bayi listesini
+        # doğrudan işaret ediyor.
+        ort = sum(_puan(m) for m in metinler) / len(elemanlar)
+        adaylar.append((telli, ort, len(elemanlar), elemanlar))
     adaylar.sort(key=lambda a: (-a[0], -a[1]))
-    return adaylar
+    return [(a[1], a[2], a[3]) for a in adaylar]
 
 
 def _yapraklar(kap):
@@ -283,9 +289,12 @@ def _kaydi_cikar(kap):
             continue
         temiz = re.sub(r"\s+", " ", m).strip()
         # Tür etiketi mi? Öyleyse rol olarak al, ad/ilçe adayı sayma.
+        # Tür etiketi hiçbir zaman ad/ilçe adayı olamaz. Rol zaten
+        # atanmışsa da atlanmalı — Rutec ve Bajaj'da etiket iki kez geçtiği
+        # için ikincisi firma adı olarak kaydediliyordu.
         rol = tur_coz(temiz)
-        if rol and not rec.get("rol"):
-            rec["rol"] = rol
+        if rol:
+            rec.setdefault("rol", rol)
             continue
         # İl adı mı? Firma adı olamaz — il alanına yazılır.
         # (Kove'de "BALIKESİR" firma adı sanılıyordu, gerçek ad ilçeye düşüyordu.)
@@ -383,22 +392,25 @@ def cikar(html: str) -> list[dict]:
     for g in soup(list(GURULTU)):
         g.decompose()
 
-    en_iyi, en_iyi_puan = [], 0.0
-    for _, _, elemanlar in kaplari_bul(soup)[:5]:
+    # Tüm adayları dene, EN ÇOK sağlam kayıt vereni seç.
+    #
+    # Önceden ilk yeterli adayda duruluyordu ve "elemanların yarısından kayıt
+    # çıkmalı" kuralı vardı. Izgara düzenli sitelerde (FCM) hücrelerin bir
+    # kısmı boş olduğu için 285 kartlık doğru grup eleniyor, 16 kartlık küçük
+    # grup seçiliyordu. Oran yerine mutlak sayı ve kalite bakıyoruz.
+    en_iyi, en_iyi_skor = [], 0.0
+    for _, _, elemanlar in kaplari_bul(soup)[:12]:
         kayitlar = [r for r in (_kaydi_cikar(e) for e in elemanlar) if r]
-        if len(kayitlar) < max(2, len(elemanlar) * 0.5):
+        if len(kayitlar) < 2:
             continue
         puan = _kalite(kayitlar)
-        # Yeterince temizse doğrudan kabul et
-        if puan >= 0.75:
-            return kayitlar
-        # Değilse en iyisini akılda tut, sonraki adaya bak
-        if puan > en_iyi_puan:
-            en_iyi, en_iyi_puan = kayitlar, puan
-    # Hiçbiri temiz değilse en iyisini ver — ama çok kötüyse hiç verme.
-    # Honda'da ayrıştırıcı CSS sınıf adlarını firma sanmıştı; böyle bir kap
-    # artık reddediliyor ve marka 'hatali' işaretlenip eski verisi korunuyor.
-    return en_iyi if en_iyi_puan >= 0.45 else []
+        if puan < 0.45:
+            continue
+        # Kalite eşiği geçildiyse kayıt sayısı belirleyici olsun
+        skor = len(kayitlar) * (1 + puan)
+        if skor > en_iyi_skor:
+            en_iyi, en_iyi_skor = kayitlar, skor
+    return en_iyi
 
 
 def _kalite(kayitlar) -> float:
