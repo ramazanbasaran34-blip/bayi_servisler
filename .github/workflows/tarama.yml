@@ -1,18 +1,22 @@
 name: Bayileri tara ve siteyi yayınla
 
-# NE ZAMAN ÇALIŞIR
+# Markalar gruplara bölünüp AYNI ANDA taranır. Tek sırada tarama 6 saatlik
+# sınıra dayanıyordu; 10 grup paralel çalışınca her grup ~1 saatte bitiyor.
+
 on:
   schedule:
-    # Her gece Türkiye saatiyle 03:00 (UTC 00:00)
     - cron: "0 0 * * *"
-  workflow_dispatch:      # "Run workflow" butonuyla elle de başlatılabilir
+  workflow_dispatch:
     inputs:
       markalar:
         description: "Sadece belirli markalar (boş = periyodu dolanlar)"
         required: false
         default: ""
+      hepsi:
+        description: "Periyodu beklemeden hepsini tara (evet yaz)"
+        required: false
+        default: ""
 
-# Sayfayı yayınlamak ve veritabanını geri yazmak için gerekli izinler
 permissions:
   contents: write
   pages: write
@@ -20,105 +24,119 @@ permissions:
 
 concurrency:
   group: bayi-tarama
-  cancel-in-progress: false     # yarım kalan taramayı iptal etme
+  cancel-in-progress: false
 
 jobs:
-  tara:
+  hazirlik:
     runs-on: ubuntu-latest
-    timeout-minutes: 355        # GitHub'ın iş başına üst sınırı 6 saat
-    # Not: il seçici keşfi devreye girdikten sonra birçok marka 81 sayfa
-    # geziyor (satış + servis için ayrı ayrı). Süre bu yüzden uzadı.
-
+    outputs:
+      gruplar: ${{ steps.bol.outputs.gruplar }}
     steps:
-      - name: Depoyu indir
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install PyYAML
+      - id: bol
+        run: echo "gruplar=$(python gruplar.py 10)" >> $GITHUB_OUTPUT
 
-      - name: Python kur
-        uses: actions/setup-python@v5
+  tara:
+    needs: hazirlik
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        grup: ${{ fromJson(needs.hazirlik.outputs.gruplar) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
-
       - name: Paketleri kur
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
-      - name: Tarayıcı kur (browser modundaki markalar için)
-        run: |
-          pip install playwright
           playwright install --with-deps chromium
-        continue-on-error: true   # kurulamazsa html/json markaları yine çalışsın
-
-      - name: Markaları tara
+      - name: Grubu tara
         run: |
+          mkdir -p parcalar
+          AD=$(echo "${{ matrix.grup }}" | md5sum | cut -c1-8)
           if [ -n "${{ github.event.inputs.markalar }}" ]; then
-            python cli.py tara --marka ${{ github.event.inputs.markalar }}
+            python cli.py --db "parcalar/$AD.db" tara --marka ${{ github.event.inputs.markalar }}
+          elif [ -n "${{ github.event.inputs.hepsi }}" ]; then
+            python cli.py --db "parcalar/$AD.db" tara --marka ${{ matrix.grup }}
           else
-            python cli.py tara --zamanlanmis
+            python cli.py --db "parcalar/$AD.db" tara --zamanlanmis --marka ${{ matrix.grup }}
           fi
-        continue-on-error: true   # bir marka patlarsa iş akışı durmasın
+        continue-on-error: true
+      - name: Parçayı sakla
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parca-${{ strategy.job-index }}
+          path: parcalar/
+          retention-days: 3
 
+  birlestir:
+    needs: tara
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Parçaları indir
+        uses: actions/download-artifact@v4
+        with:
+          pattern: parca-*
+          path: indirilen
+          merge-multiple: true
+      - name: Birleştir
+        run: |
+          mkdir -p parcalar
+          find indirilen -name "*.db" -exec cp {} parcalar/ \; || true
+          ls -la parcalar/ || true
+          python birlestir.py parcalar bayiler.db
       - name: Durum özeti
-        run: python cli.py durum
-
+        run: python cli.py durum || true
+      - name: Denetim
+        run: python denetle.py || true
       - name: Siteyi üret
         run: |
           mkdir -p site
           python uret_index.py site/index.html
-          python cli.py rapor || true
-          cp -f ciktilar/BAYI-LISTESI.xlsx site/ 2>/dev/null || true
-
-      - name: Veritabanını depoya geri yaz
-        # Toplanan veri kaybolmasın: her tarama sonrası commit edilir.
-        #
-        # ÖNEMLİ: tarama saatler sürüyor ve bu sürede depoya kod yüklenmiş
-        # olabilir. O durumda düz "git push" reddedilir ve tüm taramanın
-        # sonucu sessizce kaybolur (bir kez başımıza geldi). Bu yüzden önce
-        # uzaktaki değişiklikleri alıp üzerine biniyoruz, sonra deniyoruz.
+      - name: Veritabanını depoya yaz
         run: |
           git config user.name  "bayi-radar-bot"
           git config user.email "bot@users.noreply.github.com"
           git add -f bayiler.db
-          git diff --staged --quiet && { echo "Veride değişiklik yok."; exit 0; }
+          git diff --staged --quiet && { echo "Değişiklik yok"; exit 0; }
           git commit -m "Veri güncellendi: $(date -u +'%Y-%m-%d %H:%M UTC')"
-          for deneme in 1 2 3 4 5; do
+          for i in 1 2 3 4 5; do
             git fetch origin "${GITHUB_REF_NAME}"
-            # Veritabanı ikili dosya: çakışmada bizimki (yeni tarama) kazanır
-            git rebase -X ours "origin/${GITHUB_REF_NAME}" || {
-              git checkout --ours bayiler.db && git add bayiler.db && git rebase --continue
-            }
-            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
-              echo "Veri kaydedildi (deneme $deneme)."
-              exit 0
-            fi
-            echo "Push reddedildi, tekrar deneniyor..."
+            git rebase -X ours "origin/${GITHUB_REF_NAME}" || git rebase --skip
+            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
             sleep 5
           done
-          echo "::error::Veritabanı kaydedilemedi — tarama sonucu kayıp!"
+          echo "::error::Veri kaydedilemedi"
           exit 1
-
-      - name: Sayfayı hazırla
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
-
-      - name: Veritabanını yedek olarak sakla
-        # Kaydetme yine de başarısız olursa veri buradan kurtarılabilir
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: bayiler-db
-          path: bayiler.db
-          retention-days: 14
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: site }
 
   yayinla:
-    needs: tara
+    needs: birlestir
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.yayin.outputs.page_url }}
     steps:
-      - name: GitHub Pages'e yayınla
-        id: yayin
+      - id: yayin
         uses: actions/deploy-pages@v4
