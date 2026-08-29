@@ -93,12 +93,12 @@ kontrol("etiketli alanlar doğru okunmalı",
       for ad, tur, i, t, adr in [
         ("ALAÇATI BİSİKLET", "Bayi + Servis", "ÇEŞME", "0232 716 89 70", "İSMETİNÖNÜ MAH. 2001 SK. NO: 160/A"),
         ("AK-PA TEMEL GIDA", "Bayi + Servis", "İNCİRLİOVA", "0532 273 54 84", "CUMHURİYET MAH. GÜRSEL CAD. NO: 3"),
-        ("ACAR MOTORS", "Bayi", "BAĞLARBAŞI", "0507 377 53 03", "ATATÜRK MAH. NUH KUYUSU CAD. NO:30"),
+        ("ACAR MOTORS", "Bayi", "ÜSKÜDAR", "0507 377 53 03", "ATATÜRK MAH. NUH KUYUSU CAD. NO:30"),
         ("EGE MOTO", "Servis", "KONAK", "0232 441 22 33", "AKDENİZ MAH. CUMHURİYET BLV. NO:8"),
       ]) + "</div>",
     [{"bayi_adi": "ALAÇATI", "ilce": "ÇEŞME", "rol": "satis_servis"},
      {"bayi_adi": "AK-PA", "ilce": "İNCİRLİOVA"},
-     {"bayi_adi": "ACAR MOTORS", "ilce": "BAĞLARBAŞI", "rol": "satis"},
+     {"bayi_adi": "ACAR MOTORS", "ilce": "Üsküdar", "rol": "satis"},
      {"bayi_adi": "EGE MOTO", "ilce": "KONAK", "rol": "servis"}])
 
 # ---------------------------------------------------------------- 4
@@ -144,12 +144,12 @@ kontrol("birleşik il/ilçe ayrılmalı",
       for konum, ad, adr, t in [
         ("İZMİR-TORBALI", "ALİ BULUT MOTOR", "Ertuğrul Mah. İzmir Cad. No:11", "0 232 856 41 22"),
         ("MUĞLA / BODRUM", "TURCAN EĞLENCE TİC. LTD.", "Yokuşbaşı Mah. Kıbrıs Şehitleri Cad. No:2", "0 252 313 06 62"),
-        ("ANKARA / OSTİM", "DURAN MOTOR TİCARET", "Ostim Mah. 1201. Cad. No:19", "0 543 144 47 45"),
+        ("ANKARA / YENİMAHALLE", "DURAN MOTOR TİCARET", "Ostim Mah. 1201. Cad. No:19", "0 543 144 47 45"),
         ("İSTANBUL-ATAŞEHİR", "MOTOTAL LTD. ŞTİ.", "Küçükbakkalköy Mah. Tevfik Fikret Cad. No:24", "0 216 347 61 71"),
       ]) + "</div>",
     [{"bayi_adi": "ALİ BULUT", "il": "İzmir", "ilce": "TORBALI"},
      {"bayi_adi": "TURCAN", "il": "Muğla", "ilce": "BODRUM"},
-     {"bayi_adi": "DURAN MOTOR", "il": "Ankara", "ilce": "OSTİM"},
+     {"bayi_adi": "DURAN MOTOR", "il": "Ankara", "ilce": "Yenimahalle"},
      {"bayi_adi": "MOTOTAL", "il": "İstanbul", "ilce": "ATAŞEHİR"}])
 
 # ---------------------------------------------------------------- 7
@@ -210,6 +210,23 @@ for metin, bek in [("Satış Noktası", "satis"), ("Yetkili Servis", "servis"),
         BASARISIZ.append((f"tür: {metin}", [f"'{bek}' beklendi, '{g}' geldi"], []))
         print(f"  ✗ tür '{metin}': '{bek}' beklendi, '{g}' geldi")
 print(f"  ✓ tür etiketi tanıma ({sum(1 for b in BASARILI if b.startswith('tür:'))}/10)")
+
+# ---------------------------------------------------------------- 10
+print("\n10. İlçe doğrulama — mahalle/çöp ilçe alanına yazılmamalı")
+kontrol("gerçek olmayan ilçe reddedilmeli",
+    "<div class='l'>" + "".join(
+      f'<div class="k"><h4>{sahte}</h4><span>{ad}</span>'
+      f'<span>{adr}</span><a href="tel:{t}">{t}</a></div>'
+      for sahte, ad, adr, t in [
+        ("Haritada Gör", "Tezak Motors Ticaret", "Oba Mah. Çevre Yolu Cad. No:81 Alanya", "02425110022"),
+        ("Sizi Arayalım", "Gns Motors Sanayi", "Kızıltoprak Mah. Perge Blv. No:7 Muratpaşa", "02422410099"),
+        ("Halil Bike", "Halil Bike Motosiklet", "Bahçelievler Mah. Atatürk Cad. No:3 Kepez", "02423440077"),
+        ("Exclusive", "Motoser Otomotiv Ltd", "Güzeloba Mah. Rauf Denktaş Cad. No:12 Muratpaşa", "02423120055"),
+      ]) + "</div>",
+    [{"bayi_adi": "Tezak", "ilce": "Alanya"},
+     {"bayi_adi": "Gns Motors", "ilce": "Muratpaşa"},
+     {"bayi_adi": "Halil Bike", "ilce": "Kepez"},
+     {"bayi_adi": "Motoser", "ilce": "Muratpaşa"}])
 
 # ---------------------------------------------------------------- özet
 print("\n" + "=" * 60)
