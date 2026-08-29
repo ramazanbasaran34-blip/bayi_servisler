@@ -201,7 +201,23 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
             if kayitlar:
                 return kayitlar, basarili / len(iller)
 
-    # --- 4. tur: tarayıcı gerekiyor olabilir ---
+    # --- 4. tur: açılır listeden il seçerek gez ---
+    # Bazı siteler URL parametresini dinlemiyor; liste ancak listeden seçim
+    # yapılınca geliyor. Sayfayı gerçekten kullanmak gerekiyor.
+    if len(urls) == 1 and not cfg.get("iterate"):
+        try:
+            log("     açılır listeden il seçilerek deneniyor")
+            for il_adi, sayfa in fetcher.il_secerek_gez(urls[0][0], log):
+                ekle(_sayfayi_coz(sayfa, cfg, "html"), urls[0][0], il_adi,
+                     zorla_il=True)
+            if kayitlar:
+                for r in kayitlar:
+                    r.setdefault("rol", cfg.get("rol", "satis"))
+                return kayitlar, 1.0
+        except Exception as e:                                    # noqa: BLE001
+            log(f"     il seçimi başarısız: {str(e)[:60]}")
+
+    # --- 5. tur: tarayıcı gerekiyor olabilir ---
     if mode != "browser":
         try:
             log("     statik sayfada kayıt yok, tarayıcı deneniyor")
