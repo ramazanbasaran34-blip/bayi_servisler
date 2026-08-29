@@ -127,6 +127,7 @@ markalar:
 
   # 10. YUKI  ·  Türkiye-Çin  ·  yukimotor.com.tr
   "Yuki":
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://yukimotor.com.tr/satis-noktalari/"
@@ -142,6 +143,7 @@ markalar:
 
   # 12. PIAGGIO  ·  İtalya  ·  www.piaggio.com.tr
   "Piaggio":
+    mode: browser
     beklenen: [42, 120]   # Vespa ile aynı distribütör, benzer ağ varsayıldı
     kaynaklar:
       - rol: satis
@@ -151,6 +153,7 @@ markalar:
 
   # 13. VESPA  ·  İtalya  ·  www.vespa.com.tr
   "Vespa":
+    mode: browser
     beklenen: [42, 120]   # saha ~40 bayi ~60 servis · motorcular.com: 32 bayi 54 servis
     kaynaklar:
       - rol: satis
@@ -160,6 +163,7 @@ markalar:
 
   # 14. KYMCO  ·  Tayvan  ·  www.kymco.com.tr
   "Kymco":
+    mode: browser
     beklenen: [49, 105]   # saha: ~50 bayi, ~70 servis
     kaynaklar:
       - rol: satis_servis
@@ -167,6 +171,7 @@ markalar:
 
   # 15. APRILIA  ·  İtalya-Çin  ·  www.aprilia.com.tr
   "Aprilia":
+    mode: browser
     beklenen: [28, 78]   # Vespa/Piaggio'dan küçük ağ varsayıldı
     kaynaklar:
       - rol: satis
@@ -176,6 +181,7 @@ markalar:
 
   # 16. HERO  ·  Hindistan  ·  www.heromotor.com.tr
   "Hero":
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://www.heromotor.com.tr/bayiler/"
@@ -191,6 +197,7 @@ markalar:
 
   # 18. FALCON  ·  Türkiye-Çin  ·  falconmotosiklet.com
   "Falcon":
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://falconmotosiklet.com/bayi-servis-agi/motosiklet"
@@ -199,6 +206,7 @@ markalar:
 
   # 19. VOLTA  ·  Türkiye-Çin  ·  volta.com.tr
   "Volta":
+    mode: browser
     beklenen: [140, 360]   # saha: ~100 bayi, ~200 servis
     kaynaklar:
       - rol: satis
@@ -218,6 +226,7 @@ markalar:
 
   # 21. SUZUKI  ·  Japonya  ·  www.suzuki.com.tr
   "Suzuki":
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://www.suzuki.com.tr/tr/motosiklet/satis.html"
@@ -263,6 +272,7 @@ markalar:
 
   # 27. ALTAI  ·  Türkiye-Çin  ·  www.altai.com.tr
   "Altai":
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://www.altai.com.tr/tr/bayiler"
@@ -271,17 +281,21 @@ markalar:
 
   # 28. DUCATI  ·  İtalya  ·  korlas.com.tr
   "Ducati":
+    beklenen: [20, 60]   # Korlas: 11 il satış, 31 servis
+    mode: browser
     kaynaklar:
       - rol: satis
-        url: "https://korlas.com.tr/bayi/"
+        url: "https://korlas.com.tr/servis/"
       - rol: servis
         url: "https://korlas.com.tr/servis/"
 
   # 29. TRIUMPH  ·  İngiltere  ·  korlas.com.tr
   "Triumph":
+    beklenen: [20, 60]   # Korlas: 11 il satış, 31 servis
+    mode: browser
     kaynaklar:
       - rol: satis
-        url: "https://korlas.com.tr/bayi/"
+        url: "https://korlas.com.tr/servis/"
       - rol: servis
         url: "https://korlas.com.tr/servis/"
 
@@ -321,12 +335,14 @@ markalar:
 
   # 34. STMAX  ·  Türkiye-Çin  ·  stmax.com.tr
   "STMax":
+    mode: browser
     kaynaklar:
       - rol: satis_servis
         url: "https://stmax.com.tr/yetkili-servisler/"
 
   # 35. ABUSH  ·  Türkiye-Çin  ·  abush.com.tr
   "Abush":
+    mode: browser
     kaynaklar:
       - rol: satis_servis
         url: "https://abush.com.tr/tr/bayiler"
@@ -366,6 +382,7 @@ markalar:
 
   # 40. REWACO  ·  Almanya  ·  rewaco.com.tr
   "Rewaco":
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://rewaco.com.tr/bayiler/"
@@ -374,6 +391,7 @@ markalar:
 
   # 41. NANOK  ·  Türkiye-Çin  ·  nanok.com.tr
   "Nanok":
+    mode: browser
     kaynaklar:
       - rol: satis_servis
         url: "https://nanok.com.tr/bayilerimiz"
@@ -410,6 +428,7 @@ markalar:
 
   # 46. MUSATTI  ·  Türkiye-Çin  ·  musattimotor.com
   "Musatti":
+    mode: browser
     beklenen: [210, 720]   # saha: ~300 bayi, ~300 servis
     kaynaklar:
       - rol: satis
@@ -432,6 +451,7 @@ markalar:
 
   # 49. ZELSUN  ·  Türkiye-Çin  ·  www.zelsunmotor.com
   "Zelsun":
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://www.zelsunmotor.com/Bayilerimiz.aspx"
@@ -440,6 +460,7 @@ markalar:
 
   # 50. SFM  ·  Türkiye-Çin  ·  www.sfmmotor.com.tr
   "SFM":
+    mode: browser
     beklenen: [210, 450]   # saha: ~300 bayi, ~300 servis
     kaynaklar:
       - rol: satis_servis
@@ -470,6 +491,7 @@ markalar:
 
   # 54. YİBEN  ·  Türkiye-Çin  ·  yibenmotosiklet.com.tr
   "Yiben":
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://yibenmotosiklet.com.tr/tr/sayfa/bayi-agi"
@@ -493,6 +515,7 @@ markalar:
 
   # 57. REBAT  ·  Türkiye-Çin  ·  rebatmotor.com
   "Rebat":
+    mode: browser
     kaynaklar:
       - rol: satis_servis
         url: "https://rebatmotor.com/satis-ve-servisler-cloned-111-2/"
@@ -524,6 +547,7 @@ markalar:
 
   # 61. LEKSAS  ·  Türkiye-Çin  ·  www.leksas.com.tr
   "Leksas":
+    mode: browser
     kaynaklar:
       - rol: satis_servis
         url: "https://www.leksas.com.tr/bayi-servis/"
