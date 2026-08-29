@@ -22,7 +22,7 @@ CACHE_DIR = Path(".cache")
 
 
 class Fetcher:
-    def __init__(self, delay=1.2, timeout=25, retries=3, use_cache=True):
+    def __init__(self, delay=1.2, timeout=20, retries=3, use_cache=True):
         self.delay = delay
         self.timeout = timeout
         self.retries = retries
@@ -144,7 +144,7 @@ class Fetcher:
         finally:
             page.close()
 
-    def il_secerek_gez(self, url, log=None):
+    def il_secerek_gez(self, url, log=None, azami_saniye=900):
         """Sayfadaki il açılır listesini kullanarak 81 ili tek tek gezer.
 
         Bazı siteler URL parametresini dinlemiyor; liste ancak listeden il
@@ -192,7 +192,13 @@ class Fetcher:
                 return []
 
             log(f"     açılır listede {len(secenekler)} il, tek tek seçiliyor")
+            import time as _t
+            bas = _t.monotonic()
             for deger, il in secenekler:
+                # Cevap vermeyen site bütün taramayı kilitlemesin
+                if _t.monotonic() - bas > azami_saniye:
+                    log(f"     süre doldu, {len(cikti)}/{len(secenekler)} il alındı")
+                    break
                 try:
                     sec = page.query_selector_all("select")[hedef]
                     sec.select_option(deger)
