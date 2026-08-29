@@ -104,6 +104,7 @@ def kaynaklari_coz(cfg: dict) -> list[dict]:
 
 
 def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=None):
+    """Tek bir kaynağı tarar. Süre bütçesi bu fonksiyonun içinde işler."""
     """Tek markayı tarar. Döner: (kayitlar, kapsam)
 
     Boş dönerse pes etmez, kademeli olarak şunları dener:
@@ -178,7 +179,7 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
             basarili = 0
             il_bas = time.monotonic()
             for il_url, il_adi in il_urls:
-                if time.monotonic() - il_bas > MARKA_AZAMI_SANIYE * 0.6:
+                if time.monotonic() - il_bas > KAYNAK_AZAMI_SANIYE * 0.6:
                     log(f"     süre doldu, {basarili}/{len(il_urls)} il tarandı")
                     break
                 try:
@@ -198,7 +199,7 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
             basarili = 0
             dz_bas = time.monotonic()
             for il_adi, il_url in iller.items():
-                if time.monotonic() - dz_bas > MARKA_AZAMI_SANIYE * 0.6:
+                if time.monotonic() - dz_bas > KAYNAK_AZAMI_SANIYE * 0.6:
                     log(f"     süre doldu, {basarili}/{len(iller)} il tarandı")
                     break
                 try:
@@ -262,12 +263,13 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
     return kayitlar, (1.0 if kayitlar else kapsam)
 
 
-# Bir marka en fazla bu kadar sürebilir. Aşarsa o ana kadar toplananla
-# yetinip sonrakine geçilir.
+# Bir KAYNAK en fazla bu kadar sürebilir. Aşarsa o ana kadar toplananla
+# yetinilip sonraki kaynağa geçilir.
 #
-# Neden: cevap vermeyen tek bir site bütün grubu kilitliyordu. 17. taramada
-# bir grup 168 dakika takıldı, diğer dokuz grup 23-79 dakikada bitmişti.
-MARKA_AZAMI_SANIYE = 1800        # 30 dakika
+# Neden kaynak başına: markanın tamamına sınır koyunca satış taraması uzun
+# sürdüğünde servis hiç başlamıyordu. Bajaj'da 92 satış vardı, servis sıfırdı;
+# CFMoto'da 437 satış, sıfır servis. Sayfalar çalışıyordu, sınır kesiyordu.
+KAYNAK_AZAMI_SANIYE = 1800       # 30 dakika
 
 
 def tara_marka(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=None):
@@ -275,11 +277,7 @@ def tara_marka(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=None):
     log = log or (lambda m: None)
     kaynaklar = kaynaklari_coz(cfg)
     hepsi, kapsamlar = [], []
-    baslangic = time.monotonic()
     for k in kaynaklar:
-        if time.monotonic() - baslangic > MARKA_AZAMI_SANIYE:
-            log(f"     süre sınırı aşıldı, kalan kaynaklar atlandı")
-            break
         if len(kaynaklar) > 1:
             log(f"     [{k.get('rol','satis')}] {k['url'][:60]}")
         try:
