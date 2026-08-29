@@ -75,6 +75,19 @@ def ayni_firma_mi(a: dict, b: dict) -> tuple[bool, str]:
     ca, cb = ad_cekirdegi(a.get("bayi_adi", "")), ad_cekirdegi(b.get("bayi_adi", ""))
     if not ca or not cb:
         return False, ""
+    # Çekirdek çok kısaysa ayırt edici değil ("mondial" gibi tek kelime marka
+    # adı kalıyorsa aynı ilçedeki bütün bayiler tek kayda iniyordu)
+    if len(ca) < 4 or len(cb) < 4:
+        return False, ""
+
+    # İKİSİNİN DE telefonu var ve FARKLI → güçlü ayrım kanıtı.
+    # Bu durumda ancak adres de birebir tutuyorsa aynı firma sayılır.
+    tel_a, tel_b = a.get("telefon", ""), b.get("telefon", "")
+    if tel_a and tel_b and tel_a != tel_b:
+        aa = adres_anahtari(a.get("adres", ""))
+        ab = adres_anahtari(b.get("adres", ""))
+        if not (aa and ab and _ortak_oran(aa, ab) >= 0.7):
+            return False, ""
 
     ia, ib = fold(a.get("ilce", "")), fold(b.get("ilce", ""))
     ila, ilb = fold(a.get("il", "")), fold(b.get("il", ""))
