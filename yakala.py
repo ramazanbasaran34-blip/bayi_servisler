@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+"""Sayfa yakalama — markaların gerçek sayfalarını bir kez indirip saklar.
+
+Amaç: ayrıştırıcıyı tarama yaparak değil, kaydedilmiş sayfalar üzerinde
+geliştirmek. Böylece her deneme saatler değil saniyeler sürüyor ve sitelere
+tekrar tekrar gidilmiyor.
+
+Her marka-rol için bayi listesini içeren bölgeyi kaydeder. Script, stil ve
+görsel etiketleri atılır — sadece yapı ve metin kalır.
+
+Kullanım:
+    python yakala.py                    # tüm markalar
+    python yakala.py Honda Bajaj        # seçili markalar
+"""
+
+import gzip
+import json
+import re
+import sys
+from pathlib import Path
+
+from bs4 import BeautifulSoup
+
+from bayiradar.collect import kaynaklari_coz, load_config
+from bayiradar.fetch import Fetcher
+from bayiradar.otomatik import TEL, il_baglantilari, il_secicileri_bul, kaplari_bul
+
+CIKTI = Path("yakalanan")
+AZAMI = 400_000          # sıkıştırma öncesi azami karakter
+COP_ETIKET = ["script", "style", "noscript", "svg", "iframe", "picture",
+              "source", "video", "audio", "canvas", "template"]
+
+
+def temizle(html: str) -> str:
+    """Sayfayı sadeleştir: kod, stil, görsel çıkar; yapı ve metin kalsın."""
+    soup = BeautifulSoup(html, "html.parser")
+    for t in soup(COP_ETIKET):
+        t.decompose()
+    for t in soup.find_all(True):
+        # Görsel/erişilebilirlik özniteliklerini at, class ve id kalsın
+        for oz in list(t.attrs):
+            if oz not in ("class", "id", "href", "data-il", "data-city",
+                          "value", "name", "type"):
+                del t.attrs[oz]
+    return str(soup)
+
+
+def ilgili_bolge(html: str) -> str:
+    """Bayi listesini içeren bölgeyi bulup döner. Bulamazsa gövdeyi verir."""
+    soup = BeautifulSoup(html, "html.parser")
+    for t in soup(COP_ETIKET):
+        t.decompose()
+    adaylar = kaplari_bul(soup)
+    if not adaylar:
+        govde = soup.body or soup
+        return temizle(str(govde))[:AZAMI]
+    # En iyi adayın kapsayıcısını al — tüm kardeşler dahil olsun
+    en_iyi = adaylar[0][2][0]
+    kap = en_iyi.parent or en_iyi
+    for _ in range(2):
+        if kap.parent and len(str(kap)) < AZAMI // 2:
+            kap = kap.parent
+        else:
+            break
+    return temizle(str(kap))[:AZAMI]
+
+
+def main():
+    conf = load_config()
+    markalar = conf["markalar"]
+    if len(sys.argv) > 1:
+        markalar = {k: v for k, v in markalar.items() if k in sys.argv[1:]}
+
+    CIKTI.mkdir(exist_ok=True)
+    f = Fetcher(delay=1.5, use_cache=False, timeout=45)
+    ozet = {}
+
+    try:
+        for marka, cfg in markalar.items():
+            for kaynak in kaynaklari_coz(cfg):
+                rol = kaynak.get("rol", "satis")
+                ad = re.sub(r"[^a-z0-9]+", "-", f"{marka}-{rol}".lower()).strip("-")
+                temel = kaynak["url"].split("{")[0].rstrip("?&")
+                bilgi = {"marka": marka, "rol": rol, "url": temel}
+                print(f"→ {marka} [{rol}]")
+
+                # Her zaman gerçek tarayıcıyla: nihai DOM lazım
+                try:
+                    html = f.render(temel, max_age=0)
+                except Exception as e:                            # noqa: BLE001
+                    bilgi["hata"] = str(e)[:200]
+                    ozet[ad] = bilgi
+                    print(f"   ✗ {str(e)[:70]}")
+                    continue
+
+                bilgi["boyut"] = len(html)
+                bilgi["telefon"] = len(TEL.findall(BeautifulSoup(html, "html.parser").get_text(" ")))
+                il_urls = il_secicileri_bul(html, temel)
+                bilgi["il_secici"] = len(il_urls)
+                bilgi["il_dizini"] = len(il_baglantilari(html, temel))
+
+                # İl seçicisi varsa temel sayfa boş olabilir; bir il sayfası da al
+                if il_urls and bilgi["telefon"] < 5:
+                    hedef = next((u for u, i in il_urls if i == "İstanbul"), il_urls[0][0])
+                    try:
+                        html2 = f.render(hedef, max_age=0)
+                        if len(TEL.findall(BeautifulSoup(html2, "html.parser").get_text(" "))) > bilgi["telefon"]:
+                            html = html2
+                            bilgi["ornek_il_url"] = hedef
+                            bilgi["telefon"] = len(TEL.findall(
+                                BeautifulSoup(html, "html.parser").get_text(" ")))
+                    except Exception:                             # noqa: BLE001
+                        pass
+
+                bolge = ilgili_bolge(html)
+                (CIKTI / f"{ad}.html.gz").write_bytes(
+                    gzip.compress(bolge.encode("utf-8")))
+                bilgi["kaydedilen"] = len(bolge)
+                ozet[ad] = bilgi
+                print(f"   tel={bilgi['telefon']} ilSeçici={bilgi['il_secici']} "
+                      f"kayıt={len(bolge)//1024}KB")
+    finally:
+        f.close()
+
+    (CIKTI / "ozet.json").write_text(
+        json.dumps(ozet, ensure_ascii=False, indent=1), encoding="utf-8")
+    basarili = sum(1 for v in ozet.values() if "hata" not in v)
+    print(f"\n✓ {basarili}/{len(ozet)} sayfa yakalandı → {CIKTI}/")
+
+
+if __name__ == "__main__":
+    main()
