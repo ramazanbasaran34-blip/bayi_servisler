@@ -228,6 +228,27 @@ kontrol("gerçek olmayan ilçe reddedilmeli",
      {"bayi_adi": "Halil Bike", "ilce": "Kepez"},
      {"bayi_adi": "Motoser", "ilce": "Muratpaşa"}])
 
+# ---------------------------------------------------------------- 11
+print("\n11. E-posta firma adı olmamalı (Bajaj tipi)")
+kontrol("e-posta ad alanına yazılmamalı",
+    "<div class='l'>" + "".join(
+      f'<div class="k"><h4>{ad}</h4><span>{eposta}</span>'
+      f'<span>{adr}</span><a href="tel:{t}">{t}</a></div>'
+      for ad, eposta, adr, t in [
+        ("BAYMOTO OTOMOTİV TİC.LTD.ŞTİ.", "baymoto@gmail.com",
+         "Caferağa Mah. Moda Cad. No:5 Kadıköy", "02163456789"),
+        ("YAŞAR TİCARET MOTOSİKLET", "yasarticaret34@gmail.com",
+         "Çavuşbaşı Cad. No:33 Çekmeköy", "05413950367"),
+        ("PEKER MOTOR SANAYİ", "pekermotorr@gmail.com",
+         "Merkez Mah. Cendere Cad. No:9 Kağıthane", "02122223344"),
+        ("ERENCE MOTO GARAGE LTD", "erence@motogarage.com.tr",
+         "Alibeyköy Mah. Fetih Cad. No:2 Eyüpsultan", "02125556677"),
+      ]) + "</div>",
+    [{"bayi_adi": "BAYMOTO", "email": "baymoto@gmail.com", "ilce": "Kadıköy"},
+     {"bayi_adi": "YAŞAR TİCARET", "ilce": "Çekmeköy"},
+     {"bayi_adi": "PEKER MOTOR", "ilce": "Kağıthane"},
+     {"bayi_adi": "ERENCE", "ilce": "Eyüpsultan"}])
+
 # ---------------------------------------------------------------- özet
 print("\n" + "=" * 60)
 print(f"GEÇEN: {len(BASARILI)}   KALAN: {len(BASARISIZ)}")
