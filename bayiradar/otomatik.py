@@ -174,6 +174,9 @@ def _yapraklar(kap):
     return out
 
 
+EPOSTA_ADRES = re.compile(r"^[^@\s]+@[^@\s]+\.[a-z]{2,}$|^(https?://|www\.)", re.I)
+
+
 def COP_JETON(m: str) -> bool:
     """Metin gerçek bir isim mi? CSS artığı / rakam yığını değil mi?
 
@@ -182,6 +185,10 @@ def COP_JETON(m: str) -> bool:
     """
     t = m.strip()
     if len(t) < 4:
+        return False
+    # E-posta ya da web adresi firma adı değildir.
+    # Bajaj'da 24 kayıtta "taskinmotor@gmail.com" bayi adı olarak yazılmıştı.
+    if EPOSTA_ADRES.match(t):
         return False
     harf = sum(1 for c in t if c.isalpha())
     if harf < 3:
@@ -266,10 +273,16 @@ def _kaydi_cikar(kap):
                 kullanildi.add(id(c))
                 break
 
-    # E-posta
+    # E-posta: bağlantıdan ya da düz metinden
     mail = kap.select_one("a[href^='mailto:']")
     if mail:
         rec["email"] = mail.get("href", "")[7:]
+    else:
+        for c, m in yap:
+            if EPOSTA_ADRES.match(m.strip()) and "@" in m:
+                rec["email"] = m.strip()
+                kullanildi.add(id(c))
+                break
 
     # Adres
     for c, m in yap:
