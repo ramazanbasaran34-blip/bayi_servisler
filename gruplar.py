@@ -3,13 +3,16 @@
 
 Yavaş markaları (tarayıcı modu, il döngüsü) gruplara dengeli dağıtır ki
 bir grup diğerlerinden çok uzun sürmesin.
+
+    python gruplar.py 10              → grup sayısını yazdırır
+    python gruplar.py 10 --grup 3     → 3. grubun markalarını satır satır yazar
+
+Marka adları satır satır veriliyor; JSON içinde tırnakla taşımak iş akışında
+bozuluyordu ("Meka Motor" gibi boşluklu adlar parçalanıyordu).
 """
-import json
 import sys
 
 from bayiradar.collect import kaynaklari_coz, load_config
-
-GRUP = int(sys.argv[1]) if len(sys.argv) > 1 else 6
 
 
 def agirlik(cfg):
@@ -20,13 +23,24 @@ def agirlik(cfg):
     return p * (6 if cfg.get("mode") == "browser" else 1)
 
 
-c = load_config()["markalar"]
-sirali = sorted(c.items(), key=lambda kv: -agirlik(kv[1]))
-kovalar = [[] for _ in range(GRUP)]
-yuk = [0] * GRUP
-for ad, cfg in sirali:
-    i = yuk.index(min(yuk))
-    kovalar[i].append(ad)
-    yuk[i] += agirlik(cfg)
+def bol(sayi):
+    c = load_config()["markalar"]
+    sirali = sorted(c.items(), key=lambda kv: -agirlik(kv[1]))
+    kovalar = [[] for _ in range(sayi)]
+    yuk = [0] * sayi
+    for ad, cfg in sirali:
+        i = yuk.index(min(yuk))
+        kovalar[i].append(ad)
+        yuk[i] += agirlik(cfg)
+    return kovalar
 
-print(json.dumps([" ".join(f'"{m}"' for m in k) for k in kovalar], ensure_ascii=False))
+
+if __name__ == "__main__":
+    n = int(sys.argv[1]) if len(sys.argv) > 1 else 10
+    kovalar = bol(n)
+    if "--grup" in sys.argv:
+        i = int(sys.argv[sys.argv.index("--grup") + 1])
+        for m in kovalar[i]:
+            print(m)
+    else:
+        print(n)
