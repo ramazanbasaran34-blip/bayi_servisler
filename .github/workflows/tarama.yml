@@ -27,27 +27,17 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  hazirlik:
-    runs-on: ubuntu-latest
-    outputs:
-      gruplar: ${{ steps.bol.outputs.gruplar }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: "3.12" }
-      - run: pip install PyYAML
-      - id: bol
-        run: echo "gruplar=$(python gruplar.py 10)" >> $GITHUB_OUTPUT
-
   tara:
-    needs: hazirlik
     runs-on: ubuntu-latest
     timeout-minutes: 340
     strategy:
       fail-fast: false
       max-parallel: 10
       matrix:
-        grup: ${{ fromJson(needs.hazirlik.outputs.gruplar) }}
+        # Sabit grup numaraları. Marka adları iş akışına JSON ile taşınırken
+        # boşluklu adlar ("Meka Motor") bozuluyordu; artık her iş kendi
+        # grubunu gruplar.py'den satır satır okuyor.
+        grup: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -62,14 +52,16 @@ jobs:
       - name: Grubu tara
         run: |
           mkdir -p parcalar
-          AD=$(echo "${{ matrix.grup }}" | md5sum | cut -c1-8)
-          if [ -n "${{ github.event.inputs.markalar }}" ]; then
-            python cli.py --db "parcalar/$AD.db" tara --marka ${{ github.event.inputs.markalar }}
-          elif [ -n "${{ github.event.inputs.hepsi }}" ]; then
-            python cli.py --db "parcalar/$AD.db" tara --marka ${{ matrix.grup }}
-          else
-            python cli.py --db "parcalar/$AD.db" tara --zamanlanmis --marka ${{ matrix.grup }}
+          DB="parcalar/grup-${{ matrix.grup }}.db"
+          python gruplar.py 10 --grup ${{ matrix.grup }} > /tmp/markalar.txt
+          echo "Bu gruptaki markalar:"; cat /tmp/markalar.txt
+          EK=""
+          if [ -z "${{ github.event.inputs.hepsi }}" ] && \
+             [ -z "${{ github.event.inputs.markalar }}" ]; then
+            EK="--zamanlanmis"
           fi
+          # Boşluklu marka adları için satır satır aktarım
+          xargs -a /tmp/markalar.txt -d '\n' python cli.py --db "$DB" tara $EK --marka
         continue-on-error: true
       - name: Parçayı sakla
         if: always()
@@ -104,6 +96,10 @@ jobs:
           mkdir -p parcalar
           find indirilen -name "*.db" -exec cp {} parcalar/ \; || true
           ls -la parcalar/ || true
+          if [ -z "$(ls -A parcalar/ 2>/dev/null)" ]; then
+            echo "::error::Hiç parça gelmedi — tarama çalışmamış."
+            exit 1
+          fi
           python birlestir.py parcalar bayiler.db
       - name: Durum özeti
         run: python cli.py durum || true
