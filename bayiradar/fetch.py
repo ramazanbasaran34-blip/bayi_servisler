@@ -83,7 +83,7 @@ class Fetcher:
         raise RuntimeError(f"{url} çekilemedi: {last}")
 
     # -------------------------------------------------------------- browser
-    def render(self, url, wait_selector=None, wait_ms=2500, max_age=3600):
+    def render(self, url, wait_selector=None, wait_ms=6000, max_age=3600):
         """JS ile dolan sayfalar için. Playwright kurulu değilse anlaşılır hata verir."""
         key = f"RENDER:{url}"
         hit = self._cached(key, max_age)
@@ -110,13 +110,34 @@ class Fetcher:
                                 "install", "--with-deps", "chromium"],
                                check=False, timeout=600)
                 self._browser = self._pw.chromium.launch(headless=True)
-        page = self._browser.new_page(user_agent=UA, locale="tr-TR")
+        page = self._browser.new_page(user_agent=UA, locale="tr-TR",
+                                      viewport={"width": 1440, "height": 2200})
         try:
             page.goto(url, timeout=self.timeout * 1000, wait_until="domcontentloaded")
             if wait_selector:
-                page.wait_for_selector(wait_selector, timeout=self.timeout * 1000)
-            else:
-                page.wait_for_timeout(wait_ms)
+                try:
+                    page.wait_for_selector(wait_selector, timeout=self.timeout * 1000)
+                except Exception:                                 # noqa: BLE001
+                    pass
+            # Arka plan istekleri bitene kadar bekle — liste çoğu sitede
+            # sayfa açıldıktan sonra AJAX ile geliyor.
+            try:
+                page.wait_for_load_state("networkidle", timeout=20000)
+            except Exception:                                     # noqa: BLE001
+                pass
+            # Tembel yüklenen listeler için sayfayı sonuna kadar kaydır
+            try:
+                onceki = 0
+                for _ in range(8):
+                    page.mouse.wheel(0, 4000)
+                    page.wait_for_timeout(700)
+                    yukseklik = page.evaluate("document.body.scrollHeight")
+                    if yukseklik == onceki:
+                        break
+                    onceki = yukseklik
+            except Exception:                                     # noqa: BLE001
+                pass
+            page.wait_for_timeout(wait_ms)
             html = page.content()
             self._store(key, html)
             return html
