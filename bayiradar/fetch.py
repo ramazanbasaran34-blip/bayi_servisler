@@ -144,6 +144,86 @@ class Fetcher:
         finally:
             page.close()
 
+    def il_secerek_gez(self, url, log=None):
+        """Sayfadaki il açılır listesini kullanarak 81 ili tek tek gezer.
+
+        Bazı siteler URL parametresini dinlemiyor; liste ancak listeden il
+        seçilip arama yapılınca geliyor. Bu durumda sayfayı gerçekten
+        kullanmak gerekiyor: seç, tetikle, bekle, oku.
+
+        Döner: [(il_adi, html), ...]
+        """
+        from .normalize import ILLER, fold
+        log = log or (lambda m: None)
+        try:
+            from playwright.sync_api import sync_playwright     # noqa: F401
+        except ImportError:
+            return []
+
+        if self._browser is None:
+            self.render(url, max_age=0)          # tarayıcıyı başlat
+
+        il_fold = {fold(i): i for i in ILLER}
+        il_fold.update({"afyon": "Afyonkarahisar", "icel": "Mersin",
+                        "mersin icel": "Mersin", "urfa": "Şanlıurfa",
+                        "k maras": "Kahramanmaraş"})
+        page = self._browser.new_page(user_agent=UA, locale="tr-TR",
+                                      viewport={"width": 1440, "height": 2000})
+        cikti = []
+        try:
+            page.goto(url, timeout=self.timeout * 1000, wait_until="domcontentloaded")
+            try:
+                page.wait_for_load_state("networkidle", timeout=15000)
+            except Exception:                                     # noqa: BLE001
+                pass
+
+            # İl listesini bul: seçeneklerinde en çok il adı geçen <select>
+            hedef, secenekler = None, []
+            for i, sec in enumerate(page.query_selector_all("select")):
+                cift = []
+                for o in sec.query_selector_all("option"):
+                    d = (o.get_attribute("value") or "").strip()
+                    m = fold(o.inner_text())
+                    if d and d.lower() not in ("", "0", "-1") and m in il_fold:
+                        cift.append((d, il_fold[m]))
+                if len(cift) > len(secenekler):
+                    hedef, secenekler = i, cift
+            if hedef is None or len(secenekler) < 20:
+                return []
+
+            log(f"     açılır listede {len(secenekler)} il, tek tek seçiliyor")
+            for deger, il in secenekler:
+                try:
+                    sec = page.query_selector_all("select")[hedef]
+                    sec.select_option(deger)
+                    page.evaluate(
+                        """el => { el.dispatchEvent(new Event('change',{bubbles:true}));
+                                   el.dispatchEvent(new Event('input',{bubbles:true})); }""",
+                        sec)
+                    # Arama butonu varsa bas
+                    for kalip in ["button[type=submit]", "input[type=submit]",
+                                  "button:has-text('Ara')", "button:has-text('ARA')",
+                                  "a:has-text('Ara')", ".btn-search", "#ara"]:
+                        d = page.query_selector(kalip)
+                        if d:
+                            try:
+                                d.click(timeout=3000)
+                            except Exception:                     # noqa: BLE001
+                                pass
+                            break
+                    try:
+                        page.wait_for_load_state("networkidle", timeout=12000)
+                    except Exception:                             # noqa: BLE001
+                        pass
+                    page.wait_for_timeout(900)
+                    cikti.append((il, page.content()))
+                except Exception as e:                            # noqa: BLE001
+                    log(f"     {il}: {str(e)[:50]}")
+                    continue
+        finally:
+            page.close()
+        return cikti
+
     def close(self):
         if self._browser:
             self._browser.close()
