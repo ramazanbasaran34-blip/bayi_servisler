@@ -1,0 +1,48 @@
+name: Sayfa yakalama
+
+# Markaların sayfalarını bir kez indirip depoya kaydeder.
+# Amaç: ayrıştırıcıyı tarama yapmadan, kaydedilmiş sayfalar üzerinde
+# geliştirebilmek. Sitelere tekrar tekrar gidilmesini önler.
+
+on:
+  workflow_dispatch:
+    inputs:
+      markalar:
+        description: "Boşlukla ayrılmış marka adları (boş = hepsi)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  yakala:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Paketleri kur
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          playwright install --with-deps chromium
+      - name: Sayfaları yakala
+        run: python yakala.py ${{ github.event.inputs.markalar }}
+        continue-on-error: true
+      - name: Depoya yaz
+        run: |
+          git config user.name  "bayi-radar-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add -f yakalanan/
+          git diff --staged --quiet && { echo "Değişiklik yok"; exit 0; }
+          git commit -m "Sayfa yakalama: $(date -u +'%Y-%m-%d %H:%M UTC')"
+          for i in 1 2 3; do
+            git fetch origin "${GITHUB_REF_NAME}"
+            git rebase -X ours "origin/${GITHUB_REF_NAME}" || git rebase --skip
+            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep 5
+          done
