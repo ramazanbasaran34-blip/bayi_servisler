@@ -9,6 +9,7 @@ import re
 
 from bs4 import BeautifulSoup
 
+from .ilceler import adresten_ilce, ilce_mi, ilceden_il
 from .normalize import (clean_phone, clean_text, fold, il_ara, resolve_il,
                          split_il_ilce, title_tr)
 from .otomatik import cikar as otomatik_cikar
@@ -121,11 +122,39 @@ def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
     if not ad:
         return None
 
+    # ---- İLÇE DOĞRULAMA ----
+    # İlçe alanına ancak GERÇEK bir ilçe adı yazılabilir. Doğrulanamayan
+    # değer atılır. Önceden "Haritada Gör", "Sizi Arayalım", e-posta adresleri
+    # ve firma adları ilçe olarak listeleniyordu.
+    il_ad = resolve_il(rec.get("il", ""))
+    ham_ilce = clean_text(rec.get("ilce", ""))
+    ilce_ad = ""
+    if ham_ilce:
+        ilce_ad = ilce_mi(ham_ilce, il_ad)
+        if not ilce_ad:
+            # İl bilinmiyorsa ya da eşleşmediyse ilsiz dene
+            ilce_ad = ilce_mi(ham_ilce) if not il_ad else ""
+        if not ilce_ad:
+            # "Kadıköy / İstanbul" gibi birleşik olabilir; parçalara bak
+            for parca in re.split(r"[/,\-–_|]", ham_ilce):
+                ilce_ad = ilce_mi(parca.strip(), il_ad) or (
+                    ilce_mi(parca.strip()) if not il_ad else "")
+                if ilce_ad:
+                    break
+    # İlçe biliniyor ama il yoksa, ilçeden ili çöz
+    if ilce_ad and not il_ad:
+        il_ad = ilceden_il(ilce_ad)
+    # Hâlâ ilçe yoksa adres metninde ara
+    if not ilce_ad:
+        ilce_ad = adresten_ilce(rec.get("adres", ""), il_ad)
+    if ilce_ad and not il_ad:
+        il_ad = ilceden_il(ilce_ad)
+
     out = {
         "marka": marka,
         "bayi_adi": ad,
-        "il": resolve_il(rec.get("il", "")),
-        "ilce": title_tr(clean_text(rec.get("ilce", ""))),
+        "il": il_ad,
+        "ilce": ilce_ad,
         "adres": clean_text(rec.get("adres", "")),
         "telefon": clean_phone(rec.get("telefon", "")),
         "email": clean_text(rec.get("email", "")).lower(),
