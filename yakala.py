@@ -111,18 +111,42 @@ def main():
                 bilgi["il_secici"] = len(il_urls)
                 bilgi["il_dizini"] = len(il_baglantilari(html, temel))
 
-                # İl seçicisi varsa temel sayfa boş olabilir; bir il sayfası da al
-                if il_urls and bilgi["telefon"] < 5:
-                    hedef = next((u for u, i in il_urls if i == "İstanbul"), il_urls[0][0])
+                # Temel sayfa boşsa il seçimi gerekiyor demektir.
+                #
+                # Önce URL parametresiyle dene (hızlı). Olmazsa sayfayı
+                # gerçekten kullan: listeden il seç, arama düğmesine bas.
+                # Ayrıştırıcıyı bu HTML'e karşı geliştireceğim için asıl
+                # önemli olan bu — veri gelen halini kaydetmek.
+                if bilgi["telefon"] < 5 and il_urls:
+                    hedef = next((u for u, i in il_urls if i == "İstanbul"),
+                                 il_urls[0][0])
                     try:
-                        html2 = f.render(hedef, max_age=0)
-                        if len(TEL.findall(BeautifulSoup(html2, "html.parser").get_text(" "))) > bilgi["telefon"]:
-                            html = html2
+                        html2 = f.render(hedef, max_age=0, wait_ms=6000)
+                        t2 = len(TEL.findall(
+                            BeautifulSoup(html2, "html.parser").get_text(" ")))
+                        if t2 > bilgi["telefon"]:
+                            html, bilgi["telefon"] = html2, t2
+                            bilgi["yontem"] = "url_parametresi"
                             bilgi["ornek_il_url"] = hedef
-                            bilgi["telefon"] = len(TEL.findall(
-                                BeautifulSoup(html, "html.parser").get_text(" ")))
                     except Exception:                             # noqa: BLE001
                         pass
+
+                if bilgi["telefon"] < 5:
+                    try:
+                        sayfalar = f.il_secerek_gez(temel, log=lambda m: None,
+                                                    azami_saniye=180)
+                        en_iyi, en_tel = None, 0
+                        for il_adi, sayfa in sayfalar[:6]:
+                            t3 = len(TEL.findall(
+                                BeautifulSoup(sayfa, "html.parser").get_text(" ")))
+                            if t3 > en_tel:
+                                en_iyi, en_tel = (il_adi, sayfa), t3
+                        if en_iyi and en_tel > bilgi["telefon"]:
+                            html, bilgi["telefon"] = en_iyi[1], en_tel
+                            bilgi["yontem"] = "il_secerek"
+                            bilgi["ornek_il"] = en_iyi[0]
+                    except Exception as e:                        # noqa: BLE001
+                        bilgi["secim_hatasi"] = str(e)[:120]
 
                 bolge = ilgili_bolge(html)
                 (CIKTI / f"{ad}.html.gz").write_bytes(
