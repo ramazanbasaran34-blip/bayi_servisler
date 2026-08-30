@@ -38,6 +38,8 @@ markalar:
 
   #  1. HONDA  ·  Japonya  ·  www.honda.com.tr
   "Honda":
+    # Sitede satış ve servis ayrı listelenmiyor; her nokta ikisini de
+    # yapıyor. Kayıtlar "Satış + Servis" olarak işaretleniyor.
     beklenen: [36, 78]   # saha: ~52 bayi, ~52 servis
     mode: browser
     kaynaklar:
@@ -46,6 +48,8 @@ markalar:
 
   #  2. YAMAHA  ·  Japonya  ·  www.yamaha-motor.eu
   "Yamaha":
+    # Sitede satış ve servis ayrı listelenmiyor; her nokta ikisini de
+    # yapıyor. Kayıtlar "Satış + Servis" olarak işaretleniyor.
     beklenen: [31, 67]   # saha: ~45 bayi, ~45 servis
     mode: browser
     kaynaklar:
@@ -62,7 +66,7 @@ markalar:
         url: "https://www.ekuralkan.com/motosiklet-satis-noktalari?city={sayi}"
         iterate: {bitis: 81, type: sayi}
       - rol: servis
-        url: "https://www.ekuralkan.com/motosiklet-servis-noktalari?city={sayi}"
+        url: "https://www.ekuralkan.com/motosiklet-teslimat-noktalari?city={sayi}"
         iterate: {bitis: 81, type: sayi}
 
   #  4. KANUNI  ·  Türkiye-Çin  ·  www.ekuralkan.com
@@ -75,7 +79,7 @@ markalar:
         url: "https://www.ekuralkan.com/motosiklet-satis-noktalari?city={sayi}"
         iterate: {bitis: 81, type: sayi}
       - rol: servis
-        url: "https://www.ekuralkan.com/motosiklet-servis-noktalari?city={sayi}"
+        url: "https://www.ekuralkan.com/motosiklet-teslimat-noktalari?city={sayi}"
         iterate: {bitis: 81, type: sayi}
 
   #  5. MONDIAL  ·  Türkiye-Çin  ·  www.mondialmotor.com.tr
