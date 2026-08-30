@@ -116,6 +116,11 @@ markalar:
       ilce:     "td:nth-child(3)"
       telefon:  {sel: "td:nth-child(4) a", attr: "href", regex: "tel:(.+)"}
   "Kuba":
+    tur_suzgeci:
+      secici: "select[name=category]"
+      degerler:
+        - {deger: "Bayi", rol: satis}
+        - {deger: "Servis", rol: servis}
     # Sayfada 78 illik seçici var ama seçim URL'e yansımıyor;
     # parametre denemek hep aynı sayfayı veriyordu. Sayfa gerçekten kullanılıyor.
     mode: browser
@@ -125,6 +130,11 @@ markalar:
       - rol: satis_servis
         url: "https://www.kubamotor.com.tr/bayi-servis/kubamotor"
   "RKS":
+    tur_suzgeci:
+      secici: "select[name=category]"
+      degerler:
+        - {deger: "Bayi", rol: satis}
+        - {deger: "Servis", rol: servis}
     # Sayfada 77 illik seçici var ama seçim URL'e yansımıyor;
     # parametre denemek hep aynı sayfayı veriyordu. Sayfa gerçekten kullanılıyor.
     mode: browser
@@ -195,6 +205,11 @@ markalar:
 
   # 14. KYMCO  ·  Tayvan  ·  www.kymco.com.tr
   "Kymco":
+    tur_suzgeci:
+      secici: "select[name=by-sec]"
+      degerler:
+        - {deger: "yetkili-satici", rol: satis}
+        - {deger: "yetkili-servis", rol: servis}
     mode: browser
     beklenen: [49, 105]   # saha: ~50 bayi, ~70 servis
     kaynaklar:
@@ -269,18 +284,36 @@ markalar:
 
   # 22. PEUGEOT  ·  Fransa  ·  www.isotlarmotor.com
   "Peugeot":
+    mode: browser
+    tur_suzgeci:
+      secici: "input"
+      degerler:
+        - {deger: "Bayi", rol: satis}
+        - {deger: "Servis", rol: servis}
     kaynaklar:
       - rol: satis_servis
         url: "https://www.isotlarmotor.com/bayiler/"
 
   # 23. HORWIN  ·  Çin  ·  www.isotlarmotor.com
   "Horwin":
+    mode: browser
+    tur_suzgeci:
+      secici: "input"
+      degerler:
+        - {deger: "Bayi", rol: satis}
+        - {deger: "Servis", rol: servis}
     kaynaklar:
       - rol: satis_servis
         url: "https://www.isotlarmotor.com/bayiler/"
 
   # 24. LAMBRETTA  ·  İtalya  ·  www.isotlarmotor.com
   "Lambretta":
+    mode: browser
+    tur_suzgeci:
+      secici: "input"
+      degerler:
+        - {deger: "Bayi", rol: satis}
+        - {deger: "Servis", rol: servis}
     kaynaklar:
       - rol: satis_servis
         url: "https://www.isotlarmotor.com/bayiler/"
@@ -379,6 +412,11 @@ markalar:
 
   # 35. ABUSH  ·  Türkiye-Çin  ·  abush.com.tr
   "Abush":
+    tur_suzgeci:
+      secici: "select[name=type]"
+      degerler:
+        - {deger: "1", rol: satis}
+        - {deger: "2", rol: servis}
     mode: browser
     kaynaklar:
       - rol: satis_servis
@@ -430,6 +468,11 @@ markalar:
 
   # 41. NANOK  ·  Türkiye-Çin  ·  nanok.com.tr
   "Nanok":
+    tur_suzgeci:
+      secici: "select[name=service]"
+      degerler:
+        - {deger: "Bayi", rol: satis}
+        - {deger: "Servis", rol: servis}
     mode: browser
     kaynaklar:
       - rol: satis_servis
@@ -453,6 +496,12 @@ markalar:
 
   # 44. RUTEC  ·  Türkiye-Çin  ·  www.rutec.com.tr
   "Rutec":
+    tur_suzgeci:
+      secici: "select[name=turSel]"
+      degerler:
+        - {deger: "Satış Noktası", rol: satis}
+        - {deger: "Yetkili Servis", rol: servis}
+        - {deger: "Bölge Bayisi", rol: satis}
     mode: browser
     beklenen: [21, 45]   # saha: ~30 bayi, ~30 servis
     kaynaklar:
@@ -485,6 +534,11 @@ markalar:
 
   # 48. MEKA MOTOR  ·  Türkiye-Çin  ·  www.mekamotor.com.tr
   "Meka Motor":
+    tur_suzgeci:
+      secici: "input"
+      degerler:
+        - {deger: "bayi", rol: satis}
+        - {deger: "servis", rol: servis}
     etkilesim: il_secimi
     mode: browser
     kaynaklar:
@@ -552,6 +606,13 @@ markalar:
 
   # 56. AXİON MOTOR  ·  Türkiye-Çin  ·  axionmotor.com.tr
   "Axion Motor":
+    mode: browser
+    tur_suzgeci:
+      secici: "select"
+      degerler:
+        - {deger: "bayi", rol: satis}
+        - {deger: "servis", rol: servis}
+        - {deger: "bayi-servis", rol: satis_servis}
     kaynaklar:
       - rol: satis_servis
         url: "https://axionmotor.com.tr/hizmet-noktalarimiz/"
@@ -590,6 +651,11 @@ markalar:
 
   # 61. LEKSAS  ·  Türkiye-Çin  ·  www.leksas.com.tr
   "Leksas":
+    tur_suzgeci:
+      secici: "select[name=f-type]"
+      degerler:
+        - {deger: "bayi", rol: satis}
+        - {deger: "servis", rol: servis}
     etkilesim: il_secimi
     mode: browser
     kaynaklar:
