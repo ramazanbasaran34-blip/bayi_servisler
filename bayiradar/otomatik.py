@@ -19,8 +19,25 @@ from bs4 import BeautifulSoup
 
 from .normalize import IL_BY_FOLD, fold
 
-TEL = re.compile(r"(?:\+90|0)?[\s\(]*\d{3}[\)\s\.\-]*\d{3}[\s\.\-]*\d{2}[\s\.\-]*\d{2}"
-                 r"|\b0?\d{10}\b")
+# Türk telefon numarası.
+#
+# Önceki kalıp herhangi bir 10 haneli rakam dizisini telefon sayıyordu:
+# koordinatlar, ürün kodları, tarihler, hatta uzun sayıların içinden
+# kesitler. Zelsun'un sayfasında 21.494 "telefon" bulmuştu. Ayrıştırıcı
+# doğru kabı seçerken bu sayıya baktığı için yanlış ölçüyle karar veriyordu.
+#
+# Kurallar: başında/sonunda başka rakam olamaz; alan kodu 2-5 ile başlar
+# (Türkiye'de sabit hat 2xx-4xx, cep 5xx); toplam 10 hane.
+TEL = re.compile(
+    r"(?<![\d])"                          # solunda rakam yok
+    r"(?:\+90[\s.\-]?)?"                  # ülke kodu
+    r"0?"                                 # baştaki sıfır
+    r"[\s(]*"
+    r"[2-58]\d{2}"                        # alan kodu: 2-5 sabit/cep, 8 → 0850
+    r"[)\s.\-]*\d{3}"
+    r"[\s.\-]*\d{2}"
+    r"[\s.\-]*\d{2}"
+    r"(?![\d])")                          # sağında rakam yok
 ADRES = re.compile(r"\b(mah|mh|mahalle|mahallesi|cad|cd|cadde|caddesi|sok|sk|"
                    r"sokak|blv|bulv|bulvar|no\s*:|osb|sanayi|apt|plaza|iş\s*mrk)\b"
                    r"[\.\s:]", re.I)
