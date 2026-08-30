@@ -227,6 +227,13 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .cip.secili{background:var(--murekkep);border-color:var(--murekkep);color:#fff}
 
 /* rol süzgeci */
+.sirala{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.sirala .et{font-family:var(--m);font-size:10px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--celik);margin-right:2px}
+.sirala button{border:1px solid var(--hat2);background:#fff;border-radius:6px;
+  padding:5px 11px;cursor:pointer;font-size:12.5px}
+.sirala button:hover{border-color:var(--murekkep)}
+.sirala button.secili{background:var(--murekkep);border-color:var(--murekkep);color:#fff}
 .rolsuz{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .rolsuz button{border:1.5px solid var(--hat2);background:#fff;border-radius:7px;
   padding:6px 13px;cursor:pointer;font-size:12.5px;font-weight:500;
@@ -391,6 +398,12 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
     <div class="altbar" id="ilUstbar" style="display:none">
       <button class="btn ana" id="btnTumIlXls">Tüm illeri Excel indir</button>
     </div>
+    <div class="sirala" id="ilSirala">
+      <span class="et">Sırala</span>
+      <button data-s="sayi" class="secili">Nokta sayısına göre</button>
+      <button data-s="ad">A → Z</button>
+      <button data-s="plaka">Plaka koduna göre</button>
+    </div>
     <input class="ara" id="araIl" type="search" placeholder="İl adı veya plaka kodu" autocomplete="off">
     <div class="liste" id="ilListe"></div>
     <div class="bos" id="ilBos" style="display:none">Bu isimde il yok.</div>
@@ -434,8 +447,14 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   <section id="vTumMarka" style="display:none">
     <h2>Marka listesi</h2>
     <p class="notm"><span id="mSay2">0</span> marka · <span id="mBayi">0</span> nokta</p>
+    <div class="sirala" id="mrkSirala">
+      <span class="et">Sırala</span>
+      <button data-s="sayi" class="secili">Nokta sayısına göre</button>
+      <button data-s="ad">A → Z</button>
+      <button data-s="satis">Satışa göre</button>
+      <button data-s="servis">Servise göre</button>
+    </div>
     <div class="altbar">
-      <button class="geri" id="sirala">Nokta sayısına göre sırala</button>
       <button class="btn ana" id="btnOzetXls">Özet tablosunu Excel indir</button>
       <button class="btn" id="btnOzetYaz">Yazdır / PDF</button>
     </div>
@@ -467,7 +486,7 @@ const kat = s => (s||"").toLocaleLowerCase("tr")
 const ROL_SINIF = {satis:"satis", servis:"servis", satis_servis:"ikisi"};
 const ROL_AD    = {satis:"Satış", servis:"Servis", satis_servis:"Satış + Servis"};
 
-let IL=null, ILCE="", ROL="tum", MD=null, SIRA="ad";
+let IL=null, ILCE="", ROL="tum", MD=null, SIRA="sayi";
 const VAR_VERI = D.bayiler.length > 0;
 
 /* ---------- üst bilgiler ---------- */
@@ -565,7 +584,10 @@ function hashUygula(){
 
 window.addEventListener("hashchange", () => { if(!_kendiYazdi) hashUygula(); });
 $("#sekOzet").onclick  = () => { cizOzet(); ekran("vOzet"); };
-$("#sekIl").onclick    = () => ekran(IL?"vMarkalar":"vIl");
+$("#sekIl").onclick    = () => {
+  // Liste çizilmeden ekran açılıyordu; sekmeye basınca boş görünüyordu.
+  if(IL){ ekran("vMarkalar"); } else { cizIl(); ekran("vIl"); }
+};
 $("#sekMarka").onclick = () => { cizTum(); ekran("vTumMarka"); };
 $("#geri").onclick     = () => { IL=null; ILCE=""; ROL="tum"; $("#araMarka").value=""; ekran("vIl"); };
 $("#geriMarka").onclick= () => { ROL="tum"; cizTum(); ekran("vTumMarka"); };
@@ -714,10 +736,23 @@ $("#btnOzetTumXls").onclick = e => excelIndir({tip:"tum"},e.target);
 $("#btnOzetYaz2").onclick = () => window.print();
 
 /* ---------- iller ---------- */
+let IL_SIRA = "sayi";      // varsayılan: en çok noktadan aza
+$("#ilSirala").onclick = e => {
+  const b=e.target.closest("button"); if(!b) return;
+  IL_SIRA=b.dataset.s;
+  [...$("#ilSirala").querySelectorAll("button")].forEach(x=>
+    x.classList.toggle("secili", x===b));
+  cizIl();
+};
 function cizIl(){
   $("#ilUstbar").style.display = VAR_VERI ? "flex":"none";
   const q=kat($("#araIl").value);
-  const l=D.iller.filter(i=>!q||kat(i.ad).includes(q)||i.plaka.startsWith(q));
+  let l=D.iller.filter(i=>!q||kat(i.ad).includes(q)||i.plaka.startsWith(q));
+  const say=i=>D.bayiler.filter(x=>x[B_IL]===i.ad).length;
+  if(IL_SIRA==="sayi" && VAR_VERI)
+    l=[...l].sort((a,b)=>say(b)-say(a)||a.ad.localeCompare(b.ad,"tr"));
+  else if(IL_SIRA==="plaka") l=[...l].sort((a,b)=>a.plaka.localeCompare(b.plaka));
+  else l=[...l].sort((a,b)=>a.ad.localeCompare(b.ad,"tr"));
   $("#ilBos").style.display=l.length?"none":"block";
   $("#ilListe").innerHTML=l.map(i=>{
     const b=D.bayiler.filter(x=>x[B_IL]===i.ad);
@@ -834,16 +869,20 @@ const OZET=(()=>{
     if(b[B_ILCE])x.ilceler.add(b[B_IL]+"/"+b[B_ILCE]);});
   return Object.values(o);
 })();
-$("#sirala").onclick=()=>{
-  SIRA=SIRA==="ad"?"sayi":"ad";
-  $("#sirala").textContent=SIRA==="sayi"?"Alfabetik sırala":"Nokta sayısına göre sırala";
+$("#mrkSirala").onclick = e => {
+  const b=e.target.closest("button"); if(!b) return;
+  SIRA=b.dataset.s;
+  [...$("#mrkSirala").querySelectorAll("button")].forEach(x=>
+    x.classList.toggle("secili", x===b));
   cizTum();
 };
 function cizTum(){
   const q=kat($("#araTum").value);
   let l=OZET.filter(m=>!q||kat(m.ad+" "+m.mensei+" "+m.alan).includes(q));
-  l=SIRA==="sayi"?[...l].sort((a,b)=>b.toplam-a.toplam||a.ad.localeCompare(b.ad,"tr"))
-                 :[...l].sort((a,b)=>a.ad.localeCompare(b.ad,"tr"));
+  const ol={sayi:m=>m.toplam, satis:m=>m.satis+m.ikisi, servis:m=>m.servis+m.ikisi};
+  l = SIRA in ol
+      ? [...l].sort((a,b)=>ol[SIRA](b)-ol[SIRA](a)||a.ad.localeCompare(b.ad,"tr"))
+      : [...l].sort((a,b)=>a.ad.localeCompare(b.ad,"tr"));
   $("#tumBos").style.display=l.length?"none":"block";
   $("#tumListe").innerHTML=l.map(m=>{
     const t=m.toplam>0;
