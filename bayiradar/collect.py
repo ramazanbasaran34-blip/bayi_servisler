@@ -158,6 +158,26 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
                            data=cfg.get("data"), headers=cfg.get("headers"),
                            max_age=max_age, encoding=cfg.get("encoding"))
 
+    # --- 0a. tur: tür süzgeci varsa her tür için ayrı gez ---
+    # Kaydın türü kartta yazmıyorsa (Arora) sayfanın süzgeci kullanılır:
+    # önce "Bayi" işaretlenip iller gezilir, sonra "Servis", sonra "Bayi+Servis".
+    suzgec = cfg.get("tur_suzgeci")
+    if suzgec and len(urls) == 1:
+        try:
+            log("     tür süzgeciyle geziliyor")
+            for rol, il_adi, sayfa in fetcher.tur_ve_il_gez(
+                    urls[0][0], suzgec["secici"], suzgec["degerler"], log,
+                    azami_saniye=KAYNAK_AZAMI_SANIYE * 0.9):
+                ham = _sayfayi_coz(sayfa, cfg, "html")
+                for r in ham:
+                    r["rol"] = rol            # süzgeçten gelen rol kesindir
+                ekle(ham, urls[0][0], il_adi, zorla_il=False)
+            if kayitlar:
+                return kayitlar, 1.0
+            log("     tür süzgeci sonuç vermedi")
+        except Exception as e:                                    # noqa: BLE001
+            log(f"     tür süzgeci hatası: {str(e)[:70]}")
+
     # --- 0. tur: tarif açıkça "il seçerek gez" diyorsa doğrudan onu yap ---
     # Bazı sitelerde il seçimi URL'e yansımıyor (Arora): parametre denemek
     # hep aynı sayfayı döndürüyor ve tek ilin verisi geliyordu.
