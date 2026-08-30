@@ -1,14 +1,13 @@
 name: Derin keşif
 
 # Boş kalan markaların sayfalarını bir insan gibi kullanır: il seçer, arama
-# yapar ve HER ADIMDA sayfanın arkada çağırdığı adresleri kaydeder.
-# Amaç tarayıcıyla kazımak değil, verinin geldiği adresi bulmak.
+# yapar ve her adımda sayfanın arkada çağırdığı adresleri kaydeder.
 
 on:
   workflow_dispatch:
     inputs:
       markalar:
-        description: "Boşlukla ayrılmış marka adları (boş = hepsi)"
+        description: "VİRGÜLLE ayrılmış marka adları (boş = hepsi). Örn: Kuba,Meka Motor,Yamaha"
         required: false
         default: ""
 
@@ -18,7 +17,7 @@ permissions:
 jobs:
   kesif:
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -30,13 +29,34 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           playwright install --with-deps chromium
+
       - name: Sayfaları incele
-        run: python kesif2.py ${{ github.event.inputs.markalar }}
+        # Hata olursa da kaydı görebilmek için çıktı dosyaya yazılıyor.
+        # Önceki denemede betik sessizce çöktü ve sebebini göremedim.
+        run: |
+          mkdir -p kesif
+          # Virgülle ayır: boşluklu marka adları ("Meka Motor") bozulmasın.
+          # Önceki denemede tırnaklı adlar kabuk komutunu bozup betiği
+          # sessizce çökertmişti.
+          printf '%s' "${{ github.event.inputs.markalar }}" | tr ',' '\n' \
+            | sed 's/^[[:space:]]*//; s/[[:space:]]*$//' \
+            | grep -v '^$' > kesif/istenen.txt || true
+          echo "İstenen markalar:"; cat kesif/istenen.txt || true
+          set -o pipefail
+          if [ -s kesif/istenen.txt ]; then
+            xargs -a kesif/istenen.txt -d '\n' python -u kesif2.py 2>&1 \
+              | tee kesif/kayit.txt
+          else
+            python -u kesif2.py 2>&1 | tee kesif/kayit.txt
+          fi
         continue-on-error: true
+
       - name: Raporu depoya yaz
+        if: always()
         run: |
           git config user.name  "bayi-radar-bot"
           git config user.email "bot@users.noreply.github.com"
+          ls -la kesif/ || true
           git add -f kesif/
           git diff --staged --quiet && { echo "Değişiklik yok"; exit 0; }
           git commit -m "Derin keşif: $(date -u +'%Y-%m-%d %H:%M UTC')"
