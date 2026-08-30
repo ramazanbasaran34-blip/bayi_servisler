@@ -88,6 +88,24 @@ def _sayfayi_coz(body, cfg, mode):
     return parse_oto(body, cfg)
 
 
+def _rol_uygula(kayitlar, cfg):
+    """Kayıtlara rol atar.
+
+    Kaynak tek rollüyse (ayrı bir servis sayfası) o rol KESİNDİR; sayfadaki
+    etiket onu ezemez. CFMoto'nun servis sayfasında bir yerde "Bayi" kelimesi
+    geçtiği için 562 kaydın hepsi satış olarak yazılmıştı, servis sıfır kaldı.
+
+    Kaynak ikisini birden veriyorsa (satis_servis) sayfanın kendi etiketi
+    kullanılır — Rutec gibi her kaydın türünü yazan siteler için gerekli.
+    """
+    kaynak_rol = cfg.get("rol", "satis")
+    for r in kayitlar:
+        if kaynak_rol in ("satis", "servis"):
+            r["rol"] = kaynak_rol
+        else:
+            r.setdefault("rol", kaynak_rol)
+
+
 def kaynaklari_coz(cfg: dict) -> list[dict]:
     """Markanın taranacak kaynaklarını döner: [{rol, url, ...}, ...]
 
@@ -155,10 +173,7 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
             continue
         ekle(_sayfayi_coz(body, cfg, mode), url, url_ili)
 
-    # Sayfa kaydın türünü kendisi söylediyse (Rutec gibi) ona güven;
-    # söylemediyse tarifteki rolü uygula.
-    for r in kayitlar:
-        r.setdefault("rol", cfg.get("rol", "satis"))
+    _rol_uygula(kayitlar, cfg)
 
     kapsam = basarili_url / len(urls) if urls else 0.0
     if ilk_body is None:
@@ -221,8 +236,7 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
                 ekle(_sayfayi_coz(sayfa, cfg, "html"), urls[0][0], il_adi,
                      zorla_il=True)
             if kayitlar:
-                for r in kayitlar:
-                    r.setdefault("rol", cfg.get("rol", "satis"))
+                _rol_uygula(kayitlar, cfg)
                 return kayitlar, 1.0
         except Exception as e:                                    # noqa: BLE001
             log(f"     il seçimi başarısız: {str(e)[:60]}")
@@ -258,8 +272,7 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
         except Exception as e:                                    # noqa: BLE001
             log(f"     tarayıcı denemesi başarısız: {str(e)[:60]}")
 
-    for r in kayitlar:
-        r.setdefault("rol", cfg.get("rol", "satis"))
+    _rol_uygula(kayitlar, cfg)
     return kayitlar, (1.0 if kayitlar else kapsam)
 
 
