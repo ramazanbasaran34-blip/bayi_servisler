@@ -30,13 +30,35 @@ def tr_upper(s: str) -> str:
     return s.translate(_TR_UPPER).upper()
 
 
+def mojibake_onar(metin: str) -> str:
+    """Yanlış kodlamayla okunmuş Türkçe metni onarır.
+
+    Sunucu kodlama başlığı göndermezse tarayıcı UTF-8 baytları latin-1 gibi
+    okur: "İstanbul" → "Ä°stanbul", "Şişli" → "ÅiÅli". Bu metinler il/ilçe
+    eşleşmesinde tanınmıyor. Onarım başarısızsa metin olduğu gibi döner.
+    """
+    if not metin or not any(c in metin for c in "ÃÄÅÂ"):
+        return metin
+    try:
+        onarilmis = metin.encode("latin-1").decode("utf-8")
+        # Onarım Türkçe harf ürettiyse kabul et
+        if any(c in onarilmis for c in "çğıöşüÇĞİÖŞÜ"):
+            return onarilmis
+    except (UnicodeEncodeError, UnicodeDecodeError):
+        pass
+    return metin
+
+
 def fold(s: str) -> str:
     """Eşleştirme anahtarı üretir: küçük harf + ASCII + tek boşluk + noktalama yok.
 
     'İSTANBUL / Kadıköy' -> 'istanbul kadikoy'
+    Yanlış kodlanmış metinler ("Ä°stanbul") önce onarılır.
     """
     if not s:
         return ""
+    if any(c in s for c in "ÃÄÅÂ"):
+        s = mojibake_onar(s)
     s = tr_lower(s).translate(_FOLD)
     s = unicodedata.normalize("NFKD", s)
     s = "".join(c for c in s if not unicodedata.combining(c))
@@ -212,3 +234,5 @@ def il_ara(metin: str) -> str:
                 bulunan = ad
                 break
     return bulunan
+
+
