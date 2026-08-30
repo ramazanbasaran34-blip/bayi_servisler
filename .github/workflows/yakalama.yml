@@ -67,7 +67,7 @@ jobs:
           # tek istek, tek hata noktası.
           tampon = io.BytesIO()
           with tarfile.open(fileobj=tampon, mode="w:gz") as t:
-              for f in sorted(Path("kesif").iterdir()):
+              for f in sorted(Path("yakalanan").iterdir()):
                   if f.is_file():
                       t.add(f, arcname=f.name)
           icerik = base64.b64encode(tampon.getvalue()).decode()
