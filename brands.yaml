@@ -138,8 +138,15 @@ markalar:
     # il/ilçe/adres/telefon tam. İl seçimi URL'e yansımıyor, bu yüzden
     # sayfa gerçekten kullanılıyor (listeden seç → sonucu oku).
     mode: browser
-    etkilesim: il_secimi
     beklenen: [400, 900]
+    # Türü kart taşımıyor; sayfadaki onay kutusuyla süzülüyor.
+    # Her tür ayrı ayrı işaretlenip 81 il geziliyor.
+    tur_suzgeci:
+      secici: "input[name=yetkili-servis]"
+      degerler:
+        - {deger: "B",  rol: satis}
+        - {deger: "S",  rol: servis}
+        - {deger: "BS", rol: satis_servis}
     kaynaklar:
       - rol: satis_servis
         url: "https://www.arora.com.tr/hizmet-noktalari"
