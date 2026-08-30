@@ -94,11 +94,34 @@ IL_ILCE = {
     "Zonguldak": ["Alaplı", "Çaycuma", "Devrek", "Ereğli", "Gökçebey", "Kilimli", "Kozlu", "Zonguldak"],
 }
 
+# Resmi kayıtta ayrı, sitelerde bitişik yazılan ilçeler ve eski adlar.
+# "Gaziosmanpaşa" resmi listede "Gazi Osmanpaşa" olarak geçiyordu ve
+# eşleşmiyordu.
+TAKMA_AD = {
+    "gaziosmanpasa": ("İstanbul", "Gazi Osmanpaşa"),
+    "gop": ("İstanbul", "Gazi Osmanpaşa"),
+    "eyup": ("İstanbul", "Eyüpsultan"),
+    "sisli": ("İstanbul", "Şişli"),
+    "besiktas": ("İstanbul", "Beşiktaş"),
+    "kucukcekmece": ("İstanbul", "Küçükçekmece"),
+    "buyukcekmece": ("İstanbul", "Büyükçekmece"),
+    "seyhan": ("Adana", "Seyhan"),
+    "merkezefendi": ("Denizli", "Merkezefendi"),
+}
+
 # Hızlı arama için katlanmış anahtarlar
 ILCE_FOLD = {}
 for _il, _liste in IL_ILCE.items():
     for _i in _liste:
         ILCE_FOLD.setdefault(fold(_i), []).append((_il, _i))
+        # Boşluksuz hali de eşleşsin ("Gazi Osmanpaşa" → "gaziosmanpasa")
+        _bitisik = fold(_i).replace(" ", "")
+        if _bitisik != fold(_i):
+            ILCE_FOLD.setdefault(_bitisik, []).append((_il, _i))
+for _a, (_il, _i) in TAKMA_AD.items():
+    ILCE_FOLD.setdefault(_a, [])
+    if (_il, _i) not in ILCE_FOLD[_a]:
+        ILCE_FOLD[_a].append((_il, _i))
 
 
 def ilce_mi(metin: str, il: str = "") -> str:
