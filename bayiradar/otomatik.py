@@ -80,8 +80,14 @@ TICARI = re.compile(
 # Arayüz metinleri: butonlar, çağrı ifadeleri, form etiketleri.
 # Honda'da 59 kaydın hepsinde bayi adı yerine
 # "Satış danışmanı ile görüşmek istiyorum" yazıyordu.
+# Yer tutucular: veri yokken gösterilen metinler
+YER_TUTUCU = re.compile(
+    r"^\W*(konum yok|adres yok|bilgi yok|belirtilmemi[sş]|"
+    r"bulunamad[iı]|se[cç]iniz|se[cç]im yap|t[uü]m[uü]|hepsi|di[gğ]er)\W*$", re.I)
+
 ARAYUZ = re.compile(
     r"(istiyorum|ediyorum|alın|alin|arayın|arayin|geçin|gecin|"
+    r"konuma git|yol tarifi|haritaya git|haritada g|rota|navigasyon|"
     r"ulaşın|ulasin|tıklayın|tiklayin|görüntüle|goruntule|"
     r"randevu|yol tarifi|şimdi ara|simdi ara|iletişime|iletisime|"
     r"whatsapp|konuşun|konusun|bize ulaş|bilgi al|teklif|"
@@ -310,7 +316,7 @@ def _kaydi_cikar(kap):
             continue
         if len(m) < 3 or m.strip().lower().rstrip(":") in COP:
             continue
-        if ARAYUZ.search(m):
+        if ARAYUZ.search(m) or YER_TUTUCU.match(m):
             continue
         temiz = re.sub(r"\s+", " ", m).strip()
         # Tür etiketi mi? Öyleyse rol olarak al, ad/ilçe adayı sayma.
@@ -346,6 +352,7 @@ def _kaydi_cikar(kap):
     # Türkiye'de ~970 ilçe var ve listesini taşımak yerine şu ipucunu
     # kullanıyoruz: ilçe adı neredeyse her zaman kaydın ADRESİNDE de geçiyor,
     # firma adı ise geçmiyor. Adreste geçen tek kelimelik adaylar konum sayılır.
+    from .ilceler import ilce_mi
     from .normalize import il_ara
     adres_f = fold(rec.get("adres", ""))
     konum_gibi, gercek = [], []
@@ -354,16 +361,30 @@ def _kaydi_cikar(kap):
         if TICARI.search(m):
             gercek.append((c, m))
             continue
-        # a) Adresin içinde geçen kısa ifade → ilçe adı
+        # a) Başlık etiketindeki konum adı ("<strong>SEYHAN</strong>")
+        if c.name in ("strong", "b", "h1", "h2", "h3", "h4", "h5", "h6"):
+            if ilce_mi(m) or il_ara(m) or len(f.split()) <= 3:
+                konum_gibi.append((c, m))
+                continue
+        # b) Gerçek bir ilçe adıysa firma adı olamaz.
+        #    FCM'de "SEYHAN", "KOZAN", "YÜREĞİR" satırları bayi adı
+        #    oluyordu; kişi adlı bayilerde ticari kelime bulunmadığı için
+        #    ilk sıradaki ilçe seçiliyordu.
+        if len(f.split()) <= 3 and ilce_mi(m):
+            konum_gibi.append((c, m))
+            continue
+        # c) Adresin içinde geçen kısa ifade → ilçe adı
         if adres_f and f and len(f.split()) <= 2 and f in adres_f:
             konum_gibi.append((c, m))
             continue
-        # b) İçinde gerçek bir il adı geçiyor → konum başlığı
+        # d) İçinde gerçek bir il adı geçiyor → konum başlığı
         #    ("İZMİR-TORBALI", "MUĞLA / BODRUM" firma adı sanılıyordu)
         if len(f.split()) <= 3 and il_ara(m):
             konum_gibi.append((c, m))
             continue
         gercek.append((c, m))
+    # Konum ayıklaması sonrası hiç aday kalmadıysa geri al — yoksa kayıt
+    # tamamen kaybolur. Yanlış ad, kayıp kayıttan iyidir.
     if gercek:
         kalan = gercek
         if konum_gibi:
@@ -416,6 +437,47 @@ def _kaydi_cikar(kap):
     return rec
 
 
+def il_basliklari(soup):
+    """Belgedeki il başlıklarını sırasıyla döner: [(sıra_no, il_adı), ...]
+
+    Siteler bayileri il başlıkları altında grupluyor (SYM'de 44 sekme başlığı
+    var). Kartın içinde sadece ilçe yazıyor, il yukarıdaki başlıkta. Bu
+    eşlemeyi kurmadan 35 SYM kaydında il boş kalıyordu.
+    """
+    out = []
+    for sira, el in enumerate(soup.find_all(True)):
+        if el.find(True):                      # yalnızca yaprak
+            continue
+        m = el.get_text(" ", strip=True)
+        if not m or len(m) > 40:
+            continue
+        il = IL_BY_FOLD.get(fold(m))
+        if il:
+            out.append((sira, il))
+    return out
+
+
+def _il_devral(soup, elemanlar, kayitlar):
+    """Kaydın üstündeki en yakın il başlığını AYRI bir alana yazar.
+
+    Doğrudan 'il' alanına yazmıyoruz. Başlık devralma yanılabiliyor: sayfa
+    yapısı beklenenden farklıysa Kadıköy'deki bir bayiye Zonguldak atanıyordu.
+    Yanlış il, eksik ilden çok daha kötü. Bu yüzden başlık yalnızca ADAY
+    olarak saklanıyor; kaydın kendi adresi hiçbir ipucu vermiyorsa kullanılıyor.
+    """
+    basliklar = il_basliklari(soup)
+    if len(basliklar) < 3:
+        return
+    sira = {id(el): i for i, el in enumerate(soup.find_all(True))}
+    for el, rec in zip(elemanlar, kayitlar):
+        if rec is None:
+            continue
+        yer = sira.get(id(el), -1)
+        onceki = [il for s, il in basliklar if s < yer]
+        if onceki:
+            rec["il_baslik"] = onceki[-1]
+
+
 def cikar(html: str) -> list[dict]:
     """Sayfadan bayi kayıtlarını otomatik çıkarır."""
     soup = BeautifulSoup(html, "html.parser")
@@ -430,7 +492,9 @@ def cikar(html: str) -> list[dict]:
     # grup seçiliyordu. Oran yerine mutlak sayı ve kalite bakıyoruz.
     en_iyi, en_iyi_skor = [], 0.0
     for _, _, elemanlar in kaplari_bul(soup)[:12]:
-        kayitlar = [r for r in (_kaydi_cikar(e) for e in elemanlar) if r]
+        ham = [_kaydi_cikar(e) for e in elemanlar]
+        _il_devral(soup, elemanlar, ham)          # il başlıklarını miras al
+        kayitlar = [r for r in ham if r]
         if len(kayitlar) < 2:
             continue
         puan = _kalite(kayitlar)
