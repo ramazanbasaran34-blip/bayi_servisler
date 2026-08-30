@@ -158,6 +158,23 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
                            data=cfg.get("data"), headers=cfg.get("headers"),
                            max_age=max_age, encoding=cfg.get("encoding"))
 
+    # --- 0. tur: tarif açıkça "il seçerek gez" diyorsa doğrudan onu yap ---
+    # Bazı sitelerde il seçimi URL'e yansımıyor (Arora): parametre denemek
+    # hep aynı sayfayı döndürüyor ve tek ilin verisi geliyordu.
+    if cfg.get("etkilesim") == "il_secimi" and len(urls) == 1:
+        try:
+            log("     il seçerek geziliyor")
+            for il_adi, sayfa in fetcher.il_secerek_gez(
+                    urls[0][0], log, azami_saniye=KAYNAK_AZAMI_SANIYE * 0.8):
+                ekle(_sayfayi_coz(sayfa, cfg, "html"), urls[0][0], il_adi,
+                     zorla_il=False)
+            if kayitlar:
+                _rol_uygula(kayitlar, cfg)
+                return kayitlar, 1.0
+            log("     il seçimi sonuç vermedi, normal akışa dönülüyor")
+        except Exception as e:                                    # noqa: BLE001
+            log(f"     il seçimi hatası: {str(e)[:70]}")
+
     # --- 1. tur: tarifteki adres(ler) ---
     ilk_body = None
     for url, url_ili in urls:
