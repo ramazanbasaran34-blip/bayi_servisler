@@ -26,9 +26,9 @@ from pathlib import Path
 
 from bayiradar.collect import kaynaklari_coz, load_config
 from bayiradar.normalize import ILLER, fold
+from bayiradar.otomatik import TEL
 
 CIKTI = Path("kesif")
-TEL = re.compile(r"(?:\+90|0)?[\s(]*\d{3}[)\s.\-]*\d{3}[\s.\-]*\d{2}[\s.\-]*\d{2}")
 
 # Bayi verisi taşıyan yanıtın belirtileri
 VERI_IPUCU = re.compile(
