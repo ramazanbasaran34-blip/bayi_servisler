@@ -232,6 +232,105 @@ class Fetcher:
             page.close()
         return cikti
 
+    def tur_ve_il_gez(self, url, suzgec_secici, degerler, log=None,
+                      azami_saniye=1500):
+        """Tür süzgecini işaretleyip her tür için 81 ili gezer.
+
+        Bazı sitelerde kaydın türü (bayi / servis / ikisi) kartta yazmıyor;
+        sayfanın üstündeki onay kutusuyla süzülüyor. Arora böyle: kart hangi
+        türe ait belli değil, ama "B", "S", "BS" kutuları var.
+
+        Tür bilgisini doğru almak için her kutuyu tek tek işaretleyip listeyi
+        ayrı ayrı toplamak gerekiyor.
+
+        degerler: [{"deger": "B", "rol": "satis"}, ...]
+        Döner: [(rol, il_adi, html), ...]
+        """
+        import time as _t
+
+        from .normalize import ILLER, fold
+        log = log or (lambda m: None)
+        try:
+            from playwright.sync_api import sync_playwright   # noqa: F401
+        except ImportError:
+            return []
+        if self._browser is None:
+            self.render(url, max_age=0)
+
+        il_fold = {fold(i): i for i in ILLER}
+        il_fold.update({"afyon": "Afyonkarahisar", "icel": "Mersin",
+                        "urfa": "Şanlıurfa", "k maras": "Kahramanmaraş"})
+        cikti = []
+        bas = _t.monotonic()
+
+        for tur in degerler:
+            if _t.monotonic() - bas > azami_saniye:
+                log(f"     süre doldu, {len(cikti)} sayfa alındı")
+                break
+            page = self._browser.new_page(user_agent=UA, locale="tr-TR",
+                                          viewport={"width": 1440, "height": 2000})
+            try:
+                page.goto(url, timeout=self.timeout * 1000,
+                          wait_until="domcontentloaded")
+                try:
+                    page.wait_for_load_state("networkidle", timeout=15000)
+                except Exception:                                 # noqa: BLE001
+                    pass
+
+                # Yalnızca bu türü işaretle, diğerlerini kaldır
+                for d in degerler:
+                    kutu = page.query_selector(
+                        f"{suzgec_secici}[value='{d['deger']}']")
+                    if not kutu:
+                        continue
+                    secili = kutu.is_checked()
+                    if d["deger"] == tur["deger"] and not secili:
+                        kutu.check(timeout=4000)
+                    elif d["deger"] != tur["deger"] and secili:
+                        kutu.uncheck(timeout=4000)
+                page.wait_for_timeout(800)
+                log(f"     [{tur['rol']}] süzgeç işaretlendi")
+
+                # İl listesini bul
+                hedef, secenekler = None, []
+                for i, sec in enumerate(page.query_selector_all("select")):
+                    cift = []
+                    for o in sec.query_selector_all("option"):
+                        dv = (o.get_attribute("value") or "").strip()
+                        m = fold(o.text_content() or "")
+                        if dv and dv.lower() not in ("", "0", "-1") and m in il_fold:
+                            cift.append((dv, il_fold[m]))
+                    if len(cift) > len(secenekler):
+                        hedef, secenekler = i, cift
+
+                if hedef is None or len(secenekler) < 5:
+                    cikti.append((tur["rol"], "", page.content()))
+                    continue
+
+                for dv, il in secenekler:
+                    if _t.monotonic() - bas > azami_saniye:
+                        break
+                    try:
+                        sec = page.query_selector_all("select")[hedef]
+                        sec.select_option(dv)
+                        page.evaluate(
+                            """el => { el.dispatchEvent(new Event('change',{bubbles:true}));
+                                       el.dispatchEvent(new Event('input',{bubbles:true})); }""",
+                            sec)
+                        try:
+                            page.wait_for_load_state("networkidle", timeout=5000)
+                        except Exception:                         # noqa: BLE001
+                            pass
+                        page.wait_for_timeout(350)
+                        cikti.append((tur["rol"], il, page.content()))
+                    except Exception:                             # noqa: BLE001
+                        continue
+            except Exception as e:                                # noqa: BLE001
+                log(f"     [{tur['rol']}] hata: {str(e)[:60]}")
+            finally:
+                page.close()
+        return cikti
+
     def close(self):
         if self._browser:
             self._browser.close()
