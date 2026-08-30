@@ -103,52 +103,60 @@ def parse_json(body: str, cfg: dict) -> list[dict]:
 # ------------------------------------------------------------- son rötuşlar
 def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
     """Ham kaydı standart şemaya oturtur. Adı olmayan kaydı çöpe atar."""
-    # il ve ilçe tek alanda geldiyse ayır
-    birlesik = cfg.get("il_ilce_birlesik")
-    if birlesik and rec.get(birlesik):
-        il, ilce = split_il_ilce(rec[birlesik])
-        rec["il"], rec["ilce"] = il or rec.get("il", ""), ilce or rec.get("ilce", "")
-    elif not rec.get("il"):
-        # Son çare: adres ya da ilçe alanında GERÇEK bir il adı geçiyor mu?
-        # Geçmiyorsa boş bırakılır — uydurma il yazmak listeyi bozar.
-        ilce_ili = il_ara(rec.get("ilce", ""))
-        rec["il"] = ilce_ili or il_ara(rec.get("adres", ""))
-        # "İlçe" alanında aslında il adı varsa (Rutec'te olduğu gibi) orayı
-        # boşalt — yoksa "Adana / Adana" gibi anlamsız kayıt çıkıyor.
-        if ilce_ili and fold(rec.get("ilce", "")) == fold(ilce_ili):
-            rec["ilce"] = ""
-
     ad = clean_text(rec.get("bayi_adi", ""))
     if not ad:
         return None
 
-    # ---- İLÇE DOĞRULAMA ----
-    # İlçe alanına ancak GERÇEK bir ilçe adı yazılabilir. Doğrulanamayan
-    # değer atılır. Önceden "Haritada Gör", "Sizi Arayalım", e-posta adresleri
-    # ve firma adları ilçe olarak listeleniyordu.
-    il_ad = resolve_il(rec.get("il", ""))
+    # İl ve ilçe tek alanda geldiyse ayır (tarifte belirtilmişse)
+    birlesik = cfg.get("il_ilce_birlesik")
+    if birlesik and rec.get(birlesik):
+        il, ilce = split_il_ilce(rec[birlesik])
+        rec["il"] = il or rec.get("il", "")
+        rec["ilce"] = ilce or rec.get("ilce", "")
+
+    # ================== İL VE İLÇE BELİRLEME ==================
+    #
+    # Sıralama pahalıya mal oldu; iki ters hata yaşandı:
+    #   · Başlık devralma en üstteyken Kadıköy'deki bayiye Zonguldak atandı.
+    #   · Adresten ilçe çıkarma üstteyken "BİR ARALIK OKULU YANI" adresi
+    #     Iğdır'ın Aralık ilçesine eşleşip il Iğdır oldu; başlık Adıyaman'dı.
+    #
+    # Doğru sıra: kaydın açık il alanı → adreste yazan il → sayfadaki il
+    # başlığı → en son ilçeden çıkarım. İlçe araması bilinen ille SINIRLI,
+    # yoksa rastgele kelime eşleşmeleri ili bozuyor.
+
+    il_ad = resolve_il(rec.get("il", ""))                  # 1
+    if not il_ad:
+        il_ad = il_ara(rec.get("adres", ""))               # 2
+    if not il_ad:
+        il_ad = resolve_il(rec.get("il_baslik", ""))       # 3
+
+    # İlçe: kaydın kendi alanı, ile göre doğrulanarak
     ham_ilce = clean_text(rec.get("ilce", ""))
     ilce_ad = ""
     if ham_ilce:
         ilce_ad = ilce_mi(ham_ilce, il_ad)
+        if not ilce_ad and not il_ad:
+            ilce_ad = ilce_mi(ham_ilce)
         if not ilce_ad:
-            # İl bilinmiyorsa ya da eşleşmediyse ilsiz dene
-            ilce_ad = ilce_mi(ham_ilce) if not il_ad else ""
-        if not ilce_ad:
-            # "Kadıköy / İstanbul" gibi birleşik olabilir; parçalara bak
             for parca in re.split(r"[/,\-–_|]", ham_ilce):
-                ilce_ad = ilce_mi(parca.strip(), il_ad) or (
-                    ilce_mi(parca.strip()) if not il_ad else "")
+                p2 = parca.strip()
+                ilce_ad = ilce_mi(p2, il_ad) or (ilce_mi(p2) if not il_ad else "")
                 if ilce_ad:
                     break
-    # İlçe biliniyor ama il yoksa, ilçeden ili çöz
-    if ilce_ad and not il_ad:
-        il_ad = ilceden_il(ilce_ad)
-    # Hâlâ ilçe yoksa adres metninde ara
+        # "İlçe" alanında aslında il adı varsa (Rutec) ili oradan al
+        if not ilce_ad and not il_ad:
+            il_ad = il_ara(ham_ilce)
+
     if not ilce_ad:
         ilce_ad = adresten_ilce(rec.get("adres", ""), il_ad)
-    if ilce_ad and not il_ad:
+
+    if ilce_ad and not il_ad:                              # 4
         il_ad = ilceden_il(ilce_ad)
+
+    # Tutarlılık: ilçe bu ile ait değilse ilçeyi yazma
+    if ilce_ad and il_ad and not ilce_mi(ilce_ad, il_ad):
+        ilce_ad = ""
 
     out = {
         "marka": marka,
