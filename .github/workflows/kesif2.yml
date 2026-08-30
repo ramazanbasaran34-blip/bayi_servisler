@@ -53,16 +53,53 @@ jobs:
 
       - name: Raporu depoya yaz
         if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config user.name  "bayi-radar-bot"
-          git config user.email "bot@users.noreply.github.com"
-          ls -la kesif/ || true
-          git add -f kesif/
-          git diff --staged --quiet && { echo "Değişiklik yok"; exit 0; }
-          git commit -m "Derin keşif: $(date -u +'%Y-%m-%d %H:%M UTC')"
-          for i in 1 2 3; do
-            git fetch origin "${GITHUB_REF_NAME}"
-            git rebase -X ours "origin/${GITHUB_REF_NAME}" || git rebase --skip
-            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
-            sleep 5
-          done
+          # Git yerine doğrudan API. Önceki denemelerde "git push" sessizce
+          # reddediliyor, döngü hatayı yutuyor ve adım yeşil görünüyordu.
+          # API çağrısının HTTP kodu net: başarısızsa iş akışı kırmızı olur.
+          set -e
+          ls -la kesif/
+          python - <<'PYEOF'
+          import base64, json, os, urllib.request, urllib.error, tarfile, io
+          from pathlib import Path
+
+          tok = os.environ["GH_TOKEN"]
+          depo = os.environ["GITHUB_REPOSITORY"]
+          API = f"https://api.github.com/repos/{depo}"
+          H = {"Authorization": f"Bearer {tok}",
+               "Accept": "application/vnd.github+json",
+               "User-Agent": "kesif"}
+
+          # Tüm raporu tek arşivde topla — çok sayıda küçük dosya yerine
+          # tek istek, tek hata noktası.
+          tampon = io.BytesIO()
+          with tarfile.open(fileobj=tampon, mode="w:gz") as t:
+              for f in sorted(Path("kesif").iterdir()):
+                  if f.is_file():
+                      t.add(f, arcname=f.name)
+          icerik = base64.b64encode(tampon.getvalue()).decode()
+          yol = "kesif/rapor.tar.gz"
+
+          sha = None
+          try:
+              q = urllib.request.Request(f"{API}/contents/{yol}", headers=H)
+              with urllib.request.urlopen(q, timeout=60) as x:
+                  sha = json.loads(x.read()).get("sha")
+          except urllib.error.HTTPError:
+              pass
+
+          govde = {"message": "Derin keşif raporu", "content": icerik,
+                   "branch": os.environ.get("GITHUB_REF_NAME", "main")}
+          if sha:
+              govde["sha"] = sha
+          q = urllib.request.Request(f"{API}/contents/{yol}", method="PUT",
+                                     data=json.dumps(govde).encode(), headers=H)
+          try:
+              with urllib.request.urlopen(q, timeout=120) as x:
+                  print("Rapor yazıldı:", x.status, len(icerik), "bayt")
+          except urllib.error.HTTPError as e:
+              print("HATA", e.code, e.read().decode()[:400])
+              raise SystemExit(1)
+          PYEOF
