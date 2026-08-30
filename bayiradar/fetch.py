@@ -183,12 +183,14 @@ class Fetcher:
                 cift = []
                 for o in sec.query_selector_all("option"):
                     d = (o.get_attribute("value") or "").strip()
-                    m = fold(o.inner_text())
+                    # inner_text() <option> üzerinde boş döner (seçenekler
+                    # ekranda çizilmiyor). text_content() kullanılmalı.
+                    m = fold(o.text_content() or "")
                     if d and d.lower() not in ("", "0", "-1") and m in il_fold:
                         cift.append((d, il_fold[m]))
                 if len(cift) > len(secenekler):
                     hedef, secenekler = i, cift
-            if hedef is None or len(secenekler) < 20:
+            if hedef is None or len(secenekler) < 5:
                 return []
 
             log(f"     açılır listede {len(secenekler)} il, tek tek seçiliyor")
