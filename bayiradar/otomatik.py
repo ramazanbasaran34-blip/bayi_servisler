@@ -77,6 +77,16 @@ TICARI = re.compile(
     r"yedek|aksesuar|show\s*room|showroom|kardeşler|ve\s+o[gğ]ullar[iı]|"
     r"limited|anonim)\b", re.I)
 
+# Arayüz metinleri: butonlar, çağrı ifadeleri, form etiketleri.
+# Honda'da 59 kaydın hepsinde bayi adı yerine
+# "Satış danışmanı ile görüşmek istiyorum" yazıyordu.
+ARAYUZ = re.compile(
+    r"(istiyorum|ediyorum|alın|alin|arayın|arayin|geçin|gecin|"
+    r"ulaşın|ulasin|tıklayın|tiklayin|görüntüle|goruntule|"
+    r"randevu|yol tarifi|şimdi ara|simdi ara|iletişime|iletisime|"
+    r"whatsapp|konuşun|konusun|bize ulaş|bilgi al|teklif|"
+    r"daha fazla|devamını|detaylı bilgi|haritada)", re.I)
+
 # Bayi adı olamayacak metinler
 COP = {"ara", "detay", "harita", "yol tarifi al", "yol tarifi", "devamı",
        "daha fazla", "iletişim", "bilgi al", "göster", "adres", "telefon",
@@ -300,6 +310,8 @@ def _kaydi_cikar(kap):
             continue
         if len(m) < 3 or m.strip().lower().rstrip(":") in COP:
             continue
+        if ARAYUZ.search(m):
+            continue
         temiz = re.sub(r"\s+", " ", m).strip()
         # Tür etiketi mi? Öyleyse rol olarak al, ad/ilçe adayı sayma.
         # Tür etiketi hiçbir zaman ad/ilçe adayı olamaz. Rol zaten
@@ -366,15 +378,20 @@ def _kaydi_cikar(kap):
                 elif not rec.get("ilce"):
                     rec["ilce"] = km
 
+    # Bayi adı seçimi.
+    #
+    # "En uzun metni ad say" kuralı Honda'da çuvalladı: buton yazısı
+    # ("Satış danışmanı ile görüşmek istiyorum", 37 karakter) gerçek addan
+    # ("Honda Motosiklet Alp", 20 karakter) uzundu. Firma adı neredeyse her
+    # zaman kartın BAŞINDA olduğu için belge sırası daha güvenilir.
     ticari = [(c, m) for c, m in kalan if TICARI.search(m)]
-    if len(ticari) == 1:
-        rec["bayi_adi"] = ticari[0][1]
-        digerleri = [m for c, m in kalan if c is not ticari[0][0]]
+    if ticari:
+        rec["bayi_adi"] = ticari[0][1]                 # ilk ticari ifade
+        secilen = ticari[0][0]
+        digerleri = [m for c, m in kalan if c is not secilen]
     else:
-        # Ticari kelime yok ya da birden çok var → uzunluğa düş
-        sirali = sorted(kalan, key=lambda x: -len(x[1]))
-        rec["bayi_adi"] = sirali[0][1]
-        digerleri = [m for _, m in sirali[1:]]
+        rec["bayi_adi"] = kalan[0][1]                  # ilk aday
+        digerleri = [m for _, m in kalan[1:]]
 
     # İlçe: kalanlar içinde kısa ve ticari kelime içermeyen
     for m in digerleri:
