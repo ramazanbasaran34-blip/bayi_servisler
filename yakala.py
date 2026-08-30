@@ -26,7 +26,9 @@ from bayiradar.fetch import Fetcher
 from bayiradar.otomatik import TEL, il_baglantilari, il_secicileri_bul, kaplari_bul
 
 CIKTI = Path("yakalanan")
-AZAMI = 400_000          # sıkıştırma öncesi azami karakter
+# Sıkıştırma öncesi azami karakter. Derin keşif Zelsun'da 21.494, Arora'da
+# 3.754 telefon buldu; 400 KB sınırı bu sayfaları ortadan kesiyordu.
+AZAMI = 4_000_000
 COP_ETIKET = ["script", "style", "noscript", "svg", "iframe", "picture",
               "source", "video", "audio", "canvas", "template"]
 
@@ -46,23 +48,33 @@ def temizle(html: str) -> str:
 
 
 def ilgili_bolge(html: str) -> str:
-    """Bayi listesini içeren bölgeyi bulup döner. Bulamazsa gövdeyi verir."""
+    """Bayi listesini içeren bölgeyi döner.
+
+    Kırpma agresifti: en iyi kabın atası alınıyordu ve sayfanın kalanı
+    atılıyordu. Ayrıştırıcı bu yüzden veriyi göremiyordu. Artık telefon
+    sayısı korunuyor mu diye kontrol ediyor, kaybediyorsa tüm gövdeyi veriyor.
+    """
     soup = BeautifulSoup(html, "html.parser")
     for t in soup(COP_ETIKET):
         t.decompose()
+    govde = temizle(str(soup.body or soup))
+    tam_tel = len(TEL.findall(BeautifulSoup(govde, "html.parser").get_text(" ")))
+
     adaylar = kaplari_bul(soup)
-    if not adaylar:
-        govde = soup.body or soup
-        return temizle(str(govde))[:AZAMI]
-    # En iyi adayın kapsayıcısını al — tüm kardeşler dahil olsun
-    en_iyi = adaylar[0][2][0]
-    kap = en_iyi.parent or en_iyi
-    for _ in range(2):
-        if kap.parent and len(str(kap)) < AZAMI // 2:
-            kap = kap.parent
-        else:
-            break
-    return temizle(str(kap))[:AZAMI]
+    if adaylar:
+        en_iyi = adaylar[0][2][0]
+        kap = en_iyi.parent or en_iyi
+        for _ in range(3):
+            if kap.parent and len(str(kap)) < AZAMI // 2:
+                kap = kap.parent
+            else:
+                break
+        parca = temizle(str(kap))
+        parca_tel = len(TEL.findall(BeautifulSoup(parca, "html.parser").get_text(" ")))
+        # Kırpılmış bölge telefonların %90'ını koruyorsa onu kullan
+        if tam_tel and parca_tel >= tam_tel * 0.9:
+            return parca[:AZAMI]
+    return govde[:AZAMI]
 
 
 def main():
@@ -86,7 +98,7 @@ def main():
 
                 # Her zaman gerçek tarayıcıyla: nihai DOM lazım
                 try:
-                    html = f.render(temel, max_age=0)
+                    html = f.render(temel, max_age=0, wait_ms=6000)
                 except Exception as e:                            # noqa: BLE001
                     bilgi["hata"] = str(e)[:200]
                     ozet[ad] = bilgi
