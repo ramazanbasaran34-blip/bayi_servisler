@@ -206,6 +206,7 @@ markalar:
 
   # 16. HERO  ·  Hindistan  ·  www.heromotor.com.tr
   "Hero":
+    etkilesim: il_secimi
     mode: browser
     kaynaklar:
       - rol: satis
@@ -222,6 +223,7 @@ markalar:
 
   # 18. FALCON  ·  Türkiye-Çin  ·  falconmotosiklet.com
   "Falcon":
+    etkilesim: il_secimi
     mode: browser
     kaynaklar:
       - rol: satis
@@ -288,6 +290,7 @@ markalar:
 
   # 26. KRAL  ·  Türkiye-Çin  ·  kralmotor.tr
   "Kral":
+    etkilesim: il_secimi
     mode: browser
     kaynaklar:
       - rol: satis
@@ -297,6 +300,7 @@ markalar:
 
   # 27. ALTAI  ·  Türkiye-Çin  ·  www.altai.com.tr
   "Altai":
+    etkilesim: il_secimi
     mode: browser
     kaynaklar:
       - rol: satis
@@ -360,6 +364,7 @@ markalar:
 
   # 34. STMAX  ·  Türkiye-Çin  ·  stmax.com.tr
   "STMax":
+    etkilesim: il_secimi
     mode: browser
     kaynaklar:
       - rol: satis_servis
@@ -374,6 +379,8 @@ markalar:
 
   # 36. REGAL RAPTOR  ·  Çin  ·  regalraptor.com.tr
   "Regal Raptor":
+    etkilesim: il_secimi
+    mode: browser
     kaynaklar:
       - rol: satis
         url: "https://regalraptor.com.tr/tr/bayiler"
@@ -453,6 +460,7 @@ markalar:
 
   # 46. MUSATTI  ·  Türkiye-Çin  ·  musattimotor.com
   "Musatti":
+    etkilesim: il_secimi
     mode: browser
     beklenen: [210, 720]   # saha: ~300 bayi, ~300 servis
     kaynaklar:
@@ -470,12 +478,15 @@ markalar:
 
   # 48. MEKA MOTOR  ·  Türkiye-Çin  ·  www.mekamotor.com.tr
   "Meka Motor":
+    etkilesim: il_secimi
+    mode: browser
     kaynaklar:
       - rol: satis_servis
         url: "https://www.mekamotor.com.tr/bayi-ve-servis"
 
   # 49. ZELSUN  ·  Türkiye-Çin  ·  www.zelsunmotor.com
   "Zelsun":
+    etkilesim: il_secimi
     mode: browser
     kaynaklar:
       - rol: satis
@@ -572,6 +583,7 @@ markalar:
 
   # 61. LEKSAS  ·  Türkiye-Çin  ·  www.leksas.com.tr
   "Leksas":
+    etkilesim: il_secimi
     mode: browser
     kaynaklar:
       - rol: satis_servis
