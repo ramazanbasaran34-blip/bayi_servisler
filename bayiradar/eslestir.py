@@ -81,13 +81,25 @@ def ayni_firma_mi(a: dict, b: dict) -> tuple[bool, str]:
         return False, ""
 
     # İKİSİNİN DE telefonu var ve FARKLI → güçlü ayrım kanıtı.
-    # Bu durumda ancak adres de birebir tutuyorsa aynı firma sayılır.
+    #
+    # Bu normal bir durum: bayi hattı ayrı, servis hattı ayrı olabiliyor.
+    # Mondial'de "OMER ARAS - MONDI MOTOR" iki kez çıkıyordu, biri satış biri
+    # servis, farklı numaralarla. Ama adres de yoksa eskiden birleşemiyordu.
+    #
+    # Ölçüt: adres varsa adres tutmalı; adres YOKSA ad çekirdeği birebir aynı
+    # ve aynı ilçe olmalı. İkisi de yoksa ayrı bırakılır.
     tel_a, tel_b = a.get("telefon", ""), b.get("telefon", "")
     if tel_a and tel_b and tel_a != tel_b:
         aa = adres_anahtari(a.get("adres", ""))
         ab = adres_anahtari(b.get("adres", ""))
-        if not (aa and ab and _ortak_oran(aa, ab) >= 0.7):
-            return False, ""
+        if aa and ab:
+            if _ortak_oran(aa, ab) < 0.7:
+                return False, ""
+        else:
+            # Adres bilinmiyor: ad ve ilçe birebir tutmalı
+            ia0, ib0 = fold(a.get("ilce", "")), fold(b.get("ilce", ""))
+            if not (ca == cb and ia0 and ia0 == ib0):
+                return False, ""
 
     ia, ib = fold(a.get("ilce", "")), fold(b.get("ilce", ""))
     ila, ilb = fold(a.get("il", "")), fold(b.get("il", ""))
