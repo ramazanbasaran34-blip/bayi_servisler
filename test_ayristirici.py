@@ -300,6 +300,26 @@ for metin, bek in [
         print(f"  ✗ il_ara '{metin[:40]}': '{bek}' beklendi, '{g}' geldi")
 print(f"  ✓ yol adı tuzağı ({_t}/9)")
 
+# ---------------------------------------------------------------- 14
+print("\n14. Telefon tanıma — rakam yığınları telefon sayılmamalı")
+from bayiradar.otomatik import TEL
+_t = 0
+for metin, bek in [
+    ("1234567890123456789", 0), ("koordinat 41.008238 28.978359", 0),
+    ("id=9876543210", 0), ("SKU 1029384756", 0), ("No:12345678901234", 0),
+    ("fiyat 129900 TL", 0), ("posta kodu 34732 istanbul", 0),
+    ("0216 345 67 89", 1), ("+90 212 555 44 33", 1), ("05321234567", 1),
+    ("0 507 064 20 92", 1), ("(0212) 555 44 33", 1), ("0850 210 62 10", 1),
+    ("Tel: 0232 441 22 33 Faks: 0232 441 22 34", 2),
+]:
+    g = len(TEL.findall(metin))
+    if g == bek:
+        BASARILI.append(f"tel: {metin[:20]}"); _t += 1
+    else:
+        BASARISIZ.append((f"tel: {metin[:30]}", [f"{bek} beklendi, {g} geldi"], []))
+        print(f"  ✗ '{metin[:34]}': {bek} beklendi, {g} geldi")
+print(f"  ✓ telefon tanıma ({_t}/14)")
+
 # ---------------------------------------------------------------- özet
 print("\n" + "=" * 60)
 print(f"GEÇEN: {len(BASARILI)}   KALAN: {len(BASARISIZ)}")
