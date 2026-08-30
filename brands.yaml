@@ -119,13 +119,23 @@ markalar:
 
   #  9. ARORA  ·  Türkiye-Çin  ·  arora.com.tr
   "Arora":
-    beklenen: [350, 750]   # saha: ~400 bayi, ~500 servis
+    # Sayfa yapısı 30.08.2026'da yakalanıp doğrulandı: 20 kayıt, hepsinde
+    # il/ilçe/adres/telefon tam. İl seçimi URL'e yansımıyor, bu yüzden
+    # sayfa gerçekten kullanılıyor (listeden seç → sonucu oku).
     mode: browser
+    etkilesim: il_secimi
+    beklenen: [400, 900]
     kaynaklar:
       - rol: satis_servis
-        url: "https://arora.com.tr/hizmet-noktalari"
-
-  # 10. YUKI  ·  Türkiye-Çin  ·  yukimotor.com.tr
+        url: "https://www.arora.com.tr/hizmet-noktalari"
+    row: "div.points-card-wrapper"
+    fields:
+      bayi_adi: "h3.points-card-title"
+      adres:    "div.points-card-address"
+      telefon:  {sel: "a.points-card-tel", attr: "href", regex: "tel:(.+)"}
+    il_ilce_birlesik: konum
+    ekstra_alanlar:
+      konum: "div.points-card-city"
   "Yuki":
     mode: browser
     kaynaklar:
