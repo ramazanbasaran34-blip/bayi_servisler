@@ -275,6 +275,31 @@ kontrol("buton yazısı ad alanına yazılmamalı",
      {"bayi_adi": "Honda Motosiklet Esengül", "ilce": "Şişli"},
      {"bayi_adi": "Honda Motosiklet Marmara", "ilce": "Beylikdüzü"}])
 
+# ---------------------------------------------------------------- 13
+print("\n13. Yol adındaki il/ilçe adı konum sanılmamalı")
+from bayiradar.normalize import il_ara
+from bayiradar.ilceler import adresten_ilce
+_t = 0
+for metin, bek in [
+    ("BARBAROS MAH. 11032. SOKAK (KAYSERİ YOLU, AKEDAŞ KARŞISI)", ""),
+    ("50. YIL MAH. ESKİ EDİRNE ASFALTI CAD. NO: 542", ""),
+    ("ERTUĞRUL MAH. İZMİR AYDIN CAD. NO: 242", ""),
+    ("ÖĞRETMENEVLERİ MAH. ORDU CAD. NO:98/A", ""),
+    ("ZEYBEK MAH. SANAYİ SİTESİ İZMİR BULVARI NO: 195", ""),
+    ("HARMANDERE MAH ANKARA CAD NO:453/19", ""),
+    ("Hasanpaşa Mah. Lavanta Sok.No:26/1 Kadıköy / İstanbul", "İstanbul"),
+    ("Cikcilli Mah. Atatürk Cad. No:5 Alanya/Antalya", "Antalya"),
+    ("Merkez Mah. PTT Sok. Eskil Aksaray", "Aksaray"),
+]:
+    g = il_ara(metin)
+    if g == bek:
+        BASARILI.append(f"il_ara: {metin[:24]}"); _t += 1
+    else:
+        BASARISIZ.append((f"il_ara: {metin[:34]}",
+                          [f"'{bek}' beklendi, '{g}' geldi"], []))
+        print(f"  ✗ il_ara '{metin[:40]}': '{bek}' beklendi, '{g}' geldi")
+print(f"  ✓ yol adı tuzağı ({_t}/9)")
+
 # ---------------------------------------------------------------- özet
 print("\n" + "=" * 60)
 print(f"GEÇEN: {len(BASARILI)}   KALAN: {len(BASARISIZ)}")
