@@ -249,6 +249,32 @@ kontrol("e-posta ad alanına yazılmamalı",
      {"bayi_adi": "PEKER MOTOR", "ilce": "Kağıthane"},
      {"bayi_adi": "ERENCE", "ilce": "Eyüpsultan"}])
 
+# ---------------------------------------------------------------- 12
+print("\n12. Arayüz metni firma adı olmamalı (Honda tipi)")
+kontrol("buton yazısı ad alanına yazılmamalı",
+    "<ul>" + "".join(
+      f'<li class="k"><div><p class="tt">{ad}</p><span>{ilce}</span></div>'
+      f'<a href="tel:{t}"><span>Şimdi arayın</span><p>{t}</p></a>'
+      f'<a href="#"><span>Yol tarifi alın</span><p>{adr}</p></a>'
+      f'<div><p>Honda ile konuşun</p>'
+      f'<label>Satış danışmanı ile görüşmek istiyorum</label>'
+      f'<label>Test sürüşü randevusu almak istiyorum</label>'
+      f'<label>Servis randevusu almak istiyorum</label></div></li>'
+      for ad, ilce, adr, t in [
+        ("Honda Motosiklet Alp", "Gaziosmanpaşa",
+         "Merkez Mah. Eski Edirne Asfaltı No:10/A Gaziosmanpaşa / İstanbul", "02122168484"),
+        ("Honda Motosiklet Anes", "Bahçelievler",
+         "Basın Ekspres Yolu Cemal Ulusoy Cad. No:25 Bahçelievler / İstanbul", "02124518080"),
+        ("Honda Motosiklet Esengül", "Şişli",
+         "Mahmut Şevket Paşa Mah. Odesa Bulvarı No:22 Şişli / İstanbul", "02123208080"),
+        ("Honda Motosiklet Marmara", "Beylikdüzü",
+         "Yakuplu Mah. Sanayi Cd. No:1/B Beylikdüzü / İstanbul", "02124565859"),
+      ]) + "</ul>",
+    [{"bayi_adi": "Honda Motosiklet Alp", "ilce": "Gazi Osmanpaşa"},
+     {"bayi_adi": "Honda Motosiklet Anes", "ilce": "Bahçelievler"},
+     {"bayi_adi": "Honda Motosiklet Esengül", "ilce": "Şişli"},
+     {"bayi_adi": "Honda Motosiklet Marmara", "ilce": "Beylikdüzü"}])
+
 # ---------------------------------------------------------------- özet
 print("\n" + "=" * 60)
 print(f"GEÇEN: {len(BASARILI)}   KALAN: {len(BASARISIZ)}")
