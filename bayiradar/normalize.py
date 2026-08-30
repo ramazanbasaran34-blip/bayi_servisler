@@ -172,22 +172,40 @@ def phone_display(s: str) -> str:
     return f"0{d[:3]} {d[3:6]} {d[6:8]} {d[8:]}"
 
 
+# İl adından sonra gelen yol/yer eki. "KAYSERİ YOLU", "İZMİR BULVARI",
+# "ESKİ EDİRNE ASFALTI", "ORDU CAD." — bunlar sokak adı, o ilde olduğu
+# anlamına gelmez. Adana'daki bir bayinin adresinde "KAYSERİ YOLU" geçiyor
+# diye il Kayseri yazılamaz.
+_YOL_EKI = re.compile(
+    r"^\s*(yolu|yol|caddesi|cad|cd|bulvari|bulvar|blv|asfalti|asfalt|"
+    r"mahallesi|mah|mh|sokak|sok|sk|sitesi|apartmani|apt|"
+    r"kavsagi|kavsak|otoyolu|karayolu|istikameti|yonu|cikisi)\b")
+
+
 def il_ara(metin: str) -> str:
     """Serbest metinde geçen il adını bulur. Bulamazsa boş döner.
 
-    Adresten il çıkarırken kullanılır. "son parçayı il say" yaklaşımı
-    "Kılıçlaslan Mah. Eski Buğday Pazarı Cad." gibi çöp üretiyordu; bu
-    fonksiyon yalnızca 81 ilden biri gerçekten geçiyorsa kabul eder.
+    Yalnızca 81 ilden biri gerçekten geçiyorsa kabul eder. Ayrıca il adının
+    ardından yol/cadde eki geliyorsa o eşleşme sayılmaz — sokak adları
+    yüzünden yanlış il atanıyordu.
     """
     if not metin:
         return ""
     f = " " + fold(metin) + " "
     bulunan = ""
     for anahtar, ad in IL_BY_FOLD.items():
-        if f" {anahtar} " in f:
-            # En uzun eşleşme kazanır: "afyonkarahisar" > "afyon"
+        for m in re.finditer(r"(?<= )" + re.escape(anahtar) + r"(?= )", f):
+            # Yol eki hemen sonra ya da bir kelime sonra gelebilir:
+            # "kayseri yolu" ve "izmir aydin caddesi" ikisi de sokak adı.
+            kalan = f[m.end():].lstrip()
+            if _YOL_EKI.match(kalan):
+                continue
+            parcalar = kalan.split(None, 2)
+            if len(parcalar) >= 2 and _YOL_EKI.match(parcalar[1]):
+                continue
             if len(anahtar) > len(fold(bulunan)):
                 bulunan = ad
+            break
     if not bulunan:
         for takma, ad in IL_ALIAS.items():
             if f" {takma} " in f:
