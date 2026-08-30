@@ -95,29 +95,44 @@ markalar:
 
   #  6. CFMOTO  ·  Çin  ·  www.cfmoto.com.tr
   "CFMoto":
-    beklenen: [350, 1200]   # saha: ~500 bayi, ~500 servis
+    # Tablo yapısı 30.08.2026'da doğrulandı: 29 kayıt, il/ilçe/telefon tam.
+    # Mondial ile aynı altyapı (?sehir= parametresi).
+    encoding: windows-1254
+    beklenen: [350, 1200]
+    bekleme: 2.0
     kaynaklar:
       - rol: satis
-        url: "https://www.cfmoto.com.tr/satis-noktalari"
+        url: "https://www.cfmoto.com.tr/satis-noktalari?sehir={il_slug}"
+        iterate: il_slug
+        il_url_den: true
       - rol: servis
-        url: "https://www.cfmoto.com.tr/servis-noktalari"
-
-  #  7. KUBA  ·  Türkiye-Çin  ·  www.kubamotor.com.tr
+        url: "https://www.cfmoto.com.tr/servis-noktalari?sehir={il_slug}"
+        iterate: il_slug
+        il_url_den: true
+    row: "table tbody tr"
+    fields:
+      bayi_adi: "td:nth-child(1)"
+      adres:    "td:nth-child(2)"
+      ilce:     "td:nth-child(3)"
+      telefon:  {sel: "td:nth-child(4) a", attr: "href", regex: "tel:(.+)"}
   "Kuba":
-    beklenen: [420, 900]   # saha: ~400 bayi, ~600 servis
+    # Sayfada 78 illik seçici var ama seçim URL'e yansımıyor;
+    # parametre denemek hep aynı sayfayı veriyordu. Sayfa gerçekten kullanılıyor.
     mode: browser
+    etkilesim: il_secimi
+    beklenen: [420, 1100]
     kaynaklar:
       - rol: satis_servis
         url: "https://www.kubamotor.com.tr/bayi-servis/kubamotor"
-
-  #  8. RKS  ·  Türkiye-Çin  ·  www.rksmotor.com.tr
   "RKS":
+    # Sayfada 77 illik seçici var ama seçim URL'e yansımıyor;
+    # parametre denemek hep aynı sayfayı veriyordu. Sayfa gerçekten kullanılıyor.
     mode: browser
+    etkilesim: il_secimi
+    beklenen: [300, 900]
     kaynaklar:
       - rol: satis_servis
         url: "https://www.rksmotor.com.tr/bayi-servis/rksmotor.html"
-
-  #  9. ARORA  ·  Türkiye-Çin  ·  arora.com.tr
   "Arora":
     # Sayfa yapısı 30.08.2026'da yakalanıp doğrulandı: 20 kayıt, hepsinde
     # il/ilçe/adres/telefon tam. İl seçimi URL'e yansımıyor, bu yüzden
