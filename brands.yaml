@@ -58,7 +58,7 @@ markalar:
 
   #  3. BAJAJ  ·  Hindistan  ·  www.ekuralkan.com
   "Bajaj":
-    beklenen: [140, 396]   # saha: ~130 bayi, ~200 servis
+    beklenen: [200, 320]   # Kuralkan: 98 satış + 177 servis (kesin)
     mode: browser
     bekleme: 1.5
     kaynaklar:
@@ -71,7 +71,7 @@ markalar:
 
   #  4. KANUNI  ·  Türkiye-Çin  ·  www.ekuralkan.com
   "Kanuni":
-    beklenen: [140, 384]   # saha: ~120 bayi, ~200 servis
+    beklenen: [200, 320]   # Kuralkan: 98 satış + 177 servis (kesin)
     mode: browser
     bekleme: 1.5
     kaynaklar:
