@@ -102,6 +102,27 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
     "husqvarna-servis": ("https://spormoto.com/husqvarna/husqvarna-servisler/", "html"),
     "husqvarna-satis":  ("https://spormoto.com/husqvarna/bayiler/", "html"),
+
+    # --- öncelik listesi: Hero, Musatti, CSN, Vespa, Suzuki, Zelsun, Falcon, Kral
+    # Keşif raporundan çıkan gerçek veri uçları.
+    "falcon-api":      ("https://falconmotosiklet.com/api/bayiler.php", "json"),
+    "musatti-bayi06":  ("https://musattimotor.com/ajax-bayi-listesi.php?city=06", "json"),
+    "musatti-srv06":   ("https://musattimotor.com/ajax-servis-listesi.php?city=06", "json"),
+    "musatti-sayfa":   ("https://musattimotor.com/bayi-bul", "html"),
+    "kral-satis":      ("https://kralmotor.tr/SalesDealer", "html"),
+    "kral-servis":     ("https://kralmotor.tr/Service", "html"),
+    "vespa-satis":     ("https://www.vespa.com.tr/tr/yetkili-saticilar.html", "html"),
+    "vespa-servis":    ("https://www.vespa.com.tr/tr/yetkili-servisler.html", "html"),
+    "suzuki-satis":    ("https://www.suzuki.com.tr/tr/motosiklet/satis.html", "html"),
+    "suzuki-servis":   ("https://www.suzuki.com.tr/tr/motosiklet/yetkili-servisler.html", "html"),
+    "zelsun-satis":    ("https://www.zelsunmotor.com/Bayilerimiz.aspx", "html"),
+    "zelsun-servis":   ("https://www.zelsunmotor.com/Servislerimiz.aspx", "html"),
+    "zelsun-ist":      ("https://www.zelsunmotor.com/Bayilerimiz.aspx?sehir=%c4%b0STANBUL&ilce=", "html"),
+    "hero-satis":      ("https://www.heromotor.com.tr/bayiler/", "html"),
+    "hero-servis":     ("https://www.heromotor.com.tr/servisler/", "html"),
+    "csn-satis":       ("https://csnmotor.com.tr/satis-noktalarimiz/", "html"),
+    "csn-servis2":     ("https://csnmotor.com.tr/servis-noktalarimiz/", "html"),
+
 }
 
 TEL = re.compile(r"0?\s*\(?5?\d{3}\)?[\s\-/]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}")
