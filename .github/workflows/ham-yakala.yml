@@ -35,6 +35,10 @@ jobs:
         if: inputs.hedefler == '' || contains(inputs.hedefler, 'mj')
         run: python mj_sonda.py || true
 
+      - name: Sonda 2 (MJ GET + Yamaha)
+        if: inputs.hedefler == '' || contains(inputs.hedefler, 'sonda2')
+        run: python sonda2.py || true
+
       - name: Özeti göster
         run: cat ham/ozet.json
 
