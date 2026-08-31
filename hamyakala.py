@@ -100,6 +100,10 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     # CSN: il bazlı sayfa (örnek: Ankara)
     "csn-servis-ank":  ("https://csnmotor.com.tr/servis-noktalarimiz/ankara", "html"),
     "csn-satis-ank":   ("https://csnmotor.com.tr/satis-noktalarimiz/ankara", "html"),
+    # Motolux: il bazlı tek liste (satış+servis birlikte)
+    "motolux-adana":   ("https://motolux.com.tr/bayiler/sehir/adana/", "html"),
+    "motolux-agri":    ("https://motolux.com.tr/bayiler/sehir/agri/", "html"),
+    "motolux-izmir":   ("https://motolux.com.tr/bayiler/sehir/izmir/", "html"),
     # Hero: POST istiyor; önce GET ile yapıyı görelim
     "hero-satis":      ("https://www.heromotor.com.tr/bayiler/", "html"),
     "hero-servis":     ("https://www.heromotor.com.tr/servisler/", "html"),
