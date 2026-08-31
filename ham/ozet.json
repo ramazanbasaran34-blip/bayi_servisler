@@ -440,11 +440,19 @@
  },
  "musatti-bayi06": {
   "url": "https://musattimotor.com/ajax-bayi-listesi.php?city=06",
-  "hata": "ConnectTimeout: HTTPSConnectionPool(host='musattimotor.com', port=443): Max retries exceeded with url: /ajax-bayi-listesi.php?city=06 (Caused by ConnectTimeoutError(<HTTPSConnection(host='musattimotor"
+  "kod": 200,
+  "son_url": "https://musattimotor.com/ajax-bayi-listesi.php?city=06",
+  "boyut": 9346,
+  "tel_toplam": 22,
+  "tel_script_ici": 0
  },
  "musatti-srv06": {
   "url": "https://musattimotor.com/ajax-servis-listesi.php?city=06",
-  "hata": "ConnectTimeout: HTTPSConnectionPool(host='musattimotor.com', port=443): Max retries exceeded with url: /ajax-servis-listesi.php?city=06 (Caused by ConnectTimeoutError(<HTTPSConnection(host='musattimot"
+  "kod": 200,
+  "son_url": "https://musattimotor.com/ajax-servis-listesi.php?city=06",
+  "boyut": 11335,
+  "tel_toplam": 26,
+  "tel_script_ici": 0
  },
  "kral-satis": {
   "url": "https://kralmotor.tr/SalesDealer",
@@ -528,7 +536,11 @@
  },
  "musatti-sayfa": {
   "url": "https://musattimotor.com/bayi-bul",
-  "hata": "ConnectTimeout: HTTPSConnectionPool(host='musattimotor.com', port=443): Max retries exceeded with url: /bayi-bul (Caused by ConnectTimeoutError(<HTTPSConnection(host='musattimotor.com', port=443) at 0"
+  "kod": 200,
+  "son_url": "https://musattimotor.com/bayi-bul",
+  "boyut": 47761,
+  "tel_toplam": 2,
+  "tel_script_ici": 0
  },
  "zelsun-satis": {
   "url": "https://www.zelsunmotor.com/Bayilerimiz.aspx",
@@ -574,6 +586,24 @@
  },
  "csn-satis-ank": {
   "url": "https://csnmotor.com.tr/satis-noktalarimiz/ankara",
+  "kod": 200,
+  "son_url": "https://csnmotor.com.tr/satis-noktalarimiz/ankara/",
+  "boyut": 182604,
+  "tel_toplam": 9,
+  "tel_script_ici": 2,
+  "yonlendi": true
+ },
+ "csn-srv-ankara": {
+  "url": "https://csnmotor.com.tr/servis-noktalarimiz/ankara",
+  "kod": 200,
+  "son_url": "https://csnmotor.com.tr/servis-noktalarimiz/ankara/",
+  "boyut": 185462,
+  "tel_toplam": 11,
+  "tel_script_ici": 2,
+  "yonlendi": true
+ },
+ "csn-sat-ankara": {
+  "url": "https://csnmotor.com.tr/ankara",
   "kod": 200,
   "son_url": "https://csnmotor.com.tr/satis-noktalarimiz/ankara/",
   "boyut": 182604,
