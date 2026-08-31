@@ -147,7 +147,7 @@ def _puan(metin):
     return p
 
 
-def kaplari_bul(soup, en_az=3):
+def kaplari_bul(soup, en_az=2):
     """Bayi kaydına benzeyen, tekrar eden eleman gruplarını puanlayarak döner."""
     # Kartları önce ebeveyne göre grupla...
     gruplar = defaultdict(list)
@@ -183,7 +183,7 @@ def kaplari_bul(soup, en_az=3):
 
     adaylar = []
     for elemanlar in gruplar.values():
-        if len(elemanlar) < en_az:
+        if len(elemanlar) < en_az:   # az sayıda sonuç veren ilçe sayfaları için 2
             continue
         metinler = [e.get_text(" ", strip=True) for e in elemanlar]
         telli = sum(1 for m in metinler if TEL.search(m))
