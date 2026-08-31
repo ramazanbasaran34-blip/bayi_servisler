@@ -397,12 +397,12 @@
   "tel_script_ici": 314
  },
  "suzuki-servis": {
-  "url": "https://www.suzuki.com.tr/tr/motosiklet/servis.html",
-  "kod": 404,
-  "son_url": "https://www.suzuki.com.tr/tr/motosiklet/servis.html",
-  "boyut": 17161,
-  "tel_toplam": 2,
-  "tel_script_ici": 0
+  "url": "https://www.suzuki.com.tr/tr/motosiklet/yetkili-servisler.html",
+  "kod": 200,
+  "son_url": "https://www.suzuki.com.tr/tr/motosiklet/yetkili-servisler.html",
+  "boyut": 54963,
+  "tel_toplam": 298,
+  "tel_script_ici": 296
  },
  "mj-kuba-servis": {
   "url": "https://www.mj.com.tr/bayi-servis-agi/kuba-motor-servis-agi/",
@@ -421,5 +421,117 @@
   "tel_toplam": 519,
   "tel_script_ici": 0,
   "yonlendi": true
+ },
+ "csn": {
+  "url": "https://csnmotor.com.tr/servis-noktalarimiz/",
+  "kod": 200,
+  "son_url": "https://csnmotor.com.tr/servis-noktalarimiz/",
+  "boyut": 339757,
+  "tel_toplam": 169,
+  "tel_script_ici": 2
+ },
+ "falcon-api": {
+  "url": "https://falconmotosiklet.com/api/bayiler.php",
+  "kod": 200,
+  "son_url": "https://falconmotosiklet.com/api/bayiler.php",
+  "boyut": 1225040,
+  "tel_toplam": 7342,
+  "tel_script_ici": 0
+ },
+ "musatti-bayi06": {
+  "url": "https://musattimotor.com/ajax-bayi-listesi.php?city=06",
+  "kod": 200,
+  "son_url": "https://musattimotor.com/ajax-bayi-listesi.php?city=06",
+  "boyut": 9346,
+  "tel_toplam": 22,
+  "tel_script_ici": 0
+ },
+ "musatti-srv06": {
+  "url": "https://musattimotor.com/ajax-servis-listesi.php?city=06",
+  "kod": 200,
+  "son_url": "https://musattimotor.com/ajax-servis-listesi.php?city=06",
+  "boyut": 11335,
+  "tel_toplam": 26,
+  "tel_script_ici": 0
+ },
+ "kral-satis": {
+  "url": "https://kralmotor.tr/SalesDealer",
+  "kod": 200,
+  "son_url": "https://kralmotor.tr/SalesDealer",
+  "boyut": 199372,
+  "tel_toplam": 435,
+  "tel_script_ici": 433
+ },
+ "kral-servis": {
+  "url": "https://kralmotor.tr/Service",
+  "kod": 200,
+  "son_url": "https://kralmotor.tr/Service",
+  "boyut": 181980,
+  "tel_toplam": 469,
+  "tel_script_ici": 467
+ },
+ "vespa-satis": {
+  "url": "https://www.vespa.com.tr/tr/yetkili-saticilar.html",
+  "kod": 200,
+  "son_url": "https://www.vespa.com.tr/tr/yetkili-saticilar.html",
+  "boyut": 85786,
+  "tel_toplam": 265,
+  "tel_script_ici": 262
+ },
+ "suzuki-satis": {
+  "url": "https://www.suzuki.com.tr/tr/motosiklet/satis.html",
+  "kod": 200,
+  "son_url": "https://www.suzuki.com.tr/tr/motosiklet/satis.html",
+  "boyut": 23474,
+  "tel_toplam": 2,
+  "tel_script_ici": 0
+ },
+ "zelsun-satis34": {
+  "url": "https://www.zelsunmotor.com/Bayilerimiz.aspx?sehir=%C4%B0STANBUL&ilce=%C4%B0l%C3%A7e%20Se%C3%A7iniz",
+  "kod": 200,
+  "son_url": "https://www.zelsunmotor.com/Bayilerimiz.aspx?sehir=%C4%B0STANBUL&ilce=%C4%B0l%C3%A7e%20Se%C3%A7iniz",
+  "boyut": 80086,
+  "tel_toplam": 10,
+  "tel_script_ici": 0
+ },
+ "zelsun-srv34": {
+  "url": "https://www.zelsunmotor.com/Servislerimiz.aspx?sehir=%C4%B0STANBUL&ilce=%C4%B0l%C3%A7e%20Se%C3%A7iniz",
+  "kod": 200,
+  "son_url": "https://www.zelsunmotor.com/Servislerimiz.aspx?sehir=%C4%B0STANBUL&ilce=%C4%B0l%C3%A7e%20Se%C3%A7iniz",
+  "boyut": 76656,
+  "tel_toplam": 11,
+  "tel_script_ici": 0
+ },
+ "csn-satis2": {
+  "url": "https://csnmotor.com.tr/satis-noktalarimiz/",
+  "kod": 200,
+  "son_url": "https://csnmotor.com.tr/satis-noktalarimiz/",
+  "boyut": 338506,
+  "tel_toplam": 169,
+  "tel_script_ici": 2
+ },
+ "csn-servis2": {
+  "url": "https://csnmotor.com.tr/servis-noktalarimiz/",
+  "kod": 200,
+  "son_url": "https://csnmotor.com.tr/servis-noktalarimiz/",
+  "boyut": 339757,
+  "tel_toplam": 169,
+  "tel_script_ici": 2
+ },
+ "hero-satis": {
+  "url": "https://www.heromotor.com.tr/bayiler/",
+  "kod": 403,
+  "son_url": "https://www.heromotor.com.tr/bayiler/",
+  "boyut": 5648,
+  "tel_toplam": 7,
+  "tel_script_ici": 7
+ },
+ "hero-servis": {
+  "url": "https://www.heromotor.com.tr/servisler/",
+  "kod": 403,
+  "son_url": "https://www.heromotor.com.tr/servisler/",
+  "boyut": 5654,
+  "tel_toplam": 7,
+  "tel_script_ici": 7
  }
 }
