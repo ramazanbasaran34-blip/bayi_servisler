@@ -1,105 +1,55 @@
 {
- "kuba": {
-  "url": "https://www.kubamotor.com.tr/bayi-servis/kubamotor",
+ "mj-kuba-bayi": {
+  "url": "https://www.mj.com.tr/bayi-servis-agi/kuba-motor-bayi-agi/",
   "kod": 200,
-  "son_url": "https://www.kubamotor.com.tr/bayi-servis/kubamotor",
-  "boyut": 209694,
-  "tel_toplam": 501,
-  "tel_script_ici": 0
- },
- "rks": {
-  "url": "https://www.rksmotor.com.tr/bayi-servis/rksmotor.html",
-  "kod": 200,
-  "son_url": "https://www.rksmotor.com.tr/bayi-servis/rksmotor.html",
-  "boyut": 245816,
-  "tel_toplam": 409,
-  "tel_script_ici": 0
- },
- "rks-standart": {
-  "url": "https://www.rksmotor.com.tr/page/bayi-servis/standart-bayi-agi.html",
-  "kod": 200,
-  "son_url": "https://www.rksmotor.com.tr/page/bayi-servis/standart-bayi-agi.html",
-  "boyut": 221281,
-  "tel_toplam": 409,
-  "tel_script_ici": 0
- },
- "kymco": {
-  "url": "https://www.kymco.com.tr/tr/satis-servis-agi.html",
-  "kod": 200,
-  "son_url": "https://www.kymco.com.tr/tr/satis-servis-agi.html",
-  "boyut": 177860,
-  "tel_toplam": 558,
-  "tel_script_ici": 554
- },
- "bmw": {
-  "url": "https://www.bmw-motorrad.com.tr/tr/ssl/yetkili-satici-ve-servisler.html",
-  "hata": "ReadTimeout: HTTPSConnectionPool(host='www.bmw-motorrad.com.tr', port=443): Read timed out. (read timeout=45)"
- },
- "leksas": {
-  "url": "https://www.leksas.com.tr/bayi-servis/",
-  "kod": 200,
-  "son_url": "https://www.leksas.com.tr/bayi-servis/",
-  "boyut": 176101,
-  "tel_toplam": 23,
-  "tel_script_ici": 2
- },
- "kimmi": {
-  "url": "https://kimmimotor.com/servisler/",
-  "kod": 200,
-  "son_url": "https://www.kimmimotor.com/servisler/",
-  "boyut": 925657,
-  "tel_toplam": 8,
+  "son_url": "https://www.kubamotor.com.tr",
+  "boyut": 207909,
+  "tel_toplam": 519,
   "tel_script_ici": 0,
   "yonlendi": true
  },
- "csn": {
-  "url": "https://csnmotor.com.tr/servis-noktalarimiz/",
+ "mj-kuba-servis": {
+  "url": "https://www.mj.com.tr/bayi-servis-agi/kuba-motor-servis-agi/",
   "kod": 200,
-  "son_url": "https://csnmotor.com.tr/servis-noktalarimiz/",
-  "boyut": 339757,
-  "tel_toplam": 169,
-  "tel_script_ici": 2
- },
- "taktas": {
-  "url": "https://taktas.com.tr/servislerimiz",
-  "kod": 200,
-  "son_url": "https://taktas.com.tr/servislerimiz",
-  "boyut": 310514,
-  "tel_toplam": 5,
-  "tel_script_ici": 0
- },
- "nanok-api": {
-  "url": "https://nanok.com.tr/api/dealers",
-  "kod": 200,
-  "son_url": "https://nanok.com.tr/api/dealers",
-  "boyut": 103691,
-  "tel_toplam": 353,
-  "tel_script_ici": 0
- },
- "meka-maps": {
-  "url": "https://www.mekamotor.com.tr/resman/uploads/maps.xml",
-  "kod": 200,
-  "son_url": "https://www.mekamotor.com.tr/resman/uploads/maps.xml",
-  "boyut": 142498,
-  "tel_toplam": 309,
-  "tel_script_ici": 0
- },
- "ktm-servis": {
-  "url": "https://spormoto.com/ktm/ktm-servisler/",
-  "kod": 200,
-  "son_url": "https://www.spormoto.com/ktm/ktm-servisler/",
-  "boyut": 234836,
-  "tel_toplam": 50,
+  "son_url": "https://www.kubamotor.com.tr",
+  "boyut": 207909,
+  "tel_toplam": 519,
   "tel_script_ici": 0,
   "yonlendi": true
  },
- "husqvarna-servis": {
-  "url": "https://spormoto.com/husqvarna/husqvarna-servisler/",
+ "mj-rks-bayi": {
+  "url": "https://www.mj.com.tr/bayi-servis-agi/rks-motor-bayi-agi/",
   "kod": 200,
-  "son_url": "https://www.spormoto.com/husqvarna/husqvarna-servisler/",
-  "boyut": 235226,
-  "tel_toplam": 50,
+  "son_url": "https://www.kubamotor.com.tr",
+  "boyut": 207909,
+  "tel_toplam": 519,
   "tel_script_ici": 0,
   "yonlendi": true
+ },
+ "mj-rks-servis": {
+  "url": "https://www.mj.com.tr/bayi-servis-agi/rks-motor-servis-agi/",
+  "kod": 200,
+  "son_url": "https://www.kubamotor.com.tr",
+  "boyut": 207909,
+  "tel_toplam": 519,
+  "tel_script_ici": 0,
+  "yonlendi": true
+ },
+ "mj-agi": {
+  "url": "https://www.mj.com.tr/bayi-servis-agi/",
+  "kod": 200,
+  "son_url": "https://www.kubamotor.com.tr",
+  "boyut": 207909,
+  "tel_toplam": 519,
+  "tel_script_ici": 0,
+  "yonlendi": true
+ },
+ "rks-services": {
+  "url": "https://user.rksmotor.com.tr/services.php",
+  "kod": 200,
+  "son_url": "https://user.rksmotor.com.tr/services.php",
+  "boyut": 26189,
+  "tel_toplam": 0,
+  "tel_script_ici": 0
  }
 }
