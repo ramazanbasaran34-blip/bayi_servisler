@@ -121,8 +121,8 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "isotlar-bayi":    ("https://www.isotlarmotor.com/bayiler/", "html"),
     # İsotlar: il seçeneklerinin değeri doğrudan URL; "Tüm İller" seçeneği var
     "isotlar-peugeot": ("https://www.isotlarmotor.com/bayiler/peugeot-motosiklet/", "html"),
-    "isotlar-horwin":  ("https://www.isotlarmotor.com/bayiler/horwin/", "html"),
-    "isotlar-lambretta": ("https://www.isotlarmotor.com/bayiler/lambretta/", "html"),
+    "isotlar-horwin":  ("https://www.isotlarmotor.com/bayiler/horwin-motosiklet/", "html"),
+    "isotlar-lambretta": ("https://www.isotlarmotor.com/bayiler/lambretta-motosiklet/", "html"),
     # Arnica: sehir_id parametresi (1 = Adana)
     "arnica-bayi1":    ("https://arnicamotor.com/bayiler?lang=tr&sehir_id=1", "html"),
     "arnica-servis1":  ("https://arnicamotor.com/servisler?lang=tr&sehir_id=1", "html"),
