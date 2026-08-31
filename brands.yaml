@@ -120,33 +120,63 @@ markalar:
       ilce:     "td:nth-child(3)"
       telefon:  {sel: "td:nth-child(4) a", attr: "href", regex: "tel:(.+)"}
   "Kuba":
-    tur_suzgeci:
-      secici: "select[name=category]"
-      degerler:
-        - {deger: "Bayi", rol: satis}
-        - {deger: "Servis", rol: servis}
-    # Sayfada 78 illik seçici var ama seçim URL'e yansımıyor;
-    # parametre denemek hep aynı sayfayı veriyordu. Sayfa gerçekten kullanılıyor.
-    mode: browser
-    etkilesim: il_secimi
-    beklenen: [420, 1100]
+    # ajax.php'ye POST. Tarayıcı GEREKMİYOR.
+    # · Sayfada <base href="/"> var: uç KÖKTE, /bayi-servis/ altında değil.
+    # · İlçe seçiminde "Tüm İlçeler" = 0 → il başına tek istek, 973 ilçe yok.
+    # · Uç markayı ayırmaz, tüm MJ grubunu döner (Skyjet, Benelli, Ape Ryder...);
+    #   ayrım her kaydın "Yetkileri" satırında yazıyor → kayit_suzgeci.
+    method: POST
+    iterate: il_post
+    headers:
+      X-Requested-With: XMLHttpRequest
+    row: "div.result-item"
+    fields:
+      bayi_adi: "div.location-name h5"
+      adres: {sel: "div.text-item p", index: 0}
+      telefon: {sel: "a[href^='tel:']", attr: "href", regex: 'tel:\s*([0-9 ()]+)'}
+    ekstra_alanlar:
+      yetkiler: {sel: "div.text-item div:nth-of-type(2) p"}
+    kayit_suzgeci:
+      alan: yetkiler
+      icermeli: ["Kuba Motor"]
+    beklenen: [600, 1400]
     kaynaklar:
-      - rol: satis_servis
-        url: "https://www.kubamotor.com.tr/bayi-servis/kubamotor"
+      - rol: satis
+        url: "https://www.kubamotor.com.tr/ajax.php"
+        data: {action: states, city: "{il_adi}", state: "0", category: "Bayi"}
+      - rol: servis
+        url: "https://www.kubamotor.com.tr/ajax.php"
+        data: {action: states, city: "{il_adi}", state: "0", category: "Servis"}
+
   "RKS":
-    tur_suzgeci:
-      secici: "select[name=category]"
-      degerler:
-        - {deger: "Bayi", rol: satis}
-        - {deger: "Servis", rol: servis}
-    # Sayfada 77 illik seçici var ama seçim URL'e yansımıyor;
-    # parametre denemek hep aynı sayfayı veriyordu. Sayfa gerçekten kullanılıyor.
-    mode: browser
-    etkilesim: il_secimi
-    beklenen: [300, 900]
+    # ajax.php'ye POST. Tarayıcı GEREKMİYOR.
+    # · Sayfada <base href="/"> var: uç KÖKTE, /bayi-servis/ altında değil.
+    # · İlçe seçiminde "Tüm İlçeler" = 0 → il başına tek istek, 973 ilçe yok.
+    # · Uç markayı ayırmaz, tüm MJ grubunu döner (Skyjet, Benelli, Ape Ryder...);
+    #   ayrım her kaydın "Yetkileri" satırında yazıyor → kayit_suzgeci.
+    method: POST
+    iterate: il_post
+    headers:
+      X-Requested-With: XMLHttpRequest
+    row: "div.result-item"
+    fields:
+      bayi_adi: "div.location-name h5"
+      adres: {sel: "div.text-item p", index: 0}
+      telefon: {sel: "a[href^='tel:']", attr: "href", regex: 'tel:\s*([0-9 ()]+)'}
+    ekstra_alanlar:
+      yetkiler: {sel: "div.text-item div:nth-of-type(2) p"}
+    kayit_suzgeci:
+      alan: yetkiler
+      icermeli: ["RKS Motor"]
+    beklenen: [500, 1200]
     kaynaklar:
-      - rol: satis_servis
-        url: "https://www.rksmotor.com.tr/bayi-servis/rksmotor.html"
+      - rol: satis
+        url: "https://www.rksmotor.com.tr/ajax.php"
+        data: {action: states, city: "{il_adi}", state: "0", category: "Bayi"}
+      - rol: servis
+        url: "https://www.rksmotor.com.tr/ajax.php"
+        data: {action: states, city: "{il_adi}", state: "0", category: "Servis"}
+
   "Arora":
     # Sayfa yapısı 30.08.2026'da yakalanıp doğrulandı: 20 kayıt, hepsinde
     # il/ilçe/adres/telefon tam. İl seçimi URL'e yansımıyor, bu yüzden
