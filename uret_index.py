@@ -464,9 +464,9 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
     <input class="ara" id="araTum" type="search" placeholder="Marka veya menşe ara" autocomplete="off">
     <div class="liste">
       <div class="baslikcubuk"><span>Marka</span>
-        <span class="sagb" style="min-width:46px;text-align:right">Satış</span>
-        <span style="min-width:46px;text-align:right">Servis</span>
-        <span style="min-width:46px;text-align:right">İkisi</span>
+        <span class="sagb" style="min-width:44px;text-align:right">Satış</span>
+        <span style="min-width:44px;text-align:right">Servis</span>
+        <span style="min-width:56px;text-align:right">Sat+Srv</span>
         <span style="min-width:46px;text-align:right">Toplam</span></div>
       <div id="tumListe"></div>
     </div>
@@ -892,9 +892,9 @@ function cizTum(){
     const t=m.toplam>0;
     const ic=`<span class="ad">${esc(m.ad)}</span><span class="men">${esc(m.mensei)}</span>
       <span class="sag">
-        <span class="sayi ${m.satis?"":"yok"}" style="min-width:46px">${m.satis||"—"}</span>
-        <span class="sayi ${m.servis?"":"yok"}" style="min-width:46px">${m.servis||"—"}</span>
-        <span class="sayi ${m.ikisi?"":"yok"}" style="min-width:46px">${m.ikisi||"—"}</span>
+        <span class="sayi ${m.satis?"":"yok"}" style="min-width:44px;color:var(--satis)">${m.satis||"—"}</span>
+        <span class="sayi ${m.servis?"":"yok"}" style="min-width:44px;color:var(--servis)">${m.servis||"—"}</span>
+        <span class="sayi ${m.ikisi?"":"yok"}" style="min-width:56px;color:var(--ikisi)">${m.ikisi||"—"}</span>
         <span class="sayi ${t?"":"yok"}" style="min-width:46px;font-weight:700">${m.toplam||"—"}</span>
         <span class="ok">${t?"›":"↗"}</span></span>`;
     return t?`<button class="sat" data-m="${esc(m.ad)}">${ic}</button>`
@@ -1028,13 +1028,18 @@ async function excelIndir(kap,btn){
     if(btn){btn.textContent=eski;btn.disabled=false;} return;
   } else {
     veri=D.bayiler; ad="tum-turkiye-bayi-servis";
-    const o=[["Marka","Menşei","Satış","Servis","Satış+Servis","Toplam","İl","İlçe","Veri Durumu","Kaynak"]];
+    const o=[["Marka","Menşei","Sadece Satış","Sadece Servis","Satış+Servis",
+              "Satış Yapan Toplam","Servis Veren Toplam","Nokta Sayısı",
+              "İl","İlçe","Veri Durumu","Kaynak"]];
     [...OZET].sort((a,b)=>b.toplam-a.toplam||a.ad.localeCompare(b.ad,"tr")).forEach(m=>
-      o.push([m.ad,m.mensei,m.satis,m.servis,m.ikisi,m.toplam,m.iller.size,m.ilceler.size,
+      o.push([m.ad,m.mensei,m.satis,m.servis,m.ikisi,
+              m.satis+m.ikisi, m.servis+m.ikisi, m.toplam,
+              m.iller.size,m.ilceler.size,
               m.tazelik||(m.toplam?"Güncel":"Henüz taranmadı"),m.bayi_link||m.site]));
-    o.push([],["TOPLAM","",veri.filter(b=>b[B_ROL]==="satis").length,
-      veri.filter(b=>b[B_ROL]==="servis").length,
-      veri.filter(b=>b[B_ROL]==="satis_servis").length,veri.length,
+    const ts=veri.filter(b=>b[B_ROL]==="satis").length;
+    const tv=veri.filter(b=>b[B_ROL]==="servis").length;
+    const ti=veri.filter(b=>b[B_ROL]==="satis_servis").length;
+    o.push([],["TOPLAM","",ts,tv,ti,ts+ti,tv+ti,veri.length,
       new Set(veri.map(b=>b[B_IL]).filter(Boolean)).size,"","",""]);
     sayfaEkle(wb,"Marka Özeti",o,[{wch:20},{wch:14},{wch:9},{wch:9},{wch:13},{wch:9},
                                   {wch:7},{wch:8},{wch:24},{wch:44}]);
