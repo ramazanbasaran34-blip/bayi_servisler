@@ -66,6 +66,21 @@ TUR_ESLEME = [
 ]
 
 
+# Bileşik kategori etiketleri: "Benzinli Araç Servisi / Elektrikli Araç
+# Servisi" gibi. Volta'da bu metin firma adı olarak kaydediliyordu.
+KATEGORI_ETIKET = re.compile(
+    r"^\s*[^/]{0,40}\b(servisi|servis|bayisi|bayi|noktas[ıi]|sat[ıi][şs][ıi]?)\b"
+    r"[^/]{0,20}/[^/]{0,40}\b(servisi|servis|bayisi|bayi|noktas[ıi])\b", re.I)
+
+
+def kategori_etiketi_mi(metin: str) -> bool:
+    """'Benzinli Araç Servisi / Elektrikli Araç Servisi' gibi kategori
+    başlıkları firma adı değildir."""
+    if not metin or len(metin) > 90:
+        return False
+    return bool(KATEGORI_ETIKET.match(metin.strip()))
+
+
 def tur_coz(metin: str) -> str:
     """Metin bir kayıt türü etiketi mi? Öyleyse rolü döner, değilse boş.
 
@@ -333,7 +348,7 @@ def _kaydi_cikar(kap):
             continue
         if len(m) < 3 or m.strip().lower().rstrip(":") in COP:
             continue
-        if ARAYUZ.search(m) or YER_TUTUCU.match(m):
+        if ARAYUZ.search(m) or YER_TUTUCU.match(m) or kategori_etiketi_mi(m):
             continue
         temiz = re.sub(r"\s+", " ", m).strip()
         # Tür etiketi mi? Öyleyse rol olarak al, ad/ilçe adayı sayma.
