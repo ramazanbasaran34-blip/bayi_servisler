@@ -91,6 +91,25 @@ def yamaha_sonda() -> dict:
     except Exception as e:  # noqa: BLE001
         b["sayfa_hata"] = str(e)[:120]
 
+    # React paketini indirip bayi API'sinin adresini içinden çıkar
+    js = ("https://www.yamaha-motor.eu/etc.clientlibs/yme/clientlibs/"
+          "clientlib-react.lc-303abadbd343bffdb2b08d014fadf94e-lc.min.js")
+    try:
+        r = o.get(js, timeout=60)
+        b["js_kod"] = r.status_code
+        b["js_boyut"] = len(r.text)
+        CIKTI.mkdir(exist_ok=True)
+        (CIKTI / "yamaha-react.js.gz").write_bytes(
+            gzip.compress(r.text.encode("utf-8", "replace")))
+        adaylar = set()
+        for kal in (r"[\"'`]([/][\w./-]*(?:dealer|locator)[\w./-]*)[\"'`]",
+                    r"[\"'`](https?://[^\"'`]*(?:dealer|locator)[^\"'`]*)[\"'`]",
+                    r"[\"'`](/services/[\w./-]+)[\"'`]"):
+            adaylar |= set(re.findall(kal, r.text, re.I))
+        b["js_uclar"] = sorted(adaylar)[:25]
+    except Exception as e:  # noqa: BLE001
+        b["js_hata"] = str(e)[:120]
+
     return b
 
 
