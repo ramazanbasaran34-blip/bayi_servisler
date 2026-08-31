@@ -82,7 +82,9 @@ def uret(cikti="index.html", markalar_json="markalar.json", db_yolu="bayiler.db"
         "olusturma": datetime.now().astimezone().isoformat(timespec="minutes"),
         "iller": sorted([{"ad": i, "plaka": PLAKA[i], "slug": fold(i).replace(" ", "")}
                          for i in ILLER], key=lambda x: fold(x["ad"])),
-        "markalar": sorted(markalar, key=lambda m: fold(m["ad"])),
+        # Menşe bilgisi arayüzde gösterilmiyor; sayfaya da gömülmüyor.
+        "markalar": [{k: v for k, v in m.items() if k != "mensei"}
+                     for m in sorted(markalar, key=lambda m: fold(m["ad"]))],
         "bayiler": satirlar,
         "rol_adi": ROL_ADI,
     }
@@ -140,16 +142,22 @@ a{color:var(--vurgu)}
 }
 
 /* ================= ŞERİT ================= */
-.serit{background:var(--murekkep);color:#DCE5F2;padding:8px 22px;display:flex;
-  gap:16px;align-items:center;flex-wrap:wrap;font-family:var(--m);font-size:11.5px;
-  position:sticky;top:0;z-index:40}
-.serit b{color:#fff;font-weight:500}
-.sek{margin-left:auto;display:flex;gap:6px}
-.sek button{background:none;border:1px solid #35455E;color:#9DB0CA;border-radius:5px;
-  padding:5px 12px;cursor:pointer;font-size:12px;font-family:var(--d)}
-.sek button:hover{border-color:#5E7characters}
-.sek button:hover{border-color:#5E708C;color:#fff}
-.sek button.aktif{background:#fff;border-color:#fff;color:var(--murekkep);font-weight:600}
+/* Üst şerit: koyu/siyah zemin yerine kurumsal açık zemin.
+   Sekmeler ortada; sağa yapışık değil. */
+.serit{background:#fff;color:var(--celik);padding:9px 18px 0;display:flex;
+  flex-direction:column;gap:7px;align-items:center;font-family:var(--m);
+  font-size:12px;position:sticky;top:0;z-index:40;
+  border-bottom:1px solid var(--hat2);box-shadow:0 2px 10px -6px rgba(16,32,56,.25)}
+.serit b{color:var(--murekkep);font-weight:600}
+.seritust{display:flex;gap:16px;align-items:center;flex-wrap:wrap;
+  justify-content:center;text-align:center}
+.sek{display:flex;gap:8px;justify-content:center;width:100%;
+  border-top:1px solid var(--hat2);padding-top:7px}
+.sek button{background:none;border:0;border-bottom:3px solid transparent;
+  color:var(--celik);border-radius:0;padding:8px 18px 9px;cursor:pointer;
+  font-size:15px;font-weight:600;font-family:var(--d);letter-spacing:-.01em}
+.sek button:hover{color:var(--murekkep)}
+.sek button.aktif{color:var(--murekkep);border-bottom-color:var(--vurgu)}
 
 .sar{max-width:1100px;margin:0 auto;padding:20px 18px 70px}
 h2{font-size:17px;font-weight:600;margin:0 0 4px}
@@ -220,9 +228,44 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .geri:hover,.kop:hover{border-color:var(--murekkep)}
 .ilbaslik{font-size:17px;font-weight:700}
 
+
+/* --- Ortak sütun sistemi -------------------------------------------
+   Başlık çubuğundaki hücreler ile satırlardaki sayı hücreleri tek bir
+   genişlik değişkeninden besleniyor. Daha önce her biri ayrı ayrı
+   inline min-width taşıdığı için dar ekranda sütunlar kayıyordu. */
+:root{--kol:56px;--kol-gen:64px}
+.baslikcubuk .k,.sat .sag .k{
+  flex:0 0 var(--kol);width:var(--kol);text-align:right}
+.sat .sag .k{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.baslikcubuk .k{white-space:normal;word-break:break-word;hyphens:auto;
+  line-height:1.15;font-size:8.5px;letter-spacing:.01em}
+.baslikcubuk .k.gen,.sat .sag .k.gen{flex-basis:var(--kol-gen);width:var(--kol-gen)}
+.baslikcubuk .ilkkol,.sat .govde,.sat>.ad,.sat .plaka{
+  flex:1 1 0;min-width:0;overflow:hidden}
+.sat .plaka{flex:0 0 auto}
+/* Ad alanı okunamayacak kadar ezilmesin */
+.sat .govde,.sat>.ad{min-width:82px}
+/* Sayı bloğu asla ezilmesin, ad kısalsın */
+.sat .sag,.baslikcubuk .sagb{flex:0 0 auto;min-width:0}
+.sat .ustsatir,.sat .ad{min-width:0;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.liste,.sat,.baslikcubuk{max-width:100%;box-sizing:border-box}
+.sat{overflow:hidden}
+.baslikcubuk{align-items:flex-end;line-height:1.25}
+.sat .sag,.baslikcubuk .sagb{margin-left:auto;display:flex;align-items:center;
+  gap:8px;flex:0 0 auto}
+.sat .ok{flex:0 0 12px;text-align:center}
+.baslikcubuk .okbos{flex:0 0 12px}
+/* .sayi kendi min-width'ini dayatıyordu; ortak sütun genişliği kazansın. */
+.sat .sag .sayi.k{min-width:var(--kol);width:var(--kol);flex-basis:var(--kol)}
+.sat .sag .sayi.k.gen{min-width:var(--kol-gen);width:var(--kol-gen);
+  flex-basis:var(--kol-gen)}
+/* Başlık ve satır aynı yatay dolguyu kullansın, sağ kenarlar çakışsın. */
+.baslikcubuk,.sat{padding-left:12px;padding-right:12px;gap:8px}
+.baslikcubuk .sagb,.sat .sag{gap:8px}
 .cipler{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 /* Süzgeçler uzun listelerde ekrandan kaçmasın: sayfa kaydırılınca üstte kalsın */
-.yapiskan{position:sticky;top:0;z-index:30;background:var(--kagit);
+.yapiskan{position:sticky;top:var(--serit-y,0);z-index:30;background:var(--kagit);
   padding:9px 0 7px;margin-bottom:8px;border-bottom:1px solid var(--hat2);
   box-shadow:0 6px 12px -10px rgba(0,0,0,.35)}
 .yapiskan .ara{margin-bottom:7px}
@@ -231,10 +274,32 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   background:var(--satis-z);border-radius:5px;padding:1px 5px}
 .kutu.toplam{border-color:var(--hat);background:#fbfcfe}
 .kutu.toplam .n{font-weight:700}
-@media (max-width:560px){
-  .bslk{font-size:17px}
-  h2{font-size:20px}
-  .kutu .n{font-size:22px}
+@media (max-width:620px){
+  /* Telefonda dikey: sütunlar dar, satır adı kırpılıyor.
+     Böylece başlık ile veri hücreleri aynı hizada kalıyor. */
+  :root{--kol:36px;--kol-gen:44px}
+  .baslikcubuk,.sat{gap:6px}
+  .baslikcubuk .sagb,.sat .sag{gap:6px}
+  .sat .govde,.sat>.ad{min-width:76px}
+  .bslk{font-size:18px}
+  h2{font-size:21px}
+  .kutu .n{font-size:23px}
+  .sar{padding:14px 10px 70px}
+  .sat{padding-top:11px;padding-bottom:11px}
+  .sat .ad{font-size:14.5px;overflow:hidden;text-overflow:ellipsis;
+    white-space:nowrap;display:block}
+  .sat .sayi{font-size:13.5px}
+  .baslikcubuk{font-size:9px}
+  .liste{border-radius:8px}
+  .sek button{font-size:14px;padding:8px 12px 9px;flex:1 1 0;text-align:center}
+  .serit{padding:8px 10px 0;font-size:11.5px}
+  .kutular{grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:9px}
+}
+@media (max-width:380px){
+  :root{--kol:33px;--kol-gen:41px}
+  .sat .ad{font-size:13.5px}
+  .sat .govde,.sat>.ad{min-width:68px}
+  .baslikcubuk{font-size:8.5px}
 }
 .cip{border:1px solid var(--hat2);background:#fff;border-radius:16px;padding:4px 12px;
   cursor:pointer;font-size:12.5px}
@@ -298,6 +363,9 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .kutu.servis .n{color:var(--servis)}
 .kutu.ikisi  .n{color:var(--ikisi)}
 .ikili{display:grid;gap:16px;grid-template-columns:1fr 1fr}
+/* Grid ve flex çocukları varsayılan min-width:auto ile içerikten küçülmez;
+   telefonda sütunları dışarı taşıran şey buydu. */
+.ikili>*{min-width:0}
 @media (max-width:820px){.ikili{grid-template-columns:1fr}}
 .bslk{font-size:19px;font-weight:700;margin:0 0 10px;display:flex;gap:10px;
   align-items:baseline;justify-content:center;text-align:center;letter-spacing:-.01em}
@@ -350,8 +418,10 @@ h2{font-size:23px;font-weight:700;text-align:center;letter-spacing:-.01em}
 <div class="yazdir-bilgi" id="yazdirBilgi"></div>
 
 <div class="serit">
-  <span>Veri: <b id="veriTarih">—</b></span>
-  <span id="veriOzet"></span>
+  <div class="seritust">
+    <span>Veri: <b id="veriTarih">—</b></span>
+    <span id="veriOzet"></span>
+  </div>
   <nav class="sek">
     <button id="sekOzet">Özet</button>
     <button id="sekIl" class="aktif">İller</button>
@@ -379,37 +449,21 @@ h2{font-size:23px;font-weight:700;text-align:center;letter-spacing:-.01em}
       <div>
         <h3 class="bslk">İllere göre <span id="ilAdet"></span></h3>
         <div class="liste">
-          <div class="baslikcubuk"><span>İl</span>
-            <span class="sagb" style="min-width:44px;text-align:right">Yalnız<br>satış</span>
-            <span style="min-width:44px;text-align:right">Yalnız<br>servis</span>
-            <span style="min-width:48px;text-align:right">Satış+<br>servis</span>
-            <span style="min-width:54px;text-align:right;color:var(--satis)">Toplam<br>satış nok.</span>
-            <span style="min-width:48px;text-align:right">Toplam<br>nokta</span></div>
+          <div class="baslikcubuk"><span class="ilkkol">İl</span><span class="sagb"><span class="k">Yalnız<br>satış</span><span class="k">Yalnız<br>servis</span><span class="k">Satış+<br>servis</span><span class="k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span class="k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
           <div id="ozetIl"></div>
         </div>
       </div>
       <div>
         <h3 class="bslk">Markalara göre <span id="mrkAdet"></span></h3>
         <div class="liste">
-          <div class="baslikcubuk"><span>Marka</span>
-            <span class="sagb" style="min-width:44px;text-align:right">Yalnız<br>satış</span>
-            <span style="min-width:44px;text-align:right">Yalnız<br>servis</span>
-            <span style="min-width:48px;text-align:right">Satış+<br>servis</span>
-            <span style="min-width:54px;text-align:right;color:var(--satis)">Toplam<br>satış nok.</span>
-            <span style="min-width:48px;text-align:right">Toplam<br>nokta</span></div>
+          <div class="baslikcubuk"><span class="ilkkol">Marka</span><span class="sagb"><span class="k">Yalnız<br>satış</span><span class="k">Yalnız<br>servis</span><span class="k">Satış+<br>servis</span><span class="k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span class="k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
           <div id="ozetMarka"></div>
         </div>
       </div>
     </div>
     <h3 class="bslk" style="margin-top:20px">İlçe dağılımı <span id="ilceAdet"></span></h3>
     <div class="liste">
-      <div class="baslikcubuk"><span>İl / İlçe</span>
-        <span class="sagb" style="min-width:44px;text-align:right">Yalnız<br>satış</span>
-        <span style="min-width:44px;text-align:right">Yalnız<br>servis</span>
-        <span style="min-width:48px;text-align:right">Satış+<br>servis</span>
-        <span style="min-width:54px;text-align:right;color:var(--satis)">Toplam<br>satış nok.</span>
-        <span style="min-width:44px;text-align:right">Marka</span>
-        <span style="min-width:48px;text-align:right">Toplam<br>nokta</span></div>
+      <div class="baslikcubuk"><span class="ilkkol">İl / İlçe</span><span class="sagb"><span class="k">Yalnız<br>satış</span><span class="k">Yalnız<br>servis</span><span class="k">Satış+<br>servis</span><span class="k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span class="k">Marka</span><span class="k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
       <div id="ozetIlce"></div>
     </div>
   </section>
@@ -488,15 +542,10 @@ h2{font-size:23px;font-weight:700;text-align:center;letter-spacing:-.01em}
       <b>Sayılar henüz toplanmadı.</b> Tarama ilk kez çalıştığında bu sütunlar dolar.
     </div>
     <div class="yapiskan">
-      <input class="ara" id="araTum" type="search" placeholder="Marka veya menşe ara" autocomplete="off">
+      <input class="ara" id="araTum" type="search" placeholder="Marka ara" autocomplete="off">
     </div>
     <div class="liste">
-      <div class="baslikcubuk"><span>Marka</span>
-        <span class="sagb" style="min-width:44px;text-align:right">Yalnız<br>satış</span>
-        <span style="min-width:44px;text-align:right">Yalnız<br>servis</span>
-        <span style="min-width:48px;text-align:right">Satış+<br>servis</span>
-        <span style="min-width:54px;text-align:right;color:var(--satis)">Toplam<br>satış nok.</span>
-        <span style="min-width:48px;text-align:right">Toplam<br>nokta</span></div>
+      <div class="baslikcubuk"><span class="ilkkol">Marka</span><span class="sagb"><span class="k">Yalnız<br>satış</span><span class="k">Yalnız<br>servis</span><span class="k">Satış+<br>servis</span><span class="k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span class="k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
       <div id="tumListe"></div>
     </div>
     <div class="bos" id="tumBos" style="display:none">Sonuç yok.</div>
@@ -505,6 +554,16 @@ h2{font-size:23px;font-weight:700;text-align:center;letter-spacing:-.01em}
 </div>
 <script>
 const D = __VERI__;
+/* Yapışkan başlıklar üst şeridin ALTINA otursun; yoksa şeridin arkasında
+   kalıp görünmez oluyorlar. Şerit yüksekliği ekrana göre değiştiği için
+   ölçüp CSS değişkenine yazıyoruz. */
+function seritOlc(){
+  const e=document.querySelector(".serit");
+  if(e) document.documentElement.style.setProperty("--serit-y", e.offsetHeight+"px");
+}
+addEventListener("resize", seritOlc);
+addEventListener("load", seritOlc);
+setTimeout(seritOlc, 0);
 const $ = s => document.querySelector(s);
 const [B_MARKA,B_AD,B_IL,B_ILCE,B_ADRES,B_TEL,B_DURUM,B_ROL,B_GIRIS] = [0,1,2,3,4,5,6,7,8];
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -686,11 +745,11 @@ function cizOzet(){
           </span>
         </span>
         <span class="sag">
-          <span class="sayi" style="min-width:44px;color:var(--satis)">${c.yalnizSatis}</span>
-          <span class="sayi" style="min-width:44px;color:var(--servis)">${c.yalnizServis}</span>
-          <span class="sayi" style="min-width:48px;color:var(--ikisi)">${c.ikisi}</span>
-          <span class="sayi vurgu" style="min-width:54px">${c.satisNoktasi}</span>
-          <span class="sayi" style="min-width:48px;font-weight:700">${c.toplam}</span>
+          <span class="sayi k" style="color:var(--satis)">${c.yalnizSatis}</span>
+          <span class="sayi k" style="color:var(--servis)">${c.yalnizServis}</span>
+          <span class="sayi k" style="color:var(--ikisi)">${c.ikisi}</span>
+          <span class="sayi k gen vurgu">${c.satisNoktasi}</span>
+          <span class="sayi k" style="font-weight:700">${c.toplam}</span>
           <span class="ok">›</span></span></button>`;}).join("");
   }
 
@@ -714,15 +773,15 @@ function cizOzet(){
   $("#ozetIlce").innerHTML=iS.map(([k,v])=>{
     const [il,ilce]=k.split("|"), c=sayRol(v);
     return `<button class="sat" data-il="${esc(il)}" data-ilce="${esc(ilce)}">
-      <span class="ad">${esc(ilce)}</span>
-      <span class="men">${esc(il)}</span>
+      <span class="govde"><span class="ustsatir"><span class="ad">${esc(ilce)}</span>
+        <span class="men">${esc(il)}</span></span></span>
       <span class="sag">
-        <span class="sayi" style="min-width:44px;color:var(--satis)">${c.yalnizSatis}</span>
-        <span class="sayi" style="min-width:44px;color:var(--servis)">${c.yalnizServis}</span>
-        <span class="sayi" style="min-width:48px;color:var(--ikisi)">${c.ikisi}</span>
-        <span class="sayi vurgu" style="min-width:54px">${c.satisNoktasi}</span>
-        <span class="sayi" style="min-width:44px">${new Set(v.map(x=>x[B_MARKA])).size}</span>
-        <span class="sayi" style="min-width:48px;font-weight:700">${c.toplam}</span>
+        <span class="sayi k" style="color:var(--satis)">${c.yalnizSatis}</span>
+        <span class="sayi k" style="color:var(--servis)">${c.yalnizServis}</span>
+        <span class="sayi k" style="color:var(--ikisi)">${c.ikisi}</span>
+        <span class="sayi k gen vurgu">${c.satisNoktasi}</span>
+        <span class="sayi k">${new Set(v.map(x=>x[B_MARKA])).size}</span>
+        <span class="sayi k" style="font-weight:700">${c.toplam}</span>
         <span class="ok">›</span></span></button>`;}).join("");
   yazdirBilgiGuncelle("Genel Özet", D.bayiler.length);
 }
@@ -862,7 +921,7 @@ function cizMarka(){
   const tum=bolgeVeri();
   rolSuzgecCiz("#rolSuzgec", tum);
   const q=kat($("#araMarka").value);
-  const l=D.markalar.filter(m=>!q||kat(m.ad+" "+m.mensei+" "+m.alan).includes(q));
+  const l=D.markalar.filter(m=>!q||kat(m.ad+" "+m.alan).includes(q));
 
   $("#markaListe").innerHTML=l.map(m=>{
     const bs=tum.filter(x=>x[B_MARKA]===m.ad && rolGecer(x));
@@ -908,7 +967,7 @@ $("#kopyala").onclick=async()=>{
 /* ---------- marka özeti ---------- */
 const OZET=(()=>{
   const o={};
-  D.markalar.forEach(m=>o[m.ad]={ad:m.ad,mensei:m.mensei,alan:m.alan,bayi_link:m.bayi,
+  D.markalar.forEach(m=>o[m.ad]={ad:m.ad,alan:m.alan,bayi_link:m.bayi,
     site:m.site,tazelik:m.tazelik||"",satis:0,servis:0,ikisi:0,toplam:0,
     iller:new Set(),ilceler:new Set()});
   D.bayiler.forEach(b=>{const x=o[b[B_MARKA]]; if(!x)return;
@@ -926,7 +985,7 @@ $("#mrkSirala").onclick = e => {
 };
 function cizTum(){
   const q=kat($("#araTum").value);
-  let l=OZET.filter(m=>!q||kat(m.ad+" "+m.mensei+" "+m.alan).includes(q));
+  let l=OZET.filter(m=>!q||kat(m.ad+" "+m.alan).includes(q));
   const ol={sayi:m=>m.toplam, satis:m=>m.satis+m.ikisi, servis:m=>m.servis+m.ikisi};
   l = SIRA in ol
       ? [...l].sort((a,b)=>ol[SIRA](b)-ol[SIRA](a)||a.ad.localeCompare(b.ad,"tr"))
@@ -934,13 +993,13 @@ function cizTum(){
   $("#tumBos").style.display=l.length?"none":"block";
   $("#tumListe").innerHTML=l.map(m=>{
     const t=m.toplam>0;
-    const ic=`<span class="ad">${esc(m.ad)}</span><span class="men">${esc(m.mensei)}</span>
+    const ic=`<span class="ad">${esc(m.ad)}</span>
       <span class="sag">
-        <span class="sayi ${m.satis?"":"yok"}" style="min-width:44px;color:var(--satis)">${m.satis||"—"}</span>
-        <span class="sayi ${m.servis?"":"yok"}" style="min-width:44px;color:var(--servis)">${m.servis||"—"}</span>
-        <span class="sayi ${m.ikisi?"":"yok"}" style="min-width:48px;color:var(--ikisi)">${m.ikisi||"—"}</span>
-        <span class="sayi vurgu ${(m.satis+m.ikisi)?"":"yok"}" style="min-width:54px">${(m.satis+m.ikisi)||"—"}</span>
-        <span class="sayi ${t?"":"yok"}" style="min-width:48px;font-weight:700">${m.toplam||"—"}</span>
+        <span class="sayi k ${m.satis?"":"yok"}" style="color:var(--satis)">${m.satis||"—"}</span>
+        <span class="sayi k ${m.servis?"":"yok"}" style="color:var(--servis)">${m.servis||"—"}</span>
+        <span class="sayi k ${m.ikisi?"":"yok"}" style="color:var(--ikisi)">${m.ikisi||"—"}</span>
+        <span class="sayi k gen vurgu ${(m.satis+m.ikisi)?"":"yok"}">${(m.satis+m.ikisi)||"—"}</span>
+        <span class="sayi k ${t?"":"yok"}" style="font-weight:700">${m.toplam||"—"}</span>
         <span class="ok">${t?"›":"↗"}</span></span>`;
     return t?`<button class="sat" data-m="${esc(m.ad)}">${ic}</button>`
             :`<a class="sat" href="${esc(m.bayi_link||m.site)}" target="_blank" rel="noopener">${ic}</a>`;
@@ -1080,21 +1139,21 @@ async function excelIndir(kap,btn){
     if(btn){btn.textContent=eski;btn.disabled=false;} return;
   } else {
     veri=D.bayiler; ad="tum-turkiye-bayi-servis";
-    const o=[["Marka","Menşei","Sadece Satış","Sadece Servis","Satış+Servis",
+    const o=[["Marka","Sadece Satış","Sadece Servis","Satış+Servis",
               "Satış Yapan Toplam","Servis Veren Toplam","Nokta Sayısı",
               "İl","İlçe","Veri Durumu","Kaynak"]];
     [...OZET].sort((a,b)=>b.toplam-a.toplam||a.ad.localeCompare(b.ad,"tr")).forEach(m=>
-      o.push([m.ad,m.mensei,m.satis,m.servis,m.ikisi,
+      o.push([m.ad,m.satis,m.servis,m.ikisi,
               m.satis+m.ikisi, m.servis+m.ikisi, m.toplam,
               m.iller.size,m.ilceler.size,
               m.tazelik||(m.toplam?"Güncel":"Henüz taranmadı"),m.bayi_link||m.site]));
     const ts=veri.filter(b=>b[B_ROL]==="satis").length;
     const tv=veri.filter(b=>b[B_ROL]==="servis").length;
     const ti=veri.filter(b=>b[B_ROL]==="satis_servis").length;
-    o.push([],["TOPLAM","",ts,tv,ti,ts+ti,tv+ti,veri.length,
+    o.push([],["TOPLAM",ts,tv,ti,ts+ti,tv+ti,veri.length,
       new Set(veri.map(b=>b[B_IL]).filter(Boolean)).size,"","",""]);
-    sayfaEkle(wb,"Marka Özeti",o,[{wch:20},{wch:14},{wch:9},{wch:9},{wch:13},{wch:9},
-                                  {wch:7},{wch:8},{wch:24},{wch:44}]);
+    sayfaEkle(wb,"Marka Özeti",o,[{wch:20},{wch:13},{wch:13},{wch:13},{wch:20},
+                                  {wch:20},{wch:12},{wch:7},{wch:8},{wch:24},{wch:44}]);
     sayfaEkle(wb,"Tüm Kayıtlar",[BASLIK,...veri.map(satirDisa)],EN);
     [...new Set(veri.map(b=>b[B_MARKA]))].sort((a,b)=>a.localeCompare(b,"tr")).forEach(m=>{
       const a=veri.filter(b=>b[B_MARKA]===m);
