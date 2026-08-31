@@ -54,6 +54,13 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "nanok-api":  ("https://nanok.com.tr/api/dealers", "json"),
     "meka-maps":  ("https://www.mekamotor.com.tr/resman/uploads/maps.xml", "xml"),
 
+    # --- Piaggio grubu: satış ve servis AYRI sayfalarda, ikisi de aynı
+    #     gömülü GeoJSON yapısını kullanıyor (Kymco ile birebir aynı).
+    "vespa-servis":   ("https://www.vespa.com.tr/tr/yetkili-servisler.html", "html"),
+    "aprilia-servis": ("https://www.aprilia.com.tr/tr/yetkili-servisler.html", "html"),
+    "piaggio-servis": ("https://www.piaggio.com.tr/tr/yetkili-servisler.html", "html"),
+    "suzuki-servis":  ("https://www.suzuki.com.tr/tr/motosiklet/servis.html", "html"),
+
     # --- MJ Group: Kuba ve RKS'in sahibi, kendi sitelerinden link veriliyor.
     #     Kullanıcı onayıyla resmi kaynak kabul edildi (2026-08).
     "mj-kuba-bayi":   ("https://www.mj.com.tr/bayi-servis-agi/kuba-motor-bayi-agi/", "html"),
