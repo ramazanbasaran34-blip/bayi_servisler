@@ -93,6 +93,9 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     # CSN: satış zaten geliyor, servis eksik
     "csn-satis2":      ("https://csnmotor.com.tr/satis-noktalarimiz/", "html"),
     "csn-servis2":     ("https://csnmotor.com.tr/servis-noktalarimiz/", "html"),
+    # CSN: il bazlı sayfa (örnek: Ankara)
+    "csn-servis-ank":  ("https://csnmotor.com.tr/servis-noktalarimiz/ankara", "html"),
+    "csn-satis-ank":   ("https://csnmotor.com.tr/satis-noktalarimiz/ankara", "html"),
     # Hero: POST istiyor; önce GET ile yapıyı görelim
     "hero-satis":      ("https://www.heromotor.com.tr/bayiler/", "html"),
     "hero-servis":     ("https://www.heromotor.com.tr/servisler/", "html"),
