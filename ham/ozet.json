@@ -34,5 +34,342 @@
   "tel_toplam": 35,
   "tel_script_ici": 20,
   "yonlendi": true
+ },
+ "m-hero": {
+  "url": "https://www.heromotor.com.tr/bayiler/",
+  "kod": 403,
+  "son_url": "https://www.heromotor.com.tr/bayiler/",
+  "boyut": 5648,
+  "tel_toplam": 7,
+  "tel_script_ici": 7
+ },
+ "m-hero-ana": {
+  "url": "https://www.heromotor.com.tr/anasayfa/",
+  "kod": 403,
+  "son_url": "https://www.heromotor.com.tr/anasayfa/",
+  "boyut": 5651,
+  "tel_toplam": 7,
+  "tel_script_ici": 7
+ },
+ "m-musatti": {
+  "url": "https://musattimotor.com/bayi-bul",
+  "kod": 200,
+  "son_url": "https://musattimotor.com/bayi-bul",
+  "boyut": 47761,
+  "tel_toplam": 2,
+  "tel_script_ici": 0
+ },
+ "m-musatti-ana": {
+  "url": "https://musattimotor.com/",
+  "kod": 200,
+  "son_url": "https://musattimotor.com/",
+  "boyut": 128893,
+  "tel_toplam": 43,
+  "tel_script_ici": 0
+ },
+ "m-csn": {
+  "url": "https://csnmotor.com.tr/satis-noktalarimiz/",
+  "kod": 200,
+  "son_url": "https://csnmotor.com.tr/satis-noktalarimiz/",
+  "boyut": 338506,
+  "tel_toplam": 169,
+  "tel_script_ici": 2
+ },
+ "m-csn-ana": {
+  "url": "https://csnmotor.com.tr/",
+  "kod": 200,
+  "son_url": "https://csnmotor.com.tr/",
+  "boyut": 294707,
+  "tel_toplam": 11,
+  "tel_script_ici": 5
+ },
+ "m-vespa": {
+  "url": "https://www.vespa.com.tr/tr/yetkili-saticilar.html",
+  "kod": 200,
+  "son_url": "https://www.vespa.com.tr/tr/yetkili-saticilar.html",
+  "boyut": 85786,
+  "tel_toplam": 265,
+  "tel_script_ici": 262
+ },
+ "m-vespa-ana": {
+  "url": "https://www.vespa.com.tr/tr/",
+  "kod": 200,
+  "son_url": "https://www.vespa.com.tr/tr/",
+  "boyut": 72938,
+  "tel_toplam": 3,
+  "tel_script_ici": 0
+ },
+ "m-suzuki": {
+  "url": "https://www.suzuki.com.tr/tr/motosiklet/satis.html",
+  "kod": 200,
+  "son_url": "https://www.suzuki.com.tr/tr/motosiklet/satis.html",
+  "boyut": 23474,
+  "tel_toplam": 2,
+  "tel_script_ici": 0
+ },
+ "m-suzuki-ana": {
+  "url": "https://www.suzuki.com.tr/tr/motosiklet/",
+  "kod": 200,
+  "son_url": "https://www.suzuki.com.tr/tr/motosiklet/",
+  "boyut": 39851,
+  "tel_toplam": 2,
+  "tel_script_ici": 0
+ },
+ "m-zelsun": {
+  "url": "https://www.zelsunmotor.com/Bayilerimiz.aspx",
+  "kod": 200,
+  "son_url": "https://www.zelsunmotor.com/Bayilerimiz.aspx",
+  "boyut": 75028,
+  "tel_toplam": 8,
+  "tel_script_ici": 0
+ },
+ "m-zelsun-ana": {
+  "url": "https://www.zelsunmotor.com/Default.aspx",
+  "kod": 200,
+  "son_url": "https://www.zelsunmotor.com/Default.aspx",
+  "boyut": 124062,
+  "tel_toplam": 10,
+  "tel_script_ici": 0
+ },
+ "m-falcon": {
+  "url": "https://falconmotosiklet.com/bayi-servis-agi/motosiklet",
+  "kod": 200,
+  "son_url": "https://falconmotosiklet.com/bayi-servis-agi/motosiklet",
+  "boyut": 288099,
+  "tel_toplam": 12,
+  "tel_script_ici": 2
+ },
+ "m-falcon-ana": {
+  "url": "https://falconmotosiklet.com/",
+  "kod": 200,
+  "son_url": "https://falconmotosiklet.com/",
+  "boyut": 376156,
+  "tel_toplam": 10,
+  "tel_script_ici": 2
+ },
+ "m-kral": {
+  "url": "https://kralmotor.tr/SalesDealer",
+  "kod": 200,
+  "son_url": "https://kralmotor.tr/SalesDealer",
+  "boyut": 199372,
+  "tel_toplam": 435,
+  "tel_script_ici": 433
+ },
+ "m-kral-ana": {
+  "url": "https://kralmotor.tr/",
+  "kod": 200,
+  "son_url": "https://kralmotor.tr/",
+  "boyut": 354150,
+  "tel_toplam": 903,
+  "tel_script_ici": 900
+ },
+ "m-kymco": {
+  "url": "https://www.kymco.com.tr/tr/satis-servis-agi.html",
+  "kod": 200,
+  "son_url": "https://www.kymco.com.tr/tr/satis-servis-agi.html",
+  "boyut": 177860,
+  "tel_toplam": 558,
+  "tel_script_ici": 554
+ },
+ "m-kymco-ana": {
+  "url": "https://www.kymco.com.tr/tr/",
+  "kod": 200,
+  "son_url": "https://www.kymco.com.tr/tr/",
+  "boyut": 350899,
+  "tel_toplam": 4,
+  "tel_script_ici": 0
+ },
+ "m-nanok": {
+  "url": "https://nanok.com.tr/bayilerimiz",
+  "kod": 200,
+  "son_url": "https://nanok.com.tr/bayilerimiz",
+  "boyut": 176562,
+  "tel_toplam": 1,
+  "tel_script_ici": 0
+ },
+ "m-nanok-ana": {
+  "url": "https://nanok.com.tr/",
+  "kod": 200,
+  "son_url": "https://nanok.com.tr/",
+  "boyut": 64408,
+  "tel_toplam": 2,
+  "tel_script_ici": 1
+ },
+ "m-milyon": {
+  "url": "https://www.milyonmoto.com.tr/bayi-servisler.html",
+  "kod": 200,
+  "son_url": "https://www.milyonmoto.com.tr/bayi-servisler.html",
+  "boyut": 177948,
+  "tel_toplam": 3,
+  "tel_script_ici": 0
+ },
+ "m-milyon-ana": {
+  "url": "https://www.milyonmoto.com.tr/index.html",
+  "kod": 200,
+  "son_url": "https://www.milyonmoto.com.tr/index.html",
+  "boyut": 140799,
+  "tel_toplam": 3,
+  "tel_script_ici": 0
+ },
+ "m-yuki": {
+  "url": "https://yukimotor.com.tr/satis-noktalari/",
+  "kod": 200,
+  "son_url": "https://yukimotor.com.tr/satis-noktalari/",
+  "boyut": 135956,
+  "tel_toplam": 6,
+  "tel_script_ici": 0
+ },
+ "m-yuki-ana": {
+  "url": "https://www.yukimotor.com.tr",
+  "kod": 200,
+  "son_url": "https://yukimotor.com.tr/",
+  "boyut": 264064,
+  "tel_toplam": 12,
+  "tel_script_ici": 3,
+  "yonlendi": true
+ },
+ "m-yiben": {
+  "url": "https://yibenmotosiklet.com.tr/tr/sayfa/bayi-agi",
+  "hata": "ConnectTimeout: HTTPSConnectionPool(host='yibenmotosiklet.com.tr', port=443): Max retries exceeded with url: /tr/sayfa/bayi-agi (Caused by ConnectTimeoutError(<HTTPSConnection(host='yibenmotosiklet.co"
+ },
+ "m-yiben-ana": {
+  "url": "https://yibenmotosiklet.com.tr/tr",
+  "hata": "ConnectTimeout: HTTPSConnectionPool(host='yibenmotosiklet.com.tr', port=443): Max retries exceeded with url: /tr (Caused by ConnectTimeoutError(<HTTPSConnection(host='yibenmotosiklet.com.tr', port=443"
+ },
+ "m-altai": {
+  "url": "https://www.altai.com.tr/tr/bayiler",
+  "kod": 200,
+  "son_url": "https://www.altai.com.tr/tr/bayiler",
+  "boyut": 68241,
+  "tel_toplam": 4,
+  "tel_script_ici": 0
+ },
+ "m-altai-ana": {
+  "url": "https://www.altai.com.tr/",
+  "kod": 200,
+  "son_url": "https://www.altai.com.tr/",
+  "boyut": 104268,
+  "tel_toplam": 4,
+  "tel_script_ici": 0
+ },
+ "m-aprilia": {
+  "url": "https://www.aprilia.com.tr/tr/yetkili-saticilar.html",
+  "kod": 200,
+  "son_url": "https://www.aprilia.com.tr/tr/yetkili-saticilar.html",
+  "boyut": 89511,
+  "tel_toplam": 242,
+  "tel_script_ici": 240
+ },
+ "m-aprilia-ana": {
+  "url": "https://www.aprilia.com.tr/tr/",
+  "kod": 200,
+  "son_url": "https://www.aprilia.com.tr/tr/",
+  "boyut": 110788,
+  "tel_toplam": 2,
+  "tel_script_ici": 0
+ },
+ "m-piaggio": {
+  "url": "https://www.piaggio.com.tr/tr/yetkili-saticilar.html",
+  "kod": 200,
+  "son_url": "https://www.piaggio.com.tr/tr/yetkili-saticilar.html",
+  "boyut": 49829,
+  "tel_toplam": 264,
+  "tel_script_ici": 262
+ },
+ "m-piaggio-ana": {
+  "url": "https://www.piaggio.com.tr/tr/",
+  "kod": 200,
+  "son_url": "https://www.piaggio.com.tr/tr/",
+  "boyut": 41894,
+  "tel_toplam": 14,
+  "tel_script_ici": 0
+ },
+ "m-rebat": {
+  "url": "https://rebatmotor.com/satis-ve-servisler-cloned-111-2/",
+  "kod": 200,
+  "son_url": "https://rebatmotor.com/satis-ve-servisler-cloned-111-2/",
+  "boyut": 60391,
+  "tel_toplam": 7,
+  "tel_script_ici": 1
+ },
+ "m-rebat-ana": {
+  "url": "https://rebatmotor.com/",
+  "kod": 200,
+  "son_url": "https://rebatmotor.com/",
+  "boyut": 151909,
+  "tel_toplam": 8,
+  "tel_script_ici": 1
+ },
+ "m-regal-raptor": {
+  "url": "https://regalraptor.com.tr/tr/bayiler",
+  "kod": 200,
+  "son_url": "https://regalraptor.com.tr/tr/bayiler",
+  "boyut": 102356,
+  "tel_toplam": 4,
+  "tel_script_ici": 0
+ },
+ "m-regal-raptor-ana": {
+  "url": "https://regalraptor.com.tr/",
+  "kod": 200,
+  "son_url": "https://regalraptor.com.tr/",
+  "boyut": 159874,
+  "tel_toplam": 5,
+  "tel_script_ici": 0
+ },
+ "m-rewaco": {
+  "url": "https://rewaco.com.tr/bayiler/",
+  "kod": 200,
+  "son_url": "https://rewaco.com.tr/bayiler/",
+  "boyut": 138141,
+  "tel_toplam": 20,
+  "tel_script_ici": 1
+ },
+ "m-rewaco-ana": {
+  "url": "https://rewaco.com.tr/",
+  "kod": 200,
+  "son_url": "https://rewaco.com.tr/",
+  "boyut": 172472,
+  "tel_toplam": 17,
+  "tel_script_ici": 1
+ },
+ "m-stmax": {
+  "url": "https://stmax.com.tr/yetkili-servisler/",
+  "kod": 200,
+  "son_url": "https://stmax.com.tr/yetkili-servisler/",
+  "boyut": 204798,
+  "tel_toplam": 9,
+  "tel_script_ici": 1
+ },
+ "m-stmax-ana": {
+  "url": "https://stmax.com.tr/",
+  "kod": 200,
+  "son_url": "https://stmax.com.tr/",
+  "boyut": 290511,
+  "tel_toplam": 9,
+  "tel_script_ici": 1
+ },
+ "m-harley-davidson": {
+  "url": "https://www.harley-davidson.com/tr/tr/tools/find-a-dealer.html",
+  "kod": 403,
+  "son_url": "https://www.harley-davidson.com/tr/tr/tools/find-a-dealer.html",
+  "boyut": 5845,
+  "tel_toplam": 7,
+  "tel_script_ici": 7
+ },
+ "m-harley-davidson-ana": {
+  "url": "https://www.harley-davidson.com/tr",
+  "kod": 403,
+  "son_url": "https://www.harley-davidson.com/tr",
+  "boyut": 5718,
+  "tel_toplam": 7,
+  "tel_script_ici": 7
+ },
+ "m-bmw": {
+  "url": "https://www.bmw-motorrad.com.tr/tr/ssl/yetkili-satici-ve-servisler.html",
+  "hata": "ReadTimeout: HTTPSConnectionPool(host='www.bmw-motorrad.com.tr', port=443): Read timed out. (read timeout=45)"
+ },
+ "m-bmw-ana": {
+  "url": "https://www.bmw-motorrad.com.tr/tr/home.html#/filter-tuemue",
+  "hata": "ReadTimeout: HTTPSConnectionPool(host='www.bmw-motorrad.com.tr', port=443): Read timed out. (read timeout=45)"
  }
 }
