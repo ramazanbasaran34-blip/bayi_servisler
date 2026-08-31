@@ -2,29 +2,34 @@
  "Falcon": {
   "kayit": 1215,
   "il": 79,
-  "ilsiz": 0
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 1215, 'yeni': 1057, 'guncel': 158, 'supheli': 0, 'mesaj': ''}"
  },
  "Kral": {
   "kayit": 881,
   "il": 75,
-  "ilsiz": 0
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 881, 'yeni': 783, 'guncel': 98, 'supheli': 0, 'mesaj': ''}"
  },
  "Vespa": {
   "kayit": 75,
   "il": 18,
-  "ilsiz": 0
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 75, 'yeni': 55, 'guncel': 20, 'supheli': 0, 'mesaj': ''}"
  },
  "Suzuki": {
   "kayit": 41,
   "il": 17,
-  "ilsiz": 0
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 41, 'yeni': 41, 'guncel': 0, 'supheli': 0, 'mesaj': ''}"
  },
  "CSN": {
-  "hata": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+  "kayit": 446,
+  "il": 65,
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 446, 'yeni': 73, 'guncel': 373, 'supheli': 13, 'mesaj': ''}"
  },
  "Musatti": {
-  "kayit": 434,
-  "il": 71,
-  "ilsiz": 22
+  "hata": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
  }
 }
