@@ -64,19 +64,45 @@ def il_kodlari(sayfa) -> list[tuple[str, str]]:
         ".filter(x => x[0] && x[0] !== '0')")
 
 
+def sonuc_var_mi(html: str) -> int:
+    """Sayfada kaç telefon görünüyor — sonucun geldiğinin işareti."""
+    return len(re.findall(
+        r"0\s*\(?\d{3}\)?[\s\-/]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}", html))
+
+
 def il_cek(sayfa, kod: str) -> str:
+    """İl seçip Ara'ya basar.
+
+    ÖNEMLİ: form gönderildikten sonra Cloudflare doğrulaması TEKRAR
+    devreye giriyor. Gönderimden sonra da beklemek şart; yoksa elimize
+    "Bir dakika lütfen..." ara sayfası geçiyor.
+    """
     try:
         sayfa.select_option("select[name=city_box]", value=kod)
     except Exception:  # noqa: BLE001
         sayfa.select_option("select[name=city_box]", index=1)
-    for sec in ("input[type=submit]", "button[type=submit]", "input[name=ara]"):
+
+    basildi = False
+    for sec in ("input[type=submit]", "button[type=submit]",
+                "input[name=ara]", "form input[value='Ara']"):
         try:
             sayfa.click(sec, timeout=3000)
+            basildi = True
             break
         except Exception:  # noqa: BLE001
             continue
-    sayfa.wait_for_load_state("domcontentloaded")
-    sayfa.wait_for_timeout(900)
+    if not basildi:
+        # Düğme bulunamazsa formu doğrudan gönder
+        sayfa.evaluate("document.querySelector('select[name=city_box]').form.submit()")
+
+    try:
+        sayfa.wait_for_load_state("domcontentloaded", timeout=30000)
+    except Exception:  # noqa: BLE001
+        pass
+
+    # Gönderim sonrası doğrulama — asıl eksik olan adım buydu
+    dogrulama_bekle(sayfa, azami=40)
+    sayfa.wait_for_timeout(1200)
     return sayfa.content()
 
 
@@ -115,7 +141,7 @@ def main() -> None:
                 except Exception as e:  # noqa: BLE001
                     print(f"    ✗ {ad}: {str(e)[:60]}")
                     continue
-                tel = len(re.findall(r"0\s*\(?\d{3}\)?[\s\-/]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}", html))
+                tel = sonuc_var_mi(html)
                 dosya = f"hero-{rol}-{kod}.html.gz"
                 (CIKTI / dosya).write_bytes(gzip.compress(html.encode("utf-8", "replace")))
                 print(f"    {ad} ({kod}): {len(html)//1024}KB tel={tel}")
