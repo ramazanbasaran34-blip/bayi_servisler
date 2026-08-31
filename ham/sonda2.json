@@ -47,6 +47,9 @@
    "https://www.yamaha-motor.eu/es/es/dealer-locator/",
    "https://www.yamaha-motor.eu/fi/fi/dealer-locator/"
   ],
-  "sayfa_tel": 0
+  "sayfa_tel": 0,
+  "js_kod": 200,
+  "js_boyut": 15772,
+  "js_uclar": []
  }
 }
