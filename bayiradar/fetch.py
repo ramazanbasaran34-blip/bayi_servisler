@@ -277,18 +277,30 @@ class Fetcher:
                 except Exception:                                 # noqa: BLE001
                     pass
 
-                # Yalnızca bu türü işaretle, diğerlerini kaldır
-                for d in degerler:
-                    kutu = page.query_selector(
-                        f"{suzgec_secici}[value='{d['deger']}']")
-                    if not kutu:
-                        continue
-                    secili = kutu.is_checked()
-                    if d["deger"] == tur["deger"] and not secili:
-                        kutu.check(timeout=4000)
-                    elif d["deger"] != tur["deger"] and secili:
-                        kutu.uncheck(timeout=4000)
-                page.wait_for_timeout(800)
+                # Süzgeç ya açılır liste ya onay kutusu — ikisini de destekle.
+                #
+                # Önceki sürüm her zaman check() çağırıyordu; açılır listelerde
+                # (Kuba, RKS, Kymco, Nanok, Leksas, Abush, Axion, Rutec)
+                # hiç çalışmıyor ve o markalar sıfır kayıt veriyordu.
+                eleman = page.query_selector(suzgec_secici)
+                if eleman and eleman.evaluate("e => e.tagName.toLowerCase()") == "select":
+                    eleman.select_option(tur["deger"])
+                    page.evaluate(
+                        """el => { el.dispatchEvent(new Event('change',{bubbles:true}));
+                                   el.dispatchEvent(new Event('input',{bubbles:true})); }""",
+                        eleman)
+                else:
+                    for d in degerler:
+                        kutu = page.query_selector(
+                            f"{suzgec_secici}[value='{d['deger']}']")
+                        if not kutu:
+                            continue
+                        secili = kutu.is_checked()
+                        if d["deger"] == tur["deger"] and not secili:
+                            kutu.check(timeout=4000)
+                        elif d["deger"] != tur["deger"] and secili:
+                            kutu.uncheck(timeout=4000)
+                page.wait_for_timeout(900)
                 log(f"     [{tur['rol']}] süzgeç işaretlendi")
 
                 # İl listesini bul
