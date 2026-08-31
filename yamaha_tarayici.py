@@ -55,6 +55,19 @@ def main() -> None:
                 return
             tip = (r.headers or {}).get("content-type", "")
             kayit = {"url": u[:300], "kod": r.status, "tip": tip[:60]}
+            # İsteğin kendisini de kaydet: yöntem, gövde, başlıklar.
+            # Ucu sonradan tarayıcısız çağırabilmek için sözleşme bu.
+            try:
+                istek = r.request
+                kayit["yontem"] = istek.method
+                kayit["gonderilen"] = (istek.post_data or "")[:1500]
+                bl = istek.headers or {}
+                kayit["istek_basliklari"] = {
+                    k: v[:120] for k, v in bl.items()
+                    if k.lower() in ("content-type", "accept", "authorization",
+                                     "x-api-key", "apollographql-client-name")}
+            except Exception:  # noqa: BLE001
+                pass
             try:
                 govde = r.text()
                 kayit["boyut"] = len(govde)
