@@ -650,14 +650,16 @@ markalar:
 
   # 60. ARNİCA  ·  Türkiye-Çin  ·  arnicamotor.com
   "Arnica":
+    # Servis listesi alt alta geliyor, adres içinde "İLÇE / İL" yazıyor.
+    # sehir_id=1..81 ile il il geziliyor.
+    beklenen: [60, 220]
     kaynaklar:
       - rol: satis
         url: "https://arnicamotor.com/bayiler?lang=tr&sehir_id={sayi}"
         iterate: {type: sayi, bitis: 81}
       - rol: servis
-        url: "https://arnicamotor.com/servisler?lang=tr&sehir_id=3&sehir_id=6&sehir_id=3&sehir_id=2"
-
-  # 61. LEKSAS  ·  Türkiye-Çin  ·  www.leksas.com.tr
+        url: "https://arnicamotor.com/servisler?lang=tr&sehir_id={sayi}"
+        iterate: {type: sayi, bitis: 81}
   "Leksas":
     tur_suzgeci:
       secici: "select[name=f-type]"
