@@ -1,14 +1,80 @@
 {
- "Motolux": {
-  "kayit": 734,
-  "il": 74,
+ "Falcon": {
+  "kayit": 1215,
+  "il": 79,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 734, 'yeni': 44, 'guncel': 690, 'supheli': 51, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 1215, 'yeni': 0, 'guncel': 1215, 'supheli': 0, 'mesaj': ''}"
+ },
+ "Nanok": {
+  "kayit": 331,
+  "il": 36,
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 331, 'yeni': 0, 'guncel': 331, 'supheli': 0, 'mesaj': ''}"
+ },
+ "Meka Motor": {
+  "kayit": 275,
+  "il": 31,
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 275, 'yeni': 0, 'guncel': 275, 'supheli': 1, 'mesaj': ''}"
+ },
+ "Kral": {
+  "kayit": 880,
+  "il": 75,
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 880, 'yeni': 0, 'guncel': 880, 'supheli': 0, 'mesaj': ''}"
+ },
+ "Vespa": {
+  "kayit": 75,
+  "il": 18,
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 75, 'yeni': 0, 'guncel': 75, 'supheli': 0, 'mesaj': ''}"
+ },
+ "Suzuki": {
+  "kayit": 41,
+  "il": 17,
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 41, 'yeni': 0, 'guncel': 41, 'supheli': 0, 'mesaj': ''}"
+ },
+ "Peugeot": {
+  "kayit": 63,
+  "il": 27,
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 63, 'yeni': 0, 'guncel': 63, 'supheli': 0, 'mesaj': ''}"
+ },
+ "Horwin": {
+  "kayit": 63,
+  "il": 27,
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 63, 'yeni': 0, 'guncel': 63, 'supheli': 0, 'mesaj': ''}"
+ },
+ "Lambretta": {
+  "kayit": 63,
+  "il": 27,
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 63, 'yeni': 0, 'guncel': 63, 'supheli': 0, 'mesaj': ''}"
  },
  "Zelsun": {
   "kayit": 202,
   "il": 51,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 202, 'yeni': 183, 'guncel': 19, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 202, 'yeni': 0, 'guncel': 202, 'supheli': 0, 'mesaj': ''}"
+ },
+ "Motolux": {
+  "kayit": 734,
+  "il": 74,
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 734, 'yeni': 0, 'guncel': 734, 'supheli': 51, 'mesaj': ''}"
+ },
+ "CSN": {
+  "kayit": 446,
+  "il": 65,
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 446, 'yeni': 0, 'guncel': 446, 'supheli': 13, 'mesaj': ''}"
+ },
+ "Musatti": {
+  "kayit": 434,
+  "il": 73,
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 434, 'yeni': 303, 'guncel': 131, 'supheli': 0, 'mesaj': ''}"
  }
 }
