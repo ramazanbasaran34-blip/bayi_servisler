@@ -28,6 +28,16 @@ jobs:
       - name: Bağımlılık
         run: pip install requests
 
+      - name: Tarayıcı kur
+        if: contains(inputs.hedefler, 'tarayici')
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Yamaha tarayıcı sondası
+        if: contains(inputs.hedefler, 'tarayici')
+        run: python yamaha_tarayici.py || true
+
       - name: Yakala
         run: python hamyakala.py ${{ inputs.hedefler }}
 
