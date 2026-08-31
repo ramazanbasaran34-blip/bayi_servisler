@@ -91,24 +91,40 @@ def yamaha_sonda() -> dict:
     except Exception as e:  # noqa: BLE001
         b["sayfa_hata"] = str(e)[:120]
 
-    # React paketini indirip bayi API'sinin adresini içinden çıkar
-    js = ("https://www.yamaha-motor.eu/etc.clientlibs/yme/clientlibs/"
-          "clientlib-react.lc-303abadbd343bffdb2b08d014fadf94e-lc.min.js")
+    # React yükleyicisi küçük; asıl kod webpack parçalarında. Yükleyiciden
+    # parça adlarını çıkar, her parçayı indir, bayi API'sini içlerinde ara.
+    kok = "https://www.yamaha-motor.eu/etc.clientlibs/yme/clientlibs/"
+    js = kok + "clientlib-react.lc-303abadbd343bffdb2b08d014fadf94e-lc.min.js"
+    KALIPLAR = (
+        r"""[\"'`]((?:https?:)?/[\w./-]*(?:dealer|locator)[\w./-]*)[\"'`]""",
+        r"""[\"'`](/services/[\w./-]+)[\"'`]""",
+        r"""[\"'`](/bin/[\w./-]+)[\"'`]""",
+        r"""[\"'`](/api/[\w./-]+)[\"'`]""",
+    )
     try:
         r = o.get(js, timeout=60)
         b["js_kod"] = r.status_code
-        b["js_boyut"] = len(r.text)
-        CIKTI.mkdir(exist_ok=True)
-        (CIKTI / "yamaha-react.js.gz").write_bytes(
-            gzip.compress(r.text.encode("utf-8", "replace")))
-        adaylar = set()
-        for kal in (r"[\"'`]([/][\w./-]*(?:dealer|locator)[\w./-]*)[\"'`]",
-                    r"[\"'`](https?://[^\"'`]*(?:dealer|locator)[^\"'`]*)[\"'`]",
-                    r"[\"'`](/services/[\w./-]+)[\"'`]"):
-            adaylar |= set(re.findall(kal, r.text, re.I))
-        b["js_uclar"] = sorted(adaylar)[:25]
+        metin = r.text
+        parcalar = sorted(set(re.findall(r"[\w.-]+\.js", metin)))
+        b["parca_sayisi"] = len(parcalar)
+
+        bulunan, tarandi = set(), 0
+        for pr in parcalar:
+            for taban in (kok + "clientlib-react/resources/", kok):
+                try:
+                    c = o.get(taban + pr, timeout=45)
+                except Exception:  # noqa: BLE001
+                    continue
+                if c.status_code != 200 or len(c.text) < 500:
+                    continue
+                tarandi += 1
+                for kal in KALIPLAR:
+                    bulunan |= set(re.findall(kal, c.text, re.I))
+                break
+        b["parca_tarandi"] = tarandi
+        b["js_uclar"] = sorted(bulunan)[:40]
     except Exception as e:  # noqa: BLE001
-        b["js_hata"] = str(e)[:120]
+        b["js_hata"] = str(e)[:150]
 
     return b
 
