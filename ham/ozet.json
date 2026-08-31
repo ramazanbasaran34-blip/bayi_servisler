@@ -769,22 +769,20 @@
   "tel_script_ici": 2
  },
  "isotlar-horwin": {
-  "url": "https://www.isotlarmotor.com/bayiler/horwin/",
+  "url": "https://www.isotlarmotor.com/bayiler/horwin-motosiklet/",
   "kod": 200,
-  "son_url": "https://www.isotlarmotor.com/bayiler/",
-  "boyut": 68443,
+  "son_url": "https://www.isotlarmotor.com/bayiler/horwin-motosiklet/",
+  "boyut": 68408,
   "tel_toplam": 102,
-  "tel_script_ici": 2,
-  "yonlendi": true
+  "tel_script_ici": 2
  },
  "isotlar-lambretta": {
-  "url": "https://www.isotlarmotor.com/bayiler/lambretta/",
+  "url": "https://www.isotlarmotor.com/bayiler/lambretta-motosiklet/",
   "kod": 200,
-  "son_url": "https://www.isotlarmotor.com/bayiler/",
-  "boyut": 68443,
+  "son_url": "https://www.isotlarmotor.com/bayiler/lambretta-motosiklet/",
+  "boyut": 68669,
   "tel_toplam": 102,
-  "tel_script_ici": 2,
-  "yonlendi": true
+  "tel_script_ici": 2
  },
  "arnica-bayi1": {
   "url": "https://arnicamotor.com/bayiler?lang=tr&sehir_id=1",
