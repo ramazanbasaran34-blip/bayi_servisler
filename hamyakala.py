@@ -102,15 +102,49 @@ def yakala(ad: str, url: str, uzanti: str) -> dict:
     return bilgi
 
 
+def marka_hedefleri(adlar: list[str]) -> dict[str, tuple[str, str]]:
+    """markalar.json'daki 'bayi' adreslerinden hedef sözlüğü üretir.
+
+    Böylece her yeni marka için bu dosyayı elle düzenlemek gerekmiyor:
+        python hamyakala.py --markalar "Hero,Musatti,Vespa"
+    """
+    kayit = json.loads(Path("markalar.json").read_text(encoding="utf-8"))
+    tablo = {m["ad"]: m for m in kayit}
+    out: dict[str, tuple[str, str]] = {}
+    for ad in adlar:
+        m = tablo.get(ad)
+        if not m:
+            print(f"  ! markalar.json'da yok: {ad}")
+            continue
+        anahtar = "m-" + re.sub(r"[^a-z0-9]+", "-", ad.lower()).strip("-")
+        out[anahtar] = (m["bayi"], "html")
+        # Ana sayfa da işe yarayabilir (bayi bağlantısı değişmiş olabilir)
+        if m.get("site") and m["site"].rstrip("/") != m["bayi"].rstrip("/"):
+            out[anahtar + "-ana"] = (m["site"], "html")
+    return out
+
+
 def main() -> None:
-    istenen = sys.argv[1:]
-    if istenen:
-        secili = {k: v for k, v in HEDEFLER.items()
-                  if any(a.lower() in k for a in istenen)}
+    argv = sys.argv[1:]
+    if "--markalar" in argv:
+        i = argv.index("--markalar")
+        adlar = [a.strip() for a in argv[i + 1].split(",") if a.strip()]
+        secili = marka_hedefleri(adlar)
     else:
-        secili = HEDEFLER
+        istenen = argv
+        if istenen:
+            secili = {k: v for k, v in HEDEFLER.items()
+                      if any(a.lower() in k for a in istenen)}
+        else:
+            secili = HEDEFLER
 
     ozet: dict[str, dict] = {}
+    onceki = CIKTI / "ozet.json"
+    if onceki.exists():
+        try:
+            ozet = json.loads(onceki.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            ozet = {}
     for ad, (url, uzanti) in secili.items():
         print(f"→ {ad}", flush=True)
         b = yakala(ad, url, uzanti)
