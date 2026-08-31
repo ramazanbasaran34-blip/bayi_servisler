@@ -85,7 +85,9 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "vespa-satis":     ("https://www.vespa.com.tr/tr/yetkili-saticilar.html", "html"),
     "vespa-servis":    ("https://www.vespa.com.tr/tr/yetkili-servisler.html", "html"),
     # Suzuki: servis sayfası gömülü (298); satış ayrı yapı
-    "suzuki-satis":    ("https://www.suzuki.com.tr/tr/motosiklet/satis.html", "html"),
+    # DİKKAT: satis.html bayi listesi İÇERMİYOR (sadece test sürüşü metni).
+    # Doğru adres yetkili-saticilar.html — kullanıcı bildirdi.
+    "suzuki-satici":   ("https://www.suzuki.com.tr/tr/motosiklet/yetkili-saticilar.html", "html"),
     "suzuki-servis":   ("https://www.suzuki.com.tr/tr/motosiklet/yetkili-servisler.html", "html"),
     # Zelsun: ASP.NET, il URL parametresinde (örnek 34)
     "zelsun-satis34":  ("https://www.zelsunmotor.com/Bayilerimiz.aspx?sehir=%C4%B0STANBUL&ilce=%C4%B0l%C3%A7e%20Se%C3%A7iniz", "html"),
@@ -144,7 +146,9 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "kral-servis":     ("https://kralmotor.tr/Service", "html"),
     "vespa-satis":     ("https://www.vespa.com.tr/tr/yetkili-saticilar.html", "html"),
     "vespa-servis":    ("https://www.vespa.com.tr/tr/yetkili-servisler.html", "html"),
-    "suzuki-satis":    ("https://www.suzuki.com.tr/tr/motosiklet/satis.html", "html"),
+    # DİKKAT: satis.html bayi listesi İÇERMİYOR (sadece test sürüşü metni).
+    # Doğru adres yetkili-saticilar.html — kullanıcı bildirdi.
+    "suzuki-satici":   ("https://www.suzuki.com.tr/tr/motosiklet/yetkili-saticilar.html", "html"),
     "suzuki-servis":   ("https://www.suzuki.com.tr/tr/motosiklet/yetkili-servisler.html", "html"),
     "zelsun-satis":    ("https://www.zelsunmotor.com/Bayilerimiz.aspx", "html"),
     "zelsun-servis":   ("https://www.zelsunmotor.com/Servislerimiz.aspx", "html"),
