@@ -54,6 +54,16 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "nanok-api":  ("https://nanok.com.tr/api/dealers", "json"),
     "meka-maps":  ("https://www.mekamotor.com.tr/resman/uploads/maps.xml", "xml"),
 
+    # --- MJ Group: Kuba ve RKS'in sahibi, kendi sitelerinden link veriliyor.
+    #     Kullanıcı onayıyla resmi kaynak kabul edildi (2026-08).
+    "mj-kuba-bayi":   ("https://www.mj.com.tr/bayi-servis-agi/kuba-motor-bayi-agi/", "html"),
+    "mj-kuba-servis": ("https://www.mj.com.tr/bayi-servis-agi/kuba-motor-servis-agi/", "html"),
+    "mj-rks-bayi":    ("https://www.mj.com.tr/bayi-servis-agi/rks-motor-bayi-agi/", "html"),
+    "mj-rks-servis":  ("https://www.mj.com.tr/bayi-servis-agi/rks-motor-servis-agi/", "html"),
+    "mj-agi":         ("https://www.mj.com.tr/bayi-servis-agi/", "html"),
+    # RKS menüsünden çıkan olası veri ucu
+    "rks-services":   ("https://user.rksmotor.com.tr/services.php", "html"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "husqvarna-servis": ("https://spormoto.com/husqvarna/husqvarna-servisler/", "html"),
