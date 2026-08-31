@@ -2,46 +2,55 @@
  "Falcon": {
   "kayit": 1215,
   "il": 79,
-  "ilsiz": 0
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 1215, 'yeni': 0, 'guncel': 1215, 'supheli': 0, 'mesaj': ''}"
  },
  "Nanok": {
   "kayit": 331,
   "il": 36,
-  "ilsiz": 0
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 331, 'yeni': 252, 'guncel': 79, 'supheli': 0, 'mesaj': ''}"
  },
  "Meka Motor": {
   "kayit": 275,
   "il": 31,
-  "ilsiz": 0
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 275, 'yeni': 129, 'guncel': 146, 'supheli': 1, 'mesaj': ''}"
  },
  "Kral": {
   "kayit": 880,
   "il": 75,
-  "ilsiz": 0
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 880, 'yeni': 0, 'guncel': 880, 'supheli': 0, 'mesaj': ''}"
  },
  "Vespa": {
   "kayit": 75,
   "il": 18,
-  "ilsiz": 0
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 75, 'yeni': 0, 'guncel': 75, 'supheli': 0, 'mesaj': ''}"
  },
  "Suzuki": {
   "kayit": 41,
   "il": 17,
-  "ilsiz": 0
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 41, 'yeni': 0, 'guncel': 41, 'supheli': 0, 'mesaj': ''}"
  },
  "Peugeot": {
   "kayit": 63,
   "il": 27,
-  "ilsiz": 0
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 63, 'yeni': 38, 'guncel': 25, 'supheli': 0, 'mesaj': ''}"
  },
  "Horwin": {
   "kayit": 63,
   "il": 27,
-  "ilsiz": 0
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 63, 'yeni': 38, 'guncel': 25, 'supheli': 0, 'mesaj': ''}"
  },
  "Lambretta": {
   "kayit": 63,
   "il": 27,
-  "ilsiz": 0
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 63, 'yeni': 38, 'guncel': 25, 'supheli': 0, 'mesaj': ''}"
  }
 }
