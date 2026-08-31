@@ -562,5 +562,23 @@
   "boyut": 338506,
   "tel_toplam": 169,
   "tel_script_ici": 2
+ },
+ "csn-servis-ank": {
+  "url": "https://csnmotor.com.tr/servis-noktalarimiz/ankara",
+  "kod": 200,
+  "son_url": "https://csnmotor.com.tr/servis-noktalarimiz/ankara/",
+  "boyut": 185462,
+  "tel_toplam": 11,
+  "tel_script_ici": 2,
+  "yonlendi": true
+ },
+ "csn-satis-ank": {
+  "url": "https://csnmotor.com.tr/satis-noktalarimiz/ankara",
+  "kod": 200,
+  "son_url": "https://csnmotor.com.tr/satis-noktalarimiz/ankara/",
+  "boyut": 182604,
+  "tel_toplam": 9,
+  "tel_script_ici": 2,
+  "yonlendi": true
  }
 }
