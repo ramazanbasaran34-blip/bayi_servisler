@@ -15,30 +15,30 @@
  },
  "rks-moto": {
   "sayfa": "https://www.rksmotor.com.tr/bayi-servis/rksmotor.html",
-  "ajax": "https://www.rksmotor.com.tr/bayi-servis/ajax.php",
+  "ajax": "https://www.rksmotor.com.tr/ajax.php",
   "sayfa_kod": 200,
   "il_sayisi": 80,
-  "district_kod": 404,
-  "district_ornek": "<!DOCTYPE html>\n<html lang=\"fr-FR\">\n<head>\n\t\n<meta charset=\"UTF-8\"/>\n<link rel=\"profile\" href=\"http://gmpg.org/xfn/11\"/>\n\n<meta name=\"viewport\" content=\"width=d",
-  "Bayi_kod": 404,
-  "Bayi_boyut": 276176,
-  "Bayi_tel": 414,
-  "Servis_kod": 404,
-  "Servis_boyut": 276176,
-  "Servis_tel": 414
+  "district_kod": 200,
+  "district_ornek": "\n[\"Alt\\u0131nda\\u011f\",\"Beypazar\\u0131\",\"\\u00c7ankaya\",\"\\u00c7ubuk\",\"Etimesgut\",\"Ke\\u00e7i\\u00f6ren\",\"Mamak\",\"Polatl\\u0131\",\"Pursaklar\",\"\\u015eerefliko\\u00e7his",
+  "Bayi_kod": 200,
+  "Bayi_boyut": 22755,
+  "Bayi_tel": 52,
+  "Servis_kod": 200,
+  "Servis_boyut": 25670,
+  "Servis_tel": 54
  },
  "kuba-moto": {
   "sayfa": "https://www.kubamotor.com.tr/bayi-servis/kubamotor",
-  "ajax": "https://www.kubamotor.com.tr/bayi-servis/ajax.php",
+  "ajax": "https://www.kubamotor.com.tr/ajax.php",
   "sayfa_kod": 200,
   "il_sayisi": 81,
-  "district_kod": 404,
-  "district_ornek": "<!DOCTYPE html>\n<!--[if IE 8]><html class=\"no-js ie8 lt-ie10 lt-ie9  \" lang=\"tr-TR\" dir=\"ltr\"><![endif]-->\n<!--[if IE 9]><html class=\"no-js ie9 lt-ie10  \" lang=",
-  "Bayi_kod": 404,
-  "Bayi_boyut": 207909,
-  "Bayi_tel": 519,
-  "Servis_kod": 404,
-  "Servis_boyut": 207909,
-  "Servis_tel": 519
+  "district_kod": 200,
+  "district_ornek": "[\"Alt\\u0131nda\\u011f\",\"Beypazar\\u0131\",\"\\u00c7ankaya\",\"\\u00c7ubuk\",\"Etimesgut\",\"Ke\\u00e7i\\u00f6ren\",\"Mamak\",\"Polatl\\u0131\",\"Pursaklar\",\"\\u015eerefliko\\u00e7hisa",
+  "Bayi_kod": 200,
+  "Bayi_boyut": 22754,
+  "Bayi_tel": 52,
+  "Servis_kod": 200,
+  "Servis_boyut": 25669,
+  "Servis_tel": 54
  }
 }
