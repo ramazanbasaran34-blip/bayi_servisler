@@ -43,13 +43,5 @@
   "tel_toplam": 519,
   "tel_script_ici": 0,
   "yonlendi": true
- },
- "rks-services": {
-  "url": "https://user.rksmotor.com.tr/services.php",
-  "kod": 200,
-  "son_url": "https://user.rksmotor.com.tr/services.php",
-  "boyut": 26189,
-  "tel_toplam": 0,
-  "tel_script_ici": 0
  }
 }

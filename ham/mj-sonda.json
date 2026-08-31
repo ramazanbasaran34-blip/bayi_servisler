@@ -1,0 +1,19 @@
+{
+ "rks": {
+  "taban": "https://user.rksmotor.com.tr/",
+  "sayfa_kod": 200,
+  "il_sayisi": 81,
+  "district_kod": 200,
+  "district_ornek": "[\"Alt\\u0131nda\\u011f\",\"Beypazar\\u0131\",\"\\u00c7ankaya\",\"\\u00c7ubuk\",\"Etimesgut\",\"Ke\\u00e7i\\u00f6ren\",\"Mamak\",\"Polatl\\u0131\",\"Pursaklar\",\"\\u015eerefliko\\u00e7hisa",
+  "Bayi_kod": 200,
+  "Bayi_boyut": 13095,
+  "Bayi_tel": 50,
+  "Servis_kod": 200,
+  "Servis_boyut": 15394,
+  "Servis_tel": 54
+ },
+ "kuba": {
+  "taban": "https://user.kubamotor.com.tr/",
+  "hata": "sayfa: ConnectionError: HTTPSConnectionPool(host='user.kubamotor.com.tr', port=443): Max retries exceeded with url: /services.php (Caused by NameResol"
+ }
+}
