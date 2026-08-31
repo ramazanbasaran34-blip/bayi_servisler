@@ -66,7 +66,9 @@ HEDEFLER: dict[str, tuple[str, str]] = {
 
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
+    "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
     "husqvarna-servis": ("https://spormoto.com/husqvarna/husqvarna-servisler/", "html"),
+    "husqvarna-satis":  ("https://spormoto.com/husqvarna/bayiler/", "html"),
 }
 
 TEL = re.compile(r"0?\s*\(?5?\d{3}\)?[\s\-/]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}")
