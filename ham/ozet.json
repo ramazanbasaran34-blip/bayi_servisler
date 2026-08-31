@@ -440,19 +440,11 @@
  },
  "musatti-bayi06": {
   "url": "https://musattimotor.com/ajax-bayi-listesi.php?city=06",
-  "kod": 200,
-  "son_url": "https://musattimotor.com/ajax-bayi-listesi.php?city=06",
-  "boyut": 9346,
-  "tel_toplam": 22,
-  "tel_script_ici": 0
+  "hata": "ConnectTimeout: HTTPSConnectionPool(host='musattimotor.com', port=443): Max retries exceeded with url: /ajax-bayi-listesi.php?city=06 (Caused by ConnectTimeoutError(<HTTPSConnection(host='musattimotor"
  },
  "musatti-srv06": {
   "url": "https://musattimotor.com/ajax-servis-listesi.php?city=06",
-  "kod": 200,
-  "son_url": "https://musattimotor.com/ajax-servis-listesi.php?city=06",
-  "boyut": 11335,
-  "tel_toplam": 26,
-  "tel_script_ici": 0
+  "hata": "ConnectTimeout: HTTPSConnectionPool(host='musattimotor.com', port=443): Max retries exceeded with url: /ajax-servis-listesi.php?city=06 (Caused by ConnectTimeoutError(<HTTPSConnection(host='musattimot"
  },
  "kral-satis": {
   "url": "https://kralmotor.tr/SalesDealer",
@@ -523,8 +515,8 @@
   "kod": 403,
   "son_url": "https://www.heromotor.com.tr/bayiler/",
   "boyut": 5648,
-  "tel_toplam": 7,
-  "tel_script_ici": 7
+  "tel_toplam": 9,
+  "tel_script_ici": 9
  },
  "hero-servis": {
   "url": "https://www.heromotor.com.tr/servisler/",
@@ -533,5 +525,42 @@
   "boyut": 5654,
   "tel_toplam": 7,
   "tel_script_ici": 7
+ },
+ "musatti-sayfa": {
+  "url": "https://musattimotor.com/bayi-bul",
+  "hata": "ConnectTimeout: HTTPSConnectionPool(host='musattimotor.com', port=443): Max retries exceeded with url: /bayi-bul (Caused by ConnectTimeoutError(<HTTPSConnection(host='musattimotor.com', port=443) at 0"
+ },
+ "zelsun-satis": {
+  "url": "https://www.zelsunmotor.com/Bayilerimiz.aspx",
+  "kod": 200,
+  "son_url": "https://www.zelsunmotor.com/Bayilerimiz.aspx",
+  "boyut": 75028,
+  "tel_toplam": 8,
+  "tel_script_ici": 0
+ },
+ "zelsun-servis": {
+  "url": "https://www.zelsunmotor.com/Servislerimiz.aspx",
+  "kod": 200,
+  "son_url": "https://www.zelsunmotor.com/Servislerimiz.aspx",
+  "boyut": 71226,
+  "tel_toplam": 8,
+  "tel_script_ici": 0
+ },
+ "zelsun-ist": {
+  "url": "https://www.zelsunmotor.com/Bayilerimiz.aspx?sehir=%c4%b0STANBUL&ilce=",
+  "kod": 200,
+  "son_url": "https://www.zelsunmotor.com/Bayilerimiz.aspx?sehir=%C4%B0STANBUL&ilce=",
+  "boyut": 80059,
+  "tel_toplam": 10,
+  "tel_script_ici": 0,
+  "yonlendi": true
+ },
+ "csn-satis": {
+  "url": "https://csnmotor.com.tr/satis-noktalarimiz/",
+  "kod": 200,
+  "son_url": "https://csnmotor.com.tr/satis-noktalarimiz/",
+  "boyut": 338506,
+  "tel_toplam": 169,
+  "tel_script_ici": 2
  }
 }
