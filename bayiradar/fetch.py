@@ -333,8 +333,46 @@ class Fetcher:
                             page.wait_for_load_state("networkidle", timeout=5000)
                         except Exception:                         # noqa: BLE001
                             pass
-                        page.wait_for_timeout(350)
-                        cikti.append((tur["rol"], il, page.content()))
+                        page.wait_for_timeout(500)
+
+                        # İl seçilince dolan bir İLÇE listesi var mı?
+                        # Kuba ve RKS'de zincir üç adımlı: tür → il → ilçe.
+                        # İlçe seçilmeden sonuç görünmüyordu.
+                        ilce_sec = None
+                        for s2 in page.query_selector_all("select"):
+                            ad2 = ((s2.get_attribute("name") or "") + " "
+                                   + (s2.get_attribute("id") or "")).lower()
+                            if any(k in ad2 for k in ("district", "ilce", "ilçe", "town")):
+                                ilce_sec = s2
+                                break
+                        ilce_degerleri = []
+                        if ilce_sec:
+                            for o in ilce_sec.query_selector_all("option"):
+                                dv2 = (o.get_attribute("value") or "").strip()
+                                if dv2 and dv2.lower() not in ("", "0", "-1"):
+                                    ilce_degerleri.append(dv2)
+
+                        if not ilce_degerleri:
+                            cikti.append((tur["rol"], il, page.content()))
+                            continue
+
+                        for dv2 in ilce_degerleri:
+                            if _t.monotonic() - bas > azami_saniye:
+                                break
+                            try:
+                                ilce_sec.select_option(dv2)
+                                page.evaluate(
+                                    """el => { el.dispatchEvent(new Event('change',{bubbles:true}));
+                                               el.dispatchEvent(new Event('input',{bubbles:true})); }""",
+                                    ilce_sec)
+                                try:
+                                    page.wait_for_load_state("networkidle", timeout=4000)
+                                except Exception:                 # noqa: BLE001
+                                    pass
+                                page.wait_for_timeout(300)
+                                cikti.append((tur["rol"], il, page.content()))
+                            except Exception:                     # noqa: BLE001
+                                continue
                     except Exception:                             # noqa: BLE001
                         continue
             except Exception as e:                                # noqa: BLE001
