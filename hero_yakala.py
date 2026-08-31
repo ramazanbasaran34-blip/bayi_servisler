@@ -82,6 +82,25 @@ def il_cek(sayfa, kod: str) -> str:
     except Exception:  # noqa: BLE001
         sayfa.select_option("select[name=city_box]", index=1)
 
+    # ÖNCE adres satırından dene (GET). POST her seferinde Cloudflare
+    # doğrulamasını yeniden tetikliyor; GET gezinmesi çerezi kullanıyor
+    # ve genelde sorunsuz geçiyor.
+    temel = sayfa.url.split("?")[0]
+    try:
+        sayfa.goto(f"{temel}?city_box={kod}&ara=Ara",
+                   wait_until="domcontentloaded", timeout=45000)
+        dogrulama_bekle(sayfa, azami=25)
+        sayfa.wait_for_timeout(800)
+        html = sayfa.content()
+        if sonuc_var_mi(html) > 0:
+            return html
+        # Sonuç yoksa forma geri dön
+        sayfa.goto(temel, wait_until="domcontentloaded")
+        dogrulama_bekle(sayfa, azami=25)
+        sayfa.select_option("select[name=city_box]", value=kod)
+    except Exception:  # noqa: BLE001
+        pass
+
     basildi = False
     for sec in ("input[type=submit]", "button[type=submit]",
                 "input[name=ara]", "form input[value='Ara']"):
