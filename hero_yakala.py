@@ -71,58 +71,51 @@ def sonuc_var_mi(html: str) -> int:
 
 
 def il_cek(sayfa, kod: str) -> str:
-    """İl seçip Ara'ya basar.
+    """İl sonucunu SAYFADAN AYRILMADAN alır.
 
-    ÖNEMLİ: form gönderildikten sonra Cloudflare doğrulaması TEKRAR
-    devreye giriyor. Gönderimden sonra da beklemek şart; yoksa elimize
-    "Bir dakika lütfen..." ara sayfası geçiyor.
+    Neden böyle: Cloudflare doğrulaması *belge* isteklerinde yeniden
+    devreye giriyor. Form gönderimi de, adres satırından GET de yeni bir
+    belge isteği demek — ikisinde de elimize "Bir dakika lütfen..." ara
+    sayfası geçti (iki denemede de 0 kayıt).
+
+    Çözüm: doğrulaması geçilmiş sekmede kalıp aynı kaynağa XHR atmak.
+    Çerez (cf_clearance) istekle birlikte gidiyor, ara sayfa çıkmıyor.
+    """
+    js = """
+      async (kod) => {
+        const govde = new URLSearchParams({city_box: kod, ara: 'Ara'});
+        const y = await fetch(location.href.split('?')[0], {
+          method: 'POST',
+          headers: {'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'},
+          body: govde.toString(),
+          credentials: 'same-origin'
+        });
+        return await y.text();
+      }
     """
     try:
-        sayfa.select_option("select[name=city_box]", value=kod)
-    except Exception:  # noqa: BLE001
-        sayfa.select_option("select[name=city_box]", index=1)
-
-    # ÖNCE adres satırından dene (GET). POST her seferinde Cloudflare
-    # doğrulamasını yeniden tetikliyor; GET gezinmesi çerezi kullanıyor
-    # ve genelde sorunsuz geçiyor.
-    temel = sayfa.url.split("?")[0]
-    try:
-        sayfa.goto(f"{temel}?city_box={kod}&ara=Ara",
-                   wait_until="domcontentloaded", timeout=45000)
-        dogrulama_bekle(sayfa, azami=25)
-        sayfa.wait_for_timeout(800)
-        html = sayfa.content()
-        if sonuc_var_mi(html) > 0:
+        html = sayfa.evaluate(js, kod)
+        if html and sonuc_var_mi(html) > 0:
             return html
-        # Sonuç yoksa forma geri dön
-        sayfa.goto(temel, wait_until="domcontentloaded")
-        dogrulama_bekle(sayfa, azami=25)
-        sayfa.select_option("select[name=city_box]", value=kod)
     except Exception:  # noqa: BLE001
-        pass
+        html = ""
 
-    basildi = False
-    for sec in ("input[type=submit]", "button[type=submit]",
-                "input[name=ara]", "form input[value='Ara']"):
-        try:
-            sayfa.click(sec, timeout=3000)
-            basildi = True
-            break
-        except Exception:  # noqa: BLE001
-            continue
-    if not basildi:
-        # Düğme bulunamazsa formu doğrudan gönder
-        sayfa.evaluate("document.querySelector('select[name=city_box]').form.submit()")
-
+    # XHR tutmazsa formu gerçekten gönder (son çare)
     try:
+        sayfa.select_option("select[name=city_box]", value=kod)
+        for sec in ("input[type=submit]", "button[type=submit]", "input[name=ara]"):
+            try:
+                sayfa.click(sec, timeout=3000)
+                break
+            except Exception:  # noqa: BLE001
+                continue
         sayfa.wait_for_load_state("domcontentloaded", timeout=30000)
+        dogrulama_bekle(sayfa, azami=30)
+        sayfa.wait_for_timeout(600)
+        return sayfa.content()
     except Exception:  # noqa: BLE001
-        pass
-
-    # Gönderim sonrası doğrulama — asıl eksik olan adım buydu
-    dogrulama_bekle(sayfa, azami=40)
-    sayfa.wait_for_timeout(1200)
-    return sayfa.content()
+        return html or ""
 
 
 def main() -> None:
@@ -137,8 +130,23 @@ def main() -> None:
         s = ctx.new_page()
 
         for rol, url in SAYFA.items():
-            s.goto(url, wait_until="domcontentloaded", timeout=60000)
-            if not dogrulama_bekle(s):
+            # Doğrulama bazen ilk açılışta takılıyor. Sayfayı birkaç kez
+            # yeniden deniyoruz; ikinci sayfada (servis) genelde ilk
+            # sayfadan kalan çerezle sorunsuz geçiyor.
+            gecti = False
+            for deneme in range(3):
+                try:
+                    s.goto(url, wait_until="domcontentloaded", timeout=60000)
+                except Exception as e:  # noqa: BLE001
+                    print(f"    açılış hatası ({deneme + 1}): {str(e)[:60]}")
+                    continue
+                if dogrulama_bekle(s):
+                    gecti = True
+                    break
+                print(f"    doğrulama geçmedi, yeniden deneniyor ({deneme + 1}/3)")
+                s.wait_for_timeout(4000)
+
+            if not gecti:
                 rapor[rol] = {"hata": "Cloudflare doğrulaması geçilemedi"}
                 print(f"  ✗ {rol}: doğrulama geçilemedi")
                 continue
@@ -165,9 +173,8 @@ def main() -> None:
                 (CIKTI / dosya).write_bytes(gzip.compress(html.encode("utf-8", "replace")))
                 print(f"    {ad} ({kod}): {len(html)//1024}KB tel={tel}")
                 rapor[rol].setdefault("iller", {})[ad] = tel
-                s.goto(url, wait_until="domcontentloaded")
-                s.wait_for_timeout(400)
-                time.sleep(0.3)
+                # XHR kullanıyoruz; sayfadan ayrılmıyoruz, yeniden yükleme yok.
+                time.sleep(0.4)
         ctx.close(); t.close()
 
     (CIKTI / "hero-yakalama.json").write_text(
