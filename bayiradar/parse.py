@@ -134,6 +134,9 @@ def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
     # İlçe: kaydın kendi alanı, ile göre doğrulanarak
     ham_ilce = clean_text(rec.get("ilce", ""))
     ilce_ad = ""
+    if ham_ilce and fold(ham_ilce) in ("merkez", "merkez ilce", "il merkezi",
+                                       "sehir merkezi", "merkezi"):
+        ham_ilce = ""          # aşağıda il adıyla doldurulacak
     if ham_ilce:
         ilce_ad = ilce_mi(ham_ilce, il_ad)
         if not ilce_ad and not il_ad:
@@ -154,8 +157,22 @@ def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
     if ilce_ad and not il_ad:                              # 4
         il_ad = ilceden_il(ilce_ad)
 
-    # Tutarlılık: ilçe bu ile ait değilse ilçeyi yazma
-    if ilce_ad and il_ad and not ilce_mi(ilce_ad, il_ad):
+    # İlçe hâlâ boşsa ve kaynak "Merkez" demişse il adını yaz
+    if not ilce_ad and il_ad and fold(clean_text(rec.get("ilce", ""))) in (
+            "merkez", "merkez ilce", "il merkezi", "sehir merkezi", "merkezi"):
+        ilce_ad = il_ad
+
+    # "Merkez" ilçe adı değil, il merkezini anlatan bir sözcük. Kullanıcı
+    # listede "Aksaray / Merkez" değil doğrudan "Aksaray" görmek istiyor.
+    if ilce_ad and fold(ilce_ad) in ("merkez", "merkez ilce", "il merkezi",
+                                     "sehir merkezi", "merkezi") and il_ad:
+        ilce_ad = il_ad
+
+    # Tutarlılık: ilçe bu ile ait değilse ilçeyi yazma.
+    # İl adının kendisi ilçe olarak yazılmışsa (Aksaray/Aksaray) buna izin ver;
+    # küçük illerde merkez ilçe il adını taşıyor.
+    if ilce_ad and il_ad and fold(ilce_ad) != fold(il_ad) \
+            and not ilce_mi(ilce_ad, il_ad):
         ilce_ad = ""
 
     out = {
