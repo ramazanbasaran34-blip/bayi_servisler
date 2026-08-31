@@ -209,16 +209,28 @@ markalar:
 
   # 14. KYMCO  ·  Tayvan  ·  www.kymco.com.tr
   "Kymco":
-    tur_suzgeci:
-      secici: "select[name=by-sec]"
-      degerler:
-        - {deger: "yetkili-satici", rol: satis}
-        - {deger: "yetkili-servis", rol: servis}
-    mode: browser
-    beklenen: [49, 105]   # saha: ~50 bayi, ~70 servis
+    # Tarayıcı ve il seçimi GEREKMİYOR. Sayfa bütün ağı tek tırnaklı bir JS
+    # nesnesi (GeoJSON) olarak kaynağa basıyor; harita onu okuyor. Tek GET
+    # ile 75 kaydın hepsi geliyor, rol ayrımı da veride hazır.
+    beklenen: [70, 90]    # site 2026-08 itibarıyla 37 satıcı + 38 servis
     kaynaklar:
       - rol: satis_servis
         url: "https://www.kymco.com.tr/tr/satis-servis-agi.html"
+    gomulu:
+      kayit: "\\{\\s*'type':\\s*'yetkili-[a-z]+',.*?'msx':\\s*'.*?'\\s*\\}\\s*\\}"
+      fields:
+        bayi_adi: name
+        adres: address
+        telefon: phone1
+        email: mail1
+      ekstra_alanlar:
+        konum: city
+      rol_alani:
+        regex: "'type':\\s*'(yetkili-[a-z]+)'"
+        esleme:
+          yetkili-satici: satis
+          yetkili-servis: servis
+    il_ilce_birlesik: konum
 
   # 15. APRILIA  ·  İtalya-Çin  ·  www.aprilia.com.tr
   "Aprilia":
