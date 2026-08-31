@@ -610,5 +610,29 @@
   "tel_toplam": 9,
   "tel_script_ici": 2,
   "yonlendi": true
+ },
+ "motolux-adana": {
+  "url": "https://motolux.com.tr/bayiler/sehir/adana/",
+  "kod": 200,
+  "son_url": "https://motolux.com.tr/bayiler/sehir/adana/",
+  "boyut": 655120,
+  "tel_toplam": 109,
+  "tel_script_ici": 0
+ },
+ "motolux-agri": {
+  "url": "https://motolux.com.tr/bayiler/sehir/agri/",
+  "kod": 200,
+  "son_url": "https://motolux.com.tr/bayiler/sehir/agri/",
+  "boyut": 626998,
+  "tel_toplam": 14,
+  "tel_script_ici": 0
+ },
+ "motolux-izmir": {
+  "url": "https://motolux.com.tr/bayiler/sehir/izmir/",
+  "kod": 200,
+  "son_url": "https://motolux.com.tr/bayiler/sehir/izmir/",
+  "boyut": 681702,
+  "tel_toplam": 202,
+  "tel_script_ici": 0
  }
 }
