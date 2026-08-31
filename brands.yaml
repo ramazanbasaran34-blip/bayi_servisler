@@ -48,9 +48,9 @@ markalar:
 
   #  2. YAMAHA  ·  Japonya  ·  www.yamaha-motor.eu
   "Yamaha":
+    beklenen: [27, 125]   # saha: 45 satış, 45 servis
     # Sitede satış ve servis ayrı listelenmiyor; her nokta ikisini de
     # yapıyor. Kayıtlar "Satış + Servis" olarak işaretleniyor.
-    beklenen: [31, 67]   # saha: ~45 bayi, ~45 servis
     mode: browser
     kaynaklar:
       - rol: satis_servis
@@ -242,6 +242,7 @@ markalar:
 
   # 17. BMW  ·  Almanya-Çin  ·  www.bmw-motorrad.com.tr
   "BMW":
+    beklenen: [10, 44]   # saha: 14 satış, 18 servis
     mode: browser
     kaynaklar:
       - rol: satis_servis
@@ -354,26 +355,27 @@ markalar:
 
   # 28. DUCATI  ·  İtalya  ·  korlas.com.tr
   "Ducati":
-    beklenen: [20, 60]   # Korlas: 11 il satış, 31 servis
+    beklenen: [18, 60]   # saha: 12 satış, 31 servis
     mode: browser
     kaynaklar:
       - rol: satis
-        url: "https://korlas.com.tr/servis/"
+        url: "https://korlas.com.tr/bayi/"
       - rol: servis
         url: "https://korlas.com.tr/servis/"
 
   # 29. TRIUMPH  ·  İngiltere  ·  korlas.com.tr
   "Triumph":
-    beklenen: [20, 60]   # Korlas: 11 il satış, 31 servis
+    beklenen: [18, 60]   # saha: 12 satış, 31 servis
     mode: browser
     kaynaklar:
       - rol: satis
-        url: "https://korlas.com.tr/servis/"
+        url: "https://korlas.com.tr/bayi/"
       - rol: servis
         url: "https://korlas.com.tr/servis/"
 
   # 30. KTM  ·  Avusturya  ·  www.spormoto.com
   "KTM":
+    beklenen: [20, 95]   # saha: 34 satış, 34 servis
     kaynaklar:
       - rol: satis
         url: "https://www.spormoto.com/ktm/bayiler/"
@@ -382,6 +384,7 @@ markalar:
 
   # 31. HUSQVARNA  ·  Avusturya  ·  www.spormoto.com
   "Husqvarna":
+    beklenen: [20, 95]   # saha: 34 satış, 34 servis
     mode: browser
     kaynaklar:
       - rol: satis
@@ -649,7 +652,8 @@ markalar:
   "Arnica":
     kaynaklar:
       - rol: satis
-        url: "https://arnicamotor.com/bayiler?lang=tr"
+        url: "https://arnicamotor.com/bayiler?lang=tr&sehir_id={sayi}"
+        iterate: {type: sayi, bitis: 81}
       - rol: servis
         url: "https://arnicamotor.com/servisler?lang=tr&sehir_id=3&sehir_id=6&sehir_id=3&sehir_id=2"
 
