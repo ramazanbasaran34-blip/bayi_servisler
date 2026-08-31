@@ -22,15 +22,17 @@ from bayiradar.parse import finalize
 HAM = Path("ham")
 
 MODULLER = ["falcon", "kral", "vespa", "suzuki", "zelsun",
-            "musatti", "csn", "motolux"]
+            "musatti", "csn", "motolux", "isotlar", "nanok", "meka"]
 
 # Marka başına beklenen en az kayıt (saha bilgisi / sayfadaki gerçek sayı)
 EN_AZ = {"Falcon": 900, "Kral": 300, "Vespa": 60, "Suzuki": 35,
-         "Zelsun": 2, "Musatti": 5, "CSN": 3, "Motolux": 5}
+         "Zelsun": 2, "Musatti": 5, "CSN": 3, "Motolux": 5,
+         "Peugeot": 20, "Horwin": 5, "Lambretta": 5,
+         "Nanok": 100, "Meka Motor": 100}
 
 
-def dosya_oku(ad: str) -> str:
-    return gzip.decompress((HAM / f"{ad}.gz").read_bytes()).decode("utf-8", "replace")
+def dosya_oku(ad: str, kodlama: str = "utf-8") -> str:
+    return gzip.decompress((HAM / f"{ad}.gz").read_bytes()).decode(kodlama, "replace")
 
 
 def dene(mod_ad: str) -> tuple[int, dict]:
@@ -44,7 +46,7 @@ def dene(mod_ad: str) -> tuple[int, dict]:
             print(f"  · {marka}/{rol}: {dosya} yok, atlandı")
             continue
 
-        govde = dosya_oku(dosya)
+        govde = dosya_oku(dosya, getattr(mod, "KODLAMA", "utf-8"))
         url = mod.KAYNAKLAR.get(rol, "")
         try:
             ek = {}
