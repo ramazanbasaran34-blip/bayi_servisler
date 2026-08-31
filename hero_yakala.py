@@ -34,9 +34,17 @@ KULLANICI = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
              "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
 
 
-def dogrulama_bekle(sayfa, azami=45) -> bool:
-    """Cloudflare ara sayfası geçene kadar bekler."""
-    for _ in range(azami):
+def dogrulama_bekle(sayfa, azami=60) -> bool:
+    """Cloudflare ara sayfası geçene kadar bekler.
+
+    Bazen ilk denemede takılıyor; 20 saniyede geçmezse sayfayı yeniliyoruz.
+    """
+    for i in range(azami):
+        if i and i % 20 == 0:
+            try:
+                sayfa.reload(wait_until="domcontentloaded")
+            except Exception:  # noqa: BLE001
+                pass
         baslik = (sayfa.title() or "").lower()
         if "just a moment" not in baslik and "attention required" not in baslik:
             try:
@@ -57,7 +65,10 @@ def il_kodlari(sayfa) -> list[tuple[str, str]]:
 
 
 def il_cek(sayfa, kod: str) -> str:
-    sayfa.select_option("select[name=city_box]", kod)
+    try:
+        sayfa.select_option("select[name=city_box]", value=kod)
+    except Exception:  # noqa: BLE001
+        sayfa.select_option("select[name=city_box]", index=1)
     for sec in ("input[type=submit]", "button[type=submit]", "input[name=ara]"):
         try:
             sayfa.click(sec, timeout=3000)
@@ -88,10 +99,16 @@ def main() -> None:
                 continue
 
             iller = il_kodlari(s)
-            rapor[rol] = {"il_sayisi": len(iller)}
+            rapor[rol] = {"il_sayisi": len(iller), "ornek_secenek": iller[:6]}
             print(f"  {rol}: doğrulama geçildi, {len(iller)} il")
+            print(f"    örnek seçenekler: {iller[:6]}")
 
-            hedefler = iller if hepsi else [x for x in iller if x[0] == ORNEK_IL]
+            if hepsi:
+                hedefler = iller
+            else:
+                # Kod biçimi siteye göre değişiyor ("06" / "6" / "ANKARA");
+                # bu yüzden ADA göre eşleştiriyoruz.
+                hedefler = [x for x in iller if "ankara" in x[1].casefold()] or iller[:1]
             for kod, ad in hedefler:
                 try:
                     html = il_cek(s, kod)
