@@ -1,6 +1,35 @@
 {
  "satis": {
-  "il_sayisi": 81
+  "il_sayisi": 81,
+  "ornek_secenek": [
+   [
+    "1",
+    "Adana"
+   ],
+   [
+    "2",
+    "Adıyaman"
+   ],
+   [
+    "3",
+    "Afyon"
+   ],
+   [
+    "4",
+    "Ağrı"
+   ],
+   [
+    "68",
+    "Aksaray"
+   ],
+   [
+    "5",
+    "Amasya"
+   ]
+  ],
+  "iller": {
+   "Ankara": 0
+  }
  },
  "servis": {
   "hata": "Cloudflare doğrulaması geçilemedi"
