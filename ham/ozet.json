@@ -799,5 +799,13 @@
   "boyut": 11989,
   "tel_toplam": 17,
   "tel_script_ici": 3
+ },
+ "suzuki-satici": {
+  "url": "https://www.suzuki.com.tr/tr/motosiklet/yetkili-saticilar.html",
+  "kod": 200,
+  "son_url": "https://www.suzuki.com.tr/tr/motosiklet/yetkili-saticilar.html",
+  "boyut": 50044,
+  "tel_toplam": 272,
+  "tel_script_ici": 270
  }
 }
