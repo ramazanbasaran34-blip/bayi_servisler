@@ -119,6 +119,13 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "meka-bs":         ("https://www.mekamotor.com.tr/bayi-ve-servis", "html"),
     "milyon-bs":       ("https://www.milyonmoto.com.tr/bayi-servisler.html", "html"),
     "isotlar-bayi":    ("https://www.isotlarmotor.com/bayiler/", "html"),
+    # İsotlar: il seçeneklerinin değeri doğrudan URL; "Tüm İller" seçeneği var
+    "isotlar-peugeot": ("https://www.isotlarmotor.com/bayiler/peugeot-motosiklet/", "html"),
+    "isotlar-horwin":  ("https://www.isotlarmotor.com/bayiler/horwin/", "html"),
+    "isotlar-lambretta": ("https://www.isotlarmotor.com/bayiler/lambretta/", "html"),
+    # Arnica: sehir_id parametresi (1 = Adana)
+    "arnica-bayi1":    ("https://arnicamotor.com/bayiler?lang=tr&sehir_id=1", "html"),
+    "arnica-servis1":  ("https://arnicamotor.com/servisler?lang=tr&sehir_id=1", "html"),
     "nanok-sayfa":     ("https://nanok.com.tr/bayilerimiz", "html"),
 
     # --- spormoto ---
