@@ -680,17 +680,17 @@
   "url": "https://arnicamotor.com/bayiler?lang=tr",
   "kod": 200,
   "son_url": "https://arnicamotor.com/bayiler?lang=tr",
-  "boyut": 36659,
-  "tel_toplam": 13,
-  "tel_script_ici": 0
+  "boyut": 11904,
+  "tel_toplam": 17,
+  "tel_script_ici": 3
  },
  "arnica-servis": {
   "url": "https://arnicamotor.com/servisler?lang=tr",
   "kod": 200,
   "son_url": "https://arnicamotor.com/servisler?lang=tr",
-  "boyut": 35157,
-  "tel_toplam": 10,
-  "tel_script_ici": 0
+  "boyut": 11907,
+  "tel_toplam": 17,
+  "tel_script_ici": 3
  },
  "kimmi-bayi": {
   "url": "https://www.kimmimotor.com/bayiler/",
@@ -759,5 +759,47 @@
   "boyut": 176562,
   "tel_toplam": 1,
   "tel_script_ici": 0
+ },
+ "isotlar-peugeot": {
+  "url": "https://www.isotlarmotor.com/bayiler/peugeot-motosiklet/",
+  "kod": 200,
+  "son_url": "https://www.isotlarmotor.com/bayiler/peugeot-motosiklet/",
+  "boyut": 68495,
+  "tel_toplam": 102,
+  "tel_script_ici": 2
+ },
+ "isotlar-horwin": {
+  "url": "https://www.isotlarmotor.com/bayiler/horwin/",
+  "kod": 200,
+  "son_url": "https://www.isotlarmotor.com/bayiler/",
+  "boyut": 68443,
+  "tel_toplam": 102,
+  "tel_script_ici": 2,
+  "yonlendi": true
+ },
+ "isotlar-lambretta": {
+  "url": "https://www.isotlarmotor.com/bayiler/lambretta/",
+  "kod": 200,
+  "son_url": "https://www.isotlarmotor.com/bayiler/",
+  "boyut": 68443,
+  "tel_toplam": 102,
+  "tel_script_ici": 2,
+  "yonlendi": true
+ },
+ "arnica-bayi1": {
+  "url": "https://arnicamotor.com/bayiler?lang=tr&sehir_id=1",
+  "kod": 200,
+  "son_url": "https://arnicamotor.com/bayiler?lang=tr&sehir_id=1",
+  "boyut": 11982,
+  "tel_toplam": 17,
+  "tel_script_ici": 3
+ },
+ "arnica-servis1": {
+  "url": "https://arnicamotor.com/servisler?lang=tr&sehir_id=1",
+  "kod": 200,
+  "son_url": "https://arnicamotor.com/servisler?lang=tr&sehir_id=1",
+  "boyut": 11989,
+  "tel_toplam": 17,
+  "tel_script_ici": 3
  }
 }
