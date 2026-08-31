@@ -171,7 +171,8 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
                 ham = _sayfayi_coz(sayfa, cfg, "html")
                 for r in ham:
                     r["rol"] = rol            # süzgeçten gelen rol kesindir
-                ekle(ham, urls[0][0], il_adi, zorla_il=False)
+                # İli listeden biz seçtik, kesin biliyoruz → zorla yaz
+                ekle(ham, urls[0][0], il_adi, zorla_il=True)
             if kayitlar:
                 return kayitlar, 1.0
             log("     tür süzgeci sonuç vermedi")
