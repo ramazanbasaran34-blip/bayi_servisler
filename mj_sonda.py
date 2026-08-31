@@ -21,9 +21,16 @@ import requests
 
 CIKTI = Path("ham")
 
+# ad -> (sayfa_url, ajax_url)
+# DİKKAT: user.rksmotor.com.tr E-Bike ağını veriyor ("RKS E-Bike Bayisi").
+# Motosiklet ağı asıl sitenin kendi ajax ucunda; ikisi ayrı veri kümesi.
 UCLAR = {
-    "rks":  "https://user.rksmotor.com.tr/",
-    "kuba": "https://user.kubamotor.com.tr/",
+    "rks-ebike": ("https://user.rksmotor.com.tr/services.php",
+                  "https://user.rksmotor.com.tr/ajax.php"),
+    "rks-moto":  ("https://www.rksmotor.com.tr/bayi-servis/rksmotor.html",
+                  "https://www.rksmotor.com.tr/bayi-servis/ajax.php"),
+    "kuba-moto": ("https://www.kubamotor.com.tr/bayi-servis/kubamotor",
+                  "https://www.kubamotor.com.tr/bayi-servis/ajax.php"),
 }
 
 BASLIK = {
@@ -38,15 +45,15 @@ BASLIK = {
 DENEME_IL = "Ankara"
 
 
-def sonda(ad: str, taban: str) -> dict:
-    b: dict = {"taban": taban}
+def sonda(ad: str, uc: tuple[str, str]) -> dict:
+    sayfa_url, ajax = uc
+    b: dict = {"sayfa": sayfa_url, "ajax": ajax}
     o = requests.Session()
     o.headers.update(BASLIK)
-    ajax = taban + "ajax.php"
 
     # 1) Sayfa var mı, il listesi geliyor mu
     try:
-        s = o.get(taban + "services.php", timeout=45)
+        s = o.get(sayfa_url, timeout=45)
         b["sayfa_kod"] = s.status_code
         b["il_sayisi"] = len(re.findall(r"<option value=\"[^\"0][^\"]*\"", s.text))
     except Exception as e:  # noqa: BLE001
@@ -79,7 +86,7 @@ def sonda(ad: str, taban: str) -> dict:
 
 
 def main() -> None:
-    ozet = {ad: sonda(ad, taban) for ad, taban in UCLAR.items()}
+    ozet = {ad: sonda(ad, uc) for ad, uc in UCLAR.items()}
     CIKTI.mkdir(exist_ok=True)
     (CIKTI / "mj-sonda.json").write_text(
         json.dumps(ozet, ensure_ascii=False, indent=1), encoding="utf-8")
