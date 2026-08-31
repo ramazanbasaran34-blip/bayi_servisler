@@ -22,15 +22,16 @@ import requests
 CIKTI = Path("ham")
 
 # ad -> (sayfa_url, ajax_url)
+# Sayfada <base href="/"> var: göreli "ajax.php" DİZİNE değil KÖKE çözülür.
 # DİKKAT: user.rksmotor.com.tr E-Bike ağını veriyor ("RKS E-Bike Bayisi").
 # Motosiklet ağı asıl sitenin kendi ajax ucunda; ikisi ayrı veri kümesi.
 UCLAR = {
     "rks-ebike": ("https://user.rksmotor.com.tr/services.php",
                   "https://user.rksmotor.com.tr/ajax.php"),
     "rks-moto":  ("https://www.rksmotor.com.tr/bayi-servis/rksmotor.html",
-                  "https://www.rksmotor.com.tr/bayi-servis/ajax.php"),
+                  "https://www.rksmotor.com.tr/ajax.php"),
     "kuba-moto": ("https://www.kubamotor.com.tr/bayi-servis/kubamotor",
-                  "https://www.kubamotor.com.tr/bayi-servis/ajax.php"),
+                  "https://www.kubamotor.com.tr/ajax.php"),
 }
 
 BASLIK = {
