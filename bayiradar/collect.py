@@ -39,6 +39,21 @@ def il_slug(ad: str) -> str:
     return fold(ad).replace(" ", "")
 
 
+def _post_govdesi(cfg: dict, il_adi: str) -> dict | None:
+    """Tarifteki `data` sözlüğündeki yer tutucuları il adıyla doldurur.
+
+    MJ platformu (RKS, Kuba) ili URL'de değil POST gövdesinde istiyor:
+      data: {action: states, city: "{il_adi}", state: "0", category: Bayi}
+    `state: 0` = "Tüm İlçeler" — il başına tek istek yeter, 973 ilçe gezilmez.
+    """
+    data = cfg.get("data")
+    if not isinstance(data, dict):
+        return data
+    return {k: (v.format(il_adi=il_adi, il_slug=il_slug(il_adi))
+                if isinstance(v, str) else v)
+            for k, v in data.items()}
+
+
 def _urls_for(cfg: dict) -> list[tuple[str, str]]:
     """(url, o_url_hangi_ile_ait) çiftleri döner.
 
@@ -61,6 +76,9 @@ def _urls_for(cfg: dict) -> list[tuple[str, str]]:
                             yaricap=yaricap, yaricap_m=yaricap * 1000,
                             il_slug=il_slug(il), il_adi=il), il)
                 for il, la, lo in sorgu_noktalari(yaricap)]
+    if it in ("il_post", "il_govde"):
+        # URL sabit; değişen POST gövdesi. İl adları ikinci değerde taşınır.
+        return [(url, v) for v in ILLER]
     if it in ("il_slug", "il_adi"):
         return [(url.format(il_slug=il_slug(v), il_adi=v,
                             il_kodu=i + 1), v) for i, v in enumerate(ILLER)]
@@ -158,11 +176,12 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
             gorulen.add(imza)
             kayitlar.append(rec)
 
-    def cek(url, tarayici=False):
+    def cek(url, tarayici=False, il_adi=""):
         if tarayici or mode == "browser":
             return fetcher.render(url, cfg.get("wait_selector"), max_age=max_age)
         return fetcher.get(url, method=cfg.get("method", "GET"),
-                           data=cfg.get("data"), headers=cfg.get("headers"),
+                           data=_post_govdesi(cfg, il_adi),
+                           headers=cfg.get("headers"),
                            max_age=max_age, encoding=cfg.get("encoding"))
 
     # --- 0a. tur: tür süzgeci varsa her tür için ayrı gez ---
@@ -207,7 +226,7 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
     ilk_body = None
     for url, url_ili in urls:
         try:
-            body = cek(url)
+            body = cek(url, il_adi=url_ili)
             basarili_url += 1
             if ilk_body is None:
                 ilk_body = body
