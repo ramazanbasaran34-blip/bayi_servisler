@@ -1,6 +1,7 @@
 {
- "rks": {
-  "taban": "https://user.rksmotor.com.tr/",
+ "rks-ebike": {
+  "sayfa": "https://user.rksmotor.com.tr/services.php",
+  "ajax": "https://user.rksmotor.com.tr/ajax.php",
   "sayfa_kod": 200,
   "il_sayisi": 81,
   "district_kod": 200,
@@ -12,8 +13,32 @@
   "Servis_boyut": 15394,
   "Servis_tel": 54
  },
- "kuba": {
-  "taban": "https://user.kubamotor.com.tr/",
-  "hata": "sayfa: ConnectionError: HTTPSConnectionPool(host='user.kubamotor.com.tr', port=443): Max retries exceeded with url: /services.php (Caused by NameResol"
+ "rks-moto": {
+  "sayfa": "https://www.rksmotor.com.tr/bayi-servis/rksmotor.html",
+  "ajax": "https://www.rksmotor.com.tr/bayi-servis/ajax.php",
+  "sayfa_kod": 200,
+  "il_sayisi": 80,
+  "district_kod": 404,
+  "district_ornek": "<!DOCTYPE html>\n<html lang=\"fr-FR\">\n<head>\n\t\n<meta charset=\"UTF-8\"/>\n<link rel=\"profile\" href=\"http://gmpg.org/xfn/11\"/>\n\n<meta name=\"viewport\" content=\"width=d",
+  "Bayi_kod": 404,
+  "Bayi_boyut": 276176,
+  "Bayi_tel": 414,
+  "Servis_kod": 404,
+  "Servis_boyut": 276176,
+  "Servis_tel": 414
+ },
+ "kuba-moto": {
+  "sayfa": "https://www.kubamotor.com.tr/bayi-servis/kubamotor",
+  "ajax": "https://www.kubamotor.com.tr/bayi-servis/ajax.php",
+  "sayfa_kod": 200,
+  "il_sayisi": 81,
+  "district_kod": 404,
+  "district_ornek": "<!DOCTYPE html>\n<!--[if IE 8]><html class=\"no-js ie8 lt-ie10 lt-ie9  \" lang=\"tr-TR\" dir=\"ltr\"><![endif]-->\n<!--[if IE 9]><html class=\"no-js ie9 lt-ie10  \" lang=",
+  "Bayi_kod": 404,
+  "Bayi_boyut": 207909,
+  "Bayi_tel": 519,
+  "Servis_kod": 404,
+  "Servis_boyut": 207909,
+  "Servis_tel": 519
  }
 }
