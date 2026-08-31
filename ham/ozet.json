@@ -1,1 +1,38 @@
-{}
+{
+ "ktm-servis": {
+  "url": "https://spormoto.com/ktm/ktm-servisler/",
+  "kod": 200,
+  "son_url": "https://www.spormoto.com/ktm/ktm-servisler/",
+  "boyut": 234836,
+  "tel_toplam": 50,
+  "tel_script_ici": 0,
+  "yonlendi": true
+ },
+ "ktm-satis": {
+  "url": "https://spormoto.com/ktm/bayiler/",
+  "kod": 200,
+  "son_url": "https://www.spormoto.com/ktm/bayiler/",
+  "boyut": 260451,
+  "tel_toplam": 49,
+  "tel_script_ici": 34,
+  "yonlendi": true
+ },
+ "husqvarna-servis": {
+  "url": "https://spormoto.com/husqvarna/husqvarna-servisler/",
+  "kod": 200,
+  "son_url": "https://www.spormoto.com/husqvarna/husqvarna-servisler/",
+  "boyut": 235226,
+  "tel_toplam": 50,
+  "tel_script_ici": 0,
+  "yonlendi": true
+ },
+ "husqvarna-satis": {
+  "url": "https://spormoto.com/husqvarna/bayiler/",
+  "kod": 200,
+  "son_url": "https://www.spormoto.com/husqvarna/bayiler/",
+  "boyut": 259337,
+  "tel_toplam": 35,
+  "tel_script_ici": 20,
+  "yonlendi": true
+ }
+}
