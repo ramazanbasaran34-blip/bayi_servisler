@@ -634,5 +634,130 @@
   "boyut": 681702,
   "tel_toplam": 202,
   "tel_script_ici": 0
+ },
+ "leksas": {
+  "url": "https://www.leksas.com.tr/bayi-servis/",
+  "kod": 200,
+  "son_url": "https://www.leksas.com.tr/bayi-servis/",
+  "boyut": 176101,
+  "tel_toplam": 23,
+  "tel_script_ici": 2
+ },
+ "kimmi": {
+  "url": "https://kimmimotor.com/servisler/",
+  "kod": 200,
+  "son_url": "https://www.kimmimotor.com/servisler/",
+  "boyut": 925657,
+  "tel_toplam": 8,
+  "tel_script_ici": 0,
+  "yonlendi": true
+ },
+ "taktas": {
+  "url": "https://taktas.com.tr/servislerimiz",
+  "kod": 200,
+  "son_url": "https://taktas.com.tr/servislerimiz",
+  "boyut": 310514,
+  "tel_toplam": 5,
+  "tel_script_ici": 0
+ },
+ "nanok-api": {
+  "url": "https://nanok.com.tr/api/dealers",
+  "kod": 200,
+  "son_url": "https://nanok.com.tr/api/dealers",
+  "boyut": 103691,
+  "tel_toplam": 353,
+  "tel_script_ici": 0
+ },
+ "meka-maps": {
+  "url": "https://www.mekamotor.com.tr/resman/uploads/maps.xml",
+  "kod": 200,
+  "son_url": "https://www.mekamotor.com.tr/resman/uploads/maps.xml",
+  "boyut": 142498,
+  "tel_toplam": 309,
+  "tel_script_ici": 0
+ },
+ "arnica-satis": {
+  "url": "https://arnicamotor.com/bayiler?lang=tr",
+  "kod": 200,
+  "son_url": "https://arnicamotor.com/bayiler?lang=tr",
+  "boyut": 36659,
+  "tel_toplam": 13,
+  "tel_script_ici": 0
+ },
+ "arnica-servis": {
+  "url": "https://arnicamotor.com/servisler?lang=tr",
+  "kod": 200,
+  "son_url": "https://arnicamotor.com/servisler?lang=tr",
+  "boyut": 35157,
+  "tel_toplam": 10,
+  "tel_script_ici": 0
+ },
+ "kimmi-bayi": {
+  "url": "https://www.kimmimotor.com/bayiler/",
+  "kod": 200,
+  "son_url": "https://www.kimmimotor.com/bayiler/",
+  "boyut": 925783,
+  "tel_toplam": 8,
+  "tel_script_ici": 0
+ },
+ "kimmi-servis": {
+  "url": "https://www.kimmimotor.com/servisler/",
+  "kod": 200,
+  "son_url": "https://www.kimmimotor.com/servisler/",
+  "boyut": 925657,
+  "tel_toplam": 8,
+  "tel_script_ici": 0
+ },
+ "leksas-bs": {
+  "url": "https://www.leksas.com.tr/bayi-servis/",
+  "hata": "ConnectionError: HTTPSConnectionPool(host='www.leksas.com.tr', port=443): Read timed out."
+ },
+ "taktas-bs": {
+  "url": "https://taktas.com.tr/bayi-ve-servis",
+  "kod": 200,
+  "son_url": "https://taktas.com.tr/bayi-ve-servis",
+  "boyut": 310420,
+  "tel_toplam": 5,
+  "tel_script_ici": 0
+ },
+ "taktas-servis2": {
+  "url": "https://taktas.com.tr/servislerimiz",
+  "kod": 200,
+  "son_url": "https://taktas.com.tr/servislerimiz",
+  "boyut": 310514,
+  "tel_toplam": 5,
+  "tel_script_ici": 0
+ },
+ "meka-bs": {
+  "url": "https://www.mekamotor.com.tr/bayi-ve-servis",
+  "kod": 200,
+  "son_url": "https://www.mekamotor.com.tr/bayi-ve-servis",
+  "boyut": 177675,
+  "tel_toplam": 8,
+  "tel_script_ici": 4
+ },
+ "milyon-bs": {
+  "url": "https://www.milyonmoto.com.tr/bayi-servisler.html",
+  "kod": 200,
+  "son_url": "https://www.milyonmoto.com.tr/bayi-servisler.html",
+  "boyut": 177948,
+  "tel_toplam": 4,
+  "tel_script_ici": 0
+ },
+ "isotlar-bayi": {
+  "url": "https://www.isotlarmotor.com/bayiler/",
+  "kod": 200,
+  "son_url": "https://www.isotlarmotor.com/bayiler/",
+  "boyut": 68443,
+  "tel_toplam": 102,
+  "tel_script_ici": 2
+ },
+ "nanok-sayfa": {
+  "url": "https://nanok.com.tr/bayilerimiz",
+  "kod": 200,
+  "son_url": "https://nanok.com.tr/bayilerimiz",
+  "boyut": 176562,
+  "tel_toplam": 1,
+  "tel_script_ici": 0
  }
 }
