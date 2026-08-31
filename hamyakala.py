@@ -71,6 +71,32 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     # RKS menüsünden çıkan olası veri ucu
     "rks-services":   ("https://user.rksmotor.com.tr/services.php", "html"),
 
+
+    # --- öncelikli 8 marka (keşif raporundan çıkan gerçek uçlar) ---
+    # Falcon: tek JSON ucu, ülkenin tamamı
+    "falcon-api":      ("https://falconmotosiklet.com/api/bayiler.php", "json"),
+    # Musatti: il koduyla JSON (örnek il = 06 Ankara)
+    "musatti-bayi06":  ("https://musattimotor.com/ajax-bayi-listesi.php?city=06", "json"),
+    "musatti-srv06":   ("https://musattimotor.com/ajax-servis-listesi.php?city=06", "json"),
+    # Kral: sayfada gömülü (435/469 telefon)
+    "kral-satis":      ("https://kralmotor.tr/SalesDealer", "html"),
+    "kral-servis":     ("https://kralmotor.tr/Service", "html"),
+    # Vespa: sayfada gömülü (266/318)
+    "vespa-satis":     ("https://www.vespa.com.tr/tr/yetkili-saticilar.html", "html"),
+    "vespa-servis":    ("https://www.vespa.com.tr/tr/yetkili-servisler.html", "html"),
+    # Suzuki: servis sayfası gömülü (298); satış ayrı yapı
+    "suzuki-satis":    ("https://www.suzuki.com.tr/tr/motosiklet/satis.html", "html"),
+    "suzuki-servis":   ("https://www.suzuki.com.tr/tr/motosiklet/yetkili-servisler.html", "html"),
+    # Zelsun: ASP.NET, il URL parametresinde (örnek 34)
+    "zelsun-satis34":  ("https://www.zelsunmotor.com/Bayilerimiz.aspx?sehir=%C4%B0STANBUL&ilce=%C4%B0l%C3%A7e%20Se%C3%A7iniz", "html"),
+    "zelsun-srv34":    ("https://www.zelsunmotor.com/Servislerimiz.aspx?sehir=%C4%B0STANBUL&ilce=%C4%B0l%C3%A7e%20Se%C3%A7iniz", "html"),
+    # CSN: satış zaten geliyor, servis eksik
+    "csn-satis2":      ("https://csnmotor.com.tr/satis-noktalarimiz/", "html"),
+    "csn-servis2":     ("https://csnmotor.com.tr/servis-noktalarimiz/", "html"),
+    # Hero: POST istiyor; önce GET ile yapıyı görelim
+    "hero-satis":      ("https://www.heromotor.com.tr/bayiler/", "html"),
+    "hero-servis":     ("https://www.heromotor.com.tr/servisler/", "html"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
