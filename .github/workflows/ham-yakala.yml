@@ -11,6 +11,10 @@ on:
         description: "Boşlukla ayrılmış hedef adları (boş = hepsi)"
         required: false
         default: ""
+      markalar:
+        description: "Virgülle ayrılmış marka adları (markalar.json'dan)"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -39,7 +43,12 @@ jobs:
         run: python yamaha_tarayici.py || true
 
       - name: Yakala
-        run: python hamyakala.py ${{ inputs.hedefler }}
+        run: |
+          if [ -n "${{ inputs.markalar }}" ]; then
+            python hamyakala.py --markalar "${{ inputs.markalar }}"
+          else
+            python hamyakala.py ${{ inputs.hedefler }}
+          fi
 
       - name: MJ ajax sondası
         if: inputs.hedefler == '' || contains(inputs.hedefler, 'mj')
