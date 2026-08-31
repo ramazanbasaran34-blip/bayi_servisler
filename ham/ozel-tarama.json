@@ -1,0 +1,30 @@
+{
+ "Falcon": {
+  "kayit": 1215,
+  "il": 79,
+  "ilsiz": 0
+ },
+ "Kral": {
+  "kayit": 881,
+  "il": 75,
+  "ilsiz": 0
+ },
+ "Vespa": {
+  "kayit": 75,
+  "il": 18,
+  "ilsiz": 0
+ },
+ "Suzuki": {
+  "kayit": 41,
+  "il": 17,
+  "ilsiz": 0
+ },
+ "CSN": {
+  "hata": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+ },
+ "Musatti": {
+  "kayit": 434,
+  "il": 71,
+  "ilsiz": 22
+ }
+}
