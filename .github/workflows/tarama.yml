@@ -4,8 +4,15 @@ name: Bayileri tara ve siteyi yayınla
 # sınıra dayanıyordu; 10 grup paralel çalışınca her grup ~1 saatte bitiyor.
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
+  # GECELİK OTOMATİK TARAMA ASKIYA ALINDI.
+  #
+  # Sistem henüz oturmadı: bazı markalarda etkileşim tarifleri eksik ve
+  # gece çalışan tarama hem elle başlatılan denemelerle çakışıyor hem de
+  # yarım veriyi üstüne yazıyor. Tarifler tamamlanınca aşağıdaki iki satır
+  # yeniden açılacak.
+  #
+  # schedule:
+  #   - cron: "0 0 * * *"
   workflow_dispatch:
     inputs:
       markalar:
