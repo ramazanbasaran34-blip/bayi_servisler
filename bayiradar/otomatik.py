@@ -68,17 +68,28 @@ TUR_ESLEME = [
 
 # Bileşik kategori etiketleri: "Benzinli Araç Servisi / Elektrikli Araç
 # Servisi" gibi. Volta'da bu metin firma adı olarak kaydediliyordu.
-KATEGORI_ETIKET = re.compile(
-    r"^\s*[^/]{0,40}\b(servisi|servis|bayisi|bayi|noktas[ıi]|sat[ıi][şs][ıi]?)\b"
-    r"[^/]{0,20}/[^/]{0,40}\b(servisi|servis|bayisi|bayi|noktas[ıi])\b", re.I)
+# Bileşik kategori etiketleri. Volta'da firma adı olarak
+# "Benzinli Araç Servisi / Elektrikli Araç Servisi / Elektrikli Bisiklet
+# Servisi" kaydediliyordu — bu bir hizmet listesi, firma adı değil.
+_KATEGORI_SOZ = re.compile(
+    r"\b(servisi|servis|bayisi|bayi|noktas[ıi]|sat[ıi][şs][ıi]|"
+    r"mağazas[ıi]|magazasi|merkezi)\b", re.I)
 
 
 def kategori_etiketi_mi(metin: str) -> bool:
-    """'Benzinli Araç Servisi / Elektrikli Araç Servisi' gibi kategori
-    başlıkları firma adı değildir."""
-    if not metin or len(metin) > 90:
+    """Metin bir hizmet/kategori listesi mi?
+
+    Ölçüt: bölü işaretiyle ayrılmış en az iki parça VAR ve parçaların
+    çoğu 'servis', 'bayi', 'nokta' gibi kategori sözcüğüyle bitiyor.
+    Gerçek firma adları ("Çakmak Motor / Şaban Çakmak") bu kalıba uymaz.
+    """
+    if not metin or "/" not in metin or len(metin) > 140:
         return False
-    return bool(KATEGORI_ETIKET.match(metin.strip()))
+    parcalar = [p.strip() for p in metin.split("/") if p.strip()]
+    if len(parcalar) < 2:
+        return False
+    kategorili = sum(1 for p in parcalar if _KATEGORI_SOZ.search(p))
+    return kategorili >= 2 and kategorili >= len(parcalar) * 0.7
 
 
 def tur_coz(metin: str) -> str:
