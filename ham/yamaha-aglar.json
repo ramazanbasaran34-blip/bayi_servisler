@@ -1,0 +1,256 @@
+[
+ {
+  "url": "https://www.yamaha-motor.eu/services/api/dealers",
+  "kod": 200,
+  "tip": "application/json",
+  "boyut": 34516,
+  "puan": 5,
+  "kaydedildi": true
+ },
+ {
+  "url": "blob:https://www.yamaha-motor.eu/148cfa40-0c6b-4e4f-9d72-53c5b39ca8ae",
+  "kod": 200,
+  "tip": "application/javascript",
+  "boyut": 312634,
+  "puan": 3
+ },
+ {
+  "url": "https://www.yamaha-motor.eu/tr/tr/dealer-locator.model.json",
+  "kod": 200,
+  "tip": "application/json;charset=utf-8",
+  "boyut": 31603,
+  "puan": 3,
+  "kaydedildi": true
+ },
+ {
+  "url": "https://analytics.tiktok.com/i18n/pixel/static/main.MWFiZGNkNWVmMA.js",
+  "kod": 200,
+  "tip": "application/javascript; charset=UTF-8",
+  "boyut": 486207,
+  "puan": 3
+ },
+ {
+  "url": "https://www.yamaha-motor.eu/tr/tr/dealer-locator/?category=MCM",
+  "kod": 200,
+  "tip": "text/html;charset=utf-8",
+  "boyut": 11076,
+  "puan": 2
+ },
+ {
+  "url": "https://d3p4it9p4cf1ca.cloudfront.net/moduleEntry.js",
+  "kod": 200,
+  "tip": "application/javascript",
+  "boyut": 1211561,
+  "puan": 2
+ },
+ {
+  "url": "https://www.yamaha-motor.eu/tr/tr.model.json",
+  "kod": 200,
+  "tip": "application/json;charset=utf-8",
+  "boyut": 16245,
+  "puan": 2,
+  "kaydedildi": true
+ },
+ {
+  "url": "https://www.yamaha-motor.eu/content/experience-fragments/yme/tr/tr/yme-bu-editable/header/master/jcr:content/root/header_menu.megamenu.json/content/yme/tr/tr",
+  "kod": 200,
+  "tip": "application/json",
+  "boyut": 36316,
+  "puan": 2,
+  "kaydedildi": true
+ },
+ {
+  "url": "https://cdn.cookielaw.org/scripttemplates/202508.2.0/otBannerSdk.js",
+  "kod": 200,
+  "tip": "application/javascript",
+  "boyut": 511525,
+  "puan": 2
+ },
+ {
+  "url": "https://cdn.cookielaw.org/consent/018dd630-60b1-7e79-9a1c-fd142fb1e264/018fc8d3-c912-732f-bc2f-796a5ced4f65/tr-tr.json",
+  "kod": 200,
+  "tip": "application/json",
+  "boyut": 83125,
+  "puan": 2,
+  "kaydedildi": true
+ },
+ {
+  "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=not_available&lib=ttq",
+  "kod": 200,
+  "tip": "application/javascript; charset=UTF-8",
+  "boyut": 7930,
+  "puan": 2
+ },
+ {
+  "url": "https://analytics.tiktok.com/i18n/pixel/static/identify_ea043f1c.js",
+  "kod": 200,
+  "tip": "application/javascript; charset=UTF-8",
+  "boyut": 155566,
+  "puan": 2
+ },
+ {
+  "url": "https://www.yamaha-motor.eu/services/api/dealers",
+  "kod": 200,
+  "tip": "application/json",
+  "boyut": 5097,
+  "puan": 1
+ },
+ {
+  "url": "https://hyperdrive.yamaha-motor.eu/categories/yme-prod-tr/products/?locale=tr-TR",
+  "kod": 200,
+  "tip": "application/json",
+  "boyut": 29389,
+  "puan": 1
+ },
+ {
+  "url": "https://cdn.cookielaw.org/scripttemplates/202508.2.0/assets/v2/otPcCenter.json",
+  "kod": 200,
+  "tip": "application/json",
+  "boyut": 67871,
+  "puan": 1
+ },
+ {
+  "url": "https://cdn.brcdn.com/v1/br-trk-7660.js",
+  "kod": 200,
+  "tip": "application/javascript",
+  "boyut": 20956,
+  "puan": 1
+ },
+ {
+  "url": "https://hyperdrive.yamaha-motor.eu/products/currency-rates?currencyCode=TRY",
+  "kod": 200,
+  "tip": "application/json",
+  "boyut": 33,
+  "puan": 0
+ },
+ {
+  "url": "https://hyperdrive.yamaha-motor.eu/categories/category-links?locale=tr_tr",
+  "kod": 200,
+  "tip": "application/json",
+  "boyut": 2325,
+  "puan": 0
+ },
+ {
+  "url": "https://www.yamaha-motor.eu/services/api/client-location",
+  "kod": 200,
+  "tip": "application/json;charset=utf-8",
+  "boyut": 26,
+  "puan": 0
+ },
+ {
+  "url": "https://www.yamaha-motor.eu/services/api/test-ride/form-links?path=%2Ftr%2Ftr",
+  "kod": 200,
+  "tip": "application/json",
+  "boyut": 2,
+  "puan": 0
+ },
+ {
+  "url": "https://www.yamaha-motor.eu/services/api/dealers/demo-units?countryCode=tr",
+  "kod": 200,
+  "tip": "text/plain; charset=utf-8",
+  "boyut": 2,
+  "puan": 0
+ },
+ {
+  "url": "https://cdn.cookielaw.org/scripttemplates/otSDKStub.js",
+  "kod": 200,
+  "tip": "application/javascript",
+  "boyut": 26840,
+  "puan": 0
+ },
+ {
+  "url": "https://cdn.cookielaw.org/consent/018dd630-60b1-7e79-9a1c-fd142fb1e264/018dd630-60b1-7e79-9a1c-fd142fb1e264.json",
+  "kod": 200,
+  "tip": "application/json",
+  "boyut": 4807,
+  "puan": 0
+ },
+ {
+  "url": "https://geolocation.onetrust.com/cookieconsentpub/v1/geo/location",
+  "kod": 200,
+  "tip": "application/json",
+  "boyut": 68,
+  "puan": 0
+ },
+ {
+  "url": "https://cdn.cookielaw.org/scripttemplates/202508.2.0/assets/otFlat.json",
+  "kod": 200,
+  "tip": "application/json",
+  "boyut": 15345,
+  "puan": 0
+ },
+ {
+  "url": "https://dpm.demdex.net/id?d_visid_ver=5.5.0&d_fieldgroup=MC&d_rtbd=json&d_ver=2&d_verify=1&d_orgid=505F3E4959A92ADC0A495E33%40AdobeOrg&d_nsid=0&ts=1788206145744",
+  "kod": 302,
+  "tip": ""
+ },
+ {
+  "url": "https://dpm.demdex.net/id/rd?d_visid_ver=5.5.0&d_fieldgroup=MC&d_rtbd=json&d_ver=2&d_verify=1&d_orgid=505F3E4959A92ADC0A495E33%40AdobeOrg&d_nsid=0&ts=1788206145744",
+  "kod": 200,
+  "tip": "application/json;charset=utf-8",
+  "boyut": 362,
+  "puan": 0
+ },
+ {
+  "url": "https://yme.demdex.net/dest5.html?d_nsid=undefined",
+  "kod": 200,
+  "tip": "text/html;charset=UTF-8",
+  "boyut": 6983,
+  "puan": 0
+ },
+ {
+  "url": "https://cm.everesttech.net/cm/dd?d_uuid=10664128210215443103525592103847219164",
+  "kod": 302,
+  "tip": ""
+ },
+ {
+  "url": "https://yamahamotoreurope.d3.sc.omtrdc.net/id?d_visid_ver=5.5.0&d_fieldgroup=A&mcorgid=505F3E4959A92ADC0A495E33%40AdobeOrg&mid=10168322667857826523476004952273255382&ts=1788206145976",
+  "kod": 200,
+  "tip": "application/x-javascript;charset=utf-8",
+  "boyut": 2,
+  "puan": 0
+ },
+ {
+  "url": "https://dpm.demdex.net/ibs:dpid=411&dpuuid=apXcQgAAABjTO2tQ",
+  "kod": 200,
+  "tip": "image/gif"
+ },
+ {
+  "url": "https://yamahamotoreurope.d3.sc.omtrdc.net/b/ss/ymeprodeucaas/1/JS-2.25.0-LGU4/s44617879956389?AQB=1&ndh=1&pf=1&t=31%2F7%2F2026%2019%3A55%3A46%201%200&mid=10168322667857826523476004952273255382&aamlh=9&ce=UTF-8&pageName=Dealer%20Locator%20-%20Yamaha%20Motor&g=https%3A%2F%2Fwww.yamaha-motor.eu%2Ftr%2",
+  "kod": 200,
+  "tip": "image/gif;charset=utf-8"
+ },
+ {
+  "url": "https://analytics.tiktok.com/api/v2/pixel",
+  "kod": 200,
+  "tip": "",
+  "boyut": 0,
+  "puan": 0
+ },
+ {
+  "url": "https://p-eu.brsrvr.com/pix.gif?acct_id=7660&cookie2=uid%3D6036107289904%3Av%3D16.1%3Ats%3D1788206145985%3Ahc%3D1&sid=undefined&ref=&tzo=0&rand=0.8374965955457878&title=Dealer%20Locator%20-%20Yamaha%20Motor&ptype=other&domain_key=yamaha_motor_tr_tr&orig_ref_url=https%3A%2F%2Fwww.yamaha-motor.eu%2Ftr",
+  "kod": 200,
+  "tip": "image/gif"
+ },
+ {
+  "url": "https://analytics-ipv6.tiktokw.us/ipv6/enrich_ipv6",
+  "kod": 200,
+  "tip": "",
+  "boyut": 0,
+  "puan": 0
+ },
+ {
+  "url": "https://analytics.tiktok.com/api/v2/pixel/act",
+  "kod": 200,
+  "tip": "",
+  "boyut": 0,
+  "puan": 0
+ },
+ {
+  "url": "https://analytics.tiktok.com/api/v2/pixel/inter",
+  "kod": 200,
+  "tip": "",
+  "boyut": 0,
+  "puan": 0
+ }
+]
