@@ -93,6 +93,10 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     # CSN: satış zaten geliyor, servis eksik
     "csn-satis2":      ("https://csnmotor.com.tr/satis-noktalarimiz/", "html"),
     "csn-servis2":     ("https://csnmotor.com.tr/servis-noktalarimiz/", "html"),
+    # CSN servis, il bağlantılarını /servis-noktalarimiz/<il> biçiminde veriyor;
+    # satış ise düz /<il>. Sistem sadece ikinciyi tanıdığı için servis boş kalmıştı.
+    "csn-srv-ankara":  ("https://csnmotor.com.tr/servis-noktalarimiz/ankara", "html"),
+    "csn-sat-ankara":  ("https://csnmotor.com.tr/ankara", "html"),
     # CSN: il bazlı sayfa (örnek: Ankara)
     "csn-servis-ank":  ("https://csnmotor.com.tr/servis-noktalarimiz/ankara", "html"),
     "csn-satis-ank":   ("https://csnmotor.com.tr/satis-noktalarimiz/ankara", "html"),
@@ -125,6 +129,10 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "hero-servis":     ("https://www.heromotor.com.tr/servisler/", "html"),
     "csn-satis":       ("https://csnmotor.com.tr/satis-noktalarimiz/", "html"),
     "csn-servis2":     ("https://csnmotor.com.tr/servis-noktalarimiz/", "html"),
+    # CSN servis, il bağlantılarını /servis-noktalarimiz/<il> biçiminde veriyor;
+    # satış ise düz /<il>. Sistem sadece ikinciyi tanıdığı için servis boş kalmıştı.
+    "csn-srv-ankara":  ("https://csnmotor.com.tr/servis-noktalarimiz/ankara", "html"),
+    "csn-sat-ankara":  ("https://csnmotor.com.tr/ankara", "html"),
 
 }
 
