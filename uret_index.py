@@ -500,7 +500,8 @@ $("#veriTarih").textContent = new Date(D.olusturma)
   const s={satis:0,servis:0,satis_servis:0};
   D.bayiler.forEach(b=>s[b[B_ROL]]=(s[b[B_ROL]]||0)+1);
   $("#veriOzet").innerHTML = VAR_VERI
-    ? `<b>${s.satis}</b> satış · <b>${s.servis}</b> servis · <b>${s.satis_servis}</b> ikisi`
+    ? `<b>${s.satis}</b> satış · <b>${s.servis}</b> servis · `
+      + `<b>${s.satis_servis}</b> satış+servis · toplam <b>${D.bayiler.length}</b>`
     : "";
 })();
 if(VAR_VERI) $("#sayiUyari").style.display="none";
@@ -609,8 +610,10 @@ function cizOzet(){
 
   $("#kutular").innerHTML=`
     <div class="kutu"><span class="n">${bicim(t.toplam)}</span><span class="e">Toplam Nokta</span></div>
-    <div class="kutu satis"><span class="n">${bicim(t.satis)}</span><span class="e">Satış Noktası</span></div>
-    <div class="kutu servis"><span class="n">${bicim(t.servis)}</span><span class="e">Servis Noktası</span></div>
+    <div class="kutu satis"><span class="n">${bicim(t.satis)}</span>
+      <span class="e">Satış Yapan<br>${bicim(t.satis-t.ikisi)} + ${bicim(t.ikisi)}</span></div>
+    <div class="kutu servis"><span class="n">${bicim(t.servis)}</span>
+      <span class="e">Servis Veren<br>${bicim(t.servis-t.ikisi)} + ${bicim(t.ikisi)}</span></div>
     <div class="kutu ikisi"><span class="n">${bicim(t.ikisi)}</span><span class="e">Satış + Servis</span></div>
     <div class="kutu"><span class="n">${markalar.size}</span><span class="e">Marka</span></div>
     <div class="kutu"><span class="n">${iller.size}</span><span class="e">İl</span></div>
@@ -799,7 +802,8 @@ function kayitHtml(x){
       <span class="rol ${sn}">${esc(ROL_AD[x[B_ROL]]||"")}</span>
       ${x[B_DURUM]!=="Güncel"?`<span class="rol" style="background:var(--uyari-z);color:var(--uyari);border-color:#F0D9B5">${esc(x[B_DURUM])}</span>`:""}
     </div>
-    <div class="k2"><span class="ilcerz">${esc(x[B_ILCE]||x[B_IL])}</span> ${esc(x[B_ADRES])}</div>
+    <div class="k2">${esc(x[B_ADRES])}${x[B_ADRES]?" · ":""}<span class="ilcerz">${
+      esc([x[B_ILCE],x[B_IL]].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(" / "))}</span></div>
     <div class="k3">
       <span class="tel">${x[B_TEL]?`<a href="tel:${esc(x[B_TEL].replace(/\s/g,""))}">${esc(x[B_TEL])}</a>`:"—"}</span>
       ${x[B_GIRIS]?`<a class="giris" href="${esc(x[B_GIRIS])}" target="_blank" rel="noopener">Marka sayfasına git ↗</a>`:""}
@@ -910,8 +914,13 @@ function cizMD(){
   const tum=D.bayiler.filter(x=>x[B_MARKA]===MD.ad);
   rolSuzgecCiz("#mdRolSuzgec", tum);
   const b=tum.filter(rolGecer);
-  $("#mdOzet").textContent=`${b.length} nokta · ${MD.iller.size} il · ${MD.ilceler.size} ilçe`
-    +(MD.tazelik&&MD.tazelik!=="Güncel"?` · ${MD.tazelik}`:"");
+  const c=sayRol(tum);
+  $("#mdOzet").innerHTML =
+    `Sadece satış <b>${MD.satis}</b> · sadece servis <b>${MD.servis}</b> · `
+    + `satış+servis <b>${MD.ikisi}</b><br>`
+    + `Satış yapan toplam <b>${c.satis}</b> · servis veren toplam <b>${c.servis}</b> · `
+    + `nokta sayısı <b>${tum.length}</b> · ${MD.iller.size} il · ${MD.ilceler.size} ilçe`
+    + (MD.tazelik&&MD.tazelik!=="Güncel"?` · ${MD.tazelik}`:"");
   const g={};
   b.forEach(x=>(g[x[B_IL]||"— il bilinmiyor —"]||=[]).push(x));
   $("#mdListe").innerHTML=Object.keys(g).sort((a,c)=>a.localeCompare(c,"tr")).map(il=>
