@@ -157,6 +157,25 @@ def parse_gomulu(body: str, cfg: dict) -> list[dict]:
     return out
 
 
+# ------------------------------------------------- kayıt bazında süzgeç
+def kayit_suzgeci(kayitlar: list[dict], cfg: dict) -> list[dict]:
+    """Tek listede birden çok marka geliyorsa istenmeyeni eler.
+
+    MJ Group'un ajax ucu (RKS, Kuba, Skyjet, Benelli, Ape Ryder...) markayı
+    ayırmadan tüm grubu döner; ayrım her kaydın "Yetkileri" satırında yazar.
+    Tarif: kayit_suzgeci: {alan: yetkiler, icermeli: ["Kuba Motor"]}
+    """
+    s = cfg.get("kayit_suzgeci")
+    if not s:
+        return kayitlar
+    alan = s.get("alan", "")
+    gerekli = [fold(x) for x in (s.get("icermeli") or [])]
+    if not (alan and gerekli):
+        return kayitlar
+    return [k for k in kayitlar
+            if any(g in fold(str(k.get(alan, ""))) for g in gerekli)]
+
+
 # ------------------------------------------------------------- son rötuşlar
 def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
     """Ham kaydı standart şemaya oturtur. Adı olmayan kaydı çöpe atar."""
