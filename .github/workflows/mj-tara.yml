@@ -41,6 +41,17 @@ jobs:
           if [ "${{ inputs.kuru }}" = "evet" ]; then EK="--kuru"; fi
           python mj_tara.py ${{ inputs.markalar }} $EK
 
+      - name: Raporu depoya yaz
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ham/mj-tarama.json
+          git diff --staged --quiet || git commit -m "MJ tarama raporu"
+          for i in 1 2 3; do
+            git pull --rebase --autostash && git push && break
+            sleep 15
+          done
+
       - name: Denetim
         if: inputs.kuru != 'evet'
         run: python denetle.py --marka Kuba || true
