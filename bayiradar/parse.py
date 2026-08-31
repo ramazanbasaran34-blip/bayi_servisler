@@ -100,6 +100,63 @@ def parse_json(body: str, cfg: dict) -> list[dict]:
     return out
 
 
+# ------------------------------------------------- sayfaya gömülü JS verisi
+def _gomulu_al(blok: str, spec) -> str:
+    """Gömülü bloktan tek alan çeker.
+
+    spec string ise anahtar adı ('name' → 'name': 'DEĞER').
+    dict ise {regex: ...} ile serbest kalıp verilebilir.
+    """
+    if not spec:
+        return ""
+    if isinstance(spec, dict):
+        desen = spec.get("regex", "")
+    else:
+        desen = r"['\"]" + re.escape(str(spec)) + r"['\"]\s*:\s*['\"](.*?)['\"]"
+    if not desen:
+        return ""
+    m = re.search(desen, blok, re.S)
+    if not m:
+        return ""
+    return clean_text(m.group(1) if m.groups() else m.group(0))
+
+
+def parse_gomulu(body: str, cfg: dict) -> list[dict]:
+    """Veri sayfaya gömülü bir JS dizisindeyse regex ile çıkarır.
+
+    Kymco gibi siteler bayi listesini geçerli JSON olarak değil, tek tırnaklı
+    bir JS nesnesi olarak sayfaya basıyor. json.loads bunu okuyamaz, tarayıcı
+    da gerekmez — kalıpla okumak yeter. Tek istek, tüm kayıtlar.
+
+    Tarif:
+      gomulu:
+        kayit: "..."          # bir kaydı sınırlayan regex
+        fields: {bayi_adi: name, adres: address, telefon: phone1}
+        ekstra_alanlar: {konum: city}
+        rol_alani: {regex: "...", esleme: {yetkili-satici: satis}}
+    """
+    g = cfg.get("gomulu") or {}
+    desen = g.get("kayit")
+    if not desen:
+        return []
+
+    out = []
+    for m in re.finditer(desen, body, re.S):
+        blok = m.group(0)
+        rec = {a: _gomulu_al(blok, g.get("fields", {}).get(a)) for a in ALANLAR}
+        for ad, spec in (g.get("ekstra_alanlar") or {}).items():
+            rec[ad] = _gomulu_al(blok, spec)
+
+        rol_cfg = g.get("rol_alani")
+        if rol_cfg:
+            ham_rol = _gomulu_al(blok, rol_cfg)
+            esleme = rol_cfg.get("esleme", {}) if isinstance(rol_cfg, dict) else {}
+            if ham_rol in esleme:
+                rec["rol"] = esleme[ham_rol]
+        out.append(rec)
+    return out
+
+
 # ------------------------------------------------------------- son rötuşlar
 def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
     """Ham kaydı standart şemaya oturtur. Adı olmayan kaydı çöpe atar."""
