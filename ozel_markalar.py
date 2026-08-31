@@ -24,10 +24,12 @@ import gzip
 import json
 import re
 import sys
+import time
 from pathlib import Path
 
 from bs4 import BeautifulSoup
 
+from bayiradar.normalize import IL_KODU
 from bayiradar.parse import finalize
 
 HAM = Path("ham")
@@ -250,9 +252,20 @@ def csn_marka(oku, canli_mi: bool) -> list[dict]:
             yol = (f"{CSN_TABAN}/servis-noktalarimiz/{il}" if servis
                    else f"{CSN_TABAN}/{il}")
             dosya = f"csn-{'srv' if servis else 'sat'}-{il}.html"
-            g = oku(dosya, yol)
+            # CSN 160+ ardışık istekte bağlantıyı kapatıyor; yavaş ve
+            # yeniden denemeli gidiyoruz.
+            g = None
+            for deneme in range(3):
+                try:
+                    g = oku(dosya, yol)
+                    break
+                except Exception:  # noqa: BLE001
+                    if canli_mi:
+                        time.sleep(3 * (deneme + 1))
             if g is None:
                 continue
+            if canli_mi:
+                time.sleep(0.8)
             for r in csn_coz(g, rol):
                 r["il"] = il.replace("-", " ")
                 k = finalize(r, "CSN", yol, {})
@@ -271,7 +284,10 @@ def musatti_marka(oku, canli_mi: bool) -> list[dict]:
             g = oku(f"musatti-{kisa}{pl}.json", yol)
             if g is None:
                 continue
+            il_adi = IL_KODU.get(int(pl), "")
             for r in musatti_coz(g, ""):
+                # İl adresten çıkarılamayabiliyor; plaka kodu kesin bilgi.
+                r["il"] = r.get("il") or il_adi
                 k = finalize(r, "Musatti", yol, {})
                 if k:
                     cikan.append(k)
