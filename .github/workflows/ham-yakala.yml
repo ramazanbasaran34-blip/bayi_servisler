@@ -31,6 +31,10 @@ jobs:
       - name: Yakala
         run: python hamyakala.py ${{ inputs.hedefler }}
 
+      - name: MJ ajax sondası
+        if: inputs.hedefler == '' || contains(inputs.hedefler, 'mj')
+        run: python mj_sonda.py || true
+
       - name: Özeti göster
         run: cat ham/ozet.json
 
