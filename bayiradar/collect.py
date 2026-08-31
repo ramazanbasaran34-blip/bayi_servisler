@@ -24,7 +24,7 @@ from .fetch import Fetcher
 from .koordinat import sorgu_noktalari
 from .normalize import IL_KODU, ILLER, fold
 from .otomatik import il_baglantilari, il_secicileri_bul, json_gomulu
-from .parse import finalize, parse_html, parse_json, parse_oto
+from .parse import finalize, parse_gomulu, parse_html, parse_json, parse_oto
 from .store import commit_tarama, db, marka_bilgi, now, tarama_hatasi
 
 
@@ -80,6 +80,12 @@ def _sayfayi_coz(body, cfg, mode):
     """
     if mode == "json":
         return parse_json(body, cfg)
+    # Gömülü JS verisi tarifte açıkça verilmişse her şeyden önce gelir:
+    # sayfa görünürde boş olsa bile veri kaynakta duruyor olabilir.
+    if cfg.get("gomulu"):
+        k = parse_gomulu(body, cfg)
+        if k:
+            return k
     if cfg.get("row"):
         return parse_html(body, cfg)
     gomulu = json_gomulu(body)
