@@ -24,7 +24,8 @@ from .fetch import Fetcher
 from .koordinat import sorgu_noktalari
 from .normalize import IL_KODU, ILLER, fold
 from .otomatik import il_baglantilari, il_secicileri_bul, json_gomulu
-from .parse import finalize, parse_gomulu, parse_html, parse_json, parse_oto
+from .parse import (finalize, kayit_suzgeci, parse_gomulu, parse_html,
+                    parse_json, parse_oto)
 from .store import commit_tarama, db, marka_bilgi, now, tarama_hatasi
 
 
@@ -87,7 +88,7 @@ def _sayfayi_coz(body, cfg, mode):
         if k:
             return k
     if cfg.get("row"):
-        return parse_html(body, cfg)
+        return kayit_suzgeci(parse_html(body, cfg), cfg)
     gomulu = json_gomulu(body)
     if len(gomulu) >= 3:
         return gomulu
