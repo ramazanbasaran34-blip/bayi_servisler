@@ -108,6 +108,19 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "hero-satis":      ("https://www.heromotor.com.tr/bayiler/", "html"),
     "hero-servis":     ("https://www.heromotor.com.tr/servisler/", "html"),
 
+    # --- kalan markalar ---
+    "arnica-satis":    ("https://arnicamotor.com/bayiler?lang=tr", "html"),
+    "arnica-servis":   ("https://arnicamotor.com/servisler?lang=tr", "html"),
+    "kimmi-bayi":      ("https://www.kimmimotor.com/bayiler/", "html"),
+    "kimmi-servis":    ("https://www.kimmimotor.com/servisler/", "html"),
+    "leksas-bs":       ("https://www.leksas.com.tr/bayi-servis/", "html"),
+    "taktas-bs":       ("https://taktas.com.tr/bayi-ve-servis", "html"),
+    "taktas-servis2":  ("https://taktas.com.tr/servislerimiz", "html"),
+    "meka-bs":         ("https://www.mekamotor.com.tr/bayi-ve-servis", "html"),
+    "milyon-bs":       ("https://www.milyonmoto.com.tr/bayi-servisler.html", "html"),
+    "isotlar-bayi":    ("https://www.isotlarmotor.com/bayiler/", "html"),
+    "nanok-sayfa":     ("https://nanok.com.tr/bayilerimiz", "html"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
