@@ -1,13 +1,13 @@
-name: Özel marka taraması
+name: Özel toplayıcılarla tara
 
-# Marka başına özel yazılmış ayrıştırıcılar.
-# Önce kaydedilmiş HTML üzerinde test çalışır; test geçmezse tarama başlamaz.
+# ozel/ altındaki marka bazlı toplayıcıları çalıştırır.
+# Kuba, RKS, Mondial gibi yakın zamanda taranmış markalara DOKUNMAZ.
 
 on:
   workflow_dispatch:
     inputs:
-      markalar:
-        description: "Boşlukla ayrılmış marka adları (boş = hepsi)"
+      moduller:
+        description: "Boşlukla ayrılmış modül adları (boş = hepsi)"
         required: false
         default: ""
       kuru:
@@ -34,19 +34,19 @@ jobs:
         run: pip install -r requirements.txt
       - name: Gerileme testi
         run: python test_ayristirici.py
-      - name: Ayrıştırıcı testi (kaydedilmiş veri, ağ yok)
-        run: python ozel_markalar.py --test
+      - name: Kaydedilmiş sayfalarla ön test
+        run: python ozel_test.py || true
       - name: Tara
         run: |
           EK=""
           if [ "${{ inputs.kuru }}" = "evet" ]; then EK="--kuru"; fi
-          python ozel_markalar.py ${{ inputs.markalar }} $EK
+          python ozel_tara.py ${{ inputs.moduller }} $EK
       - name: Depoya işle
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add ham/ bayiler.db
-          git diff --staged --quiet || git commit -m "Özel marka taraması"
+          git diff --staged --quiet || git commit -m "özel toplayıcı taraması"
           for i in 1 2 3 4 5; do
             git pull --rebase --autostash && git push && exit 0
             sleep 20
