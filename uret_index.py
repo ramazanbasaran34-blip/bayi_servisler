@@ -273,6 +273,10 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .rolsuz{display:flex;gap:6px;flex-wrap:wrap}
 .rolsuz button{flex:1 1 auto;min-width:0;white-space:nowrap}
 .rolsuz button .n{font-family:var(--m);font-size:10.5px;opacity:.75;margin-left:4px}
+/* Birleşik kümeler (satış noktası = yalnız satış + satış&servis) öne çıksın */
+.rolsuz button.birlesik{border-color:#C9DAF0;background:#F5F9FF;font-weight:600}
+.rolsuz button.birlesik.secili{background:var(--murekkep);border-color:var(--murekkep);color:#fff}
+.rolsuz button.birlesik .n{opacity:.9}
 .sayi.vurgu{font-weight:700;color:var(--satis);
   background:var(--satis-z);border-radius:5px;padding:1px 5px}
 .kutu.toplam{border-color:var(--hat);background:#fbfcfe}
@@ -603,9 +607,21 @@ if(VAR_VERI) $("#sayiUyari").style.display="none";
 function rolSuzgecCiz(hedef, veri){
   const s={tum:veri.length,satis:0,servis:0,ikisi:0};
   veri.forEach(b=>s[ROL_SINIF[b[B_ROL]]]++);
-  const et={tum:"Tümü",satis:"Sadece satış",servis:"Sadece servis",ikisi:"Satış + Servis"};
-  $(hedef).innerHTML = ["tum","satis","servis","ikisi"].map(r=>
-    `<button data-r="${r}" class="${ROL===r?"secili":""}">${et[r]}
+  // Birleşik kümeler: "satış noktası" = yalnız satış + satış&servis.
+  // Kullanıcı asıl bu sayıyı arıyor: kaç noktada satış yapılıyor.
+  s.satisNok  = s.satis  + s.ikisi;
+  s.servisNok = s.servis + s.ikisi;
+  const et={
+    tum:"Tümü",
+    satisNok:"Toplam satış noktası",
+    servisNok:"Toplam servis noktası",
+    satis:"Sadece satış",
+    servis:"Sadece servis",
+    ikisi:"Satış + Servis"};
+  const sira=["tum","satisNok","servisNok","satis","servis","ikisi"];
+  $(hedef).innerHTML = sira.map(r=>
+    `<button data-r="${r}" class="${ROL===r?"secili":""}${
+       (r==="satisNok"||r==="servisNok")?" birlesik":""}">${et[r]}
        <span class="n">${s[r]}</span></button>`).join("");
 }
 function rolBagla(hedef, ciz){
@@ -614,7 +630,13 @@ function rolBagla(hedef, ciz){
     ROL = b.dataset.r; ciz();
   };
 }
-const rolGecer = b => ROL==="tum" || ROL_SINIF[b[B_ROL]]===ROL;
+const rolGecer = b => {
+  if (ROL === "tum") return true;
+  const sn = ROL_SINIF[b[B_ROL]];
+  if (ROL === "satisNok")  return sn === "satis"  || sn === "ikisi";
+  if (ROL === "servisNok") return sn === "servis" || sn === "ikisi";
+  return sn === ROL;
+};
 
 /* ---------- ekranlar ---------- */
 /* Ekranı gösterir. gecmis=true ise adres etiketine yazar; böylece tarayıcının
