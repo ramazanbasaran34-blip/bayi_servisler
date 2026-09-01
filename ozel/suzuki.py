@@ -1,8 +1,14 @@
-"""Suzuki — servis sayfası gömülü `stores` GeoJSON.
+"""Suzuki — satış ve servis, gömülü `stores` GeoJSON.
 
-Satış sayfası (satis.html) bayi listesi İÇERMİYOR; sadece test sürüşü ve
-destek metni var (ham yakalamada telefon sayısı 2). Bu yüzden Suzuki için
-yalnızca servis ağı toplanıyor; satış noktası verisi sitede yayınlanmıyor.
+Kymco / Vespa ile aynı altyapı: sayfa il seçtirip haritadan konum
+gösteriyor ama listenin tamamı kaynağa gömülü, tarayıcı gerekmiyor.
+
+DİKKAT — adres tuzağı: `/motosiklet/satis.html` sayfasında bayi listesi
+YOK (yalnızca test sürüşü ve destek metni, 2 telefon). Yetkili satıcı
+listesi ayrı adreste:
+
+    satış  → /tr/motosiklet/yetkili-saticilar.html    (36 satıcı)
+    servis → /tr/motosiklet/yetkili-servisler.html    (41 servis)
 """
 
 from __future__ import annotations
@@ -12,9 +18,11 @@ from .geojson_stores import coz_stores
 MARKA = "Suzuki"
 
 KAYNAKLAR = {
+    "satis":  "https://www.suzuki.com.tr/tr/motosiklet/yetkili-saticilar.html",
     "servis": "https://www.suzuki.com.tr/tr/motosiklet/yetkili-servisler.html",
 }
 TEST = {
+    ("Suzuki", "satis"):  "suzuki-satici.html",
     ("Suzuki", "servis"): "suzuki-servis.html",
 }
 
