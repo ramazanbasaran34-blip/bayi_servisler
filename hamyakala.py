@@ -143,6 +143,13 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "acco-bayi":       ("https://actiomobilite.com/bayiler", "html"),
     "indian-srv":      ("https://www.indianmotorcycle.com.tr/find-a-dealer/list-teknik-servisler/", "html"),
 
+    # WordPress REST ucu: sayfa içeriğini işlenmiş hâlde veriyor.
+    # Elementor listesi düz HTML'de görünmediğinde buradan okunuyor.
+    "kimmi-rest":      ("https://www.kimmimotor.com/wp-json/wp/v2/pages/850", "json"),
+    "lifan-rest":      ("https://www.lifanmotor.com.tr/wp-json/wp/v2/pages/1383", "json"),
+    "leksas-rest":     ("https://www.leksas.com.tr/wp-json/wp/v2/pages/72", "json"),
+    "indian-satis":    ("https://www.indianmotorcycle.com.tr/find-a-dealer/list-bayiler/", "html"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
