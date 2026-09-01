@@ -680,17 +680,17 @@
   "url": "https://arnicamotor.com/bayiler?lang=tr",
   "kod": 200,
   "son_url": "https://arnicamotor.com/bayiler?lang=tr",
-  "boyut": 11904,
-  "tel_toplam": 17,
-  "tel_script_ici": 3
+  "boyut": 36659,
+  "tel_toplam": 13,
+  "tel_script_ici": 0
  },
  "arnica-servis": {
   "url": "https://arnicamotor.com/servisler?lang=tr",
   "kod": 200,
   "son_url": "https://arnicamotor.com/servisler?lang=tr",
-  "boyut": 11907,
-  "tel_toplam": 17,
-  "tel_script_ici": 3
+  "boyut": 35157,
+  "tel_toplam": 10,
+  "tel_script_ici": 0
  },
  "kimmi-bayi": {
   "url": "https://www.kimmimotor.com/bayiler/",
@@ -710,7 +710,11 @@
  },
  "leksas-bs": {
   "url": "https://www.leksas.com.tr/bayi-servis/",
-  "hata": "ConnectionError: HTTPSConnectionPool(host='www.leksas.com.tr', port=443): Read timed out."
+  "kod": 200,
+  "son_url": "https://www.leksas.com.tr/bayi-servis/",
+  "boyut": 176101,
+  "tel_toplam": 23,
+  "tel_script_ici": 2
  },
  "taktas-bs": {
   "url": "https://taktas.com.tr/bayi-ve-servis",
@@ -788,17 +792,17 @@
   "url": "https://arnicamotor.com/bayiler?lang=tr&sehir_id=1",
   "kod": 200,
   "son_url": "https://arnicamotor.com/bayiler?lang=tr&sehir_id=1",
-  "boyut": 11982,
-  "tel_toplam": 17,
-  "tel_script_ici": 3
+  "boyut": 36659,
+  "tel_toplam": 13,
+  "tel_script_ici": 0
  },
  "arnica-servis1": {
   "url": "https://arnicamotor.com/servisler?lang=tr&sehir_id=1",
   "kod": 200,
   "son_url": "https://arnicamotor.com/servisler?lang=tr&sehir_id=1",
-  "boyut": 11989,
-  "tel_toplam": 17,
-  "tel_script_ici": 3
+  "boyut": 35157,
+  "tel_toplam": 10,
+  "tel_script_ici": 0
  },
  "suzuki-satici": {
   "url": "https://www.suzuki.com.tr/tr/motosiklet/yetkili-saticilar.html",
@@ -807,5 +811,69 @@
   "boyut": 50044,
   "tel_toplam": 272,
   "tel_script_ici": 270
+ },
+ "kimmi-srv": {
+  "url": "https://www.kimmimotor.com/servisler/",
+  "kod": 200,
+  "son_url": "https://www.kimmimotor.com/servisler/",
+  "boyut": 925657,
+  "tel_toplam": 8,
+  "tel_script_ici": 0
+ },
+ "taktas-srv": {
+  "url": "https://taktas.com.tr/servislerimiz",
+  "kod": 200,
+  "son_url": "https://taktas.com.tr/servislerimiz",
+  "boyut": 310514,
+  "tel_toplam": 5,
+  "tel_script_ici": 0
+ },
+ "arnica-bayi06": {
+  "url": "https://arnicamotor.com/bayiler?lang=tr&sehir_id=6",
+  "kod": 200,
+  "son_url": "https://arnicamotor.com/bayiler?lang=tr&sehir_id=6",
+  "boyut": 33140,
+  "tel_toplam": 6,
+  "tel_script_ici": 0
+ },
+ "arnica-srv06": {
+  "url": "https://arnicamotor.com/servisler?lang=tr&sehir_id=6",
+  "kod": 200,
+  "son_url": "https://arnicamotor.com/servisler?lang=tr&sehir_id=6",
+  "boyut": 33142,
+  "tel_toplam": 6,
+  "tel_script_ici": 0
+ },
+ "lifan-bayi": {
+  "url": "https://www.lifanmotor.com.tr/bayiler/",
+  "kod": 200,
+  "son_url": "https://www.lifanmotor.com.tr/bayiler/",
+  "boyut": 912704,
+  "tel_toplam": 9,
+  "tel_script_ici": 0
+ },
+ "lifan-srv": {
+  "url": "https://www.lifanmotor.com.tr/servisler/",
+  "kod": 200,
+  "son_url": "https://www.lifanmotor.com.tr/servisler/",
+  "boyut": 912403,
+  "tel_toplam": 9,
+  "tel_script_ici": 0
+ },
+ "acco-bayi": {
+  "url": "https://actiomobilite.com/bayiler",
+  "kod": 200,
+  "son_url": "https://actiomobilite.com/bayiler",
+  "boyut": 57282,
+  "tel_toplam": 3,
+  "tel_script_ici": 2
+ },
+ "indian-srv": {
+  "url": "https://www.indianmotorcycle.com.tr/find-a-dealer/list-teknik-servisler/",
+  "kod": 200,
+  "son_url": "https://www.indianmotorcycle.com.tr/find-a-dealer/list-teknik-servisler/",
+  "boyut": 82957,
+  "tel_toplam": 42,
+  "tel_script_ici": 0
  }
 }
