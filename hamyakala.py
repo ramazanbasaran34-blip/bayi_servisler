@@ -192,6 +192,10 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     # vermiyor ama bu uç veriyor.
     "bmw-api":  ("https://c2b-services-i.bmw.com/c2b-localsearch/services/cache/v4/ShowAll?country=tr&category=BD&clientid=UX_NICCE_FORM_DLO", "json"),
 
+    # STMax: il seçimi doğrudan /iller/<slug>/ adresine gidiyor
+    "stmax-ankara":    ("https://stmax.com.tr/iller/ankara/", "html"),
+    "stmax-adana":     ("https://stmax.com.tr/iller/adana/", "html"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
