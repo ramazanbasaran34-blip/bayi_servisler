@@ -59,6 +59,70 @@
    "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
   },
   {
+   "yol": "/js/genel.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/js/hero.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/js/app.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/js/general.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/js/functions.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/js/jquery.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/js/ajax.js",
+   "kod": 522,
+   "boyut": 7268,
+   "tip": "text/html; charset=UTF-8",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->"
+  },
+  {
+   "yol": "/js/islem.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
    "yol": "/design/js/script.js",
    "kod": 404,
    "boyut": 1238,
@@ -83,6 +147,54 @@
    "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
   },
   {
+   "yol": "/design/js/genel.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/design/script.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/design/main.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/design/custom.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/design/js.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/design/genel.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
    "yol": "/assets/js/script.js",
    "kod": 404,
    "boyut": 1238,
@@ -99,7 +211,7 @@
    "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
   },
   {
-   "yol": "/js/genel.js",
+   "yol": "/assets/js/custom.js",
    "kod": 404,
    "boyut": 1238,
    "tip": "text/html",
@@ -107,7 +219,7 @@
    "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
   },
   {
-   "yol": "/js/hero.js",
+   "yol": "/scripts/main.js",
    "kod": 404,
    "boyut": 1238,
    "tip": "text/html",
@@ -115,7 +227,39 @@
    "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
   },
   {
-   "yol": "/design/script.js",
+   "yol": "/scripts/script.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/inc/js.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/inc/script.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/images/script.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/images/js.js",
    "kod": 404,
    "boyut": 1238,
    "tip": "text/html",
