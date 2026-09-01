@@ -130,6 +130,19 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "arnica-servis1":  ("https://arnicamotor.com/servisler?lang=tr&sehir_id=1", "html"),
     "nanok-sayfa":     ("https://nanok.com.tr/bayilerimiz", "html"),
 
+    # --- servis verisi hiç gelmeyen markalar ---
+    "kimmi-bayi":      ("https://www.kimmimotor.com/bayiler/", "html"),
+    "kimmi-srv":       ("https://www.kimmimotor.com/servisler/", "html"),
+    "leksas-bs":       ("https://www.leksas.com.tr/bayi-servis/", "html"),
+    "taktas-bs":       ("https://taktas.com.tr/bayi-ve-servis", "html"),
+    "taktas-srv":      ("https://taktas.com.tr/servislerimiz", "html"),
+    "arnica-bayi06":   ("https://arnicamotor.com/bayiler?lang=tr&sehir_id=6", "html"),
+    "arnica-srv06":    ("https://arnicamotor.com/servisler?lang=tr&sehir_id=6", "html"),
+    "lifan-bayi":      ("https://www.lifanmotor.com.tr/bayiler/", "html"),
+    "lifan-srv":       ("https://www.lifanmotor.com.tr/servisler/", "html"),
+    "acco-bayi":       ("https://actiomobilite.com/bayiler", "html"),
+    "indian-srv":      ("https://www.indianmotorcycle.com.tr/find-a-dealer/list-teknik-servisler/", "html"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
