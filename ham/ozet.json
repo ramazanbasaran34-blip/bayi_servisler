@@ -907,5 +907,32 @@
   "boyut": 751,
   "tel_toplam": 0,
   "tel_script_ici": 0
+ },
+ "kimmi-srv-ank": {
+  "url": "https://www.kimmimotor.com/servisler/ankara",
+  "kod": 200,
+  "son_url": "https://www.kimmimotor.com/servisler/ankara/",
+  "boyut": 958061,
+  "tel_toplam": 14,
+  "tel_script_ici": 0,
+  "yonlendi": true
+ },
+ "kimmi-bayi-ank": {
+  "url": "https://www.kimmimotor.com/bayiler/ankara",
+  "kod": 200,
+  "son_url": "https://www.kimmimotor.com/bayiler/ankara/",
+  "boyut": 951982,
+  "tel_toplam": 14,
+  "tel_script_ici": 0,
+  "yonlendi": true
+ },
+ "lifan-srv-ank": {
+  "url": "https://www.lifanmotor.com.tr/servisler/ankara",
+  "kod": 200,
+  "son_url": "https://www.lifanmotor.com.tr/servisler/ankara/",
+  "boyut": 927622,
+  "tel_toplam": 13,
+  "tel_script_ici": 0,
+  "yonlendi": true
  }
 }
