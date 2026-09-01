@@ -205,24 +205,24 @@ a{color:var(--vurgu)}
 /* ================= ŞERİT ================= */
 /* Üst şerit: koyu/siyah zemin yerine kurumsal açık zemin.
    Sekmeler ortada; sağa yapışık değil. */
-.serit{background:#fff;color:var(--celik);padding:9px 18px 0;display:flex;
-  flex-direction:column;gap:7px;align-items:center;font-family:var(--m);
-  font-size:12px;position:sticky;top:0;z-index:40;
+.serit{background:#fff;color:var(--celik);padding:5px 14px 0;display:flex;
+  flex-direction:column;gap:3px;align-items:center;font-family:var(--m);
+  font-size:11px;position:sticky;top:0;z-index:40;
   border-bottom:1px solid var(--hat2);box-shadow:0 2px 10px -6px rgba(16,32,56,.25)}
 .serit b{color:var(--murekkep);font-weight:600}
 .seritust{display:flex;gap:16px;align-items:center;flex-wrap:wrap;
   justify-content:center;text-align:center}
-.sek{display:flex;gap:8px;justify-content:center;width:100%;
-  border-top:1px solid var(--hat2);padding-top:7px}
+.sek{display:flex;gap:6px;justify-content:center;width:100%;
+  border-top:1px solid var(--hat2);padding-top:4px}
 .sek button{background:none;border:0;border-bottom:3px solid transparent;
-  color:var(--celik);border-radius:0;padding:8px 18px 9px;cursor:pointer;
-  font-size:15px;font-weight:600;font-family:var(--d);letter-spacing:-.01em}
+  color:var(--celik);border-radius:0;padding:6px 14px 7px;cursor:pointer;
+  font-size:14.5px;font-weight:600;font-family:var(--d);letter-spacing:-.01em}
 .sek button:hover{color:var(--murekkep)}
 .sek button.aktif{color:var(--murekkep);border-bottom-color:var(--vurgu)}
 
 .sar{max-width:1100px;margin:0 auto;padding:20px 18px 70px}
 h2{font-size:17px;font-weight:600;margin:0 0 4px}
-.notm{color:var(--celik);font-size:12.5px;margin:0 0 14px}
+.notm{color:var(--celik);font-size:12px;margin:0 0 8px}
 
 .ara{width:100%;border:1px solid var(--hat2);background:#fff;border-radius:7px;
   padding:9px 12px;outline:none;margin-bottom:12px;font-size:13.5px}
@@ -338,8 +338,8 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 /* Sütun başlığı kaydırırken görünür kalsın: üst şeridin ALTINA
    yapışıyor. Değişken JS ile şeridin gerçek yüksekliğinden
    hesaplanıyor (bkz. seritOlc). */
-.baslikcubuk{position:sticky;top:var(--serit-y,0);z-index:20;
-  background:#F0F4FA}
+.baslikcubuk{position:sticky;z-index:20;background:#F0F4FA;
+  top:calc(var(--serit-y,0px) + var(--yapiskan-y,0px))}
 .rolsuz{display:flex;gap:6px;flex-wrap:wrap}
 .rolsuz button{flex:1 1 auto;min-width:0;white-space:nowrap}
 .rolsuz button .n{font-family:var(--m);font-size:10.5px;opacity:.75;margin-left:4px}
@@ -424,6 +424,9 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   .altozet .kutu b{font-size:23px}
   .altozet .kutu i{font-size:9.5px}
   .altozet .aonot{font-size:10.5px}
+  /* Şeritteki kayıt bazlı özet dar ekranda iki satır kaplıyordu;
+     aynı bilgi alt çubukta firma bazlı ve daha doğru veriliyor. */
+  .genisgor{display:none}
   .sar{padding-bottom:var(--altozet-y,160px)}
   .acikbilgi{font-size:11.5px;padding:8px 10px}
   .altozet .aonot{font-size:9.5px}
@@ -448,7 +451,16 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   .bslk{font-size:18px}
   h2{font-size:21px}
   .kutu .n{font-size:23px}
-  .sar{padding-top:14px;padding-left:10px;padding-right:10px}
+  /* Telefonda üst alan ekranın yarısını yiyordu; liste için yer açıyoruz. */
+  .sar{padding-top:9px;padding-left:10px;padding-right:10px}
+  h2{font-size:17px;margin:0 0 3px}
+  .notm{font-size:11px;margin:0 0 6px}
+  .sirala{gap:4px;margin-bottom:5px}
+  .sirala .et{display:none}          /* "SIRALA" etiketi yer kaplıyor */
+  .altbar{gap:5px;margin:0 0 6px}
+  .btn{padding:5px 9px;font-size:12px}
+  .yapiskan{padding:5px 0 4px;margin-bottom:5px}
+  .ara{padding:7px 10px;font-size:13.5px}
   .sat{padding-top:11px;padding-bottom:11px}
   .sat .ad{font-size:14.5px;overflow:hidden;text-overflow:ellipsis;
     white-space:nowrap;display:block}
@@ -471,7 +483,10 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .cip.secili{background:var(--murekkep);border-color:var(--murekkep);color:#fff}
 
 /* rol süzgeci */
-.sirala{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+/* Sıralama artık sütun başlıklarına tıklanarak yapılıyor; bu düğme
+   grubu yalnızca geniş ekranda yedek olarak duruyor. */
+.sirala{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-bottom:7px}
+@media (max-width:620px){ .sirala{display:none} }
 .sirala .et{font-family:var(--m);font-size:10px;letter-spacing:.09em;
   text-transform:uppercase;color:var(--celik);margin-right:2px}
 .sirala button{border:1px solid var(--hat2);background:#fff;border-radius:6px;
@@ -534,10 +549,11 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .bslk{font-size:19px;font-weight:700;margin:0 0 10px;display:flex;gap:10px;
   align-items:baseline;justify-content:center;text-align:center;letter-spacing:-.01em}
 .bslk span{font-family:var(--m);font-size:12.5px;color:var(--celik);font-weight:500}
-h2{font-size:23px;font-weight:700;text-align:center;letter-spacing:-.01em}
-.altbar{display:flex;gap:8px;margin:0 0 14px;flex-wrap:wrap}
-.btn{border:1px solid var(--hat2);background:#fff;border-radius:7px;padding:8px 14px;
-  cursor:pointer;font-size:13px;font-weight:500;box-shadow:var(--golge)}
+h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
+  margin:0 0 4px}
+.altbar{display:flex;gap:6px;margin:0 0 8px;flex-wrap:wrap}
+.btn{border:1px solid var(--hat2);background:#fff;border-radius:7px;padding:6px 11px;
+  cursor:pointer;font-size:12.5px;font-weight:500;box-shadow:var(--golge)}
 .btn:hover{border-color:var(--murekkep)}
 .btn.ana{background:var(--vurgu);border-color:var(--vurgu);color:#fff}
 .btn.ana:hover{background:#14568F}
@@ -584,7 +600,7 @@ h2{font-size:23px;font-weight:700;text-align:center;letter-spacing:-.01em}
 <div class="serit">
   <div class="seritust">
     <span>Veri: <b id="veriTarih">—</b></span>
-    <span id="veriOzet"></span>
+    <span id="veriOzet" class="genisgor"></span>
   </div>
   <nav class="sek">
     <button id="sekOzet">Özet</button>
@@ -740,6 +756,16 @@ function seritOlc(){
   const a=document.querySelector(".altozet");
   if(a) document.documentElement.style.setProperty(
     "--altozet-y", (a.offsetHeight + 14) + "px");
+
+  // Yapışkan arama/süzgeç bloğu da şeridin altına yapışıyor. Sütun
+  // başlığı onunla AYNI yere yapışınca arkasında kalıyordu; başlığı
+  // o bloğun altına indiriyoruz. Ekranlar farklı yükseklikte olduğu
+  // için görünür olanı ölçüyoruz.
+  let y = 0;
+  document.querySelectorAll(".yapiskan").forEach(e=>{
+    if(e.offsetParent !== null) y = Math.max(y, e.offsetHeight);
+  });
+  document.documentElement.style.setProperty("--yapiskan-y", y + "px");
 }
 addEventListener("resize", seritOlc);
 addEventListener("load", seritOlc);
@@ -858,6 +884,10 @@ const rolGecer = b => {
 /* Ekranı gösterir. gecmis=true ise adres etiketine yazar; böylece tarayıcının
    geri tuşu sayfadan çıkmak yerine bir önceki ekrana döner. */
 function ekran(v, gecmis=true){
+  // Ekranlar farklı yükseklikte yapışkan blok taşıyor (arama kutusu,
+  // ilçe çipleri, rol süzgeci). Geçişte yeniden ölçüyoruz ki sütun
+  // başlığı hep o bloğun ALTINA yapışsın.
+  setTimeout(seritOlc, 0);
   ["vOzet","vIl","vMarkalar","vTumMarka","vMarkaDetay"].forEach(x=>$("#"+x).style.display="none");
   $("#"+v).style.display="block";
   $("#sar").classList.toggle("genis", v==="vTumMarka"||v==="vMarkaDetay"||v==="vOzet");
