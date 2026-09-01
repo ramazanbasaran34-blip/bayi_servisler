@@ -1162,5 +1162,13 @@
   "boyut": 154018,
   "tel_toplam": 182,
   "tel_script_ici": 171
+ },
+ "kuralkan-servis": {
+  "url": "https://www.ekuralkan.com/motosiklet-teslimat-noktalari",
+  "kod": 200,
+  "son_url": "https://www.ekuralkan.com/motosiklet-teslimat-noktalari",
+  "boyut": 199416,
+  "tel_toplam": 341,
+  "tel_script_ici": 330
  }
 }
