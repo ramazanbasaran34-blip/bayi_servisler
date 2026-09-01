@@ -96,6 +96,12 @@ def coz(rol: str, govde: str, url: str, il: str | None = None) -> list[dict]:
         if not t:
             continue
 
+        # Sayfa alt bilgisi de telefon taşıyor; kayıt sanılmasın.
+        dusuk = metin.casefold()
+        if any(k in dusuk for k in ("dil ayarları", "bayi girişi", "@altai.com.tr",
+                                    "çerez", "gizlilik", "tüm hakları")):
+            continue
+
         bas = kutu.find(["h1", "h2", "h3", "h4", "h5", "h6", "strong", "b"])
         ad = _m(bas)
         if not ad:
@@ -107,6 +113,9 @@ def coz(rol: str, govde: str, url: str, il: str | None = None) -> list[dict]:
 
         tel = t.group(0)
         adres = metin.replace(ad, "", 1).replace(tel, " ")
+        # "Satış Mağazası" / "Servis" gibi kart etiketi adresin başında
+        adres = re.sub(r"^\s*(Satış Mağazası|Servis Noktası|Servis|Bayi)\s*",
+                       "", adres, flags=re.I)
         adres = re.sub(r"\s+", " ", adres).strip(" -–|·,")
 
         anahtar = (ad.casefold(), tel)
