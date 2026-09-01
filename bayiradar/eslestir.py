@@ -68,8 +68,18 @@ def _ortak_oran(a: str, b: str) -> float:
 
 def ayni_firma_mi(a: dict, b: dict) -> tuple[bool, str]:
     """İki kayıt aynı firma mı? (evet_mi, gerekçe)"""
-    # 1. Telefon — en güçlü kanıt
+    # 1. Telefon — güçlü kanıt AMA tek başına yetmiyor.
+    #
+    # Zincir bayiler şubelerinde aynı merkezi numarayı kullanıyor.
+    # Yalnızca telefona bakınca Bajaj'da 7 gerçek satış noktası tek
+    # kayda iniyordu (Hatay/Kenan Uslu, Mersin/Çetinkaya Moto,
+    # İstanbul/Mustafa Oktay, Denizli/Yiğitler...). Bu yüzden telefon
+    # tutsa bile ADRESLER açıkça farklıysa ayrı nokta sayılıyor.
     if a.get("telefon") and a.get("telefon") == b.get("telefon"):
+        aa = adres_anahtari(a.get("adres", ""))
+        ab = adres_anahtari(b.get("adres", ""))
+        if aa and ab and aa != ab:
+            return False, "aynı telefon, farklı adres"
         return True, "telefon"
 
     ca, cb = ad_cekirdegi(a.get("bayi_adi", "")), ad_cekirdegi(b.get("bayi_adi", ""))
