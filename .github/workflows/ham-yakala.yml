@@ -62,6 +62,10 @@ jobs:
         if: inputs.hedefler == '' || contains(inputs.hedefler, 'aspnet')
         run: pip install beautifulsoup4 lxml PyYAML && python aspnet_sonda.py || true
 
+      - name: Hero sondası
+        if: contains(inputs.hedefler, 'hero-sonda')
+        run: pip install requests && python hero_sonda.py || true
+
       - name: Özeti göster
         run: cat ham/ozet.json
 
