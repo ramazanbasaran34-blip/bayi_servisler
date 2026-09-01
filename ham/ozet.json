@@ -1065,7 +1065,7 @@
  },
  "bmw-moto": {
   "url": "https://www.bmw-motorrad.com.tr/tr/ssl/yetkili-satici-ve-servisler.html",
-  "hata": "ReadTimeout: HTTPSConnectionPool(host='www.bmw-motorrad.com.tr', port=443): Read timed out. (read timeout=45)"
+  "hata": "ReadTimeout: HTTPSConnectionPool(host='www.bmw-motorrad.com.tr', port=443): Read timed out. (read timeout=120)"
  },
  "yuki-satis-ank": {
   "url": "https://yukimotor.com.tr/satis-noktalari/?province=ankara",
