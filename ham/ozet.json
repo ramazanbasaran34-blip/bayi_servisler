@@ -1191,5 +1191,29 @@
  "bmw-yeni": {
   "url": "https://www.bmw-motorrad.com.tr/tr/ssl/yetkili-satici-ve-servisler.html",
   "hata": "ReadTimeout: HTTPSConnectionPool(host='www.bmw-motorrad.com.tr', port=443): Read timed out. (read timeout=120)"
+ },
+ "borusan-istanbul": {
+  "url": "https://www.borusanotomotiv.com/yetkili-satici-ve-servisler/arama?city=istanbul",
+  "kod": 200,
+  "son_url": "https://www.borusanotomotiv.com/yetkili-satici-ve-servisler/arama?city=istanbul",
+  "boyut": 35662,
+  "tel_toplam": 31,
+  "tel_script_ici": 30
+ },
+ "borusan-bursa": {
+  "url": "https://www.borusanotomotiv.com/yetkili-satici-ve-servisler/arama?city=Bursa",
+  "kod": 200,
+  "son_url": "https://www.borusanotomotiv.com/yetkili-satici-ve-servisler/arama?city=Bursa",
+  "boyut": 27800,
+  "tel_toplam": 10,
+  "tel_script_ici": 9
+ },
+ "borusan-harita": {
+  "url": "https://www.borusanotomotiv.com/yetkili-satici-ve-servisler/harita",
+  "kod": 200,
+  "son_url": "https://www.borusanotomotiv.com/yetkili-satici-ve-servisler/harita",
+  "boyut": 19520,
+  "tel_toplam": 2,
+  "tel_script_ici": 1
  }
 }
