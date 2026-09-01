@@ -59,7 +59,9 @@ markalar:
   #  3. BAJAJ  ·  Hindistan  ·  www.ekuralkan.com
   "Bajaj":
     beklenen: [200, 320]   # Kuralkan: 98 satış + 177 servis (kesin)
-    mode: browser
+    # ozel/kuralkan.py ile toplanıyor: liste Next.js flight
+    # verisinde gömülü, ?city parametresi sunucuda işlenmiyor.
+    ozel: kuralkan
     bekleme: 1.5
     kaynaklar:
       - rol: satis
@@ -72,7 +74,9 @@ markalar:
   #  4. KANUNI  ·  Türkiye-Çin  ·  www.ekuralkan.com
   "Kanuni":
     beklenen: [200, 320]   # Kuralkan: 98 satış + 177 servis (kesin)
-    mode: browser
+    # ozel/kuralkan.py ile toplanıyor: liste Next.js flight
+    # verisinde gömülü, ?city parametresi sunucuda işlenmiyor.
+    ozel: kuralkan
     bekleme: 1.5
     kaynaklar:
       - rol: satis
