@@ -359,10 +359,19 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .altozet{position:fixed;left:0;right:0;bottom:0;z-index:45;
   background:#fff;border-top:2px solid var(--murekkep);
   box-shadow:0 -6px 18px -10px rgba(16,32,56,.4);
-  display:flex;align-items:center;gap:10px;padding:8px 14px;
-  overflow-x:auto;font-family:var(--m)}
-.altozet .baslik{font-weight:700;font-size:12px;color:var(--murekkep);
+  display:flex;flex-direction:column;gap:5px;padding:7px 14px 8px;
+  font-family:var(--m)}
+.altozet .aoust{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.altozet .baslik{font-weight:700;font-size:13px;color:var(--murekkep);
   white-space:nowrap;font-family:var(--d);flex:0 0 auto}
+.altozet .aonot{font-family:var(--d);font-size:10.5px;color:var(--celik);
+  line-height:1.25;flex:1 1 180px}
+.altozet .satir{display:flex;align-items:center;gap:10px;overflow-x:auto}
+/* Üstteki açıklama */
+.acikbilgi{font-size:12.5px;line-height:1.45;color:var(--celik);
+  background:#F5F9FF;border:1px solid var(--hat2);border-left:3px solid var(--murekkep);
+  border-radius:7px;padding:9px 12px;margin:0 0 11px}
+.acikbilgi b{color:var(--murekkep)}
 .altozet .kutu{display:flex;flex-direction:column;align-items:center;
   line-height:1.15;flex:0 0 auto;padding:0 8px;border-left:1px solid var(--hat2)}
 .altozet .kutu b{font-size:16px;color:var(--murekkep);
@@ -371,14 +380,20 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   white-space:nowrap;letter-spacing:.02em}
 .altozet .kutu.vurgu b{color:var(--satis)}
 .altozet .kutu.vurgu{background:var(--satis-z);border-radius:6px}
-.sar{padding-bottom:86px}
+.altozet .kutu.toplamf{background:var(--murekkep);border-radius:6px;
+  border-left:0;padding:2px 10px}
+.altozet .kutu.toplamf b{color:#fff}
+.altozet .kutu.toplamf i{color:#C9DAF0}
+.sar{padding-bottom:118px}
 @media (max-width:620px){
   .altozet{gap:4px;padding:6px 8px}
   .altozet .baslik{font-size:11px}
   .altozet .kutu{padding:0 5px}
   .altozet .kutu b{font-size:14.5px}
   .altozet .kutu i{font-size:8.5px}
-  .sar{padding-bottom:78px}
+  .sar{padding-bottom:126px}
+  .acikbilgi{font-size:11.5px;padding:8px 10px}
+  .altozet .aonot{font-size:9.5px}
 }
 /* --- Sıra numarası --- */
 .sirano{flex:0 0 26px;text-align:right;font-family:var(--m);font-size:11px;
@@ -555,6 +570,12 @@ h2{font-size:23px;font-weight:700;text-align:center;letter-spacing:-.01em}
              placeholder="İl, ilçe, marka veya bayi adı ara — doğrudan git">
     </div>
     <div class="oneri" id="oneriKutu"></div>
+    <p class="acikbilgi ust">
+      Aşağıdaki rakamlar <b>toplam bayilik/servislik sayısını</b> gösterir.
+      Bir firma aynı anda birden çok markanın bayisi ve servisi olabildiği
+      için burada birden fazla kez sayılır.
+      <b>Gerçek firma sayısı sayfanın en altındadır.</b>
+    </p>
     <div class="kutular" id="kutular"></div>
     <div class="kapsam" id="kapsam"></div>
     <div class="altbar">
@@ -783,6 +804,7 @@ function altOzetGuncelle(baslik, veri){
   $("#aoIkisi").textContent     = bicim(c.ikisi);
   $("#aoSatisNok").textContent  = bicim(c.satisNoktasi);
   $("#aoToplam").textContent    = bicim(c.toplam);
+  $("#aoServisNok").textContent = bicim(c.servisNoktasi);
 }
 
 const rolGecer = b => {
@@ -1580,12 +1602,19 @@ ekran('vOzet', false);
 try{ history.replaceState({ekran:'vOzet'},''); }catch(e){}
 </script>
 <div class="altozet" id="altOzet">
-  <span class="baslik" id="aoBaslik">Türkiye geneli</span>
-  <span class="kutu"><b id="aoSatis">—</b><i>yalnız satış</i></span>
-  <span class="kutu"><b id="aoServis">—</b><i>yalnız servis</i></span>
-  <span class="kutu"><b id="aoIkisi">—</b><i>satış + servis</i></span>
-  <span class="kutu vurgu"><b id="aoSatisNok">—</b><i>toplam satış noktası</i></span>
-  <span class="kutu"><b id="aoToplam">—</b><i>toplam bayi</i></span>
+  <div class="aoust">
+    <span class="baslik" id="aoBaslik">Türkiye geneli</span>
+    <span class="aonot">gerçek firma sayısı — her bayi yalnızca bir kez
+      sayılır, birden çok markaya bayilik yapsa bile</span>
+  </div>
+  <div class="satir">
+    <span class="kutu toplamf"><b id="aoToplam">—</b><i>gerçek firma</i></span>
+    <span class="kutu vurgu"><b id="aoSatisNok">—</b><i>toplam satış nok.</i></span>
+    <span class="kutu"><b id="aoServisNok">—</b><i>toplam servis nok.</i></span>
+    <span class="kutu"><b id="aoSatis">—</b><i>yalnız satış</i></span>
+    <span class="kutu"><b id="aoServis">—</b><i>yalnız servis</i></span>
+    <span class="kutu"><b id="aoIkisi">—</b><i>satış + servis</i></span>
+  </div>
 </div>
 <div class="ortu" id="duzenleOrtu" style="display:none">
   <div class="duzenle">
