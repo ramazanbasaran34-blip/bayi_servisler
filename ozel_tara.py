@@ -44,6 +44,8 @@ GEZINME = {
     "musatti": "il_kodu",
     "leksas": "tek", "indian": "tek",
     "aprilia": "tek", "piaggio": "tek", "kymco": "tek", "yiben": "tek",
+    # ASP.NET WebForms: il seçimi ViewState taşıyan POST ile
+    "altai": "postback", "regal": "postback",
     # Kimmi ve Lifan aynı modülü paylaşıyor; il listesi sitenin kendi
     # <select id="cities"> kutusundan okunuyor, ILLER sabitinden değil.
     "kimmi_lifan": "cities",
