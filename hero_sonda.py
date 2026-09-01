@@ -40,20 +40,15 @@ STATIK = [
 ]
 
 # 2) JS dosyası nerede? Yaygın yollar denenir.
-# Statik dosyalar 200 dönüyor (Cloudflare yalnızca PHP'yi engelliyor),
-# yani JS dosyasını bulabilirsek okuyabiliriz. Yol geniş taranıyor.
+# GERÇEK dosya adları — kullanıcının view-source ekran görüntülerinden.
+# Tahminle aranınca bulunamıyordu; bunlar sayfada <script src=> ile yüklü.
 JS_ADAYLARI = [
-    "/js/script.js", "/js/main.js", "/js/custom.js", "/js/site.js",
-    "/js/genel.js", "/js/hero.js", "/js/app.js", "/js/general.js",
-    "/js/functions.js", "/js/jquery.js", "/js/ajax.js", "/js/islem.js",
-    "/design/js/script.js", "/design/js/main.js", "/design/js/custom.js",
-    "/design/js/genel.js", "/design/script.js", "/design/main.js",
-    "/design/custom.js", "/design/js.js", "/design/genel.js",
-    "/assets/js/script.js", "/assets/js/main.js", "/assets/js/custom.js",
-    "/scripts/main.js", "/scripts/script.js",
-    "/inc/js.js", "/inc/script.js",
-    # Görseller /design/ ve /images/ altında; JS de orada olabilir
-    "/images/script.js", "/images/js.js",
+    "/js/jquery.min.js", "/js/jquery.easing.1.3.js", "/js/nav-bikes.js",
+    "/js/milestones.js", "/js/social-details.js", "/js/jquery.bxslider.js",
+    "/js/ddaccordion.js", "/js/organictabs.jquery.click.js",
+    "/js/jquery.magnific-popup.js", "/js/scroll-top.js",
+    "/js/waypoints.min.js", "/js/jquery.counterup.js",
+    "/js/jquery.flexslider.js", "/js/contentslider.js", "/js/spritespin.js",
 ]
 
 # 3) Olası AJAX uçları (site /inc/price.php kullanıyor, aynı klasör mantığı)
@@ -108,8 +103,20 @@ def main() -> None:
             try:
                 y = o.get(KOK + p, timeout=30)
                 uclar = sorted(set(re.findall(r"[\w./\-]*\.php[\w?=&]*", y.text)))
-                b["php_adresleri"] = uclar[:20]
-                print(f"      içindeki php adresleri: {uclar[:12]}")
+                if uclar:
+                    b["php_adresleri"] = uclar[:20]
+                    print(f"      php adresleri: {uclar[:12]}")
+                # Bayi arama işini yapan kod bu anahtarları içerir
+                for anahtar in ("bayi_quey_form", "bayi_city_box",
+                                "bayi_content", "servis_quey_form",
+                                "servis_city_box", "servis_content"):
+                    if anahtar in y.text:
+                        i = y.text.find(anahtar)
+                        parca = re.sub(r"\s+", " ", y.text[max(0, i-260):i+360])
+                        b.setdefault("bulgular", []).append(
+                            {"anahtar": anahtar, "parca": parca})
+                        print(f"      ★ {anahtar} BULUNDU")
+                        print(f"        {parca[:300]}")
             except Exception:  # noqa: BLE001
                 pass
         else:
