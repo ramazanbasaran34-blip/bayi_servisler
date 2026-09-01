@@ -52,6 +52,8 @@ GEZINME = {
     # Yuki: il listesi sayfadaki `provinces` dizisinden, adres
     # ?province=<slug> parametresiyle. Konum tespiti sadece kısayol.
     "yuki": "province", "rewaco": "tek", "rebat": "tek",
+    # BMW: Borusan Otomotiv il bazli arama sayfasi
+    "bmw": "adres_listesi",
     # Kuralkan tek sayfada hem Bajaj hem Kanuni ağını veriyor
     "kuralkan": "cok_marka",
     # STMax: seçenek değeri zaten tam adres
