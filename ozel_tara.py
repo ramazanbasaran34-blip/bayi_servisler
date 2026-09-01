@@ -51,7 +51,7 @@ GEZINME = {
     "kimmi_lifan": "cities",
     # Yuki: il listesi sayfadaki `provinces` dizisinden, adres
     # ?province=<slug> parametresiyle. Konum tespiti sadece kısayol.
-    "yuki": "province", "rewaco": "tek",
+    "yuki": "province", "rewaco": "tek", "rebat": "tek",
     # Kuralkan tek sayfada hem Bajaj hem Kanuni ağını veriyor
     "kuralkan": "cok_marka",
     # STMax: seçenek değeri zaten tam adres
