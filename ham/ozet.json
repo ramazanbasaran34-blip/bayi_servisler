@@ -1122,5 +1122,21 @@
   "boyut": 24599,
   "tel_toplam": 86,
   "tel_script_ici": 0
+ },
+ "stmax-ankara": {
+  "url": "https://stmax.com.tr/iller/ankara/",
+  "kod": 200,
+  "son_url": "https://stmax.com.tr/iller/ankara/",
+  "boyut": 271753,
+  "tel_toplam": 28,
+  "tel_script_ici": 1
+ },
+ "stmax-adana": {
+  "url": "https://stmax.com.tr/iller/adana/",
+  "kod": 200,
+  "son_url": "https://stmax.com.tr/iller/adana/",
+  "boyut": 268158,
+  "tel_toplam": 18,
+  "tel_script_ici": 1
  }
 }
