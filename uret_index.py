@@ -78,16 +78,30 @@ def uret(cikti="index.html", markalar_json="markalar.json", db_yolu="bayiler.db"
         # elle: true olan markalar taranmıyor; sayfada düzenlenebilir olsun
         m["elle"] = bool((tarif.get(m["ad"]) or {}).get("elle"))
 
-    # Kompakt dizi: [marka, ad, il, ilce, adres, tel, durum, rol, giris_url]
+    # Cari kod: aynı fiziksel firma (telefon+ilçe) tek kod taşır.
+    # Bir firma birden çok markanın bayisi olabildiği için kod, kayıtları
+    # tekilleştirip "kaç ayrı bayi var" sorusuna cevap veriyor.
+    try:
+        from cari_kod import firma_anahtari
+        kod_esleme = json.loads(
+            Path("cari_kodlar.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        firma_anahtari, kod_esleme = None, {}
+
+    # Kompakt dizi: [marka, ad, il, ilce, adres, tel, durum, rol, giris_url, kod]
     satirlar = []
     for k in kayitlar:
         m = link.get(k["marka"], {})
         giris = (k.get("kaynak_servis") or k.get("kaynak_satis")
                  or k.get("kaynak_url") or m.get("bayi") or m.get("site") or "")
+        kod = ""
+        if firma_anahtari:
+            kod = kod_esleme.get(firma_anahtari(
+                k.get("telefon", ""), k["il"], k["ilce"], k["bayi_adi"]), "")
         satirlar.append([
             k["marka"], k["bayi_adi"], k["il"], k["ilce"], k["adres"],
             phone_display(k.get("telefon", "")), k.get("veri_durumu", "Güncel"),
-            k.get("rol") or "satis", giris,
+            k.get("rol") or "satis", giris, kod,
         ])
 
     say = defaultdict(lambda: {"satis": 0, "servis": 0, "ikisi": 0, "toplam": 0})
@@ -333,6 +347,39 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   padding:9px 10px;border:1px solid var(--hat2);border-radius:7px;
   font-size:14.5px;font-family:inherit;color:var(--murekkep);font-weight:400}
 .dzbtn{display:flex;gap:8px;margin-top:6px}
+/* --- Cari kod rozeti --- */
+.carikod{font-family:var(--m);font-size:10.5px;font-weight:700;
+  background:var(--murekkep);color:#fff;border-radius:4px;
+  padding:2px 6px;margin-right:7px;letter-spacing:.06em}
+
+/* --- Alt özet çubuğu ---
+   Kayıtlar marka × nokta olarak tutuluyor; bir firma 14 markanın
+   bayisi olabiliyor. Buradaki sayılar CARİ KODA göre tekilleştirilmiş,
+   yani her bayi yalnızca bir kez sayılıyor. */
+.altozet{position:fixed;left:0;right:0;bottom:0;z-index:45;
+  background:#fff;border-top:2px solid var(--murekkep);
+  box-shadow:0 -6px 18px -10px rgba(16,32,56,.4);
+  display:flex;align-items:center;gap:10px;padding:8px 14px;
+  overflow-x:auto;font-family:var(--m)}
+.altozet .baslik{font-weight:700;font-size:12px;color:var(--murekkep);
+  white-space:nowrap;font-family:var(--d);flex:0 0 auto}
+.altozet .kutu{display:flex;flex-direction:column;align-items:center;
+  line-height:1.15;flex:0 0 auto;padding:0 8px;border-left:1px solid var(--hat2)}
+.altozet .kutu b{font-size:16px;color:var(--murekkep);
+  font-variant-numeric:tabular-nums}
+.altozet .kutu i{font-style:normal;font-size:9.5px;color:var(--celik);
+  white-space:nowrap;letter-spacing:.02em}
+.altozet .kutu.vurgu b{color:var(--satis)}
+.altozet .kutu.vurgu{background:var(--satis-z);border-radius:6px}
+.sar{padding-bottom:86px}
+@media (max-width:620px){
+  .altozet{gap:4px;padding:6px 8px}
+  .altozet .baslik{font-size:11px}
+  .altozet .kutu{padding:0 5px}
+  .altozet .kutu b{font-size:14.5px}
+  .altozet .kutu i{font-size:8.5px}
+  .sar{padding-bottom:78px}
+}
 /* --- Sıra numarası --- */
 .sirano{flex:0 0 26px;text-align:right;font-family:var(--m);font-size:11px;
   color:var(--celik);opacity:.75;font-variant-numeric:tabular-nums}
@@ -638,7 +685,8 @@ addEventListener("resize", seritOlc);
 addEventListener("load", seritOlc);
 setTimeout(seritOlc, 0);
 const $ = s => document.querySelector(s);
-const [B_MARKA,B_AD,B_IL,B_ILCE,B_ADRES,B_TEL,B_DURUM,B_ROL,B_GIRIS] = [0,1,2,3,4,5,6,7,8];
+const [B_MARKA,B_AD,B_IL,B_ILCE,B_ADRES,B_TEL,B_DURUM,B_ROL,B_GIRIS,B_KOD] =
+      [0,1,2,3,4,5,6,7,8,9];
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const kat = s => (s||"").toLocaleLowerCase("tr")
   .replace(/[çğıöşü]/g,c=>({"ç":"c","ğ":"g","ı":"i","ö":"o","ş":"s","ü":"u"}[c]))
@@ -698,6 +746,45 @@ function rolBagla(hedef, ciz){
     ROL = b.dataset.r; ciz();
   };
 }
+const bicim = n => (n||0).toLocaleString("tr-TR");
+
+/* ---------- alt özet: TEKİL BAYİ sayıları ----------
+   D.bayiler marka×nokta tutuyor. Aynı fiziksel bayi birden çok markanın
+   kaydında geçiyor (bir firma 14 markaya kadar bayilik yapabiliyor).
+   Cari koda göre tekilleştirip her bayiyi bir kez sayıyoruz; rol de
+   o bayinin TÜM kayıtlarının birleşimi. */
+function tekilSay(veri){
+  const g = new Map();
+  veri.forEach(b=>{
+    const k = b[B_KOD] || ("x|"+b[B_AD]+"|"+b[B_IL]+"|"+b[B_ILCE]);
+    let o = g.get(k);
+    if(!o){ o = {satis:false, servis:false}; g.set(k, o); }
+    const r = b[B_ROL];
+    if(r==="satis"||r==="satis_servis") o.satis = true;
+    if(r==="servis"||r==="satis_servis") o.servis = true;
+  });
+  let ys=0, yv=0, ik=0;
+  g.forEach(o=>{ if(o.satis&&o.servis) ik++; else if(o.satis) ys++; else yv++; });
+  return {yalnizSatis:ys, yalnizServis:yv, ikisi:ik,
+          satisNoktasi:ys+ik, servisNoktasi:yv+ik, toplam:g.size};
+}
+
+/* Çubuk </body> hemen öncesinde; bu betik ondan ÖNCE çalıştığı için
+   ilk çağrıda öğeler henüz yok. Yoksa sessizce geç, DOM hazır olunca
+   yeniden çağrılıyor. */
+let AO_SON = null;
+function altOzetGuncelle(baslik, veri){
+  AO_SON = [baslik, veri];
+  if(!$("#aoBaslik")) return;
+  const c = tekilSay(veri);
+  $("#aoBaslik").textContent = baslik;
+  $("#aoSatis").textContent     = bicim(c.yalnizSatis);
+  $("#aoServis").textContent    = bicim(c.yalnizServis);
+  $("#aoIkisi").textContent     = bicim(c.ikisi);
+  $("#aoSatisNok").textContent  = bicim(c.satisNoktasi);
+  $("#aoToplam").textContent    = bicim(c.toplam);
+}
+
 const rolGecer = b => {
   if (ROL === "tum") return true;
   const sn = ROL_SINIF[b[B_ROL]];
@@ -774,7 +861,8 @@ $("#sekIl").onclick    = () => {
 };
 $("#sekMarka").onclick = () => { cizTum(); ekran("vTumMarka"); };
 $("#geri").onclick     = () => { IL=null; ILCE=""; ROL="tum"; $("#araMarka").value=""; ekran("vIl"); };
-$("#geriMarka").onclick= () => { ROL="tum"; cizTum(); ekran("vTumMarka"); };
+$("#geriMarka").onclick= () => { ROL="tum"; cizTum();
+  altOzetGuncelle("Türkiye geneli", D.bayiler); ekran("vTumMarka"); };
 
 /* ---------- ÖZET ---------- */
 function sayRol(veri){
@@ -950,6 +1038,7 @@ function cizOzet(){
 
   ["ozetIl","ozetMarka","ozetIlce"].forEach(ozetCiz);
   siralamayiBagla();
+  altOzetGuncelle("Türkiye geneli", D.bayiler);
   yazdirBilgiGuncelle("Genel Özet", D.bayiler.length);
 }
 function ozetTiklama(e){
@@ -1031,6 +1120,7 @@ function cizIl(){
     });
 
   $("#ilBos").style.display=l.length?"none":"block";
+  altOzetGuncelle("Türkiye geneli", D.bayiler);
   $("#ilListe").innerHTML=l.map((i,ix)=>{
     const c=say[i.ad];
     return `<button class="sat" data-slug="${i.slug}">
@@ -1076,7 +1166,8 @@ function kayitHtml(x, no, duzenlenebilir=false){
     ? D.bayiler.filter(y=>y[B_MARKA]===x[B_MARKA]).indexOf(x) : -1;
   return `<div class="kayit ${sn} ${x[B_DURUM]!=="Güncel"?"eski":""}${
       duzenlenebilir?" duzenlenebilir":""}"${ix>=0?` data-i="${ix}"`:""}>
-    <div class="k1">${no?`<span class="sirano kno">${no}</span>`:""}<span class="kad">${esc(x[B_AD])}</span>${
+    <div class="k1">${no?`<span class="sirano kno">${no}</span>`:""}${
+      x[B_KOD]?`<span class="carikod" title="Cari kod">${esc(x[B_KOD])}</span>`:""}<span class="kad">${esc(x[B_AD])}</span>${
       duzenlenebilir?'<span class="dzip">düzenlemek için dokun</span>':""}
       <span class="rol ${sn}">${esc(ROL_AD[x[B_ROL]]||"")}</span>
       ${x[B_DURUM]!=="Güncel"?`<span class="rol" style="background:var(--uyari-z);color:var(--uyari);border-color:#F0D9B5">${esc(x[B_DURUM])}</span>`:""}
@@ -1095,6 +1186,7 @@ function bolgeVeri(){
 }
 function cizMarka(){
   const tum=bolgeVeri();
+  altOzetGuncelle(IL ? (IL.ad + (ILCE ? " / " + ILCE : "")) : "Türkiye geneli", tum);
   rolSuzgecCiz("#rolSuzgec", tum);
   const q=kat($("#araMarka").value);
   const l=D.markalar.filter(m=>!q||kat(m.ad+" "+m.alan).includes(q));
@@ -1226,6 +1318,7 @@ function cizMD(){
        <span class="sagb">${g[il].length} nokta</span></div>`+
     g[il].map((x,ix)=>kayitHtml(x,ix+1,dzn)).join("")).join("");
   yazdirBilgiGuncelle(MD.ad, b.length);
+  altOzetGuncelle(MD.ad, tum);
 }
 rolBagla("#mdRolSuzgec", cizMD);
 
@@ -1274,9 +1367,13 @@ function dzBagla(){
   $("#duzenleOrtu").onclick=e=>{ if(e.target.id==="duzenleOrtu") duzenleKapat(); };
   $("#dzKaydet").onclick=dzKaydet;
 }
+function dzHazir(){
+  dzBagla();
+  if(AO_SON) altOzetGuncelle(AO_SON[0], AO_SON[1]);
+}
 if(document.readyState==="loading")
-  document.addEventListener("DOMContentLoaded", dzBagla);
-else dzBagla();
+  document.addEventListener("DOMContentLoaded", dzHazir);
+else dzHazir();
 
 function dzKaydet(){
   if(!DZ_HEDEF) return;
@@ -1482,6 +1579,14 @@ cizOzet();
 ekran('vOzet', false);
 try{ history.replaceState({ekran:'vOzet'},''); }catch(e){}
 </script>
+<div class="altozet" id="altOzet">
+  <span class="baslik" id="aoBaslik">Türkiye geneli</span>
+  <span class="kutu"><b id="aoSatis">—</b><i>yalnız satış</i></span>
+  <span class="kutu"><b id="aoServis">—</b><i>yalnız servis</i></span>
+  <span class="kutu"><b id="aoIkisi">—</b><i>satış + servis</i></span>
+  <span class="kutu vurgu"><b id="aoSatisNok">—</b><i>toplam satış noktası</i></span>
+  <span class="kutu"><b id="aoToplam">—</b><i>toplam bayi</i></span>
+</div>
 <div class="ortu" id="duzenleOrtu" style="display:none">
   <div class="duzenle">
     <h3>Kaydı düzenle</h3>
