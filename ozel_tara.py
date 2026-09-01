@@ -43,6 +43,7 @@ GEZINME = {
     "zelsun": "il_adi", "motolux": "il_adi", "csn": "il_adi",
     "musatti": "il_kodu",
     "leksas": "tek", "indian": "tek",
+    "aprilia": "tek", "piaggio": "tek", "kymco": "tek", "yiben": "tek",
     # Kimmi ve Lifan aynı modülü paylaşıyor; il listesi sitenin kendi
     # <select id="cities"> kutusundan okunuyor, ILLER sabitinden değil.
     "kimmi_lifan": "cities",
