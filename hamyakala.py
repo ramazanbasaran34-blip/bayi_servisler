@@ -187,6 +187,11 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "stmax-srv":       ("https://stmax.com.tr/yetkili-servisler/", "html"),
     "rewaco-srv2":     ("https://rewaco.com.tr/servis/", "html"),
 
+    # BMW: sayfa listeyi bu servisten çekiyor (kaynaktaki
+    # data-gcdm-dealer-data-url). Sayfanın kendisi düz isteğe yanıt
+    # vermiyor ama bu uç veriyor.
+    "bmw-api":  ("https://c2b-services-i.bmw.com/c2b-localsearch/services/cache/v4/ShowAll?country=tr&category=BD&clientid=UX_NICCE_FORM_DLO", "json"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
