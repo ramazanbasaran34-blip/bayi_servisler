@@ -47,6 +47,9 @@ GEZINME = {
     # Kimmi ve Lifan aynı modülü paylaşıyor; il listesi sitenin kendi
     # <select id="cities"> kutusundan okunuyor, ILLER sabitinden değil.
     "kimmi_lifan": "cities",
+    # ASP.NET WebForms: il seçimi URL'e yansımıyor, ViewState ile POST
+    # atmak gerekiyor. Ayrı bir akışla yürüyor (_postback_tara).
+    "altai": "postback", "regal": "postback",
 }
 
 MODULLER = list(GEZINME)
@@ -103,8 +106,57 @@ def _hedefler(mod_ad: str, mod) -> list[tuple[str, str, str, str]]:
     return out
 
 
+def _postback_tara(mod_ad: str, mod, log=print) -> tuple[dict, float]:
+    """ASP.NET WebForms siteleri: her il için ViewState taşıyarak POST.
+
+    Sunucu her yanıtta YENİ ViewState üretiyor; zincir bozulursa
+    "geçersiz durum" hatası gelir. O yüzden gövde her adımda yenileniyor.
+    """
+    toplam: dict[str, list[dict]] = {}
+    denendi = basarili = 0
+
+    for rol, url in mod.KAYNAKLAR.items():
+        oturum = requests.Session()
+        oturum.headers.update(BASLIK)
+        try:
+            ilk = oturum.get(url, timeout=60)
+            ilk.raise_for_status()
+            govde = ilk.text
+        except Exception as e:  # noqa: BLE001
+            log(f"    ✗ {mod.MARKA}/{rol}: {str(e)[:60]}")
+            continue
+
+        for deger, il_adi in mod.il_secenekleri(govde):
+            denendi += 1
+            try:
+                y = oturum.post(url, data=mod.post_govdesi(govde, deger),
+                                timeout=60, headers={"Referer": url})
+                y.raise_for_status()
+                govde = y.text          # zincir: sonraki ViewState
+                basarili += 1
+            except Exception as e:  # noqa: BLE001
+                log(f"    ✗ {mod.MARKA}/{rol}/{il_adi}: {str(e)[:50]}")
+                continue
+
+            try:
+                for r in mod.coz(rol, govde, url, il=il_adi):
+                    k = finalize(dict(r), mod.MARKA, url, {})
+                    if k:
+                        toplam.setdefault(mod.MARKA, []).append(k)
+            except Exception as e:  # noqa: BLE001
+                log(f"    ✗ ayrıştırma {il_adi}: {str(e)[:50]}")
+            time.sleep(0.3)
+
+    return toplam, (basarili / denendi if denendi else 0.0)
+
+
 def marka_tara(mod_ad: str, log=print) -> dict[str, list[dict]]:
     mod = importlib.import_module(f"ozel.{mod_ad}")
+    if GEZINME.get(mod_ad) == "postback":
+        toplam, kapsam = _postback_tara(mod_ad, mod, log)
+        for marka in toplam:
+            log(f"  {marka}: {len(toplam[marka])} kayıt (kapsam %{kapsam*100:.0f})")
+        return toplam
     kodlama = getattr(mod, "KODLAMA", None)
     oturum = requests.Session()
     oturum.headers.update(BASLIK)
