@@ -25,7 +25,7 @@ MODULLER = ["falcon", "kral", "vespa", "suzuki", "zelsun",
             "musatti", "csn", "motolux", "isotlar", "nanok", "meka"]
 
 # Marka başına beklenen en az kayıt (saha bilgisi / sayfadaki gerçek sayı)
-EN_AZ = {"Falcon": 900, "Kral": 300, "Vespa": 60, "Suzuki": 35,
+EN_AZ = {"Falcon": 900, "Kral": 300, "Vespa": 60, "Suzuki": 70,
          "Zelsun": 2, "Musatti": 5, "CSN": 3, "Motolux": 5,
          "Peugeot": 20, "Horwin": 5, "Lambretta": 5,
          "Nanok": 100, "Meka Motor": 100}
