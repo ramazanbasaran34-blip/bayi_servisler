@@ -1269,6 +1269,8 @@ const OZET=(()=>{
     x.toplam++; x[ROL_SINIF[b[B_ROL]]]++;
     if(b[B_IL])x.iller.add(b[B_IL]);
     if(b[B_ILCE])x.ilceler.add(b[B_IL]+"/"+b[B_ILCE]);});
+  // Excel çıktısı markaya göre kaynak adresi arıyor; sözlüğü de tut.
+  window.OZET_SOZ = o;
   return Object.values(o);
 })();
 $("#mrkSirala").onclick = e => {
@@ -1447,11 +1449,21 @@ function yazdirBilgiGuncelle(baslik, adet){
 }
 
 /* ================= DIŞA AKTARMA ================= */
-const BASLIK=["Marka","Ünvan / Bayi Adı","Rol","İl","İlçe","Adres","Telefon",
-              "Veri Durumu","Marka Sayfası"];
-const EN=[{wch:16},{wch:38},{wch:14},{wch:14},{wch:16},{wch:50},{wch:16},{wch:24},{wch:44}];
-const satirDisa = x => [x[B_MARKA],x[B_AD],ROL_AD[x[B_ROL]]||"",x[B_IL],x[B_ILCE],
-                        x[B_ADRES],x[B_TEL],x[B_DURUM],x[B_GIRIS]];
+/* Excel sütunları. Cari kod EN BAŞTA: aynı firma birden çok markada
+   geçiyor, koda göre eşleştirme yapılabilsin.
+   Kaynak adresleri satış ve servis olarak AYRI iki sütun. */
+const BASLIK=["Cari Kod","Marka","Ünvan / Bayi Adı","Rol","İl","İlçe","Adres",
+              "Telefon","Veri Durumu","Satış Kaynak Adresi","Servis Kaynak Adresi",
+              "Marka Sayfası"];
+const EN=[{wch:10},{wch:16},{wch:38},{wch:14},{wch:14},{wch:16},{wch:50},{wch:16},
+          {wch:14},{wch:52},{wch:52},{wch:40}];
+const MK = ad => (window.OZET_SOZ && window.OZET_SOZ[ad]) || {};
+const satirDisa = x => {
+  const m = MK(x[B_MARKA]);
+  return [x[B_KOD]||"", x[B_MARKA], x[B_AD], ROL_AD[x[B_ROL]]||"", x[B_IL],
+          x[B_ILCE], x[B_ADRES], x[B_TEL], x[B_DURUM],
+          m.satis_kaynak||"", m.servis_kaynak||"", x[B_GIRIS]];
+};
 
 async function xlsxYukle(){
   if(window.XLSX) return true;
