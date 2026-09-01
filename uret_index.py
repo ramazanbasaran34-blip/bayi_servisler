@@ -277,6 +277,14 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .rolsuz button.birlesik{border-color:#C9DAF0;background:#F5F9FF;font-weight:600}
 .rolsuz button.birlesik.secili{background:var(--murekkep);border-color:var(--murekkep);color:#fff}
 .rolsuz button.birlesik .n{opacity:.9}
+/* --- Sıralanabilir sütun başlıkları --- */
+.baslikcubuk.sirali .sirakol{cursor:pointer;user-select:none;
+  border-radius:4px;transition:background .12s,color .12s}
+.baslikcubuk.sirali .sirakol:hover{background:var(--hat2);color:var(--murekkep)}
+.baslikcubuk.sirali .sirakol.aktifsira{color:var(--murekkep);font-weight:700}
+.baslikcubuk.sirali .sirakol.aktifsira::after{
+  content:" ▾";font-size:9px;letter-spacing:0}
+.baslikcubuk.sirali .sirakol.aktifsira[data-yon="yukari"]::after{content:" ▴"}
 .sayi.vurgu{font-weight:700;color:var(--satis);
   background:var(--satis-z);border-radius:5px;padding:1px 5px}
 .kutu.toplam{border-color:var(--hat);background:#fbfcfe}
@@ -456,21 +464,21 @@ h2{font-size:23px;font-weight:700;text-align:center;letter-spacing:-.01em}
       <div>
         <h3 class="bslk">İllere göre <span id="ilAdet"></span></h3>
         <div class="liste">
-          <div class="baslikcubuk"><span class="ilkkol">İl</span><span class="sagb"><span class="k">Yalnız<br>satış</span><span class="k">Yalnız<br>servis</span><span class="k">Satış+<br>servis</span><span class="k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span class="k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+          <div class="baslikcubuk sirali" data-tablo="ozetIl"><span class="ilkkol sirakol" data-s="ad">İl</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Yalnız<br>satış</span><span data-s="yalnizServis" class="sirakol k">Yalnız<br>servis</span><span data-s="ikisi" class="sirakol k">Satış+<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
           <div id="ozetIl"></div>
         </div>
       </div>
       <div>
         <h3 class="bslk">Markalara göre <span id="mrkAdet"></span></h3>
         <div class="liste">
-          <div class="baslikcubuk"><span class="ilkkol">Marka</span><span class="sagb"><span class="k">Yalnız<br>satış</span><span class="k">Yalnız<br>servis</span><span class="k">Satış+<br>servis</span><span class="k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span class="k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+          <div class="baslikcubuk sirali" data-tablo="ozetMarka"><span class="ilkkol sirakol" data-s="ad">Marka</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Yalnız<br>satış</span><span data-s="yalnizServis" class="sirakol k">Yalnız<br>servis</span><span data-s="ikisi" class="sirakol k">Satış+<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
           <div id="ozetMarka"></div>
         </div>
       </div>
     </div>
     <h3 class="bslk" style="margin-top:20px">İlçe dağılımı <span id="ilceAdet"></span></h3>
     <div class="liste">
-      <div class="baslikcubuk"><span class="ilkkol">İl / İlçe</span><span class="sagb"><span class="k">Yalnız<br>satış</span><span class="k">Yalnız<br>servis</span><span class="k">Satış+<br>servis</span><span class="k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span class="k">Marka</span><span class="k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+      <div class="baslikcubuk sirali" data-tablo="ozetIlce"><span class="ilkkol sirakol" data-s="ad">İl / İlçe</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Yalnız<br>satış</span><span data-s="yalnizServis" class="sirakol k">Yalnız<br>servis</span><span data-s="ikisi" class="sirakol k">Satış+<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="marka" class="sirakol k">Marka</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
       <div id="ozetIlce"></div>
     </div>
   </section>
@@ -554,7 +562,7 @@ h2{font-size:23px;font-weight:700;text-align:center;letter-spacing:-.01em}
       <input class="ara" id="araTum" type="search" placeholder="Marka ara" autocomplete="off">
     </div>
     <div class="liste">
-      <div class="baslikcubuk"><span class="ilkkol">Marka</span><span class="sagb"><span class="k">Yalnız<br>satış</span><span class="k">Yalnız<br>servis</span><span class="k">Satış+<br>servis</span><span class="k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span class="k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+      <div class="baslikcubuk sirali" data-tablo="tumListe"><span class="ilkkol sirakol" data-s="ad">Marka</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Yalnız<br>satış</span><span data-s="yalnizServis" class="sirakol k">Yalnız<br>servis</span><span data-s="ikisi" class="sirakol k">Satış+<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
       <div id="tumListe"></div>
     </div>
     <div class="bos" id="tumBos" style="display:none">Sonuç yok.</div>
@@ -584,6 +592,10 @@ const ROL_SINIF = {satis:"satis", servis:"servis", satis_servis:"ikisi"};
 const ROL_AD    = {satis:"Satış", servis:"Servis", satis_servis:"Satış + Servis"};
 
 let IL=null, ILCE="", ROL="tum", MD=null, SIRA="sayi";
+/* Sütun başlığından sıralama durumu: tablo -> {anahtar, yon}.
+   Genel kapsamda; hem özet tabloları hem "Tüm markalar" okuyor. */
+const SIRA_DURUM = {};
+let basligiIsaretle = () => {};
 const VAR_VERI = D.bayiler.length > 0;
 
 /* ---------- üst bilgiler ---------- */
@@ -780,24 +792,90 @@ function cizOzet(){
           <span class="ok">›</span></span></button>`;}).join("");
   }
 
+  /* ---------- sıralanabilir özet tabloları ----------
+     Her sütun başlığı tıklanınca o sütuna göre sıralanıyor (Excel gibi).
+     İlk tıklama büyükten küçüğe; aynı başlığa tekrar tıklanınca ters
+     çevriliyor. Ad sütunu alfabetik başlıyor. */
+  // (SIRA_DURUM genel kapsamda tanımlı — bkz. ROL_SINIF yakını)
+
+  function siraDegerleri(v){
+    const c = sayRol(v);
+    return {yalnizSatis:c.yalnizSatis, yalnizServis:c.yalnizServis,
+            ikisi:c.ikisi, satisNoktasi:c.satisNoktasi,
+            servisNoktasi:c.servisNoktasi, toplam:c.toplam,
+            marka:new Set(v.map(x=>x[B_MARKA])).size};
+  }
+
+  function sirala(giris, tablo){
+    const d = SIRA_DURUM[tablo] || {anahtar:"toplam", yon:-1};
+    const l = [...giris];
+    if(d.anahtar === "ad"){
+      l.sort((a,b)=>(d.yon<0 ? -1 : 1) * a[0].localeCompare(b[0],"tr"));
+    } else {
+      l.sort((a,b)=>{
+        const fa=siraDegerleri(a[1])[d.anahtar]||0;
+        const fb=siraDegerleri(b[1])[d.anahtar]||0;
+        return (d.yon<0 ? fb-fa : fa-fb) || a[0].localeCompare(b[0],"tr");
+      });
+    }
+    return l;
+  }
+
+  basligiIsaretle = function(tablo){
+    const d = SIRA_DURUM[tablo] || {anahtar:"toplam", yon:-1};
+    document.querySelectorAll(`.baslikcubuk[data-tablo="${tablo}"] .sirakol`)
+      .forEach(h=>{
+        const secili = h.dataset.s === d.anahtar;
+        h.classList.toggle("aktifsira", secili);
+        h.dataset.yon = secili ? (d.yon<0 ? "asagi" : "yukari") : "";
+      });
+  };
+
+  const OZET_VERI = {};
+
+  function ozetCiz(tablo){
+    const {veri, tip, hedef} = OZET_VERI[tablo];
+    const l = sirala(veri, tablo);
+    $(hedef).innerHTML = tip==="ilce" ? ilceSatirlari(l) : satirlar(l, tip);
+    basligiIsaretle(tablo);
+  }
+
+  function siralamayiBagla(){
+    document.querySelectorAll(".baslikcubuk.sirali").forEach(bas=>{
+      bas.onclick = e => {
+        const h = e.target.closest(".sirakol");
+        if(!h) return;
+        const tablo = bas.dataset.tablo, a = h.dataset.s;
+        const d = SIRA_DURUM[tablo] || {anahtar:"toplam", yon:-1};
+        SIRA_DURUM[tablo] = (d.anahtar === a)
+          ? {anahtar:a, yon:-d.yon}
+          : {anahtar:a, yon:(a==="ad" ? 1 : -1)};   // sayılar büyükten küçüğe
+        if(OZET_VERI[tablo]) ozetCiz(tablo);
+        else if(tablo==="tumListe") cizTum();
+      };
+    });
+  }
+
   const ilG={};
   D.bayiler.forEach(b=>{ if(b[B_IL]) (ilG[b[B_IL]]||=[]).push(b); });
-  const ilS=Object.entries(ilG).sort((a,b)=>b[1].length-a[1].length);
+  const ilS=Object.entries(ilG);
   $("#ilAdet").textContent=`${ilS.length} il`;
-  $("#ozetIl").innerHTML=satirlar(ilS,"il");
+  OZET_VERI["ozetIl"]={veri:ilS, tip:"il", hedef:"#ozetIl"};
 
   const mG={};
   D.bayiler.forEach(b=>(mG[b[B_MARKA]]||=[]).push(b));
-  const mS=Object.entries(mG).sort((a,b)=>b[1].length-a[1].length);
+  const mS=Object.entries(mG);
   $("#mrkAdet").textContent=`${mS.length} marka`;
-  $("#ozetMarka").innerHTML=satirlar(mS,"mrk");
+  OZET_VERI["ozetMarka"]={veri:mS, tip:"mrk", hedef:"#ozetMarka"};
 
   // İlçe dağılımı — ilk 60, en yoğundan
   const iG={};
   D.bayiler.forEach(b=>{ if(b[B_ILCE]) (iG[b[B_IL]+"|"+b[B_ILCE]]||=[]).push(b); });
   const iS=Object.entries(iG).sort((a,b)=>b[1].length-a[1].length).slice(0,60);
   $("#ilceAdet").textContent=`en yoğun ${iS.length} ilçe · toplam ${ilceler.size}`;
-  $("#ozetIlce").innerHTML=iS.map(([k,v])=>{
+  OZET_VERI["ozetIlce"]={veri:iS, tip:"ilce", hedef:"#ozetIlce"};
+
+  function ilceSatirlari(liste){ return liste.map(([k,v])=>{
     const [il,ilce]=k.split("|"), c=sayRol(v);
     return `<button class="sat" data-il="${esc(il)}" data-ilce="${esc(ilce)}">
       <span class="govde"><span class="ustsatir"><span class="ad">${esc(ilce)}</span>
@@ -809,7 +887,10 @@ function cizOzet(){
         <span class="sayi k gen vurgu">${c.satisNoktasi}</span>
         <span class="sayi k">${new Set(v.map(x=>x[B_MARKA])).size}</span>
         <span class="sayi k" style="font-weight:700">${c.toplam}</span>
-        <span class="ok">›</span></span></button>`;}).join("");
+        <span class="ok">›</span></span></button>`;}).join(""); }
+
+  ["ozetIl","ozetMarka","ozetIlce"].forEach(ozetCiz);
+  siralamayiBagla();
   yazdirBilgiGuncelle("Genel Özet", D.bayiler.length);
 }
 function ozetTiklama(e){
@@ -1013,10 +1094,21 @@ $("#mrkSirala").onclick = e => {
 function cizTum(){
   const q=kat($("#araTum").value);
   let l=OZET.filter(m=>!q||kat(m.ad+" "+m.alan).includes(q));
-  const ol={sayi:m=>m.toplam, satis:m=>m.satis+m.ikisi, servis:m=>m.servis+m.ikisi};
-  l = SIRA in ol
-      ? [...l].sort((a,b)=>ol[SIRA](b)-ol[SIRA](a)||a.ad.localeCompare(b.ad,"tr"))
-      : [...l].sort((a,b)=>a.ad.localeCompare(b.ad,"tr"));
+  // Sütun başlığından sıralama (Excel gibi). Üstteki düğmeler de çalışır.
+  const ol={sayi:m=>m.toplam, toplam:m=>m.toplam,
+            satis:m=>m.satis+m.ikisi, servis:m=>m.servis+m.ikisi,
+            yalnizSatis:m=>m.satis, yalnizServis:m=>m.servis,
+            ikisi:m=>m.ikisi, satisNoktasi:m=>m.satis+m.ikisi,
+            servisNoktasi:m=>m.servis+m.ikisi};
+  const bd = SIRA_DURUM["tumListe"] || null;
+  const anahtar = bd ? bd.anahtar : SIRA;
+  const yon = bd ? bd.yon : -1;
+  l = anahtar in ol
+      ? [...l].sort((a,b)=>(yon<0 ? ol[anahtar](b)-ol[anahtar](a)
+                                         : ol[anahtar](a)-ol[anahtar](b))
+                            || a.ad.localeCompare(b.ad,"tr"))
+      : [...l].sort((a,b)=>(anahtar==="ad"?(yon<0?-1:1):1)*a.ad.localeCompare(b.ad,"tr"));
+  basligiIsaretle("tumListe");
   $("#tumBos").style.display=l.length?"none":"block";
   $("#tumListe").innerHTML=l.map(m=>{
     const t=m.toplam>0;
