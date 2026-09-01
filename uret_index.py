@@ -245,8 +245,13 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .rol.ikisi {background:var(--ikisi-z); color:var(--ikisi); border-color:#C9BCF0}
 
 /* ================= LİSTE ================= */
+/* overflow:hidden köşeleri kırpıyordu ama içindeki position:sticky
+   başlığı da öldürüyordu (sütun başlığı kaydırınca kayboluyordu).
+   Kırpma yerine ilk/son satıra köşe yarıçapı veriyoruz. */
 .liste{background:var(--kart);border:1px solid var(--hat2);border-radius:9px;
-  overflow:hidden;box-shadow:var(--golge)}
+  box-shadow:var(--golge)}
+.liste > *:first-child{border-top-left-radius:9px;border-top-right-radius:9px}
+.liste > *:last-child{border-bottom-left-radius:9px;border-bottom-right-radius:9px}
 .sat{display:flex;align-items:center;gap:10px;width:100%;text-align:left;
   background:none;border:0;border-bottom:1px solid var(--hat);padding:9px 13px;
   cursor:pointer;text-decoration:none;color:inherit}
@@ -330,7 +335,11 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   padding:9px 0 7px;margin-bottom:8px;border-bottom:1px solid var(--hat2);
   box-shadow:0 6px 12px -10px rgba(0,0,0,.35)}
 .yapiskan .ara{margin-bottom:7px}
-.baslikcubuk{position:sticky;top:var(--suzgec-y,0);z-index:20}
+/* Sütun başlığı kaydırırken görünür kalsın: üst şeridin ALTINA
+   yapışıyor. Değişken JS ile şeridin gerçek yüksekliğinden
+   hesaplanıyor (bkz. seritOlc). */
+.baslikcubuk{position:sticky;top:var(--serit-y,0);z-index:20;
+  background:#F0F4FA}
 .rolsuz{display:flex;gap:6px;flex-wrap:wrap}
 .rolsuz button{flex:1 1 auto;min-width:0;white-space:nowrap}
 .rolsuz button .n{font-family:var(--m);font-size:10.5px;opacity:.75;margin-left:4px}
