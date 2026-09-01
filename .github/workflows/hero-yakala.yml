@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       tanilama:
-        description: "Sadece tanılama çalıştır (evet/hayır)"
+        description: "evet = tanılama, yol = GET yolu ara, hayır = normal"
         required: false
         default: "hayır"
       hepsi:
@@ -34,6 +34,10 @@ jobs:
       - name: Tanılama (üç yöntem)
         if: inputs.tanilama == 'evet'
         run: python hero_tanila.py || true
+
+      - name: Yol arayışı
+        if: inputs.tanilama == 'yol'
+        run: python hero_yol.py || true
 
       - name: Yakala
         if: inputs.tanilama != 'evet'
