@@ -15,12 +15,12 @@
   "kayit": 299,
   "il": 53,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 299, 'yeni': 0, 'guncel': 299, 'supheli': 3, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 299, 'yeni': 0, 'guncel': 299, 'supheli': 0, 'mesaj': ''}"
  },
  "Lifan": {
-  "kayit": 107,
+  "kayit": 110,
   "il": 39,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 107, 'yeni': 0, 'guncel': 107, 'supheli': 2, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 110, 'yeni': 0, 'guncel': 110, 'supheli': 0, 'mesaj': ''}"
  }
 }
