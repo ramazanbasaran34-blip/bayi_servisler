@@ -52,6 +52,8 @@ GEZINME = {
     # Yuki: il listesi sayfadaki `provinces` dizisinden, adres
     # ?province=<slug> parametresiyle. Konum tespiti sadece kısayol.
     "yuki": "province", "rewaco": "tek",
+    # STMax: seçenek değeri zaten tam adres
+    "stmax": "adres_listesi",
     # ASP.NET WebForms: il seçimi URL'e yansımıyor, ViewState ile POST
     # atmak gerekiyor. Ayrı bir akışla yürüyor (_postback_tara).
     "altai": "postback", "regal": "postback",
@@ -76,6 +78,19 @@ def _hedefler(mod_ad: str, mod) -> list[tuple[str, str, str, str]]:
                 out.append((anahtar, "hepsi", url, ""))
             else:
                 out.append((mod.MARKA, anahtar, url, ""))
+        return out
+
+    if bicim == "adres_listesi":
+        # İl açılır kutusundaki değerler doğrudan adres.
+        import requests as _r
+        for rol, kok in mod.KAYNAKLAR.items():
+            try:
+                y = _r.get(kok, headers=BASLIK, timeout=45)
+                iller = mod.il_sluglari(y.text)
+            except Exception:  # noqa: BLE001
+                iller = []
+            for adres, ad in iller:
+                out.append((mod.MARKA, rol, adres, ad))
         return out
 
     if bicim == "province":
