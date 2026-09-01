@@ -3,7 +3,7 @@
   "kayit": 155,
   "il": 43,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 155, 'yeni': 37, 'guncel': 118, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 155, 'yeni': 0, 'guncel': 155, 'supheli': 0, 'mesaj': ''}"
  },
  "Indian": {
   "kayit": 5,
@@ -15,12 +15,12 @@
   "kayit": 299,
   "il": 53,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 299, 'yeni': 50, 'guncel': 249, 'supheli': 3, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 299, 'yeni': 0, 'guncel': 299, 'supheli': 3, 'mesaj': ''}"
  },
  "Lifan": {
-  "kayit": 110,
+  "kayit": 107,
   "il": 39,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 110, 'yeni': 43, 'guncel': 67, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 107, 'yeni': 0, 'guncel': 107, 'supheli': 2, 'mesaj': ''}"
  }
 }
