@@ -52,6 +52,30 @@ def uret(cikti="index.html", markalar_json="markalar.json", db_yolu="bayiler.db"
     # Marka → resmi sayfa adresleri (doğrudan giriş sütunu için)
     link = {m["ad"]: m for m in markalar}
 
+    # Kaynak adresleri brands.yaml'den: markalar.json'da yalnızca bayi
+    # linki var, Excel'de servis linki de görünsün diye tarifteki
+    # kaynakları rolüne göre ayırıyoruz.
+    try:
+        import yaml
+        tarif = (yaml.safe_load(Path("brands.yaml").read_text(encoding="utf-8"))
+                 or {}).get("markalar", {})
+    except Exception:  # noqa: BLE001
+        tarif = {}
+    for m in markalar:
+        kaynaklar = (tarif.get(m["ad"]) or {}).get("kaynaklar") or []
+        satis_u, servis_u = [], []
+        for k in kaynaklar:
+            u = (k.get("url") or "").split("{")[0].rstrip("?&")
+            if not u:
+                continue
+            rol = k.get("rol") or ""
+            if rol in ("satis", "satis_servis", "hepsi"):
+                satis_u.append(u)
+            if rol in ("servis", "satis_servis", "hepsi"):
+                servis_u.append(u)
+        m["satis_kaynak"] = " | ".join(dict.fromkeys(satis_u))
+        m["servis_kaynak"] = " | ".join(dict.fromkeys(servis_u))
+
     # Kompakt dizi: [marka, ad, il, ilce, adres, tel, durum, rol, giris_url]
     satirlar = []
     for k in kayitlar:
@@ -285,6 +309,12 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .baslikcubuk.sirali .sirakol.aktifsira::after{
   content:" ▾";font-size:9px;letter-spacing:0}
 .baslikcubuk.sirali .sirakol.aktifsira[data-yon="yukari"]::after{content:" ▴"}
+/* --- Sıra numarası --- */
+.sirano{flex:0 0 26px;text-align:right;font-family:var(--m);font-size:11px;
+  color:var(--celik);opacity:.75;font-variant-numeric:tabular-nums}
+.sirano.kno{flex:0 0 auto;margin-right:6px;background:var(--hat2);
+  border-radius:4px;padding:1px 5px;font-size:10.5px}
+@media (max-width:620px){ .sirano{flex-basis:20px;font-size:10px} }
 .sayi.vurgu{font-weight:700;color:var(--satis);
   background:var(--satis-z);border-radius:5px;padding:1px 5px}
 .kutu.toplam{border-color:var(--hat);background:#fbfcfe}
@@ -295,7 +325,7 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   :root{--kol:36px;--kol-gen:44px}
   .baslikcubuk,.sat{gap:6px}
   .baslikcubuk .sagb,.sat .sag{gap:6px}
-  .sat .govde,.sat>.ad{min-width:76px}
+  .sat .govde,.sat>.ad{min-width:92px}
   .bslk{font-size:18px}
   h2{font-size:21px}
   .kutu .n{font-size:23px}
@@ -489,15 +519,10 @@ h2{font-size:23px;font-weight:700;text-align:center;letter-spacing:-.01em}
     <div class="altbar" id="ilUstbar" style="display:none">
       <button class="btn ana" id="btnTumIlXls">Tüm illeri Excel indir</button>
     </div>
-    <div class="sirala" id="ilSirala">
-      <span class="et">Sırala</span>
-      <button data-s="sayi" class="secili">Nokta sayısına göre</button>
-      <button data-s="ad">A → Z</button>
-      <button data-s="plaka">Plaka koduna göre</button>
-    </div>
     <div class="yapiskan">
       <input class="ara" id="araIl" type="search" placeholder="İl adı veya plaka kodu" autocomplete="off">
     </div>
+    <div class="baslikcubuk sirali" data-tablo="ilListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Yalnız<br>satış</span><span data-s="yalnizServis" class="sirakol k">Yalnız<br>servis</span><span data-s="ikisi" class="sirakol k">Satış+<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
     <div class="liste" id="ilListe"></div>
     <div class="bos" id="ilBos" style="display:none">Bu isimde il yok.</div>
   </section>
@@ -771,10 +796,11 @@ function cizOzet(){
   const enCok = v => Math.max(1, ...v.map(x=>x[1].length));
   function satirlar(veri, tip){
     const m=enCok(veri);
-    return veri.map(([ad,v])=>{
+    return veri.map(([ad,v],ix)=>{
       const c=sayRol(v);
       const p=(D.iller.find(x=>x.ad===ad)||{}).plaka;
       return `<button class="sat" data-${tip}="${esc(ad)}">
+        <span class="sirano">${ix+1}</span>
         ${p?`<span class="plaka"><span class="tr">TR</span><span class="kod">${p}</span></span>`:""}
         <span class="govde">
           <span class="ustsatir"><span class="ad">${esc(ad)}</span></span>
@@ -852,6 +878,7 @@ function cizOzet(){
           : {anahtar:a, yon:(a==="ad" ? 1 : -1)};   // sayılar büyükten küçüğe
         if(OZET_VERI[tablo]) ozetCiz(tablo);
         else if(tablo==="tumListe") cizTum();
+        else if(tablo==="ilListe") cizIl();
       };
     });
   }
@@ -875,9 +902,10 @@ function cizOzet(){
   $("#ilceAdet").textContent=`en yoğun ${iS.length} ilçe · toplam ${ilceler.size}`;
   OZET_VERI["ozetIlce"]={veri:iS, tip:"ilce", hedef:"#ozetIlce"};
 
-  function ilceSatirlari(liste){ return liste.map(([k,v])=>{
+  function ilceSatirlari(liste){ return liste.map(([k,v],ix)=>{
     const [il,ilce]=k.split("|"), c=sayRol(v);
     return `<button class="sat" data-il="${esc(il)}" data-ilce="${esc(ilce)}">
+      <span class="sirano">${ix+1}</span>
       <span class="govde"><span class="ustsatir"><span class="ad">${esc(ilce)}</span>
         <span class="men">${esc(il)}</span></span></span>
       <span class="sag">
@@ -951,36 +979,41 @@ $("#btnOzetYaz2").onclick = () => window.print();
 
 /* ---------- iller ---------- */
 let IL_SIRA = "sayi";      // varsayılan: en çok noktadan aza
-$("#ilSirala").onclick = e => {
-  const b=e.target.closest("button"); if(!b) return;
-  IL_SIRA=b.dataset.s;
-  [...$("#ilSirala").querySelectorAll("button")].forEach(x=>
-    x.classList.toggle("secili", x===b));
-  cizIl();
-};
+/* İl sıralaması artık sütun başlıklarından (bkz. baslikcubuk[data-tablo=ilListe]) */
+
 function cizIl(){
   $("#ilUstbar").style.display = VAR_VERI ? "flex":"none";
   const q=kat($("#araIl").value);
   let l=D.iller.filter(i=>!q||kat(i.ad).includes(q)||i.plaka.startsWith(q));
-  const say=i=>D.bayiler.filter(x=>x[B_IL]===i.ad).length;
-  if(IL_SIRA==="sayi" && VAR_VERI)
-    l=[...l].sort((a,b)=>say(b)-say(a)||a.ad.localeCompare(b.ad,"tr"));
-  else if(IL_SIRA==="plaka") l=[...l].sort((a,b)=>a.plaka.localeCompare(b.plaka));
-  else l=[...l].sort((a,b)=>a.ad.localeCompare(b.ad,"tr"));
+
+  // Her il için sayaçlar; sıralama da bunlar üzerinden.
+  const say = {};
+  l.forEach(i=>{ say[i.ad]=sayRol(D.bayiler.filter(x=>x[B_IL]===i.ad)); });
+
+  const d = SIRA_DURUM["ilListe"] || {anahtar:"toplam", yon:-1};
+  if(d.anahtar==="ad")
+    l=[...l].sort((a,b)=>(d.yon<0?-1:1)*a.ad.localeCompare(b.ad,"tr"));
+  else
+    l=[...l].sort((a,b)=>{
+      const fa=say[a.ad][d.anahtar]||0, fb=say[b.ad][d.anahtar]||0;
+      return (d.yon<0 ? fb-fa : fa-fb) || a.ad.localeCompare(b.ad,"tr");
+    });
+
   $("#ilBos").style.display=l.length?"none":"block";
-  $("#ilListe").innerHTML=l.map(i=>{
-    const b=D.bayiler.filter(x=>x[B_IL]===i.ad);
-    const n=VAR_VERI?b.length:null;
-    const s=b.filter(x=>x[B_ROL]==="satis"||x[B_ROL]==="satis_servis").length;
-    const v=b.filter(x=>x[B_ROL]==="servis"||x[B_ROL]==="satis_servis").length;
+  $("#ilListe").innerHTML=l.map((i,ix)=>{
+    const c=say[i.ad];
     return `<button class="sat" data-slug="${i.slug}">
-      <span class="plaka"><span class="tr">TR</span><span class="kod">${i.plaka}</span></span>
-      <span class="ad">${esc(i.ad)}</span>
+      <span class="sirano">${ix+1}</span>
+      <span class="govde"><span class="ustsatir"><span class="ad">${esc(i.ad)}</span>
+        <span class="men">${i.plaka}</span></span></span>
       <span class="sag">
-        ${n?`<span class="rol satis">${s} satış</span>
-             <span class="rol servis">${v} servis</span>`:""}
-        <span class="sayi ${n?"":"yok"}">${n||"—"}</span>
+        <span class="sayi k" style="color:var(--satis)">${c.yalnizSatis}</span>
+        <span class="sayi k" style="color:var(--servis)">${c.yalnizServis}</span>
+        <span class="sayi k" style="color:var(--ikisi)">${c.ikisi}</span>
+        <span class="sayi k gen vurgu">${c.satisNoktasi}</span>
+        <span class="sayi k" style="font-weight:700">${c.toplam}</span>
         <span class="ok">›</span></span></button>`;}).join("");
+  basligiIsaretle("ilListe");
 }
 $("#ilListe").onclick = e => {
   const b=e.target.closest(".sat"); if(!b) return;
@@ -1006,10 +1039,10 @@ $("#ilceCipler").onclick=e=>{
 };
 
 /* ---------- kayıt kartı ---------- */
-function kayitHtml(x){
+function kayitHtml(x, no){
   const sn=ROL_SINIF[x[B_ROL]];
   return `<div class="kayit ${sn} ${x[B_DURUM]!=="Güncel"?"eski":""}">
-    <div class="k1"><span class="kad">${esc(x[B_AD])}</span>
+    <div class="k1">${no?`<span class="sirano kno">${no}</span>`:""}<span class="kad">${esc(x[B_AD])}</span>
       <span class="rol ${sn}">${esc(ROL_AD[x[B_ROL]]||"")}</span>
       ${x[B_DURUM]!=="Güncel"?`<span class="rol" style="background:var(--uyari-z);color:var(--uyari);border-color:#F0D9B5">${esc(x[B_DURUM])}</span>`:""}
     </div>
@@ -1031,6 +1064,7 @@ function cizMarka(){
   const q=kat($("#araMarka").value);
   const l=D.markalar.filter(m=>!q||kat(m.ad+" "+m.alan).includes(q));
 
+  let mSira=0;
   $("#markaListe").innerHTML=l.map(m=>{
     const bs=tum.filter(x=>x[B_MARKA]===m.ad && rolGecer(x));
     if(!bs.length){
@@ -1043,7 +1077,9 @@ function cizMarka(){
     }
     const acik=ACIK.has(m.ad);
     const s=bs.filter(x=>x[B_ROL]!=="servis").length, v=bs.filter(x=>x[B_ROL]!=="satis").length;
+    mSira++;
     return `<button class="sat" data-m="${esc(m.ad)}">
+        <span class="sirano">${mSira}</span>
         <span class="ad">${esc(m.ad)}</span>
         <span class="sag">
           ${s?`<span class="rol satis">${s} satış</span>`:""}
@@ -1076,6 +1112,7 @@ $("#kopyala").onclick=async()=>{
 const OZET=(()=>{
   const o={};
   D.markalar.forEach(m=>o[m.ad]={ad:m.ad,alan:m.alan,bayi_link:m.bayi,
+    satis_kaynak:m.satis_kaynak||"", servis_kaynak:m.servis_kaynak||"",
     site:m.site,tazelik:m.tazelik||"",satis:0,servis:0,ikisi:0,toplam:0,
     iller:new Set(),ilceler:new Set()});
   D.bayiler.forEach(b=>{const x=o[b[B_MARKA]]; if(!x)return;
@@ -1110,9 +1147,9 @@ function cizTum(){
       : [...l].sort((a,b)=>(anahtar==="ad"?(yon<0?-1:1):1)*a.ad.localeCompare(b.ad,"tr"));
   basligiIsaretle("tumListe");
   $("#tumBos").style.display=l.length?"none":"block";
-  $("#tumListe").innerHTML=l.map(m=>{
+  $("#tumListe").innerHTML=l.map((m,ix)=>{
     const t=m.toplam>0;
-    const ic=`<span class="ad">${esc(m.ad)}</span>
+    const ic=`<span class="sirano">${ix+1}</span><span class="ad">${esc(m.ad)}</span>
       <span class="sag">
         <span class="sayi k ${m.satis?"":"yok"}" style="color:var(--satis)">${m.satis||"—"}</span>
         <span class="sayi k ${m.servis?"":"yok"}" style="color:var(--servis)">${m.servis||"—"}</span>
@@ -1149,7 +1186,7 @@ function cizMD(){
   $("#mdListe").innerHTML=Object.keys(g).sort((a,c)=>a.localeCompare(c,"tr")).map(il=>
     `<div class="baslikcubuk"><span>${esc(il)}</span>
        <span class="sagb">${g[il].length} nokta</span></div>`+
-    g[il].map(kayitHtml).join("")).join("");
+    g[il].map((x,ix)=>kayitHtml(x,ix+1)).join("")).join("");
   yazdirBilgiGuncelle(MD.ad, b.length);
 }
 rolBagla("#mdRolSuzgec", cizMD);
@@ -1260,19 +1297,22 @@ async function excelIndir(kap,btn){
     veri=D.bayiler; ad="tum-turkiye-bayi-servis";
     const o=[["Marka","Sadece Satış","Sadece Servis","Satış+Servis",
               "Satış Yapan Toplam","Servis Veren Toplam","Nokta Sayısı",
-              "İl","İlçe","Veri Durumu","Kaynak"]];
+              "İl","İlçe","Veri Durumu",
+              "Satış Kaynak Adresi","Servis Kaynak Adresi","Marka Sitesi"]];
     [...OZET].sort((a,b)=>b.toplam-a.toplam||a.ad.localeCompare(b.ad,"tr")).forEach(m=>
       o.push([m.ad,m.satis,m.servis,m.ikisi,
               m.satis+m.ikisi, m.servis+m.ikisi, m.toplam,
               m.iller.size,m.ilceler.size,
-              m.tazelik||(m.toplam?"Güncel":"Henüz taranmadı"),m.bayi_link||m.site]));
+              m.tazelik||(m.toplam?"Güncel":"Henüz taranmadı"),
+              m.satis_kaynak||m.bayi_link||"", m.servis_kaynak||"", m.site||""]));
     const ts=veri.filter(b=>b[B_ROL]==="satis").length;
     const tv=veri.filter(b=>b[B_ROL]==="servis").length;
     const ti=veri.filter(b=>b[B_ROL]==="satis_servis").length;
     o.push([],["TOPLAM",ts,tv,ti,ts+ti,tv+ti,veri.length,
       new Set(veri.map(b=>b[B_IL]).filter(Boolean)).size,"","",""]);
     sayfaEkle(wb,"Marka Özeti",o,[{wch:20},{wch:13},{wch:13},{wch:13},{wch:20},
-                                  {wch:20},{wch:12},{wch:7},{wch:8},{wch:24},{wch:44}]);
+                                  {wch:20},{wch:12},{wch:7},{wch:8},{wch:16},
+                                  {wch:46},{wch:46},{wch:32}]);
     sayfaEkle(wb,"Tüm Kayıtlar",[BASLIK,...veri.map(satirDisa)],EN);
     [...new Set(veri.map(b=>b[B_MARKA]))].sort((a,b)=>a.localeCompare(b,"tr")).forEach(m=>{
       const a=veri.filter(b=>b[B_MARKA]===m);
