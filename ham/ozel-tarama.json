@@ -3,12 +3,12 @@
   "kayit": 273,
   "il": 54,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 273, 'yeni': 214, 'guncel': 59, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 273, 'yeni': 0, 'guncel': 273, 'supheli': 0, 'mesaj': ''}"
  },
  "Regal Raptor": {
-  "kayit": 623,
+  "kayit": 624,
   "il": 68,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 623, 'yeni': 456, 'guncel': 167, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 624, 'yeni': 0, 'guncel': 624, 'supheli': 0, 'mesaj': ''}"
  }
 }
