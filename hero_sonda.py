@@ -40,11 +40,20 @@ STATIK = [
 ]
 
 # 2) JS dosyası nerede? Yaygın yollar denenir.
+# Statik dosyalar 200 dönüyor (Cloudflare yalnızca PHP'yi engelliyor),
+# yani JS dosyasını bulabilirsek okuyabiliriz. Yol geniş taranıyor.
 JS_ADAYLARI = [
     "/js/script.js", "/js/main.js", "/js/custom.js", "/js/site.js",
+    "/js/genel.js", "/js/hero.js", "/js/app.js", "/js/general.js",
+    "/js/functions.js", "/js/jquery.js", "/js/ajax.js", "/js/islem.js",
     "/design/js/script.js", "/design/js/main.js", "/design/js/custom.js",
-    "/assets/js/script.js", "/assets/js/main.js",
-    "/js/genel.js", "/js/hero.js", "/design/script.js",
+    "/design/js/genel.js", "/design/script.js", "/design/main.js",
+    "/design/custom.js", "/design/js.js", "/design/genel.js",
+    "/assets/js/script.js", "/assets/js/main.js", "/assets/js/custom.js",
+    "/scripts/main.js", "/scripts/script.js",
+    "/inc/js.js", "/inc/script.js",
+    # Görseller /design/ ve /images/ altında; JS de orada olabilir
+    "/images/script.js", "/images/js.js",
 ]
 
 # 3) Olası AJAX uçları (site /inc/price.php kullanıyor, aynı klasör mantığı)
