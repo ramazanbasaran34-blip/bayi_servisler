@@ -51,7 +51,7 @@ GEZINME = {
     "kimmi_lifan": "cities",
     # Yuki: il listesi sayfadaki `provinces` dizisinden, adres
     # ?province=<slug> parametresiyle. Konum tespiti sadece kısayol.
-    "yuki": "province",
+    "yuki": "province", "rewaco": "tek",
     # ASP.NET WebForms: il seçimi URL'e yansımıyor, ViewState ile POST
     # atmak gerekiyor. Ayrı bir akışla yürüyor (_postback_tara).
     "altai": "postback", "regal": "postback",
