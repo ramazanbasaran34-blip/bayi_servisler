@@ -4,15 +4,19 @@ name: Bayileri tara ve siteyi yayınla
 # sınıra dayanıyordu; 10 grup paralel çalışınca her grup ~1 saatte bitiyor.
 
 on:
-  # GECELİK OTOMATİK TARAMA ASKIYA ALINDI.
+  # GECELİK OTOMATİK TARAMA AÇIK.
   #
-  # Sistem henüz oturmadı: bazı markalarda etkileşim tarifleri eksik ve
-  # gece çalışan tarama hem elle başlatılan denemelerle çakışıyor hem de
-  # yarım veriyi üstüne yazıyor. Tarifler tamamlanınca aşağıdaki iki satır
-  # yeniden açılacak.
+  # Askıya alınma sebebi (eksik tarifler) ortadan kalktı: 62 markanın
+  # hepsinde veri var. Her gece o güne düşen ~9 marka taranıyor; markalar
+  # alfabetik sırayla haftanın yedi gününe dağıtıldığı için tek gecede
+  # 62 siteye gidilmiyor.
   #
-  # schedule:
-  #   - cron: "0 0 * * *"
+  # Saat: 01:30 UTC = Türkiye'de 04:30. Hem trafiğin en düşük olduğu saat
+  # hem de GitHub'ın tam saat başlarındaki yoğunluğundan kaçınıyor.
+  #
+  # elle: true işaretli markalar (Hero, Harley-Davidson) atlanır.
+  schedule:
+    - cron: "30 1 * * *"
   workflow_dispatch:
     inputs:
       markalar:
