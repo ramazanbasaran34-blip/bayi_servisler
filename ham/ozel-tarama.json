@@ -1,8 +1,8 @@
 {
- "Rebat": {
-  "kayit": 134,
-  "il": 45,
+ "BMW": {
+  "kayit": 20,
+  "il": 14,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 134, 'yeni': 133, 'guncel': 1, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 20, 'yeni': 19, 'guncel': 1, 'supheli': 0, 'mesaj': ''}"
  }
 }
