@@ -178,6 +178,15 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "korlas-servis":   ("https://korlas.com.tr/servis/", "html"),
     "bmw-moto":        ("https://www.bmw-motorrad.com.tr/tr/ssl/yetkili-satici-ve-servisler.html", "html"),
 
+    # Yuki: konum tespiti sadece kısayol; asıl seçim ?province=<slug>
+    "yuki-satis-ank":  ("https://yukimotor.com.tr/satis-noktalari/?province=ankara", "html"),
+    "yuki-servis-ank": ("https://yukimotor.com.tr/servis-noktalari/?province=ankara", "html"),
+    # Rebat ve Harley — henüz hiç yakalanmadı
+    "rebat":           ("https://rebatmotor.com/satis-ve-servisler-cloned-1111/", "html"),
+    "harley":          ("https://www.harley-davidson.com/tr/tr/tools/find-a-dealer.html", "html"),
+    "stmax-srv":       ("https://stmax.com.tr/yetkili-servisler/", "html"),
+    "rewaco-srv2":     ("https://rewaco.com.tr/servis/", "html"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
