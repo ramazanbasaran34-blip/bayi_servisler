@@ -329,7 +329,7 @@ markalar:
     mode: browser
     kaynaklar:
       - rol: satis
-        url: "https://www.suzuki.com.tr/tr/motosiklet/satis.html"
+        url: "https://www.suzuki.com.tr/tr/motosiklet/yetkili-saticilar.html"
       - rol: servis
         url: "https://www.suzuki.com.tr/tr/motosiklet/yetkili-servisler.html"
 
