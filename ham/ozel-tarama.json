@@ -1,8 +1,14 @@
 {
- "Yuki": {
-  "kayit": 820,
-  "il": 76,
+ "Rewaco": {
+  "kayit": 10,
+  "il": 8,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 820, 'yeni': 672, 'guncel': 148, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 10, 'yeni': 10, 'guncel': 0, 'supheli': 0, 'mesaj': ''}"
+ },
+ "STMax": {
+  "kayit": 389,
+  "il": 63,
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 389, 'yeni': 389, 'guncel': 0, 'supheli': 0, 'mesaj': ''}"
  }
 }
