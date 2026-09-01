@@ -58,6 +58,10 @@ jobs:
         if: inputs.hedefler == '' || contains(inputs.hedefler, 'sonda2')
         run: python sonda2.py || true
 
+      - name: ASP.NET postback sondası
+        if: inputs.hedefler == '' || contains(inputs.hedefler, 'aspnet')
+        run: pip install beautifulsoup4 lxml PyYAML && python aspnet_sonda.py || true
+
       - name: Özeti göster
         run: cat ham/ozet.json
 
