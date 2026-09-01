@@ -150,6 +150,11 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "leksas-rest":     ("https://www.leksas.com.tr/wp-json/wp/v2/pages/72", "json"),
     "indian-satis":    ("https://www.indianmotorcycle.com.tr/find-a-dealer/list-bayiler/", "html"),
 
+    # Kimmi / Lifan: il seçimi düz URL'e gidiyor (/servisler/ankara)
+    "kimmi-srv-ank":   ("https://www.kimmimotor.com/servisler/ankara", "html"),
+    "kimmi-bayi-ank":  ("https://www.kimmimotor.com/bayiler/ankara", "html"),
+    "lifan-srv-ank":   ("https://www.lifanmotor.com.tr/servisler/ankara", "html"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
