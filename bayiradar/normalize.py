@@ -77,10 +77,21 @@ def title_tr(s: str) -> str:
 
 
 def clean_text(s: str) -> str:
-    """HTML'den gelen metni temizler: &nbsp;, kırık boşluklar, satır sonları."""
+    """HTML'den gelen metni temizler ve BOZUK TÜRKÇEYİ ONARIR.
+
+    Kodlama başlığı göndermeyen sitelerde Türkçe harfler bozuk geliyor
+    ("MUSTAFAKEMALPAÅA", "SARAÃOÄLU"). Bu onarım eskiden yalnızca il/ilçe
+    eşleşmesinde yapılıyordu; firma adı ve adres bozuk hâliyle kaydediliyor,
+    aramada ve tekilleştirmede eşleşmiyordu. Artık HER metin alanı buradan
+    geçtiği için bütün markalarda tek noktadan onarılıyor.
+    """
     if not s:
         return ""
+    s = mojibake_onar(s)
     s = s.replace("\xa0", " ").replace("\u200b", "")
+    # Türkçe "İ" sonrası kalan birleştirici nokta (U+0307) — casefold
+    # artığı; anahtar üretiminde sessizce eşleşmeyi bozuyordu.
+    s = s.replace("\u0307", "")
     return re.sub(r"\s+", " ", s).strip()
 
 
