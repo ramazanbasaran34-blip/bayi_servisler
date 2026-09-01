@@ -483,7 +483,11 @@ markalar:
 
   # 37. HARLEY DAVIDSON  ·  ABD  ·  www.harley-davidson.com
   "Harley-Davidson":
-    mode: browser
+    # TARANMIYOR. Site Cloudflare korumalı ve GitHub Actions IP'lerinden
+    # 403 dönüyor. Veri elle/harley-davidson.json dosyasında tutuluyor ve
+    # elle_tara.py ile işleniyor. Güncelleme sayfadaki düzenleme
+    # ekranından ya da doğrudan o dosyadan yapılır.
+    elle: true
     kaynaklar:
       - rol: satis_servis
         url: "https://www.harley-davidson.com/tr/tr/tools/find-a-dealer.html"
