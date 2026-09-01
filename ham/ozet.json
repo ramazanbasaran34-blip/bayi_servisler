@@ -1088,7 +1088,7 @@
   "kod": 404,
   "son_url": "https://rebatmotor.com/satis-ve-servisler-cloned-1111/",
   "boyut": 58014,
-  "tel_toplam": 5,
+  "tel_toplam": 6,
   "tel_script_ici": 1
  },
  "harley": {
@@ -1170,5 +1170,26 @@
   "boyut": 199416,
   "tel_toplam": 341,
   "tel_script_ici": 330
+ },
+ "rebat-servis": {
+  "url": "https://rebatmotor.com/servis/",
+  "kod": 200,
+  "son_url": "https://rebatmotor.com/servis/",
+  "boyut": 473091,
+  "tel_toplam": 130,
+  "tel_script_ici": 0
+ },
+ "rebat-bayi": {
+  "url": "https://rebatmotor.com/bayi/",
+  "kod": 200,
+  "son_url": "https://rebatmotor.com/bayi-ekleme-paneli/",
+  "boyut": 59551,
+  "tel_toplam": 6,
+  "tel_script_ici": 1,
+  "yonlendi": true
+ },
+ "bmw-yeni": {
+  "url": "https://www.bmw-motorrad.com.tr/tr/ssl/yetkili-satici-ve-servisler.html",
+  "hata": "ReadTimeout: HTTPSConnectionPool(host='www.bmw-motorrad.com.tr', port=443): Read timed out. (read timeout=120)"
  }
 }
