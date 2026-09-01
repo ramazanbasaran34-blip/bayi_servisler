@@ -1,0 +1,216 @@
+{
+ "statik": [
+  {
+   "yol": "/images/ajax-loader-small.gif",
+   "kod": 200,
+   "boyut": 847,
+   "tip": "image/gif"
+  },
+  {
+   "yol": "/design/hero-logo-lg.png",
+   "kod": 200,
+   "boyut": 3302,
+   "tip": "image/png"
+  },
+  {
+   "yol": "/design/dealer.png",
+   "kod": 200,
+   "boyut": 1731,
+   "tip": "image/png"
+  },
+  {
+   "yol": "/images/search-icon.gif",
+   "kod": 200,
+   "boyut": 160,
+   "tip": "image/gif"
+  }
+ ],
+ "js": [
+  {
+   "yol": "/js/script.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/js/main.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/js/custom.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/js/site.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/design/js/script.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/design/js/main.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/design/js/custom.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/assets/js/script.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/assets/js/main.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/js/genel.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/js/hero.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  },
+  {
+   "yol": "/design/script.js",
+   "kod": 404,
+   "boyut": 1238,
+   "tip": "text/html",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html> <html style=\"height:100%\"> <head> <meta name=\"viewport\" content=\"width=dev"
+  }
+ ],
+ "uclar": [
+  {
+   "yol": "/inc/dealer.php?city=10",
+   "kod": 403,
+   "boyut": 5726,
+   "tip": "text/html; charset=UTF-8",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"C"
+  },
+  {
+   "yol": "/inc/bayi.php?city=10",
+   "kod": 403,
+   "boyut": 5720,
+   "tip": "text/html; charset=UTF-8",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"C"
+  },
+  {
+   "yol": "/inc/dealers.php?city=10",
+   "kod": 403,
+   "boyut": 5729,
+   "tip": "text/html; charset=UTF-8",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"C"
+  },
+  {
+   "yol": "/inc/servis.php?city=10",
+   "kod": 403,
+   "boyut": 5726,
+   "tip": "text/html; charset=UTF-8",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"C"
+  },
+  {
+   "yol": "/inc/service.php?city=10",
+   "kod": 403,
+   "boyut": 5729,
+   "tip": "text/html; charset=UTF-8",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"C"
+  },
+  {
+   "yol": "/inc/bayiara.php?city=10",
+   "kod": 403,
+   "boyut": 5729,
+   "tip": "text/html; charset=UTF-8",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"C"
+  },
+  {
+   "yol": "/inc/dealer.php?city_box=10",
+   "kod": 403,
+   "boyut": 5738,
+   "tip": "text/html; charset=UTF-8",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"C"
+  },
+  {
+   "yol": "/inc/bayi.php?city_box=10",
+   "kod": 403,
+   "boyut": 5732,
+   "tip": "text/html; charset=UTF-8",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"C"
+  },
+  {
+   "yol": "/ajax/dealer.php?city=10",
+   "kod": 403,
+   "boyut": 5729,
+   "tip": "text/html; charset=UTF-8",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"C"
+  },
+  {
+   "yol": "/ajax/bayi.php?city=10",
+   "kod": 403,
+   "boyut": 5723,
+   "tip": "text/html; charset=UTF-8",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"C"
+  },
+  {
+   "yol": "/inc/price.php?id=31",
+   "kod": 403,
+   "boyut": 5717,
+   "tip": "text/html; charset=UTF-8",
+   "tel": 0,
+   "ilk": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"C"
+  }
+ ]
+}
