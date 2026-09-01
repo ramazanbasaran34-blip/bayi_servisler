@@ -3,12 +3,12 @@
   "kayit": 275,
   "il": 64,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 275, 'yeni': 7, 'guncel': 268, 'supheli': 2, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 275, 'yeni': 0, 'guncel': 275, 'supheli': 2, 'mesaj': ''}"
  },
  "Kanuni": {
   "kayit": 275,
   "il": 64,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 275, 'yeni': 7, 'guncel': 268, 'supheli': 2, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 275, 'yeni': 0, 'guncel': 275, 'supheli': 2, 'mesaj': ''}"
  }
 }
