@@ -359,13 +359,13 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .altozet{position:fixed;left:0;right:0;bottom:0;z-index:45;
   background:#fff;border-top:2px solid var(--murekkep);
   box-shadow:0 -6px 18px -10px rgba(16,32,56,.4);
-  display:flex;flex-direction:column;gap:5px;padding:7px 14px 8px;
+  display:flex;flex-direction:column;gap:6px;padding:11px 12px 12px;
   font-family:var(--m)}
 .altozet .aoust{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
-.altozet .baslik{font-weight:700;font-size:13px;color:var(--murekkep);
+.altozet .baslik{font-weight:700;font-size:15px;color:var(--murekkep);
   white-space:nowrap;font-family:var(--d);flex:0 0 auto}
-.altozet .aonot{font-family:var(--d);font-size:10.5px;color:var(--celik);
-  line-height:1.25;flex:1 1 180px}
+.altozet .aonot{font-family:var(--d);font-size:11.5px;color:var(--celik);
+  line-height:1.3;flex:1 1 180px}
 .altozet .satir{display:flex;align-items:center;gap:10px;overflow-x:auto}
 /* Üstteki açıklama */
 .acikbilgi{font-size:12.5px;line-height:1.45;color:var(--celik);
@@ -373,25 +373,28 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   border-radius:7px;padding:9px 12px;margin:0 0 11px}
 .acikbilgi b{color:var(--murekkep)}
 .altozet .kutu{display:flex;flex-direction:column;align-items:center;
-  line-height:1.15;flex:0 0 auto;padding:0 8px;border-left:1px solid var(--hat2)}
-.altozet .kutu b{font-size:16px;color:var(--murekkep);
-  font-variant-numeric:tabular-nums}
-.altozet .kutu i{font-style:normal;font-size:9.5px;color:var(--celik);
-  white-space:nowrap;letter-spacing:.02em}
+  line-height:1.2;flex:0 0 auto;padding:2px 6px;border-left:1px solid var(--hat2)}
+.altozet .kutu b{font-size:24px;color:var(--murekkep);
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.altozet .kutu i{font-style:normal;font-size:11px;color:var(--celik);
+  white-space:nowrap;letter-spacing:.01em;margin-top:1px}
 .altozet .kutu.vurgu b{color:var(--satis)}
-.altozet .kutu.vurgu{background:var(--satis-z);border-radius:6px}
-.altozet .kutu.toplamf{background:var(--murekkep);border-radius:6px;
-  border-left:0;padding:2px 10px}
+.altozet .kutu.vurgu{background:var(--satis-z);border-radius:7px;padding:4px 8px}
+.altozet .kutu.toplamf{background:var(--murekkep);border-radius:7px;
+  border-left:0;padding:4px 10px}
 .altozet .kutu.toplamf b{color:#fff}
 .altozet .kutu.toplamf i{color:#C9DAF0}
-.sar{padding-bottom:118px}
+.sar{padding-bottom:var(--altozet-y,150px)}
 @media (max-width:620px){
-  .altozet{gap:4px;padding:6px 8px}
-  .altozet .baslik{font-size:11px}
-  .altozet .kutu{padding:0 5px}
-  .altozet .kutu b{font-size:14.5px}
-  .altozet .kutu i{font-size:8.5px}
-  .sar{padding-bottom:126px}
+  /* Dikeyde büyüt, yatayda daralt: rakamlar okunaklı olsun */
+  .altozet{gap:6px;padding:10px 6px 12px}
+  .altozet .baslik{font-size:13px}
+  .altozet .satir{gap:4px}
+  .altozet .kutu{padding:2px 4px}
+  .altozet .kutu b{font-size:23px}
+  .altozet .kutu i{font-size:9.5px}
+  .altozet .aonot{font-size:10.5px}
+  .sar{padding-bottom:var(--altozet-y,160px)}
   .acikbilgi{font-size:11.5px;padding:8px 10px}
   .altozet .aonot{font-size:9.5px}
 }
@@ -415,7 +418,7 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   .bslk{font-size:18px}
   h2{font-size:21px}
   .kutu .n{font-size:23px}
-  .sar{padding:14px 10px 70px}
+  .sar{padding-top:14px;padding-left:10px;padding-right:10px}
   .sat{padding-top:11px;padding-bottom:11px}
   .sat .ad{font-size:14.5px;overflow:hidden;text-overflow:ellipsis;
     white-space:nowrap;display:block}
@@ -701,6 +704,12 @@ const D = __VERI__;
 function seritOlc(){
   const e=document.querySelector(".serit");
   if(e) document.documentElement.style.setProperty("--serit-y", e.offsetHeight+"px");
+  // Alt özet çubuğu sabit; son kaydın üstüne binmemesi için sayfa
+  // altına onun YÜKSEKLİĞİ kadar boşluk bırakılıyor. Sabit bir değer
+  // yetmiyordu: çubuk dar ekranda iki satıra sarınca yükseliyor.
+  const a=document.querySelector(".altozet");
+  if(a) document.documentElement.style.setProperty(
+    "--altozet-y", (a.offsetHeight + 14) + "px");
 }
 addEventListener("resize", seritOlc);
 addEventListener("load", seritOlc);
@@ -1621,11 +1630,11 @@ try{ history.replaceState({ekran:'vOzet'},''); }catch(e){}
   </div>
   <div class="satir">
     <span class="kutu toplamf"><b id="aoToplam">—</b><i>gerçek firma</i></span>
-    <span class="kutu vurgu"><b id="aoSatisNok">—</b><i>toplam satış nok.</i></span>
-    <span class="kutu"><b id="aoServisNok">—</b><i>toplam servis nok.</i></span>
-    <span class="kutu"><b id="aoSatis">—</b><i>yalnız satış</i></span>
-    <span class="kutu"><b id="aoServis">—</b><i>yalnız servis</i></span>
-    <span class="kutu"><b id="aoIkisi">—</b><i>satış + servis</i></span>
+    <span class="kutu vurgu"><b id="aoSatisNok">—</b><i>satış nok.</i></span>
+    <span class="kutu"><b id="aoServisNok">—</b><i>servis nok.</i></span>
+    <span class="kutu"><b id="aoSatis">—</b><i>yln. satış</i></span>
+    <span class="kutu"><b id="aoServis">—</b><i>yln. servis</i></span>
+    <span class="kutu"><b id="aoIkisi">—</b><i>satış+srv</i></span>
   </div>
 </div>
 <div class="ortu" id="duzenleOrtu" style="display:none">
