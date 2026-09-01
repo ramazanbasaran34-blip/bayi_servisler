@@ -1,26 +1,26 @@
 {
- "Leksas": {
-  "kayit": 155,
-  "il": 43,
+ "Aprilia": {
+  "kayit": 71,
+  "il": 17,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 155, 'yeni': 0, 'guncel': 155, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 71, 'yeni': 52, 'guncel': 19, 'supheli': 0, 'mesaj': ''}"
  },
- "Indian": {
-  "kayit": 5,
-  "il": 5,
+ "Piaggio": {
+  "kayit": 75,
+  "il": 18,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 5, 'yeni': 0, 'guncel': 5, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 75, 'yeni': 55, 'guncel': 20, 'supheli': 0, 'mesaj': ''}"
  },
- "Kimmi": {
-  "kayit": 299,
-  "il": 53,
+ "Kymco": {
+  "kayit": 75,
+  "il": 19,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 299, 'yeni': 0, 'guncel': 299, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 75, 'yeni': 54, 'guncel': 21, 'supheli': 0, 'mesaj': ''}"
  },
- "Lifan": {
-  "kayit": 110,
-  "il": 39,
-  "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 110, 'yeni': 0, 'guncel': 110, 'supheli': 0, 'mesaj': ''}"
+ "Yiben": {
+  "kayit": 191,
+  "il": 57,
+  "ilsiz": 2,
+  "db": "{'durum': 'basarili', 'adet': 191, 'yeni': 184, 'guncel': 7, 'supheli': 0, 'mesaj': ''}"
  }
 }
