@@ -1,14 +1,14 @@
 {
- "Rewaco": {
-  "kayit": 10,
-  "il": 8,
+ "Bajaj": {
+  "kayit": 275,
+  "il": 64,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 10, 'yeni': 10, 'guncel': 0, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 275, 'yeni': 7, 'guncel': 268, 'supheli': 2, 'mesaj': ''}"
  },
- "STMax": {
-  "kayit": 389,
-  "il": 63,
+ "Kanuni": {
+  "kayit": 275,
+  "il": 64,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 389, 'yeni': 389, 'guncel': 0, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 275, 'yeni': 7, 'guncel': 268, 'supheli': 2, 'mesaj': ''}"
  }
 }
