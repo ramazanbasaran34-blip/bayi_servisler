@@ -251,6 +251,21 @@ def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
                                      "sehir merkezi", "merkezi") and il_ad:
         ilce_ad = il_ad
 
+    # SON KONTROL: il alanı gerçek bir il mi?
+    #
+    # Bazı siteler il alanına İLÇE yazıyor (Yuki'de "Antakya", "İzmit").
+    # Böyle kayıtlar veritabanında sahte il yaratıyordu; 81 il beklenirken
+    # 83 görünüyordu. İl tanınmıyorsa ilçe kabul edip gerçek ilini buluyoruz;
+    # bulunamazsa il alanını boşaltıyoruz — uydurmuyoruz.
+    if il_ad and not il_ara(il_ad):
+        aday = ilceden_il(il_ad)
+        if aday:
+            if not ilce_ad:
+                ilce_ad = il_ad
+            il_ad = aday
+        else:
+            il_ad = ""
+
     # Türkiye dışı konumlar kapsam dışı. Yamaha'nın listesinde KKTC
     # bayisi vardı ve il doğrulanmadığı için "Kıbrıs" diye bir il
     # oluşmuştu. Bu kayıtlar tamamen eleniyor.
