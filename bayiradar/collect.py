@@ -499,6 +499,13 @@ def tara_hepsi(config_path="brands.yaml", sadece=None, db_path="bayiler.db",
     with db(db_path) as con:
         sirali = sorted(markalar.items(), key=lambda kv: kv[1].get("oncelik", 5))
         for i, (marka, cfg) in enumerate(sirali):
+            # elle: true → verisi elle/<marka>.json'dan geliyor, taranmaz.
+            # (Cloudflare korumalı siteler; bkz. elle_tara.py)
+            if cfg.get("elle"):
+                ozet["atlanan"].append((marka, "elle girilen veri"))
+                log(f"⏭  {marka} atlandı — elle girilen veri")
+                continue
+
             if zamanlanmis:
                 gerek, sebep = tarama_gerekiyor_mu(marka_bilgi(con, marka), cfg, marka)
                 if not gerek:
