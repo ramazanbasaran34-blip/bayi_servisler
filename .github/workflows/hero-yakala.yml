@@ -1,18 +1,15 @@
 name: Hero yakala (tarayıcı)
 
-# Hero'nun sayfası Cloudflare doğrulaması istiyor; düz istek 403 dönüyor.
-# Bu akış gerçek tarayıcı açıp doğrulamayı geçiyor ve sayfaları kaydediyor.
+# Hero'nun sayfası Cloudflare doğrulaması istiyor.
+# Paketlenmiş Chromium headless olarak tanınıp engelleniyor; bu yüzden
+# GERÇEK Chrome'u sanal ekranda (xvfb) GÖRÜNÜR kipte çalıştırıyoruz.
 # Tarama YAPMAZ, veritabanına dokunmaz.
 
 on:
   workflow_dispatch:
     inputs:
-      tanilama:
-        description: "evet = tanılama, yol = GET yolu ara, hayır = normal"
-        required: false
-        default: "hayır"
       hepsi:
-        description: "81 ilin tamamı mı? (evet/hayır — hayır = sadece Ankara)"
+        description: "Tüm iller mi? (evet/hayır — hayır = birkaç örnek il)"
         required: false
         default: "hayır"
 
@@ -22,34 +19,31 @@ permissions:
 jobs:
   yakala:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Bağımlılık
         run: |
           pip install playwright
-          playwright install --with-deps chromium
-      - name: Tanılama (üç yöntem)
-        if: inputs.tanilama == 'evet'
-        run: python hero_tanila.py || true
+          playwright install --with-deps chrome || playwright install --with-deps chromium
+          sudo apt-get install -y xvfb
 
-      - name: Yol arayışı
-        if: inputs.tanilama == 'yol'
-        run: python hero_yol.py || true
-
-      - name: Yakala
-        if: inputs.tanilama != 'evet'
+      - name: Yakala (sanal ekranda)
         run: |
           EK=""
           if [ "${{ inputs.hepsi }}" = "evet" ]; then EK="--hepsi"; fi
-          python hero_yakala.py $EK
+          xvfb-run -a --server-args="-screen 0 1366x768x24" python hero_yakala.py $EK
+
       - name: Depoya işle
+        if: always()
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add ham/
+          git add ham/ || true
           git diff --staged --quiet || git commit -m "Hero tarayıcı yakalama"
           for i in 1 2 3 4 5; do
             git pull --rebase --autostash && git push && exit 0
