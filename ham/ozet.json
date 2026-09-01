@@ -934,5 +934,137 @@
   "tel_toplam": 13,
   "tel_script_ici": 0,
   "yonlendi": true
+ },
+ "aprilia-satis": {
+  "url": "https://www.aprilia.com.tr/tr/yetkili-saticilar.html",
+  "kod": 200,
+  "son_url": "https://www.aprilia.com.tr/tr/yetkili-saticilar.html",
+  "boyut": 89511,
+  "tel_toplam": 242,
+  "tel_script_ici": 240
+ },
+ "piaggio-satis": {
+  "url": "https://www.piaggio.com.tr/tr/yetkili-saticilar.html",
+  "kod": 200,
+  "son_url": "https://www.piaggio.com.tr/tr/yetkili-saticilar.html",
+  "boyut": 49829,
+  "tel_toplam": 264,
+  "tel_script_ici": 262
+ },
+ "kymco-agi": {
+  "url": "https://www.kymco.com.tr/tr/satis-servis-agi.html",
+  "kod": 200,
+  "son_url": "https://www.kymco.com.tr/tr/satis-servis-agi.html",
+  "boyut": 177860,
+  "tel_toplam": 558,
+  "tel_script_ici": 554
+ },
+ "altai-satis": {
+  "url": "https://www.altai.com.tr/tr/bayiler",
+  "kod": 200,
+  "son_url": "https://www.altai.com.tr/tr/bayiler",
+  "boyut": 68241,
+  "tel_toplam": 4,
+  "tel_script_ici": 0
+ },
+ "altai-servis": {
+  "url": "https://www.altai.com.tr/tr/servisler",
+  "kod": 200,
+  "son_url": "https://www.altai.com.tr/tr/servisler",
+  "boyut": 68885,
+  "tel_toplam": 4,
+  "tel_script_ici": 0
+ },
+ "regal-satis": {
+  "url": "https://regalraptor.com.tr/tr/bayiler",
+  "kod": 200,
+  "son_url": "https://regalraptor.com.tr/tr/bayiler",
+  "boyut": 102432,
+  "tel_toplam": 4,
+  "tel_script_ici": 0
+ },
+ "regal-servis": {
+  "url": "https://regalraptor.com.tr/tr/servisler",
+  "kod": 200,
+  "son_url": "https://regalraptor.com.tr/tr/servisler",
+  "boyut": 102708,
+  "tel_toplam": 2,
+  "tel_script_ici": 0
+ },
+ "yiben-satis": {
+  "url": "https://yibenmotosiklet.com.tr/tr/sayfa/bayi-agi",
+  "kod": 200,
+  "son_url": "https://yibenmotosiklet.com.tr/tr/sayfa/bayi-agi",
+  "boyut": 149642,
+  "tel_toplam": 199,
+  "tel_script_ici": 188
+ },
+ "yiben-servis": {
+  "url": "https://yibenmotosiklet.com.tr/tr/sayfa/servis-agi",
+  "kod": 200,
+  "son_url": "https://yibenmotosiklet.com.tr/tr/sayfa/servis-agi",
+  "boyut": 53091,
+  "tel_toplam": 15,
+  "tel_script_ici": 4
+ },
+ "yuki-satis": {
+  "url": "https://yukimotor.com.tr/satis-noktalari/",
+  "kod": 200,
+  "son_url": "https://yukimotor.com.tr/satis-noktalari/",
+  "boyut": 135956,
+  "tel_toplam": 6,
+  "tel_script_ici": 0
+ },
+ "yuki-servis": {
+  "url": "https://yukimotor.com.tr/servis-noktalari/",
+  "kod": 200,
+  "son_url": "https://yukimotor.com.tr/servis-noktalari/",
+  "boyut": 172984,
+  "tel_toplam": 7,
+  "tel_script_ici": 0
+ },
+ "rewaco-satis": {
+  "url": "https://rewaco.com.tr/bayiler/",
+  "kod": 200,
+  "son_url": "https://rewaco.com.tr/bayiler/",
+  "boyut": 138141,
+  "tel_toplam": 20,
+  "tel_script_ici": 1
+ },
+ "rewaco-servis": {
+  "url": "https://rewaco.com.tr/servis/",
+  "kod": 200,
+  "son_url": "https://rewaco.com.tr/servis/",
+  "boyut": 181350,
+  "tel_toplam": 93,
+  "tel_script_ici": 1
+ },
+ "stmax-servis": {
+  "url": "https://stmax.com.tr/yetkili-servisler/",
+  "kod": 200,
+  "son_url": "https://stmax.com.tr/yetkili-servisler/",
+  "boyut": 204798,
+  "tel_toplam": 9,
+  "tel_script_ici": 1
+ },
+ "korlas-bayi": {
+  "url": "https://korlas.com.tr/bayi/",
+  "kod": 403,
+  "son_url": "https://korlas.com.tr/bayi/",
+  "boyut": 5738,
+  "tel_toplam": 7,
+  "tel_script_ici": 7
+ },
+ "korlas-servis": {
+  "url": "https://korlas.com.tr/servis/",
+  "kod": 403,
+  "son_url": "https://korlas.com.tr/servis/",
+  "boyut": 5744,
+  "tel_toplam": 7,
+  "tel_script_ici": 7
+ },
+ "bmw-moto": {
+  "url": "https://www.bmw-motorrad.com.tr/tr/ssl/yetkili-satici-ve-servisler.html",
+  "hata": "ReadTimeout: HTTPSConnectionPool(host='www.bmw-motorrad.com.tr', port=443): Read timed out. (read timeout=45)"
  }
 }
