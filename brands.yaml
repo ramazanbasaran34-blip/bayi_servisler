@@ -289,10 +289,15 @@ markalar:
   # 17. BMW  ·  Almanya-Çin  ·  www.bmw-motorrad.com.tr
   "BMW":
     beklenen: [10, 44]   # saha: 14 satış, 18 servis
-    mode: browser
+    # bmw-motorrad.com.tr BOŞ KABUK: içerik iframe'e yükleniyor, HTML'de
+    # sadece spinner var. Gerçek kaynak distribütör Borusan Otomotiv;
+    # ozel/bmw.py il bazlı arama sayfasından topluyor.
+    ozel: bmw
     kaynaklar:
-      - rol: satis_servis
-        url: "https://www.bmw-motorrad.com.tr/tr/ssl/yetkili-satici-ve-servisler.html"
+      - rol: satis
+        url: "https://www.borusanotomotiv.com/yetkili-satici-ve-servisler/arama"
+      - rol: servis
+        url: "https://www.borusanotomotiv.com/yetkili-satici-ve-servisler/arama"
 
   # 18. FALCON  ·  Türkiye-Çin  ·  falconmotosiklet.com
   "Falcon":
