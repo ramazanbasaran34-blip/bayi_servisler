@@ -1,14 +1,8 @@
 {
- "Altai": {
-  "kayit": 273,
-  "il": 54,
+ "Yuki": {
+  "kayit": 820,
+  "il": 76,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 273, 'yeni': 0, 'guncel': 273, 'supheli': 0, 'mesaj': ''}"
- },
- "Regal Raptor": {
-  "kayit": 624,
-  "il": 68,
-  "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 624, 'yeni': 0, 'guncel': 624, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 820, 'yeni': 672, 'guncel': 148, 'supheli': 0, 'mesaj': ''}"
  }
 }
