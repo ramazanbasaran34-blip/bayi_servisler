@@ -155,6 +155,29 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "kimmi-bayi-ank":  ("https://www.kimmimotor.com/bayiler/ankara", "html"),
     "lifan-srv-ank":   ("https://www.lifanmotor.com.tr/servisler/ankara", "html"),
 
+    # --- hiç veri gelmeyen 15 marka ---
+    # Piaggio grubu (Vespa/Kymco ile aynı 'stores' GeoJSON olabilir)
+    "aprilia-satis":   ("https://www.aprilia.com.tr/tr/yetkili-saticilar.html", "html"),
+    "aprilia-servis":  ("https://www.aprilia.com.tr/tr/yetkili-servisler.html", "html"),
+    "piaggio-satis":   ("https://www.piaggio.com.tr/tr/yetkili-saticilar.html", "html"),
+    "piaggio-servis":  ("https://www.piaggio.com.tr/tr/yetkili-servisler.html", "html"),
+    "kymco-agi":       ("https://www.kymco.com.tr/tr/satis-servis-agi.html", "html"),
+    # diğerleri
+    "altai-satis":     ("https://www.altai.com.tr/tr/bayiler", "html"),
+    "altai-servis":    ("https://www.altai.com.tr/tr/servisler", "html"),
+    "regal-satis":     ("https://regalraptor.com.tr/tr/bayiler", "html"),
+    "regal-servis":    ("https://regalraptor.com.tr/tr/servisler", "html"),
+    "yiben-satis":     ("https://yibenmotosiklet.com.tr/tr/sayfa/bayi-agi", "html"),
+    "yiben-servis":    ("https://yibenmotosiklet.com.tr/tr/sayfa/servis-agi", "html"),
+    "yuki-satis":      ("https://yukimotor.com.tr/satis-noktalari/", "html"),
+    "yuki-servis":     ("https://yukimotor.com.tr/servis-noktalari/", "html"),
+    "rewaco-satis":    ("https://rewaco.com.tr/bayiler/", "html"),
+    "rewaco-servis":   ("https://rewaco.com.tr/servis/", "html"),
+    "stmax-servis":    ("https://stmax.com.tr/yetkili-servisler/", "html"),
+    "korlas-bayi":     ("https://korlas.com.tr/bayi/", "html"),
+    "korlas-servis":   ("https://korlas.com.tr/servis/", "html"),
+    "bmw-moto":        ("https://www.bmw-motorrad.com.tr/tr/ssl/yetkili-satici-ve-servisler.html", "html"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
