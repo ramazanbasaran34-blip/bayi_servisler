@@ -75,6 +75,8 @@ def uret(cikti="index.html", markalar_json="markalar.json", db_yolu="bayiler.db"
                 servis_u.append(u)
         m["satis_kaynak"] = " | ".join(dict.fromkeys(satis_u))
         m["servis_kaynak"] = " | ".join(dict.fromkeys(servis_u))
+        # elle: true olan markalar taranmıyor; sayfada düzenlenebilir olsun
+        m["elle"] = bool((tarif.get(m["ad"]) or {}).get("elle"))
 
     # Kompakt dizi: [marka, ad, il, ilce, adres, tel, durum, rol, giris_url]
     satirlar = []
@@ -309,6 +311,28 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .baslikcubuk.sirali .sirakol.aktifsira::after{
   content:" ▾";font-size:9px;letter-spacing:0}
 .baslikcubuk.sirali .sirakol.aktifsira[data-yon="yukari"]::after{content:" ▴"}
+/* --- Elle girilen marka düzenleme --- */
+.ellebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+  background:#FFF8E8;border:1px solid #F0D9B5;border-radius:8px;
+  padding:9px 12px;margin:0 0 10px}
+.ellebar .rozet{background:var(--uyari,#B7791F);color:#fff;border-radius:5px;
+  padding:2px 8px;font-size:11px;font-family:var(--m);font-weight:600}
+.ellebar .aciklama{font-size:12.5px;color:var(--celik);flex:1 1 220px}
+.kayit.duzenlenebilir{cursor:pointer}
+.kayit.duzenlenebilir:hover{background:#F7FAFF}
+.kayit .dzip{font-size:10.5px;color:var(--celik);opacity:.7;margin-left:6px}
+.ortu{position:fixed;inset:0;background:rgba(16,32,56,.45);z-index:60;
+  display:flex;align-items:center;justify-content:center;padding:16px}
+.duzenle{background:#fff;border-radius:12px;padding:18px;width:100%;
+  max-width:420px;max-height:88vh;overflow:auto;
+  box-shadow:0 18px 40px -12px rgba(16,32,56,.5)}
+.duzenle h3{margin:0 0 12px;font-size:18px}
+.duzenle label{display:block;font-size:12px;color:var(--celik);
+  margin-bottom:9px;font-weight:600}
+.duzenle input,.duzenle select{width:100%;box-sizing:border-box;margin-top:3px;
+  padding:9px 10px;border:1px solid var(--hat2);border-radius:7px;
+  font-size:14.5px;font-family:inherit;color:var(--murekkep);font-weight:400}
+.dzbtn{display:flex;gap:8px;margin-top:6px}
 /* --- Sıra numarası --- */
 .sirano{flex:0 0 26px;text-align:right;font-family:var(--m);font-size:11px;
   color:var(--celik);opacity:.75;font-variant-numeric:tabular-nums}
@@ -555,6 +579,13 @@ h2{font-size:23px;font-weight:700;text-align:center;letter-spacing:-.01em}
       <span class="ilbaslik" id="mdAd"></span>
     </div>
     <p class="notm" id="mdOzet"></p>
+    <div class="ellebar" id="mdElleBar" style="display:none">
+      <span class="rozet">Elle girilen veri</span>
+      <span class="aciklama">Bu marka taranmıyor. Kayda dokunup bilgileri
+        düzeltebilirsin; değişiklikler bu cihazda saklanır.</span>
+      <button class="btn" id="btnElleDisa">Düzeltmeleri indir (JSON)</button>
+      <button class="btn" id="btnElleSifirla">Düzeltmeleri sıfırla</button>
+    </div>
     <div class="yapiskan">
       <div class="rolsuz" id="mdRolSuzgec"></div>
     </div>
@@ -1039,10 +1070,14 @@ $("#ilceCipler").onclick=e=>{
 };
 
 /* ---------- kayıt kartı ---------- */
-function kayitHtml(x, no){
+function kayitHtml(x, no, duzenlenebilir=false){
   const sn=ROL_SINIF[x[B_ROL]];
-  return `<div class="kayit ${sn} ${x[B_DURUM]!=="Güncel"?"eski":""}">
-    <div class="k1">${no?`<span class="sirano kno">${no}</span>`:""}<span class="kad">${esc(x[B_AD])}</span>
+  const ix = duzenlenebilir
+    ? D.bayiler.filter(y=>y[B_MARKA]===x[B_MARKA]).indexOf(x) : -1;
+  return `<div class="kayit ${sn} ${x[B_DURUM]!=="Güncel"?"eski":""}${
+      duzenlenebilir?" duzenlenebilir":""}"${ix>=0?` data-i="${ix}"`:""}>
+    <div class="k1">${no?`<span class="sirano kno">${no}</span>`:""}<span class="kad">${esc(x[B_AD])}</span>${
+      duzenlenebilir?'<span class="dzip">düzenlemek için dokun</span>':""}
       <span class="rol ${sn}">${esc(ROL_AD[x[B_ROL]]||"")}</span>
       ${x[B_DURUM]!=="Güncel"?`<span class="rol" style="background:var(--uyari-z);color:var(--uyari);border-color:#F0D9B5">${esc(x[B_DURUM])}</span>`:""}
     </div>
@@ -1113,6 +1148,7 @@ const OZET=(()=>{
   const o={};
   D.markalar.forEach(m=>o[m.ad]={ad:m.ad,alan:m.alan,bayi_link:m.bayi,
     satis_kaynak:m.satis_kaynak||"", servis_kaynak:m.servis_kaynak||"",
+    elle:!!m.elle,
     site:m.site,tazelik:m.tazelik||"",satis:0,servis:0,ikisi:0,toplam:0,
     iller:new Set(),ilceler:new Set()});
   D.bayiler.forEach(b=>{const x=o[b[B_MARKA]]; if(!x)return;
@@ -1183,13 +1219,107 @@ function cizMD(){
     + (MD.tazelik&&MD.tazelik!=="Güncel"?` · ${MD.tazelik}`:"");
   const g={};
   b.forEach(x=>(g[x[B_IL]||"— il bilinmiyor —"]||=[]).push(x));
+  const dzn = !!MD.elle;
+  $("#mdElleBar").style.display = dzn ? "flex" : "none";
   $("#mdListe").innerHTML=Object.keys(g).sort((a,c)=>a.localeCompare(c,"tr")).map(il=>
     `<div class="baslikcubuk"><span>${esc(il)}</span>
        <span class="sagb">${g[il].length} nokta</span></div>`+
-    g[il].map((x,ix)=>kayitHtml(x,ix+1)).join("")).join("");
+    g[il].map((x,ix)=>kayitHtml(x,ix+1,dzn)).join("")).join("");
   yazdirBilgiGuncelle(MD.ad, b.length);
 }
 rolBagla("#mdRolSuzgec", cizMD);
+
+/* ---------- elle girilen markalarda düzeltme ----------
+   Bu markalar taranmıyor (siteleri erişilemiyor), veri elle
+   giriliyor. Kullanıcı kaydı düzeltebilsin diye basit bir düzenleme
+   ekranı var. Sayfa statik olduğu için değişiklikler TARAYICIDA
+   saklanıyor; kalıcı olması için "Düzeltmeleri indir" ile alınan
+   JSON'un elle/<marka>.json dosyasına konması gerekiyor. */
+const DZ_ANAHTAR = "bayiradar-duzeltme";
+let DUZELTME = {};
+try { DUZELTME = JSON.parse(localStorage.getItem(DZ_ANAHTAR) || "{}"); }
+catch(e){ DUZELTME = {}; }
+
+function dzKimlik(x){ return x[B_MARKA] + "|" + x[B_AD] + "|" + x[B_IL]; }
+
+function duzeltmeleriUygula(){
+  D.bayiler.forEach(x=>{
+    const d = DUZELTME[dzKimlik(x)];
+    if(!d) return;
+    if(d.ad!==undefined)    x[B_AD]=d.ad;
+    if(d.tel!==undefined)   x[B_TEL]=d.tel;
+    if(d.il!==undefined)    x[B_IL]=d.il;
+    if(d.ilce!==undefined)  x[B_ILCE]=d.ilce;
+    if(d.adres!==undefined) x[B_ADRES]=d.adres;
+    if(d.rol!==undefined)   x[B_ROL]=d.rol;
+  });
+}
+
+let DZ_HEDEF=null;
+function duzenleAc(x){
+  DZ_HEDEF=x;
+  $("#dzAd").value=x[B_AD]||""; $("#dzTel").value=x[B_TEL]||"";
+  $("#dzIl").value=x[B_IL]||""; $("#dzIlce").value=x[B_ILCE]||"";
+  $("#dzAdres").value=x[B_ADRES]||""; $("#dzMail").value="";
+  $("#dzRol").value=x[B_ROL]||"satis_servis";
+  $("#duzenleOrtu").style.display="flex";
+}
+function duzenleKapat(){ $("#duzenleOrtu").style.display="none"; DZ_HEDEF=null; }
+
+/* Düzenleme penceresi </body> hemen öncesinde; bu betik ondan ÖNCE
+   çalıştığı için öğeler henüz yok. Bağlamaları DOM hazır olunca yap. */
+function dzBagla(){
+  if(!$("#dzIptal")) return;
+  $("#dzIptal").onclick=duzenleKapat;
+  $("#duzenleOrtu").onclick=e=>{ if(e.target.id==="duzenleOrtu") duzenleKapat(); };
+  $("#dzKaydet").onclick=dzKaydet;
+}
+if(document.readyState==="loading")
+  document.addEventListener("DOMContentLoaded", dzBagla);
+else dzBagla();
+
+function dzKaydet(){
+  if(!DZ_HEDEF) return;
+  const k=dzKimlik(DZ_HEDEF);
+  DUZELTME[k]={ad:$("#dzAd").value.trim(), tel:$("#dzTel").value.trim(),
+    il:$("#dzIl").value.trim(), ilce:$("#dzIlce").value.trim(),
+    adres:$("#dzAdres").value.trim(), rol:$("#dzRol").value};
+  try{ localStorage.setItem(DZ_ANAHTAR, JSON.stringify(DUZELTME)); }catch(e){}
+  duzeltmeleriUygula();
+  duzenleKapat();
+  cizMD();
+}
+
+$("#mdListe").addEventListener("click", e=>{
+  if(!MD || !MD.elle) return;
+  const kutu=e.target.closest(".kayit.duzenlenebilir"); if(!kutu) return;
+  const i=+kutu.dataset.i;
+  const x=D.bayiler.filter(y=>y[B_MARKA]===MD.ad)[i];
+  if(x) duzenleAc(x);
+});
+
+$("#btnElleSifirla").onclick=()=>{
+  DUZELTME={};
+  try{ localStorage.removeItem(DZ_ANAHTAR); }catch(e){}
+  location.reload();
+};
+
+$("#btnElleDisa").onclick=()=>{
+  const kayitlar=D.bayiler.filter(x=>x[B_MARKA]===MD.ad).map(x=>({
+    marka:x[B_MARKA], rol:x[B_ROL], bayi_adi:x[B_AD], il:x[B_IL],
+    ilce:x[B_ILCE], adres:x[B_ADRES], telefon:x[B_TEL],
+    email:"", website:""}));
+  const veri={_aciklama:`${MD.ad} — sayfadaki düzenleme ekranından alındı.`,
+    _kaynak:[MD.satis_kaynak||MD.site||""], _tarih:new Date().toISOString().slice(0,10),
+    _duzenlenebilir:true, kayitlar};
+  const b=new Blob([JSON.stringify(veri,null,1)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(b);
+  a.download=kat(MD.ad).replace(/ /g,"-")+".json";
+  a.click(); URL.revokeObjectURL(a.href);
+};
+
+duzeltmeleriUygula();
 
 function yazdirBilgiGuncelle(baslik, adet){
   const et={tum:"tümü",satis:"sadece satış",servis:"sadece servis",ikisi:"satış + servis"};
@@ -1352,6 +1482,28 @@ cizOzet();
 ekran('vOzet', false);
 try{ history.replaceState({ekran:'vOzet'},''); }catch(e){}
 </script>
+<div class="ortu" id="duzenleOrtu" style="display:none">
+  <div class="duzenle">
+    <h3>Kaydı düzenle</h3>
+    <label>Bayi adı<input id="dzAd" type="text"></label>
+    <label>Telefon<input id="dzTel" type="text" inputmode="tel"></label>
+    <label>İl<input id="dzIl" type="text"></label>
+    <label>İlçe<input id="dzIlce" type="text"></label>
+    <label>Adres<input id="dzAdres" type="text"></label>
+    <label>E-posta<input id="dzMail" type="text" inputmode="email"></label>
+    <label>Rol
+      <select id="dzRol">
+        <option value="satis">Satış</option>
+        <option value="servis">Servis</option>
+        <option value="satis_servis">Satış + Servis</option>
+      </select>
+    </label>
+    <div class="dzbtn">
+      <button class="btn ana" id="dzKaydet">Kaydet</button>
+      <button class="btn" id="dzIptal">Vazgeç</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
 """
