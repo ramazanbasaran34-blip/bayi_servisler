@@ -157,6 +157,13 @@ def parse_gomulu(body: str, cfg: dict) -> list[dict]:
     return out
 
 
+# Türkiye dışı konum adları (il alanına düşerse kayıt elenir)
+YURTDISI = {
+    "kibris", "kuzey kibris", "kktc", "lefkosa", "girne", "magusa",
+    "gazimagusa", "guzelyurt", "iskele", "lefke",
+}
+
+
 # ------------------------------------------------- kayıt bazında süzgeç
 def kayit_suzgeci(kayitlar: list[dict], cfg: dict) -> list[dict]:
     """Tek listede birden çok marka geliyorsa istenmeyeni eler.
@@ -243,6 +250,12 @@ def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
     if ilce_ad and fold(ilce_ad) in ("merkez", "merkez ilce", "il merkezi",
                                      "sehir merkezi", "merkezi") and il_ad:
         ilce_ad = il_ad
+
+    # Türkiye dışı konumlar kapsam dışı. Yamaha'nın listesinde KKTC
+    # bayisi vardı ve il doğrulanmadığı için "Kıbrıs" diye bir il
+    # oluşmuştu. Bu kayıtlar tamamen eleniyor.
+    if fold(il_ad) in YURTDISI:
+        return None
 
     # Tutarlılık: ilçe bu ile ait değilse ilçeyi yazma.
     # İl adının kendisi ilçe olarak yazılmışsa (Aksaray/Aksaray) buna izin ver;
