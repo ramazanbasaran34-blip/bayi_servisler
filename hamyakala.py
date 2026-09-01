@@ -228,7 +228,10 @@ SCRIPT = re.compile(r"<script[^>]*>(.*?)</script>", re.S | re.I)
 def yakala(ad: str, url: str, uzanti: str) -> dict:
     bilgi: dict = {"url": url}
     try:
-        y = requests.get(url, headers=BASLIK, timeout=45, allow_redirects=True)
+        # BMW gibi bazı siteler ilk yanıtı 60 sn'ye kadar geciktiriyor;
+        # önceki denemede ReadTimeout bu yüzden gelmişti.
+        y = requests.get(url, headers=BASLIK, timeout=(15, 120),
+                         allow_redirects=True)
     except Exception as e:  # noqa: BLE001
         bilgi["hata"] = f"{type(e).__name__}: {e}"[:200]
         return bilgi
