@@ -124,7 +124,22 @@ jobs:
         run: |
           git config user.name  "bayi-radar-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add -f bayiler.db
+
+          # Her gece bir satır tarama günlüğü yazıyoruz. İki işe yarıyor:
+          #  1) Ne zaman ne tarandığı geriye dönük görülüyor.
+          #  2) GitHub, 60 gün COMMIT olmayan depolarda zamanlanmış işleri
+          #     kapatıyor. Veri hiç değişmediği gecelerde commit atılmazdı
+          #     ve sayaç işlemeye devam ederdi. Bu günlük her gece
+          #     değiştiği için sayaç hiç dolmuyor; kimsenin depoya elle
+          #     dokunması gerekmiyor.
+          mkdir -p gunluk
+          echo "$(date -u +'%Y-%m-%d %H:%M UTC')  tarama çalıştı" \
+            >> gunluk/tarama-gunlugu.txt
+          # Dosya şişmesin: son 400 satır yeter
+          tail -n 400 gunluk/tarama-gunlugu.txt > /tmp/g.txt \
+            && mv /tmp/g.txt gunluk/tarama-gunlugu.txt
+
+          git add -f bayiler.db gunluk/tarama-gunlugu.txt
           git diff --staged --quiet && { echo "Değişiklik yok"; exit 0; }
           git commit -m "Veri güncellendi: $(date -u +'%Y-%m-%d %H:%M UTC')"
           for i in 1 2 3 4 5; do
