@@ -7,6 +7,10 @@ name: Hero yakala (tarayıcı)
 on:
   workflow_dispatch:
     inputs:
+      tanilama:
+        description: "Sadece tanılama çalıştır (evet/hayır)"
+        required: false
+        default: "hayır"
       hepsi:
         description: "81 ilin tamamı mı? (evet/hayır — hayır = sadece Ankara)"
         required: false
@@ -27,7 +31,12 @@ jobs:
         run: |
           pip install playwright
           playwright install --with-deps chromium
+      - name: Tanılama (üç yöntem)
+        if: inputs.tanilama == 'evet'
+        run: python hero_tanila.py || true
+
       - name: Yakala
+        if: inputs.tanilama != 'evet'
         run: |
           EK=""
           if [ "${{ inputs.hepsi }}" = "evet" ]; then EK="--hepsi"; fi
