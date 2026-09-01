@@ -206,6 +206,12 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "rebat-bayi":      ("https://rebatmotor.com/bayi/", "html"),
     "bmw-yeni":        ("https://www.bmw-motorrad.com.tr/tr/ssl/yetkili-satici-ve-servisler.html", "html"),
 
+    # BMW Motorrad: bmw-motorrad.com.tr boş kabuk (içerik iframe'de).
+    # Gerçek kaynak distribütör Borusan Otomotiv; il bazlı düz GET.
+    "borusan-istanbul": ("https://www.borusanotomotiv.com/yetkili-satici-ve-servisler/arama?city=istanbul", "html"),
+    "borusan-bursa":    ("https://www.borusanotomotiv.com/yetkili-satici-ve-servisler/arama?city=Bursa", "html"),
+    "borusan-harita":   ("https://www.borusanotomotiv.com/yetkili-satici-ve-servisler/harita", "html"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
