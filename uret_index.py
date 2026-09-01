@@ -270,6 +270,9 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   box-shadow:0 6px 12px -10px rgba(0,0,0,.35)}
 .yapiskan .ara{margin-bottom:7px}
 .baslikcubuk{position:sticky;top:var(--suzgec-y,0);z-index:20}
+.rolsuz{display:flex;gap:6px;flex-wrap:wrap}
+.rolsuz button{flex:1 1 auto;min-width:0;white-space:nowrap}
+.rolsuz button .n{font-family:var(--m);font-size:10.5px;opacity:.75;margin-left:4px}
 .sayi.vurgu{font-weight:700;color:var(--satis);
   background:var(--satis-z);border-radius:5px;padding:1px 5px}
 .kutu.toplam{border-color:var(--hat);background:#fbfcfe}
@@ -515,7 +518,9 @@ h2{font-size:23px;font-weight:700;text-align:center;letter-spacing:-.01em}
       <span class="ilbaslik" id="mdAd"></span>
     </div>
     <p class="notm" id="mdOzet"></p>
-    <div class="rolsuz" id="mdRolSuzgec"></div>
+    <div class="yapiskan">
+      <div class="rolsuz" id="mdRolSuzgec"></div>
+    </div>
     <div class="altbar">
       <button class="btn ana" id="btnMarkaXls">Excel indir</button>
       <button class="btn" id="btnMarkaHtml">HTML kaydet</button>
