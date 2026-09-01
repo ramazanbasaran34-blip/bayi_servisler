@@ -201,6 +201,11 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "kuralkan-satis-34":    ("https://www.ekuralkan.com/motosiklet-satis-noktalari?city=34", "html"),
     "kuralkan-servis":      ("https://www.ekuralkan.com/motosiklet-teslimat-noktalari", "html"),
 
+    # Taranmamış son markalar
+    "rebat-servis":    ("https://rebatmotor.com/servis/", "html"),
+    "rebat-bayi":      ("https://rebatmotor.com/bayi/", "html"),
+    "bmw-yeni":        ("https://www.bmw-motorrad.com.tr/tr/ssl/yetkili-satici-ve-servisler.html", "html"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
