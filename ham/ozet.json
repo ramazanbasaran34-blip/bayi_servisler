@@ -1138,5 +1138,29 @@
   "boyut": 268158,
   "tel_toplam": 18,
   "tel_script_ici": 1
+ },
+ "kuralkan-satis-hepsi": {
+  "url": "https://www.ekuralkan.com/motosiklet-satis-noktalari",
+  "kod": 200,
+  "son_url": "https://www.ekuralkan.com/motosiklet-satis-noktalari",
+  "boyut": 154018,
+  "tel_toplam": 182,
+  "tel_script_ici": 171
+ },
+ "kuralkan-satis-34": {
+  "url": "https://www.ekuralkan.com/motosiklet-satis-noktalari?city=34",
+  "kod": 200,
+  "son_url": "https://www.ekuralkan.com/motosiklet-satis-noktalari?city=34",
+  "boyut": 154018,
+  "tel_toplam": 182,
+  "tel_script_ici": 171
+ },
+ "kuralkan-satis-6": {
+  "url": "https://www.ekuralkan.com/motosiklet-satis-noktalari?city=6",
+  "kod": 200,
+  "son_url": "https://www.ekuralkan.com/motosiklet-satis-noktalari?city=6",
+  "boyut": 154018,
+  "tel_toplam": 182,
+  "tel_script_ici": 171
  }
 }
