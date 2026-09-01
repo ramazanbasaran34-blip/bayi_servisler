@@ -679,7 +679,7 @@ markalar:
     mode: browser
     kaynaklar:
       - rol: satis_servis
-        url: "https://rebatmotor.com/satis-ve-servisler-cloned-111-2/"
+        url: "https://rebatmotor.com/servis/"   # eski adres 404 veriyordu
 
   # 58. LİFAN  ·  Türkiye-Çin  ·  www.lifanmotor.com.tr
   "Lifan":
