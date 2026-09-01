@@ -208,10 +208,20 @@ def main() -> None:
     rapor: dict = {}
 
     with sync_playwright() as pw:
-        t = pw.chromium.launch(args=[
+        # Paketlenmiş Chromium'u Cloudflare tanıyor (headless imzası +
+        # eksik codec/parmak izi). Gerçek Chrome'u GÖRÜNÜR kipte, sanal
+        # ekranda (xvfb) çalıştırmak bu kontrolü geçiyor.
+        baslat = dict(args=[
             "--disable-blink-features=AutomationControlled",
             "--no-sandbox",
-        ])
+            "--disable-dev-shm-usage",
+            "--start-maximized",
+        ], headless=False)
+        try:
+            t = pw.chromium.launch(channel="chrome", **baslat)
+        except Exception:
+            # Chrome kurulu değilse paketlenmiş Chromium'a düş
+            t = pw.chromium.launch(**baslat)
         ctx = t.new_context(
             user_agent=KULLANICI, locale="tr-TR",
             timezone_id="Europe/Istanbul",
