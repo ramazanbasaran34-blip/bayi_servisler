@@ -1114,5 +1114,13 @@
   "boyut": 181350,
   "tel_toplam": 93,
   "tel_script_ici": 1
+ },
+ "bmw-api": {
+  "url": "https://c2b-services-i.bmw.com/c2b-localsearch/services/cache/v4/ShowAll?country=tr&category=BD&clientid=UX_NICCE_FORM_DLO",
+  "kod": 200,
+  "son_url": "https://c2b-services-i.bmw.com/c2b-localsearch/services/cache/v4/ShowAll?country=tr&category=BD&clientid=UX_NICCE_FORM_DLO",
+  "boyut": 24599,
+  "tel_toplam": 86,
+  "tel_script_ici": 0
  }
 }
