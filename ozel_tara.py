@@ -42,6 +42,10 @@ GEZINME = {
     "kral": "tek", "vespa": "tek", "suzuki": "tek", "isotlar": "tek",
     "zelsun": "il_adi", "motolux": "il_adi", "csn": "il_adi",
     "musatti": "il_kodu",
+    "leksas": "tek", "indian": "tek",
+    # Kimmi ve Lifan aynı modülü paylaşıyor; il listesi sitenin kendi
+    # <select id="cities"> kutusundan okunuyor, ILLER sabitinden değil.
+    "kimmi_lifan": "cities",
 }
 
 MODULLER = list(GEZINME)
@@ -63,6 +67,23 @@ def _hedefler(mod_ad: str, mod) -> list[tuple[str, str, str, str]]:
                 out.append((anahtar, "hepsi", url, ""))
             else:
                 out.append((mod.MARKA, anahtar, url, ""))
+        return out
+
+    if bicim == "cities":
+        # Önce ana sayfayı çekip sitenin YAYINLADIĞI il listesini al.
+        # Kimmi 50, Lifan daha az il listeliyor; 81 ili denemek boşuna
+        # istek ve 404 demek.
+        import requests as _r
+        for marka, taban in mod.TABAN.items():
+            for rol, kalip in mod.KAYNAKLAR.items():
+                kok = kalip.format(taban=taban, slug="").rstrip("/")
+                try:
+                    y = _r.get(kok + "/", headers=BASLIK, timeout=45)
+                    iller = mod.il_sluglari(y.text)
+                except Exception:  # noqa: BLE001
+                    iller = []
+                for slug, ad in iller:
+                    out.append((marka, rol, mod.il_url(marka, rol, slug), ad))
         return out
 
     for il in ILLER:
