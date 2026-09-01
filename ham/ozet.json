@@ -875,5 +875,37 @@
   "boyut": 82957,
   "tel_toplam": 42,
   "tel_script_ici": 0
+ },
+ "kimmi-rest": {
+  "url": "https://www.kimmimotor.com/wp-json/wp/v2/pages/850",
+  "kod": 200,
+  "son_url": "https://www.kimmimotor.com/wp-json/wp/v2/pages/850",
+  "boyut": 10602,
+  "tel_toplam": 0,
+  "tel_script_ici": 0
+ },
+ "lifan-rest": {
+  "url": "https://www.lifanmotor.com.tr/wp-json/wp/v2/pages/1383",
+  "kod": 200,
+  "son_url": "https://www.lifanmotor.com.tr/wp-json/wp/v2/pages/1383",
+  "boyut": 5821,
+  "tel_toplam": 0,
+  "tel_script_ici": 0
+ },
+ "leksas-rest": {
+  "url": "https://www.leksas.com.tr/wp-json/wp/v2/pages/72",
+  "kod": 200,
+  "son_url": "https://www.leksas.com.tr/wp-json/wp/v2/pages/72",
+  "boyut": 95557,
+  "tel_toplam": 439,
+  "tel_script_ici": 0
+ },
+ "indian-satis": {
+  "url": "https://www.indianmotorcycle.com.tr/find-a-dealer/list-bayiler/",
+  "kod": 404,
+  "son_url": "https://www.indianmotorcycle.com.tr/find-a-dealer/list-bayiler/",
+  "boyut": 751,
+  "tel_toplam": 0,
+  "tel_script_ici": 0
  }
 }
