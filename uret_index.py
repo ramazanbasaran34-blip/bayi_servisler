@@ -11,6 +11,7 @@ Kullanım:  python uret_index.py [cikti_yolu]
 
 import base64
 import json
+import re
 import sys
 from collections import defaultdict
 from datetime import datetime
@@ -20,6 +21,16 @@ from bayiradar.normalize import ILLER, fold, phone_display
 
 PLAKA = {ad: f"{i+1:02d}" for i, ad in enumerate(ILLER)}
 ROL_ADI = {"satis": "Satış", "servis": "Servis", "satis_servis": "Satış + Servis"}
+
+# Veri çekilen makine uçları — insana gösterilecek bağlantı olamazlar.
+MAKINE_UC = re.compile(
+    r"(?:/api/|ajax[\w\-]*\.php|\.json(?:\?|$)|\.xml(?:\?|$)"
+    r"|/services\.php|subeListe|wp-json)", re.I)
+
+
+def makine_ucu(url: str) -> bool:
+    """Bu adres tarayıcıda açılınca ham veri mi döker?"""
+    return bool(url) and bool(MAKINE_UC.search(url))
 
 
 def _logo(yol: str) -> str:
@@ -92,8 +103,18 @@ def uret(cikti="index.html", markalar_json="markalar.json", db_yolu="bayiler.db"
     satirlar = []
     for k in kayitlar:
         m = link.get(k["marka"], {})
-        giris = (k.get("kaynak_servis") or k.get("kaynak_satis")
-                 or k.get("kaynak_url") or m.get("bayi") or m.get("site") or "")
+        # "Marka sayfasına git" bağlantısı KULLANICIYA açılacak sayfa olmalı.
+        # Veri kaynağı çoğu markada bir API ucu (api/bayiler.php, ajax.php,
+        # maps.xml); o adres tarayıcıda açılınca ham JSON dökülüyordu.
+        # Bu yüzden makine uçlarını eleyip markanın kendi sayfasına düşüyoruz.
+        giris = ""
+        for aday in (k.get("kaynak_servis"), k.get("kaynak_satis"),
+                     k.get("kaynak_url"), m.get("bayi"), m.get("site")):
+            if aday and not makine_ucu(aday):
+                giris = aday
+                break
+        if not giris:
+            giris = m.get("bayi") or m.get("site") or ""
         kod = ""
         if firma_anahtari:
             kod = kod_esleme.get(firma_anahtari(
