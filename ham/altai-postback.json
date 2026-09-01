@@ -1,0 +1,14 @@
+{
+ "satis": {
+  "il_sayisi": 47,
+  "iller": {
+   "Ankara": 8
+  }
+ },
+ "servis": {
+  "il_sayisi": 54,
+  "iller": {
+   "Ankara": 6
+  }
+ }
+}
