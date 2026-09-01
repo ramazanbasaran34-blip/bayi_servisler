@@ -135,9 +135,20 @@ def db(path=DB_PATH):
 
 
 def tekil_key(rec: dict) -> str:
+    """Kaydın benzersiz anahtarı.
+
+    DİKKAT — telefona ilçe de girmek zorunda: aynı firmanın aynı ilde
+    birden çok şubesi olabiliyor ve şubeler çoğu zaman AYNI merkezi
+    numarayı paylaşıyor. Anahtar yalnızca marka+telefon olduğunda
+    ikinci şube birinciyi eziyordu (Bajaj'da 98 satış noktasının 4'ü
+    bu yüzden kayboluyordu: Hatay/Kenan Uslu, Mersin/Çetinkaya Moto,
+    İstanbul/Mustafa Oktay, Denizli/Yiğitler).
+    """
+    marka = fold(rec["marka"])
+    ilce = fold(rec.get("ilce", ""))
     if rec.get("telefon"):
-        return f"{fold(rec['marka'])}|{rec['telefon']}"
-    return f"{fold(rec['marka'])}|{fold(rec['bayi_adi'])}|{fold(rec.get('ilce',''))}"
+        return f"{marka}|{rec['telefon']}|{ilce}"
+    return f"{marka}|{fold(rec['bayi_adi'])}|{ilce}"
 
 
 def _log_degisim(con, marka, tip, rec, detay=""):
