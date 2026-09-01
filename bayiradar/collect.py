@@ -395,6 +395,11 @@ def _gun_yuvasi(marka: str) -> int:
     return gun_haritasi().get(marka, 0)
 
 
+# Tarama tutarsız çıkarsa (hata / kısmi kapsam / karantina) bu kadar saat
+# sonra SADECE o marka yeniden taranır. Haftalık periyot beklenmez.
+TUTARSIZLIK_BEKLEME = 3
+
+
 def tarama_gerekiyor_mu(bilgi: dict, cfg: dict, marka: str = "") -> tuple[bool, str]:
     """Bu marka şimdi taranmalı mı? (evet_mi, gerekçe)"""
     periyot = cfg.get("periyot_saat", 168)      # varsayılan: haftalık
@@ -405,15 +410,27 @@ def tarama_gerekiyor_mu(bilgi: dict, cfg: dict, marka: str = "") -> tuple[bool, 
     simdi = datetime.now(timezone.utc)
     yas = simdi - datetime.fromisoformat(son)
 
-    # Son deneme başarısızsa periyodu bekleme, artan aralıkla tekrar dene
+    # TUTARSIZLIK SONRASI: haftalık periyodu bekleme, 3 saat sonra
+    # SADECE BU MARKAYI yeniden tara.
+    #
+    # Neden 3 saat: hata, kısmi kapsam ya da karantina genelde geçici bir
+    # arızadan geliyor (site yavaş, bir il sayfası düşmüş, sunucu bakımda).
+    # Bir hafta beklemek veriyi bayatlatıyor; hemen tekrar denemek de
+    # karşı tarafı zorluyor. 3 saat ikisinin arası.
+    #
+    # Ardışık hata artarsa aralık büyüyor (3, 6, 12, en fazla 24 saat) ki
+    # site gerçekten kapalıysa üst üste gidilmesin.
     if bilgi.get("son_deneme_durum") in ("hatali", "kismi", "karantina"):
         son_deneme = bilgi.get("son_deneme")
         if son_deneme:
-            bekleme_saat = min(2 ** bilgi.get("ardisik_hata", 1), 24)
+            hata = max(bilgi.get("ardisik_hata", 1), 1)
+            bekleme_saat = min(TUTARSIZLIK_BEKLEME * (2 ** (hata - 1)), 24)
             gecen = simdi - datetime.fromisoformat(son_deneme)
             if gecen < timedelta(hours=bekleme_saat):
-                return False, f"hata sonrası {bekleme_saat} saat bekleniyor"
-        return True, "önceki deneme başarısızdı, tekrar deneniyor"
+                kalan = bekleme_saat - gecen.total_seconds() / 3600
+                return False, (f"tutarsızlık sonrası tekrar denemeye "
+                               f"{kalan:.1f} saat var")
+        return True, "önceki tarama tutarsızdı, yeniden deneniyor"
 
     if yas < timedelta(hours=periyot):
         gun = int(yas.total_seconds() // 86400)
