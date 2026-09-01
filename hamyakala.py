@@ -199,7 +199,7 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     # Bajaj/Kanuni (Kuralkan): 98 satış beklenirken 87 geliyor
     "kuralkan-satis-hepsi": ("https://www.ekuralkan.com/motosiklet-satis-noktalari", "html"),
     "kuralkan-satis-34":    ("https://www.ekuralkan.com/motosiklet-satis-noktalari?city=34", "html"),
-    "kuralkan-satis-6":     ("https://www.ekuralkan.com/motosiklet-satis-noktalari?city=6", "html"),
+    "kuralkan-servis":      ("https://www.ekuralkan.com/motosiklet-teslimat-noktalari", "html"),
 
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
