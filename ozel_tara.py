@@ -49,6 +49,9 @@ GEZINME = {
     # Kimmi ve Lifan aynı modülü paylaşıyor; il listesi sitenin kendi
     # <select id="cities"> kutusundan okunuyor, ILLER sabitinden değil.
     "kimmi_lifan": "cities",
+    # Yuki: il listesi sayfadaki `provinces` dizisinden, adres
+    # ?province=<slug> parametresiyle. Konum tespiti sadece kısayol.
+    "yuki": "province",
     # ASP.NET WebForms: il seçimi URL'e yansımıyor, ViewState ile POST
     # atmak gerekiyor. Ayrı bir akışla yürüyor (_postback_tara).
     "altai": "postback", "regal": "postback",
@@ -73,6 +76,20 @@ def _hedefler(mod_ad: str, mod) -> list[tuple[str, str, str, str]]:
                 out.append((anahtar, "hepsi", url, ""))
             else:
                 out.append((mod.MARKA, anahtar, url, ""))
+        return out
+
+    if bicim == "province":
+        # Sitenin kendi il listesini kullan (79 il; bazıları ILLER'de yok,
+        # bazı adlar iki kez geçiyor — Afyon/Afyonkarahisar gibi).
+        import requests as _r
+        for rol, kok in mod.KAYNAKLAR.items():
+            try:
+                y = _r.get(kok, headers=BASLIK, timeout=45)
+                iller = mod.il_sluglari(y.text)
+            except Exception:  # noqa: BLE001
+                iller = []
+            for slug, ad in iller:
+                out.append((mod.MARKA, rol, mod.il_url(rol, slug), ad.title()))
         return out
 
     if bicim == "cities":
