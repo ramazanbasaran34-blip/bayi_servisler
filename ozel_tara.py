@@ -52,6 +52,8 @@ GEZINME = {
     # Yuki: il listesi sayfadaki `provinces` dizisinden, adres
     # ?province=<slug> parametresiyle. Konum tespiti sadece kısayol.
     "yuki": "province", "rewaco": "tek",
+    # Kuralkan tek sayfada hem Bajaj hem Kanuni ağını veriyor
+    "kuralkan": "cok_marka",
     # STMax: seçenek değeri zaten tam adres
     "stmax": "adres_listesi",
     # ASP.NET WebForms: il seçimi URL'e yansımıyor, ViewState ile POST
@@ -78,6 +80,13 @@ def _hedefler(mod_ad: str, mod) -> list[tuple[str, str, str, str]]:
                 out.append((anahtar, "hepsi", url, ""))
             else:
                 out.append((mod.MARKA, anahtar, url, ""))
+        return out
+
+    if bicim == "cok_marka":
+        # Tek kaynak, birden çok marka (Bajaj ve Kanuni aynı ağ).
+        for marka in mod.MARKALAR:
+            for rol, url in mod.KAYNAKLAR.items():
+                out.append((marka, rol, url, ""))
         return out
 
     if bicim == "adres_listesi":
