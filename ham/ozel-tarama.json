@@ -1,26 +1,14 @@
 {
- "Aprilia": {
-  "kayit": 71,
-  "il": 17,
+ "Altai": {
+  "kayit": 273,
+  "il": 54,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 71, 'yeni': 52, 'guncel': 19, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 273, 'yeni': 214, 'guncel': 59, 'supheli': 0, 'mesaj': ''}"
  },
- "Piaggio": {
-  "kayit": 75,
-  "il": 18,
+ "Regal Raptor": {
+  "kayit": 623,
+  "il": 68,
   "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 75, 'yeni': 55, 'guncel': 20, 'supheli': 0, 'mesaj': ''}"
- },
- "Kymco": {
-  "kayit": 75,
-  "il": 19,
-  "ilsiz": 0,
-  "db": "{'durum': 'basarili', 'adet': 75, 'yeni': 54, 'guncel': 21, 'supheli': 0, 'mesaj': ''}"
- },
- "Yiben": {
-  "kayit": 191,
-  "il": 57,
-  "ilsiz": 2,
-  "db": "{'durum': 'basarili', 'adet': 191, 'yeni': 184, 'guncel': 7, 'supheli': 0, 'mesaj': ''}"
+  "db": "{'durum': 'basarili', 'adet': 623, 'yeni': 456, 'guncel': 167, 'supheli': 0, 'mesaj': ''}"
  }
 }
