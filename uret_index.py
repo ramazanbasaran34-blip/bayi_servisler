@@ -391,6 +391,25 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   padding:9px 10px;border:1px solid var(--hat2);border-radius:7px;
   font-size:14.5px;font-family:inherit;color:var(--murekkep);font-weight:400}
 .dzbtn{display:flex;gap:8px;margin-top:6px}
+/* Verim tablosunda 7 sayı sütunu var (3 yıl × satış+verim, artı nokta).
+   Dar ekranda sığması için bu tabloya özel daraltma. */
+#verimListe .sag .k,
+.baslikcubuk[data-tablo="verimListe"] .k{min-width:34px;padding:0 2px}
+#verimListe .sag,
+.baslikcubuk[data-tablo="verimListe"] .sagb{gap:3px}
+#verimListe .govde,#verimListe .sat>.ad{min-width:58px}
+@media (max-width:620px){
+  #verimListe .sag .k,
+  .baslikcubuk[data-tablo="verimListe"] .k{min-width:27px;font-size:11px;padding:0 1px}
+  .baslikcubuk[data-tablo="verimListe"] .k{font-size:8px;letter-spacing:0}
+  #verimListe .govde,#verimListe .sat>.ad{min-width:42px}
+  #verimListe .men{display:none}
+  /* Ok işareti ve sıra numarası yer kaplıyor; 7 sütun için gerekli */
+  #verimListe .ok,.baslikcubuk[data-tablo="verimListe"] .okbos{display:none}
+  #verimListe .sirano{flex-basis:16px;font-size:9px}
+  #verimListe .sat{padding-left:6px;padding-right:6px;gap:5px}
+}
+
 /* Verim ekranı seçim düğmeleri.
    DİKKAT: .sirala kullanılamaz — o sınıf mobilde gizli. */
 .secimler{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
@@ -763,7 +782,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <div class="yapiskan">
       <input class="ara" id="araVerim" type="search" placeholder="İl ara" autocomplete="off">
     </div>
-    <div class="baslikcubuk sirali" data-tablo="verimListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="nokta" class="sirakol k">Nokta</span><span data-s="2024" class="sirakol k">2024<br>satış</span><span data-s="v2024" class="sirakol k">2024<br>nokta başı</span><span data-s="2025" class="sirakol k">2025<br>satış</span><span data-s="v2025" class="sirakol k gen">2025<br>nokta başı</span><span class="okbos"></span></span></div>
+    <div class="baslikcubuk sirali" data-tablo="verimListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="nokta" class="sirakol k">Nokta</span><span data-s="2024" class="sirakol k">2024<br>satış</span><span data-s="v2024" class="sirakol k">2024<br>nokta başı</span><span data-s="2025" class="sirakol k">2025<br>satış</span><span data-s="v2025" class="sirakol k">2025<br>nokta başı</span><span data-s="2026" class="sirakol k">2026*<br>satış</span><span data-s="v2026" class="sirakol k gen">2026*<br>nokta başı</span><span class="okbos"></span></span></div>
     <div class="liste" id="verimListe"></div>
     <div class="bos" id="verimBos" style="display:none">Sonuç bulunamadı.</div>
   </section>
@@ -1494,12 +1513,16 @@ function cizVerim(){
   const topN = l.reduce((a,x)=>a+x.nokta,0);
   const top24 = l.reduce((a,x)=>a+x["2024"],0);
   const top25 = l.reduce((a,x)=>a+x["2025"],0);
+  const top26 = l.reduce((a,x)=>a+x["2026"],0);
   $("#verimNot").innerHTML =
     `<b>${bicim(topN)}</b> ${etiket} noktası · 2024'te <b>${bicim(top24)}</b>, ` +
     `2025'te <b>${bicim(top25)}</b> motosiklet satıldı · ` +
     `Türkiye ortalaması ${etiket} başına <b>${topN?Math.round(top24/topN):0}</b> (2024), ` +
-    `<b>${topN?Math.round(top25/topN):0}</b> (2025) adet. ` +
-    `<span style="color:var(--celik)">Satış adetleri TÜİK. 2026 rakamı 31.07 itibarıyladır.</span>`;
+    `<b>${topN?Math.round(top25/topN):0}</b> (2025), ` +
+    `<b>${topN?Math.round(top26/topN):0}</b> (2026*) adet. ` +
+    `<span style="color:var(--celik)">Satış adetleri TÜİK. ` +
+    `<b>*2026 rakamı 31.07 itibarıyladır</b>, yıl tamamlanmadığı için ` +
+    `diğer yıllarla doğrudan kıyaslanamaz.</span>`;
 
   $("#verimBos").style.display = l.length ? "none" : "block";
   $("#verimListe").innerHTML = l.map((x,ix)=>`
@@ -1512,7 +1535,9 @@ function cizVerim(){
         <span class="sayi k" title="${bicim(x["2024"])}">${kisa(x["2024"])}</span>
         <span class="sayi k" style="color:var(--satis)">${bicim(x.v2024)}</span>
         <span class="sayi k" title="${bicim(x["2025"])}">${kisa(x["2025"])}</span>
-        <span class="sayi k gen vurgu">${bicim(x.v2025)}</span>
+        <span class="sayi k" style="color:var(--satis)">${bicim(x.v2025)}</span>
+        <span class="sayi k" title="${bicim(x["2026"])}">${kisa(x["2026"])}</span>
+        <span class="sayi k gen vurgu">${bicim(x.v2026)}</span>
         <span class="ok">›</span></span></button>`).join("");
   basligiIsaretle("verimListe");
   altOzetGuncelle(VERIM_ROL === "satis" ? "Bayiler" : "Servisler",
