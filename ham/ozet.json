@@ -1247,5 +1247,13 @@
   "boyut": 139688,
   "tel_toplam": 170,
   "tel_script_ici": 0
+ },
+ "abush-liste": {
+  "url": "https://abush.com.tr/tr/bayiler",
+  "kod": 200,
+  "son_url": "https://abush.com.tr/tr/bayiler",
+  "boyut": 367219,
+  "tel_toplam": 1,
+  "tel_script_ici": 0
  }
 }
