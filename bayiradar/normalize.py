@@ -95,6 +95,25 @@ def clean_text(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 
+# Bazı siteler adresi etiketiyle birlikte veriyor:
+#   "Adres: 50.Yıl Mah. ..."        (Motolux)
+#   "Adres 100. Yıl Mah. ... Telefon"  (Regal Raptor — sonda da etiket var)
+# 384 kayıtta görüldü. Etiketleri baştan ve sondan kırpıyoruz.
+_ADRES_BAS = re.compile(r"^\s*(?:adres|address)\s*[:\-–]?\s*", re.I)
+_ADRES_SON = re.compile(r"\s*(?:telefon|tel|gsm|e-?posta|e-?mail)\s*[:\-–]?\s*$", re.I)
+
+
+def clean_adres(s: str) -> str:
+    """Adres metnini temizler ve etiket kalıntılarını atar."""
+    s = clean_text(s)
+    onceki = None
+    while s != onceki:            # "Adres : Telefon" gibi üst üste gelenler
+        onceki = s
+        s = _ADRES_BAS.sub("", s)
+        s = _ADRES_SON.sub("", s)
+    return s.strip(" ·-–,")
+
+
 def clean_phone(s: str) -> str:
     """Telefonu +90XXXXXXXXXX formatına indirger. Tekilleştirme için kritik."""
     if not s:
