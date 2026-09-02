@@ -11,12 +11,17 @@ on:
   # alfabetik sırayla haftanın yedi gününe dağıtıldığı için tek gecede
   # 62 siteye gidilmiyor.
   #
-  # Saat: 01:30 UTC = Türkiye'de 04:30. Hem trafiğin en düşük olduğu saat
-  # hem de GitHub'ın tam saat başlarındaki yoğunluğundan kaçınıyor.
+  # Saat: 02:07 UTC = Türkiye'de 05:07.
+  #
+  # DİKKAT — zamanlama GARANTİ DEĞİL. GitHub bu işleri "müsait olunca"
+  # çalıştırıyor; bu depoda daha önce 00:00 için kurulan tarama 03:21 ve
+  # 03:24'te çalışmıştı, yani 3+ saat gecikmişti. Gecikmeyi azaltmak için
+  # dakikayı :00 ve :30 dışında seçtik — herkes cron'unu tam ve yarım saat
+  # başlarına kurduğu için o anlar en yoğun olanlar.
   #
   # elle: true işaretli markalar (Hero, Harley-Davidson) atlanır.
   schedule:
-    - cron: "30 1 * * *"
+    - cron: "7 2 * * *"
   workflow_dispatch:
     inputs:
       markalar:
