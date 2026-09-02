@@ -28,6 +28,8 @@ import re
 
 from bs4 import BeautifulSoup
 
+from bayiradar.ilceler import ilce_mi
+
 from .tr import anahtar
 
 MARKA = "SYM"
@@ -103,6 +105,27 @@ def coz(rol: str, govde: str, url: str) -> list[dict]:
                     tel = m.group(0)
                 elif not m:
                     telsiz.append(x)
+
+            # Bazı bloklarda başlıktan sonra fazladan bir İLÇE LİSTESİ
+            # satırı var: "ÇUKUROVA/ YÜREĞİR/ SARIÇAM/". Firma adı değil,
+            # o servisin hizmet verdiği ilçeler. Eğik çizgiyle ayrılmış,
+            # her parçası bilinen ilçe adı olan satırları atıyoruz.
+            def _ilce_listesi(x: str) -> bool:
+                """Gerçekten ilçe listesi mi, yoksa eğik çizgili firma adı mı?
+
+                İlk denemede "eğik çizgi varsa ilçe listesidir" dedim ve
+                "DURAN MOTOR / MURAT ERGISI" gibi firma adları elendi.
+                Artık her parçanın O İLİN gerçek bir ilçesi olmasını
+                şart koşuyoruz.
+                """
+                if "/" not in x:
+                    return False
+                parcalar = [k.strip() for k in x.split("/") if k.strip()]
+                if len(parcalar) < 2:
+                    return False
+                return all(ilce_mi(k, il) for k in parcalar)
+
+            telsiz = [x for x in telsiz if not _ilce_listesi(x)]
 
             ad = telsiz[0] if telsiz else ""
             adres = " ".join(telsiz[1:]) if len(telsiz) > 1 else ""
