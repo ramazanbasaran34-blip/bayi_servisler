@@ -449,7 +449,19 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 }
 
 #anaSayfa{display:inline-flex;align-items:center;cursor:pointer;
-  border-radius:6px;transition:opacity .12s}
+  border-radius:6px;transition:opacity .12s;
+  /* Dokunma hedefi küçük kalmasın */
+  padding:2px;min-height:40px}
+.tepe .orta h1{cursor:pointer}
+/* Şerit yapışkan olduğu için bu düğme sayfa kaydırılsa da hep görünür.
+   Üstteki logo yukarı kayınca ana sayfaya dönüş yolu kalmıyordu. */
+#anaSayfaKisa{background:none;border:0;padding:2px 6px;cursor:pointer;
+  color:var(--celik);display:inline-flex;align-items:center;
+  border-radius:5px;line-height:0}
+#anaSayfaKisa:hover{background:var(--hat2);color:var(--murekkep)}
+#anaSayfaKisa:active{opacity:.6}
+.seritust{display:flex;align-items:center;gap:7px;justify-content:center}
+.tepe .orta h1:active{opacity:.6}
 #anaSayfa:hover{opacity:.75}
 #anaSayfa:active{opacity:.55}
 
@@ -701,6 +713,12 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
 
 <div class="serit">
   <div class="seritust">
+    <button id="anaSayfaKisa" title="Ana sayfa" aria-label="Ana sayfa">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round"
+           stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/>
+        <path d="M5 9.5V21h14V9.5"/></svg>
+    </button>
     <span>Veri: <b id="veriTarih">—</b></span>
   </div>
   <nav class="sek">
@@ -1109,14 +1127,24 @@ function hashUygula(){
 
 window.addEventListener("hashchange", () => { if(!_kendiYazdi) hashUygula(); });
 $("#sekOzet").onclick  = () => { cizOzet(); ekran("vOzet"); };
-/* Logoya tıklayınca ana sayfa (Özet). Seçili il, ilçe ve süzgeçler
-   sıfırlanıyor ki temiz bir başlangıç olsun. */
-$("#anaSayfa").onclick = e => {
-  e.preventDefault();
+/* Logoya (veya başlık yazısına) dokununca ana sayfa = Özet.
+   Seçili il, ilçe, marka ve süzgeçler sıfırlanıyor ki temiz bir
+   başlangıç olsun.
+
+   Doğrudan onclick yerine BELGE DÜZEYİNDE dinleyici kullanıyoruz:
+   öğe henüz oluşmamışsa ya da sonradan yeniden çizilirse bağ kopmuyor. */
+function anaSayfayaDon(e){
+  if(e) e.preventDefault();
   IL = null; ILCE = ""; ROL = "tum"; MD = null;
   const a = $("#araIl"); if(a) a.value = "";
+  const b = $("#araMarka"); if(b) b.value = "";
   cizOzet(); ekran("vOzet");
-};
+  window.scrollTo(0, 0);
+}
+document.addEventListener("click", e => {
+  if(e.target.closest("#anaSayfa, #anaSayfaKisa, .tepe .orta h1"))
+    anaSayfayaDon(e);
+});
 $("#sekIl").onclick    = () => {
   // Liste çizilmeden ekran açılıyordu; sekmeye basınca boş görünüyordu.
   if(IL){ ekran("vMarkalar"); } else { cizIl(); ekran("vIl"); }
