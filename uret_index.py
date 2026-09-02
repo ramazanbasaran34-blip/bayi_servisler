@@ -485,8 +485,12 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   border-radius:6px;cursor:pointer;font-size:14px}
 .ilcesatir:hover{background:var(--hat2)}
 .ilcesatir input{width:16px;height:16px;flex:0 0 auto;accent-color:var(--murekkep)}
-.ilcealt{display:flex;gap:6px;justify-content:flex-end;
-  border-top:1px solid var(--hat2);padding-top:7px;margin-top:5px}
+/* Üst şerit: başlık solda, Temizle/Tamam sağda. Kaydırınca da kalsın. */
+.ilceust{display:flex;align-items:center;gap:6px;
+  border-bottom:1px solid var(--hat2);padding-bottom:8px;margin-bottom:8px;
+  position:sticky;top:0;background:#fff;z-index:2}
+.ilcebaslik{flex:1 1 auto;font-weight:700;font-size:14px;color:var(--murekkep)}
+.ilceust .btn{padding:7px 13px;font-size:13px;flex:0 0 auto}
 
 @media (max-width:620px){
   /* Telefonda menü sayfanın içinde açılınca alt kısmı ekran dışında
@@ -500,8 +504,8 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
     background:var(--hat2);border-radius:3px;margin:0 auto 8px}
   #ilceListesi{max-height:none;flex:1 1 auto;min-height:0}
   .ilcesatir{padding:11px 6px;font-size:15px}
-  .ilcealt{position:sticky;bottom:0;background:#fff;padding-bottom:2px}
-  .ilcealt .btn{flex:1 1 auto;padding:10px}
+  .ilceust{padding-bottom:9px;margin-bottom:9px}
+  .ilceust .btn{padding:9px 14px;font-size:14px}
   /* Panel açıkken arkadaki sayfa kaymasın */
   body.ilcepanel{overflow:hidden}
 }
@@ -867,12 +871,15 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
           <span class="ok2">▾</span>
         </button>
         <div class="ilcemenu" id="ilceMenu" hidden>
-          <input class="ara" id="ilceAra" type="search" placeholder="İlçe ara" autocomplete="off">
-          <div id="ilceListesi"></div>
-          <div class="ilcealt">
+          <!-- Düğmeler ÜSTTE: altta olduklarında alt özet çubuğu onları
+               örtüyordu ve telefonda hiç ulaşılamıyordu. -->
+          <div class="ilceust">
+            <span class="ilcebaslik">İlçe seç</span>
             <button class="btn" id="ilceTemizle">Temizle</button>
             <button class="btn ana" id="ilceUygula">Tamam</button>
           </div>
+          <input class="ara" id="ilceAra" type="search" placeholder="İlçe ara" autocomplete="off">
+          <div id="ilceListesi"></div>
         </div>
       </div>
       <div class="rolsuz" id="rolSuzgec"></div>
