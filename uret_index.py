@@ -456,9 +456,9 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 /* Etiketler iki satır: kısaltma yerine tam kelime yazıyoruz, yazıyı
    küçültüp iki mısraya bölerek sığdırıyoruz. */
-.altozet .kutu i{font-style:normal;font-size:9.5px;color:var(--celik);
-  white-space:nowrap;letter-spacing:0;margin-top:1px;line-height:1.15;
-  text-align:center}
+.altozet .kutu i{font-style:normal;font-size:10px;color:var(--celik);
+  white-space:nowrap;letter-spacing:0;margin-top:2px;line-height:1.2;
+  text-align:center;font-family:var(--d)}
 .altozet .kutu.vurgu b{color:var(--satis)}
 .altozet .kutu.vurgu{background:var(--satis-z);border-radius:7px;padding:4px 8px}
 .altozet .kutu.toplamf{background:var(--murekkep);border-radius:7px;
@@ -561,8 +561,8 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .bilgi{background:var(--uyari-z);border:1px solid #F0D9B5;color:var(--uyari);
   border-radius:8px;padding:10px 13px;font-size:12.5px;margin-bottom:14px}
 .bos{padding:30px;text-align:center;color:var(--celik);font-size:13px}
-.baslikcubuk{display:flex;gap:10px;padding:7px 13px;font-family:var(--m);font-size:9.5px;
-  letter-spacing:.09em;text-transform:uppercase;color:var(--celik);
+.baslikcubuk{display:flex;gap:10px;padding:7px 13px;font-family:var(--d);font-size:11px;
+  letter-spacing:0;color:var(--celik);font-weight:600;
   background:#F0F4FA;border-bottom:1px solid var(--hat2)}
 .baslikcubuk .sagb{margin-left:auto}
 
@@ -589,8 +589,11 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .kutu{background:var(--kart);border:1px solid var(--hat2);border-radius:9px;
   padding:13px 15px;box-shadow:var(--golge)}
 .kutu .n{font-family:var(--m);font-size:26px;font-weight:500;line-height:1;display:block}
-.kutu .e{font-size:11px;font-family:var(--m);letter-spacing:.08em;text-transform:uppercase;
-  color:var(--celik);margin-top:5px;display:block}
+/* Etiketler daktilo yazıyla ve zorla BÜYÜK HARFE çevriliyordu; okunması
+   zordu ve Türkçe imlaya aykırıydı. Normal yazı tipine alındı, harf
+   dönüşümü kaldırıldı; metinler artık büyük harfle başlayıp devam ediyor. */
+.kutu .e{font-size:12px;font-family:var(--d);letter-spacing:0;
+  color:var(--celik);margin-top:5px;display:block;line-height:1.35}
 .kutu.satis  .n{color:var(--satis)}
 .kutu.servis .n{color:var(--servis)}
 .kutu.ikisi  .n{color:var(--ikisi)}
@@ -689,21 +692,21 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
       <div>
         <h3 class="bslk">İllere göre <span id="ilAdet"></span></h3>
         <div class="liste">
-          <div class="baslikcubuk sirali" data-tablo="ozetIl"><span class="ilkkol sirakol" data-s="ad">İl</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Yalnız<br>satış</span><span data-s="yalnizServis" class="sirakol k">Yalnız<br>servis</span><span data-s="ikisi" class="sirakol k">Satış+<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+          <div class="baslikcubuk sirali" data-tablo="ozetIl"><span class="ilkkol sirakol" data-s="ad">İl</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
           <div id="ozetIl"></div>
         </div>
       </div>
       <div>
         <h3 class="bslk">Markalara göre <span id="mrkAdet"></span></h3>
         <div class="liste">
-          <div class="baslikcubuk sirali" data-tablo="ozetMarka"><span class="ilkkol sirakol" data-s="ad">Marka</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Yalnız<br>satış</span><span data-s="yalnizServis" class="sirakol k">Yalnız<br>servis</span><span data-s="ikisi" class="sirakol k">Satış+<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+          <div class="baslikcubuk sirali" data-tablo="ozetMarka"><span class="ilkkol sirakol" data-s="ad">Marka</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
           <div id="ozetMarka"></div>
         </div>
       </div>
     </div>
     <h3 class="bslk" style="margin-top:20px">İlçe dağılımı <span id="ilceAdet"></span></h3>
     <div class="liste">
-      <div class="baslikcubuk sirali" data-tablo="ozetIlce"><span class="ilkkol sirakol" data-s="ad">İl / İlçe</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Yalnız<br>satış</span><span data-s="yalnizServis" class="sirakol k">Yalnız<br>servis</span><span data-s="ikisi" class="sirakol k">Satış+<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="marka" class="sirakol k">Marka</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+      <div class="baslikcubuk sirali" data-tablo="ozetIlce"><span class="ilkkol sirakol" data-s="ad">İl / İlçe</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="marka" class="sirakol k">Marka</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
       <div id="ozetIlce"></div>
     </div>
   </section>
@@ -717,7 +720,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <div class="yapiskan">
       <input class="ara" id="araIl" type="search" placeholder="İl adı veya plaka kodu" autocomplete="off">
     </div>
-    <div class="baslikcubuk sirali" data-tablo="ilListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Yalnız<br>satış</span><span data-s="yalnizServis" class="sirakol k">Yalnız<br>servis</span><span data-s="ikisi" class="sirakol k">Satış+<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+    <div class="baslikcubuk sirali" data-tablo="ilListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
     <div class="liste" id="ilListe"></div>
     <div class="bos" id="ilBos" style="display:none">Bu isimde il yok.</div>
   </section>
@@ -831,7 +834,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
       <input class="ara" id="araTum" type="search" placeholder="Marka ara" autocomplete="off">
     </div>
     <div class="liste">
-      <div class="baslikcubuk sirali" data-tablo="tumListe"><span class="ilkkol sirakol" data-s="ad">Marka</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Yalnız<br>satış</span><span data-s="yalnizServis" class="sirakol k">Yalnız<br>servis</span><span data-s="ikisi" class="sirakol k">Satış+<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+      <div class="baslikcubuk sirali" data-tablo="tumListe"><span class="ilkkol sirakol" data-s="ad">Marka</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
       <div id="tumListe"></div>
     </div>
     <div class="bos" id="tumBos" style="display:none">Sonuç yok.</div>
@@ -1162,14 +1165,14 @@ function cizOzet(){
   const f = tekilSay(D.bayiler);
   $("#kutular").innerHTML=`
     <div class="kutu toplam"><span class="n">${bicim(f.toplam)}</span>
-      <span class="e">Firma Sayısı<br>1 işyeri 1 adet</span></div>
+      <span class="e">Firma sayısı<br>1 işyeri 1 adet</span></div>
     <div class="kutu satis"><span class="n">${bicim(f.satisNoktasi)}</span>
-      <span class="e">Toplam Satış Noktası<br>${bicim(f.yalnizSatis)} yalnız satış + ${bicim(f.ikisi)} satış+servis</span></div>
+      <span class="e">Toplam satış noktası<br>${bicim(f.yalnizSatis)} sadece bayi + ${bicim(f.ikisi)} bayi ve servis</span></div>
     <div class="kutu servis"><span class="n">${bicim(f.servisNoktasi)}</span>
-      <span class="e">Toplam Servis Noktası<br>${bicim(f.yalnizServis)} yalnız servis + ${bicim(f.ikisi)} satış+servis</span></div>
-    <div class="kutu"><span class="n">${bicim(f.yalnizSatis)}</span><span class="e">Yalnız Satış</span></div>
-    <div class="kutu"><span class="n">${bicim(f.yalnizServis)}</span><span class="e">Yalnız Servis</span></div>
-    <div class="kutu ikisi"><span class="n">${bicim(f.ikisi)}</span><span class="e">Satış + Servis<br>(kesişim)</span></div>
+      <span class="e">Toplam servis noktası<br>${bicim(f.yalnizServis)} sadece servis + ${bicim(f.ikisi)} bayi ve servis</span></div>
+    <div class="kutu"><span class="n">${bicim(f.yalnizSatis)}</span><span class="e">Sadece bayi</span></div>
+    <div class="kutu"><span class="n">${bicim(f.yalnizServis)}</span><span class="e">Sadece servis</span></div>
+    <div class="kutu ikisi"><span class="n">${bicim(f.ikisi)}</span><span class="e">Bayi ve servis<br>(kesişim)</span></div>
     <div class="kutu"><span class="n">${markalar.size}</span><span class="e">Marka</span></div>
     <div class="kutu"><span class="n">${iller.size}</span><span class="e">İl</span></div>
     <div class="kutu"><span class="n">${ilceler.size}</span><span class="e">İlçe</span></div>`;
@@ -2056,16 +2059,16 @@ try{ history.replaceState({ekran:'vOzet'},''); }catch(e){}
 <div class="altozet" id="altOzet">
   <div class="aoust">
     <span class="baslik" id="aoBaslik">Türkiye geneli</span>
-    <span class="aonot">bayi birden çok marka ile çalışsa bile 1 işyeri
-      1 adet sayıldı; şubeler ayrı adresteyse ayrı işyeri</span>
+    <span class="aonot">Bayi birden çok marka ile çalışsa bile 1 işyeri
+      1 adet sayıldı; şubeler ayrı adresteyse ayrı işyeri.</span>
   </div>
   <div class="satir">
-    <span class="kutu toplamf"><b id="aoToplam">—</b><i>firma</i></span>
-    <span class="kutu vurgu"><b id="aoSatisNok">—</b><i>toplam<br>satış noktası</i></span>
-    <span class="kutu"><b id="aoServisNok">—</b><i>toplam<br>servis noktası</i></span>
-    <span class="kutu"><b id="aoSatis">—</b><i>sadece<br>bayi</i></span>
-    <span class="kutu"><b id="aoServis">—</b><i>sadece<br>servis</i></span>
-    <span class="kutu"><b id="aoIkisi">—</b><i>bayi +<br>servis</i></span>
+    <span class="kutu toplamf"><b id="aoToplam">—</b><i>Firma</i></span>
+    <span class="kutu vurgu"><b id="aoSatisNok">—</b><i>Toplam<br>satış noktası</i></span>
+    <span class="kutu"><b id="aoServisNok">—</b><i>Toplam<br>servis noktası</i></span>
+    <span class="kutu"><b id="aoSatis">—</b><i>Sadece<br>bayi</i></span>
+    <span class="kutu"><b id="aoServis">—</b><i>Sadece<br>servis</i></span>
+    <span class="kutu"><b id="aoIkisi">—</b><i>Bayi ve<br>servis</i></span>
   </div>
 </div>
 <div class="ortu" id="duzenleOrtu" style="display:none">
