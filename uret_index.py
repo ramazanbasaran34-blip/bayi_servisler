@@ -480,7 +480,16 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .dmarka:hover{background:var(--murekkep);color:#fff}
 /* Şu an bakılan marka — listede ilk ve vurgulu */
 .dmarka.bumarka{background:var(--murekkep);color:#fff;border-color:var(--murekkep)}
-@media (max-width:620px){ .k4 .dmet{font-size:10px} .dmarka{font-size:10px;padding:2px 6px} }
+@media (max-width:620px){
+  .k4 .dmet{font-size:10px}
+  .dmarka{font-size:10px;padding:2px 5px}
+  /* Marka listesi uzun olabiliyor (14 markaya kadar); kart genişliğini
+     zorlamasın diye satır sarması serbest, kelime bölünmesi kapalı. */
+  .k4{flex-wrap:wrap;max-width:100%}
+  .dmarka{max-width:100%;overflow-wrap:anywhere}
+}
+.k4{min-width:0}
+.kayit{min-width:0;overflow:hidden}
 
 /* --- Cari kod rozeti --- */
 .carikod{font-family:var(--m);font-size:10.5px;font-weight:700;
