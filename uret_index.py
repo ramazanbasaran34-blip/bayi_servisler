@@ -664,7 +664,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <button id="sekMarka">Markalar</button>
     <button id="sekBayi">Bayiler</button>
     <button id="sekServis">Servisler</button>
-    <button id="sekVerim">Satış / Bayi</button>
+    <button id="sekVerim">Satışa Oran</button>
   </nav>
 </div>
 
