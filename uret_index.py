@@ -673,9 +673,8 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     </div>
     <div class="oneri" id="oneriKutu"></div>
     <p class="acikbilgi ust">
-      Rakamlar <b>gerçek firma sayısını</b> gösterir: bir firma birden çok
-      markaya bayilik yapsa bile <b>yalnızca bir kez</b> sayılır.
-      Marka bazlı toplam bayilik sayıları için Markalar sekmesine bakın.
+      Bayi birden çok marka ile çalışsa bile <b>1 işyeri 1 adet</b> sayıldı.
+      Şubeler, ayrı adres ise ayrı işyeri sayıldı.
     </p>
     <div class="kutular" id="kutular"></div>
     <div class="kapsam" id="kapsam"></div>
@@ -1160,7 +1159,7 @@ function cizOzet(){
   const f = tekilSay(D.bayiler);
   $("#kutular").innerHTML=`
     <div class="kutu toplam"><span class="n">${bicim(f.toplam)}</span>
-      <span class="e">Gerçek Firma Sayısı<br>her bayi bir kez sayılır</span></div>
+      <span class="e">Firma Sayısı<br>1 işyeri 1 adet</span></div>
     <div class="kutu satis"><span class="n">${bicim(f.satisNoktasi)}</span>
       <span class="e">Toplam Satış Noktası<br>${bicim(f.yalnizSatis)} yalnız satış + ${bicim(f.ikisi)} satış+servis</span></div>
     <div class="kutu servis"><span class="n">${bicim(f.servisNoktasi)}</span>
@@ -2054,11 +2053,11 @@ try{ history.replaceState({ekran:'vOzet'},''); }catch(e){}
 <div class="altozet" id="altOzet">
   <div class="aoust">
     <span class="baslik" id="aoBaslik">Türkiye geneli</span>
-    <span class="aonot">gerçek firma sayısı — her bayi yalnızca bir kez
-      sayılır, birden çok markaya bayilik yapsa bile</span>
+    <span class="aonot">bayi birden çok marka ile çalışsa bile 1 işyeri
+      1 adet sayıldı; şubeler ayrı adresteyse ayrı işyeri</span>
   </div>
   <div class="satir">
-    <span class="kutu toplamf"><b id="aoToplam">—</b><i>gerçek firma</i></span>
+    <span class="kutu toplamf"><b id="aoToplam">—</b><i>firma</i></span>
     <span class="kutu vurgu"><b id="aoSatisNok">—</b><i>satış nok.</i></span>
     <span class="kutu"><b id="aoServisNok">—</b><i>servis nok.</i></span>
     <span class="kutu"><b id="aoSatis">—</b><i>yln. satış</i></span>
