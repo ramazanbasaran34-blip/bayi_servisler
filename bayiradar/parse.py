@@ -10,7 +10,7 @@ import re
 from bs4 import BeautifulSoup
 
 from .ilceler import adresten_ilce, ilce_mi, ilceden_il
-from .normalize import (clean_phone, clean_text, fold, il_ara, resolve_il,
+from .normalize import (clean_adres, clean_phone, clean_text, fold, il_ara, resolve_il,
                          split_il_ilce, title_tr)
 from .otomatik import cikar as otomatik_cikar
 
@@ -284,7 +284,7 @@ def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
         "bayi_adi": ad,
         "il": il_ad,
         "ilce": ilce_ad,
-        "adres": clean_text(rec.get("adres", "")),
+        "adres": clean_adres(rec.get("adres", "")),
         "telefon": clean_phone(rec.get("telefon", "")),
         "email": clean_text(rec.get("email", "")).lower(),
         "website": clean_text(rec.get("website", "")),
