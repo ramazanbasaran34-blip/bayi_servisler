@@ -681,7 +681,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
   <img src="__LOGO_SOL__" alt="Kuralkan">
   <div class="orta">
     <h1>Motosiklet Bayi ve Servis Ağı</h1>
-    <p class="alt">Türkiye · <span id="mSayi">0</span> Marka · <span id="kSayi">0</span> Nokta</p>
+
   </div>
   <img class="sag-logo" src="__LOGO_SAG__" alt="Dayanışma">
 </header>
@@ -714,8 +714,8 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     </div>
     <div class="oneri" id="oneriKutu"></div>
     <p class="acikbilgi ust">
-      Bayi birden çok marka ile çalışsa bile <b>1 işyeri 1 adet</b> sayıldı.
-      Şubeler, ayrı adres ise ayrı işyeri sayıldı.
+      Bayi birden çok marka ile çalışsa bile <b>1 işyeri 1 adet</b> sayıldı;
+      Şubeler ayrı adresteyse ayrı işyeri olarak kabul edildi.
     </p>
     <div class="kutular" id="kutular"></div>
     <div class="kapsam" id="kapsam"></div>
@@ -923,8 +923,6 @@ let basligiIsaretle = () => {};
 const VAR_VERI = D.bayiler.length > 0;
 
 /* ---------- üst bilgiler ---------- */
-$("#mSayi").textContent = D.markalar.length;
-$("#kSayi").textContent = D.bayiler.length.toLocaleString("tr-TR");
 $("#mSay2").textContent = D.markalar.length;
 $("#mBayi").textContent = D.bayiler.length.toLocaleString("tr-TR");
 $("#veriTarih").textContent = new Date(D.olusturma)
@@ -2106,7 +2104,8 @@ try{ history.replaceState({ekran:'vOzet'},''); }catch(e){}
   <div class="aoust">
     <span class="baslik" id="aoBaslik">Türkiye geneli</span>
     <span class="aonot">Bayi birden çok marka ile çalışsa bile 1 işyeri
-      1 adet sayıldı; şubeler ayrı adresteyse ayrı işyeri.</span>
+      1 adet sayıldı; Şubeler ayrı adresteyse ayrı işyeri olarak
+      kabul edildi.</span>
   </div>
   <div class="satir">
     <span class="kutu toplamf"><b id="aoToplam">—</b><i>Satış+<br>Servis</i></span>
