@@ -76,6 +76,25 @@ def ayni_firma_mi(a: dict, b: dict) -> tuple[bool, str]:
     # İstanbul/Mustafa Oktay, Denizli/Yiğitler...). Bu yüzden telefon
     # tutsa bile ADRESLER açıkça farklıysa ayrı nokta sayılıyor.
     if a.get("telefon") and a.get("telefon") == b.get("telefon"):
+        # AYNI İLÇEDE aynı numara → aynı işyeri. Adres yazımı sayfadan
+        # sayfaya değişebiliyor ("Mimar Sinan Mah. 6045 Sok." vs
+        # "MİMAR SİNAN MAH.6045 SOK."), bu yüzden adres farkına bakmıyoruz.
+        #
+        # SYM'de bunu yapmayınca 29 firma iki kez sayılıyordu: bayi
+        # sayfasında "MANAVGAT MOTOR / YASİN AĞGEDİK", servis sayfasında
+        # "YASİN AĞGEDİK" yazdığı için biri "sadece bayi", öteki "sadece
+        # servis" görünüyordu. Oysa tek işyeri ve satış+servis.
+        ia = fold(a.get("ilce", "") or "")
+        ib = fold(b.get("ilce", "") or "")
+        if ia and ib and ia == ib:
+            return True, "telefon + aynı ilçe"
+
+        # FARKLI ilçede aynı numara → zincir bayinin ayrı şubesi.
+        # Bajaj'da 7 gerçek nokta bu yüzden tek kayda iniyordu.
+        if ia and ib and ia != ib:
+            return False, "aynı telefon, farklı ilçe"
+
+        # İlçe bilinmiyorsa eski davranış: adres farkı ayırt edici.
         aa = adres_anahtari(a.get("adres", ""))
         ab = adres_anahtari(b.get("adres", ""))
         if aa and ab and aa != ab:
