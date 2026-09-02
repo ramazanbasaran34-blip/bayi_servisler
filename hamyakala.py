@@ -212,6 +212,10 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "borusan-bursa":    ("https://www.borusanotomotiv.com/yetkili-satici-ve-servisler/arama?city=Bursa", "html"),
     "borusan-harita":   ("https://www.borusanotomotiv.com/yetkili-satici-ve-servisler/harita", "html"),
 
+    # SYM: 278 kaydın 126'sı yanlışlıkla Adana'ya atanmış, il ataması bozuk
+    "sym-bayiler":     ("https://www.sym-tr.com/bayiler/", "html"),
+    "sym-servis":      ("https://www.sym-tr.com/servis/", "html"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
