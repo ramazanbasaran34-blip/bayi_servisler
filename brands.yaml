@@ -320,7 +320,9 @@ markalar:
 
   # 20. SYM  ·  Tayvan-Çin  ·  www.sym-tr.com
   "SYM":
-    mode: browser
+    # ozel/sym.py ile toplanıyor: WPBakery akordeon; il panel
+    # başlığında, ilçe blok içindeki kalın satırda.
+    ozel: sym
     beklenen: [70, 240]   # saha: ~100 bayi, ~100 servis
     kaynaklar:
       - rol: satis
