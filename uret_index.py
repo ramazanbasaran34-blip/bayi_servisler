@@ -465,6 +465,27 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 #anaSayfa:hover{opacity:.75}
 #anaSayfa:active{opacity:.55}
 
+/* İlçe seçim kutusu — eskiden çipler yan yana dizilip ekranın
+   yarısını kaplıyordu. Tek kutu, çoklu seçim, arama var. */
+.ilcekutu{position:relative;margin:0 0 8px}
+#ilceAc{width:100%;display:flex;align-items:center;justify-content:space-between;
+  gap:8px;background:#fff;border:1px solid var(--hat2);border-radius:7px;
+  padding:9px 12px;font-size:14px;font-family:inherit;color:var(--murekkep);
+  cursor:pointer;box-shadow:var(--golge)}
+#ilceAc .ok2{color:var(--celik);font-size:12px}
+#ilceAc[aria-expanded="true"]{border-color:var(--murekkep)}
+.ilcemenu{position:absolute;z-index:35;left:0;right:0;top:calc(100% + 4px);
+  background:#fff;border:1px solid var(--hat2);border-radius:9px;
+  box-shadow:0 12px 28px -12px rgba(16,32,56,.45);padding:8px}
+.ilcemenu .ara{margin-bottom:6px}
+#ilceListesi{max-height:46vh;overflow-y:auto}
+.ilcesatir{display:flex;align-items:center;gap:8px;padding:7px 6px;
+  border-radius:6px;cursor:pointer;font-size:14px}
+.ilcesatir:hover{background:var(--hat2)}
+.ilcesatir input{width:16px;height:16px;flex:0 0 auto;accent-color:var(--murekkep)}
+.ilcealt{display:flex;gap:6px;justify-content:flex-end;
+  border-top:1px solid var(--hat2);padding-top:7px;margin-top:5px}
+
 /* Verim ekranı seçim düğmeleri.
    DİKKAT: .sirala kullanılamaz — o sınıf mobilde gizli. */
 .secimler{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
@@ -808,7 +829,22 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     </div>
     <div class="yapiskan">
       <input class="ara" id="araMarka" type="search" placeholder="Marka, bayi adı veya adres ara" autocomplete="off">
-      <div class="cipler" id="ilceCipler"></div>
+      <!-- İlçeler eskiden yan yana çip olarak diziliyordu; büyük illerde
+           ekranın yarısını kaplıyordu. Artık tek kutu, çoklu seçim. -->
+      <div class="ilcekutu">
+        <button id="ilceAc" type="button" aria-expanded="false">
+          <span id="ilceOzet">Tüm ilçeler</span>
+          <span class="ok2">▾</span>
+        </button>
+        <div class="ilcemenu" id="ilceMenu" hidden>
+          <input class="ara" id="ilceAra" type="search" placeholder="İlçe ara" autocomplete="off">
+          <div id="ilceListesi"></div>
+          <div class="ilcealt">
+            <button class="btn" id="ilceTemizle">Temizle</button>
+            <button class="btn ana" id="ilceUygula">Kapat</button>
+          </div>
+        </div>
+      </div>
       <div class="rolsuz" id="rolSuzgec"></div>
     </div>
     <div class="altbar" id="ustbar" style="display:none">
@@ -955,6 +991,10 @@ const ROL_SINIF = {satis:"satis", servis:"servis", satis_servis:"ikisi"};
 const ROL_AD    = {satis:"Satış", servis:"Servis", satis_servis:"Satış + Servis"};
 
 let IL=null, ILCE="", ROL="tum", MD=null, SIRA="sayi";
+/* Birden çok ilçe seçilebiliyor. ILCE tek değer olarak kalıyor
+   (adres çubuğu ve eski kodlarla uyum için); ILCELER seçili kümedir.
+   Küme boşsa "tüm ilçeler" demektir. */
+let ILCELER = new Set();
 /* Sütun başlığından sıralama durumu: tablo -> {anahtar, yon}.
    Genel kapsamda; hem özet tabloları hem "Tüm markalar" okuyor. */
 const SIRA_DURUM = {};
@@ -1134,8 +1174,7 @@ function hashUygula(){
       IL = bulunan; ILCE = ilce;
       $("#kod").textContent = IL.plaka; $("#ilAdi").textContent = IL.ad;
       cizIlce();
-      if(ILCE) [...$("#ilceCipler").children].forEach(
-        c => c.classList.toggle("secili", c.dataset.i === ILCE));
+      if(ILCE){ ILCELER = new Set([ILCE]); ilceListesiCiz(); ilceOzetGuncelle(); }
       cizMarka(); ekran("vMarkalar", false); return;
     }
   }
@@ -1419,8 +1458,7 @@ function ozetTiklama(e){
     ILCE=b.dataset.ilce||""; ROL="tum";
     $("#kod").textContent=IL.plaka; $("#ilAdi").textContent=IL.ad;
     cizIlce();
-    if(ILCE){ [...$("#ilceCipler").children].forEach(c=>
-      c.classList.toggle("secili", c.dataset.i===ILCE)); }
+    if(ILCE){ ILCELER = new Set([ILCE]); ilceListesiCiz(); ilceOzetGuncelle(); }
     cizMarka(); ekran("vMarkalar");
   }
 }
@@ -1516,19 +1554,70 @@ $("#ilListe").onclick = e => {
 let z1; $("#araIl").oninput=()=>{clearTimeout(z1);z1=setTimeout(cizIl,110);};
 
 /* ---------- ilçe ---------- */
+let ILCE_LISTE = [];
+
 function cizIlce(){
-  const l=[...new Set(D.bayiler.filter(b=>b[B_IL]===IL.ad).map(b=>b[B_ILCE]).filter(Boolean))]
-    .sort((a,b)=>a.localeCompare(b,"tr"));
-  $("#ilceCipler").innerHTML = l.length
-    ? `<button class="cip secili" data-i="">Tüm ${esc(IL.ad)}</button>`+
-      l.map(x=>`<button class="cip" data-i="${esc(x)}">${esc(x)}</button>`).join("") : "";
+  ILCE_LISTE = [...new Set(D.bayiler.filter(b=>b[B_IL]===IL.ad)
+    .map(b=>b[B_ILCE]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"tr"));
+  ILCELER = new Set();
+  $("#ilceAra").value = "";
+  ilceListesiCiz();
+  ilceOzetGuncelle();
+  $("#ilceMenu").hidden = true;
+  $("#ilceAc").setAttribute("aria-expanded", "false");
+  $("#ilceAc").style.display = ILCE_LISTE.length ? "" : "none";
 }
-$("#ilceCipler").onclick=e=>{
-  const b=e.target.closest(".cip"); if(!b) return;
-  ILCE=b.dataset.i;
-  [...$("#ilceCipler").children].forEach(c=>c.classList.toggle("secili",c===b));
-  cizMarka();
+
+function ilceListesiCiz(){
+  const q = kat($("#ilceAra").value);
+  const l = q ? ILCE_LISTE.filter(x => kat(x).includes(q)) : ILCE_LISTE;
+  // "Tüm ilçeler" hep en başta
+  $("#ilceListesi").innerHTML =
+    `<label class="ilcesatir"><input type="checkbox" id="ilceHepsi"${
+      ILCELER.size===0?" checked":""}><span><b>Tüm ${esc(IL.ad)}</b></span></label>` +
+    l.map(x=>`<label class="ilcesatir"><input type="checkbox" data-i="${esc(x)}"${
+      ILCELER.has(x)?" checked":""}><span>${esc(x)}</span></label>`).join("");
+}
+
+function ilceOzetGuncelle(){
+  const n = ILCELER.size;
+  $("#ilceOzet").textContent = n === 0 ? `Tüm ${IL.ad}`
+    : n === 1 ? [...ILCELER][0]
+    : `${n} ilçe seçili`;
+  ILCE = n === 1 ? [...ILCELER][0] : "";   // adres çubuğu için
+}
+
+$("#ilceAc").onclick = () => {
+  const m = $("#ilceMenu");
+  m.hidden = !m.hidden;
+  $("#ilceAc").setAttribute("aria-expanded", String(!m.hidden));
+  if(!m.hidden) $("#ilceAra").focus();
 };
+$("#ilceAra").oninput = ilceListesiCiz;
+$("#ilceListesi").onchange = e => {
+  const k = e.target;
+  if(k.id === "ilceHepsi"){
+    ILCELER.clear();
+  } else if(k.dataset.i){
+    if(k.checked) ILCELER.add(k.dataset.i); else ILCELER.delete(k.dataset.i);
+  } else return;
+  ilceListesiCiz(); ilceOzetGuncelle(); cizMarka();
+};
+$("#ilceTemizle").onclick = () => {
+  ILCELER.clear(); ilceListesiCiz(); ilceOzetGuncelle(); cizMarka();
+};
+$("#ilceUygula").onclick = () => {
+  $("#ilceMenu").hidden = true;
+  $("#ilceAc").setAttribute("aria-expanded", "false");
+};
+// Dışına tıklayınca kapansın
+document.addEventListener("click", e => {
+  if(!e.target.closest(".ilcekutu")) {
+    const m = $("#ilceMenu");
+    if(m && !m.hidden){ m.hidden = true;
+      $("#ilceAc").setAttribute("aria-expanded","false"); }
+  }
+});
 
 /* ---------- kayıt kartı ---------- */
 function kayitHtml(x, no, duzenlenebilir=false){
@@ -1739,7 +1828,8 @@ function cizFirma(){
 
 /* ---------- ilin markaları ---------- */
 function bolgeVeri(){
-  return D.bayiler.filter(b=>b[B_IL]===IL.ad && (!ILCE||b[B_ILCE]===ILCE));
+  return D.bayiler.filter(b => b[B_IL]===IL.ad &&
+    (ILCELER.size === 0 || ILCELER.has(b[B_ILCE])));
 }
 function cizMarka(){
   const tum=bolgeVeri();
