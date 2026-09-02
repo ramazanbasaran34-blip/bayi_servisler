@@ -638,10 +638,9 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     </div>
     <div class="oneri" id="oneriKutu"></div>
     <p class="acikbilgi ust">
-      Aşağıdaki rakamlar <b>toplam bayilik/servislik sayısını</b> gösterir.
-      Bir firma aynı anda birden çok markanın bayisi ve servisi olabildiği
-      için burada birden fazla kez sayılır.
-      <b>Gerçek firma sayısı sayfanın en altındadır.</b>
+      Rakamlar <b>gerçek firma sayısını</b> gösterir: bir firma birden çok
+      markaya bayilik yapsa bile <b>yalnızca bir kez</b> sayılır.
+      Marka bazlı toplam bayilik sayıları için Markalar sekmesine bakın.
     </p>
     <div class="kutular" id="kutular"></div>
     <div class="kapsam" id="kapsam"></div>
@@ -951,6 +950,9 @@ function ekran(v, gecmis=true){
   $("#"+v).style.display="block";
   $("#sar").classList.toggle("genis", v==="vTumMarka"||v==="vMarkaDetay"||
                                       v==="vOzet"||v==="vFirma");
+  // Özet ekranında sayılar zaten üstteki kutularda; alt çubuk gereksiz.
+  const ao = $("#altOzet");
+  if(ao) ao.style.display = (v==="vOzet") ? "none" : "flex";
   $("#sekOzet").classList.toggle("aktif", v==="vOzet");
   $("#sekIl").classList.toggle("aktif", v==="vIl"||v==="vMarkalar");
   $("#sekMarka").classList.toggle("aktif", v==="vTumMarka"||v==="vMarkaDetay");
@@ -1047,18 +1049,24 @@ function cizOzet(){
   const markalar=new Set(D.bayiler.map(b=>b[B_MARKA]));
   const bicim=n=>n.toLocaleString("tr-TR");
 
+  /* Kutular artık FİRMA bazlı (tekilleştirilmiş), kayıt bazlı değil.
+     Kayıt bazlı sayılar yanıltıcıydı: bir firma 14 markaya bayilik
+     yapınca 14 kez sayılıyordu. Doğru sayılar alt çubuktaydı; onları
+     buraya taşıdık ve Özet ekranında alt çubuğu gizledik. */
+  const f = tekilSay(D.bayiler);
   $("#kutular").innerHTML=`
-    <div class="kutu satis"><span class="n">${bicim(t.satisNoktasi)}</span>
-      <span class="e">Toplam Satış Noktası<br>${bicim(t.yalnizSatis)} yalnız satış + ${bicim(t.ikisi)} satış+servis</span></div>
-    <div class="kutu servis"><span class="n">${bicim(t.servisNoktasi)}</span>
-      <span class="e">Toplam Servis Noktası<br>${bicim(t.yalnizServis)} yalnız servis + ${bicim(t.ikisi)} satış+servis</span></div>
-    <div class="kutu"><span class="n">${bicim(t.yalnizSatis)}</span><span class="e">Yalnız Satış</span></div>
-    <div class="kutu"><span class="n">${bicim(t.yalnizServis)}</span><span class="e">Yalnız Servis</span></div>
-    <div class="kutu ikisi"><span class="n">${bicim(t.ikisi)}</span><span class="e">Satış + Servis<br>(kesişim)</span></div>
+    <div class="kutu toplam"><span class="n">${bicim(f.toplam)}</span>
+      <span class="e">Gerçek Firma Sayısı<br>her bayi bir kez sayılır</span></div>
+    <div class="kutu satis"><span class="n">${bicim(f.satisNoktasi)}</span>
+      <span class="e">Toplam Satış Noktası<br>${bicim(f.yalnizSatis)} yalnız satış + ${bicim(f.ikisi)} satış+servis</span></div>
+    <div class="kutu servis"><span class="n">${bicim(f.servisNoktasi)}</span>
+      <span class="e">Toplam Servis Noktası<br>${bicim(f.yalnizServis)} yalnız servis + ${bicim(f.ikisi)} satış+servis</span></div>
+    <div class="kutu"><span class="n">${bicim(f.yalnizSatis)}</span><span class="e">Yalnız Satış</span></div>
+    <div class="kutu"><span class="n">${bicim(f.yalnizServis)}</span><span class="e">Yalnız Servis</span></div>
+    <div class="kutu ikisi"><span class="n">${bicim(f.ikisi)}</span><span class="e">Satış + Servis<br>(kesişim)</span></div>
     <div class="kutu"><span class="n">${markalar.size}</span><span class="e">Marka</span></div>
     <div class="kutu"><span class="n">${iller.size}</span><span class="e">İl</span></div>
-    <div class="kutu"><span class="n">${ilceler.size}</span><span class="e">İlçe</span></div>
-    <div class="kutu toplam"><span class="n">${bicim(t.toplam)}</span><span class="e">Toplam Nokta</span></div>`;
+    <div class="kutu"><span class="n">${ilceler.size}</span><span class="e">İlçe</span></div>`;
 
   // Kapsama bilgisi
   const telli=D.bayiler.filter(b=>b[B_TEL]).length;
