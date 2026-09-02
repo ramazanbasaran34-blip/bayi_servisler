@@ -1,8 +1,8 @@
 {
- "SYM": {
-  "kayit": 349,
-  "il": 59,
-  "ilsiz": 1,
-  "db": "{'durum': 'basarili', 'adet': 349, 'yeni': 295, 'guncel': 54, 'supheli': 0, 'mesaj': ''}"
+ "Kawasaki": {
+  "kayit": 111,
+  "il": 37,
+  "ilsiz": 0,
+  "db": "{'durum': 'basarili', 'adet': 111, 'yeni': 90, 'guncel': 21, 'supheli': 0, 'mesaj': ''}"
  }
 }
