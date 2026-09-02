@@ -1732,14 +1732,10 @@ function cizMarka(){
   let mSira=0;
   $("#markaListe").innerHTML=l.map(m=>{
     const bs=tum.filter(x=>x[B_MARKA]===m.ad && rolGecer(x));
-    if(!bs.length){
-      if(q && !kat(m.ad).includes(q)) return "";
-      if(ROL!=="tum") return "";
-      return `<a class="sat" href="${esc(m.bayi||m.site)}" target="_blank" rel="noopener">
-        <span class="ad">${esc(m.ad)}</span>
-        <span class="sag"><span class="alan">${esc(m.alan)}</span>
-        <span class="ok">↗</span></span></a>`;
-    }
+    // O ilde noktası olmayan markayı listeleme. Önceden marka sitesine
+    // giden bir bağlantı olarak yine de gösteriliyordu; liste kalabalık
+    // görünüyor ve "bu ilde bayisi var" izlenimi veriyordu.
+    if(!bs.length) return "";
     const acik=ACIK.has(m.ad);
     const s=bs.filter(x=>x[B_ROL]!=="servis").length, v=bs.filter(x=>x[B_ROL]!=="satis").length;
     mSira++;
