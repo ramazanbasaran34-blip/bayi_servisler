@@ -1215,5 +1215,21 @@
   "boyut": 19520,
   "tel_toplam": 2,
   "tel_script_ici": 1
+ },
+ "sym-bayiler": {
+  "url": "https://www.sym-tr.com/bayiler/",
+  "kod": 200,
+  "son_url": "https://www.sym-tr.com/bayiler/",
+  "boyut": 187371,
+  "tel_toplam": 311,
+  "tel_script_ici": 0
+ },
+ "sym-servis": {
+  "url": "https://www.sym-tr.com/servis/",
+  "kod": 200,
+  "son_url": "https://www.sym-tr.com/servis/",
+  "boyut": 234782,
+  "tel_toplam": 377,
+  "tel_script_ici": 0
  }
 }
