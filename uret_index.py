@@ -448,6 +448,11 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   #verimListe .sat{padding-left:6px;padding-right:6px;gap:5px}
 }
 
+#anaSayfa{display:inline-flex;align-items:center;cursor:pointer;
+  border-radius:6px;transition:opacity .12s}
+#anaSayfa:hover{opacity:.75}
+#anaSayfa:active{opacity:.55}
+
 /* Verim ekranı seçim düğmeleri.
    DİKKAT: .sirala kullanılamaz — o sınıf mobilde gizli. */
 .secimler{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
@@ -684,7 +689,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
 <body>
 
 <header class="tepe">
-  <img src="__LOGO_SOL__" alt="Kuralkan">
+  <a href="#" id="anaSayfa" title="Ana sayfaya dön"><img src="__LOGO_SOL__" alt="Kuralkan"></a>
   <div class="orta">
     <h1>Motosiklet Bayi ve Servis Ağı</h1>
 
@@ -1104,6 +1109,14 @@ function hashUygula(){
 
 window.addEventListener("hashchange", () => { if(!_kendiYazdi) hashUygula(); });
 $("#sekOzet").onclick  = () => { cizOzet(); ekran("vOzet"); };
+/* Logoya tıklayınca ana sayfa (Özet). Seçili il, ilçe ve süzgeçler
+   sıfırlanıyor ki temiz bir başlangıç olsun. */
+$("#anaSayfa").onclick = e => {
+  e.preventDefault();
+  IL = null; ILCE = ""; ROL = "tum"; MD = null;
+  const a = $("#araIl"); if(a) a.value = "";
+  cizOzet(); ekran("vOzet");
+};
 $("#sekIl").onclick    = () => {
   // Liste çizilmeden ekran açılıyordu; sekmeye basınca boş görünüyordu.
   if(IL){ ekran("vMarkalar"); } else { cizIl(); ekran("vIl"); }
