@@ -454,8 +454,11 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   line-height:1.2;flex:0 0 auto;padding:2px 6px;border-left:1px solid var(--hat2)}
 .altozet .kutu b{font-size:24px;color:var(--murekkep);
   font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.altozet .kutu i{font-style:normal;font-size:11px;color:var(--celik);
-  white-space:nowrap;letter-spacing:.01em;margin-top:1px}
+/* Etiketler iki satır: kısaltma yerine tam kelime yazıyoruz, yazıyı
+   küçültüp iki mısraya bölerek sığdırıyoruz. */
+.altozet .kutu i{font-style:normal;font-size:9.5px;color:var(--celik);
+  white-space:nowrap;letter-spacing:0;margin-top:1px;line-height:1.15;
+  text-align:center}
 .altozet .kutu.vurgu b{color:var(--satis)}
 .altozet .kutu.vurgu{background:var(--satis-z);border-radius:7px;padding:4px 8px}
 .altozet .kutu.toplamf{background:var(--murekkep);border-radius:7px;
@@ -472,7 +475,7 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   .altozet .satir{gap:4px}
   .altozet .kutu{padding:2px 4px}
   .altozet .kutu b{font-size:23px}
-  .altozet .kutu i{font-size:9.5px}
+  .altozet .kutu i{font-size:8.5px}
   .altozet .aonot{font-size:10.5px}
   /* Şeritteki kayıt bazlı özet dar ekranda iki satır kaplıyordu;
      aynı bilgi alt çubukta firma bazlı ve daha doğru veriliyor. */
@@ -2058,11 +2061,11 @@ try{ history.replaceState({ekran:'vOzet'},''); }catch(e){}
   </div>
   <div class="satir">
     <span class="kutu toplamf"><b id="aoToplam">—</b><i>firma</i></span>
-    <span class="kutu vurgu"><b id="aoSatisNok">—</b><i>satış nok.</i></span>
-    <span class="kutu"><b id="aoServisNok">—</b><i>servis nok.</i></span>
-    <span class="kutu"><b id="aoSatis">—</b><i>yln. satış</i></span>
-    <span class="kutu"><b id="aoServis">—</b><i>yln. servis</i></span>
-    <span class="kutu"><b id="aoIkisi">—</b><i>satış+srv</i></span>
+    <span class="kutu vurgu"><b id="aoSatisNok">—</b><i>toplam<br>satış noktası</i></span>
+    <span class="kutu"><b id="aoServisNok">—</b><i>toplam<br>servis noktası</i></span>
+    <span class="kutu"><b id="aoSatis">—</b><i>sadece<br>bayi</i></span>
+    <span class="kutu"><b id="aoServis">—</b><i>sadece<br>servis</i></span>
+    <span class="kutu"><b id="aoIkisi">—</b><i>bayi +<br>servis</i></span>
   </div>
 </div>
 <div class="ortu" id="duzenleOrtu" style="display:none">
