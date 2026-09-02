@@ -782,7 +782,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <div class="yapiskan">
       <input class="ara" id="araVerim" type="search" placeholder="İl ara" autocomplete="off">
     </div>
-    <div class="baslikcubuk sirali" data-tablo="verimListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="nokta" class="sirakol k">Nokta</span><span data-s="2024" class="sirakol k">2024<br>satış</span><span data-s="v2024" class="sirakol k">2024<br>nokta başı</span><span data-s="2025" class="sirakol k">2025<br>satış</span><span data-s="v2025" class="sirakol k">2025<br>nokta başı</span><span data-s="2026" class="sirakol k">2026*<br>satış</span><span data-s="v2026" class="sirakol k gen">2026*<br>nokta başı</span><span class="okbos"></span></span></div>
+    <div class="baslikcubuk sirali" data-tablo="verimListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="nokta" class="sirakol k">Nokta</span><span data-s="2024" class="sirakol k">2024<br>satış</span><span data-s="v2024" class="sirakol k">2024<br>yıllık<br>nokta başı</span><span data-s="2025" class="sirakol k">2025<br>satış</span><span data-s="v2025" class="sirakol k">2025<br>yıllık<br>nokta başı</span><span data-s="2026" class="sirakol k">2026*<br>satış</span><span data-s="v2026" class="sirakol k gen">2026*<br>7 aylık<br>nokta başı</span><span class="okbos"></span></span></div>
     <div class="liste" id="verimListe"></div>
     <div class="bos" id="verimBos" style="display:none">Sonuç bulunamadı.</div>
   </section>
@@ -1093,10 +1093,10 @@ $("#btnVerimXls").onclick = async e => {
   const etiket = VERIM_ROL==="satis" ? "Bayi" : "Servis";
   const bas = ["İl","Plaka",`${etiket} noktası`,
     "2023 satış","2024 satış","2025 satış","2026 satış (31.07)",
-    `2023 ${etiket.toLocaleLowerCase("tr")} başı`,
-    `2024 ${etiket.toLocaleLowerCase("tr")} başı`,
-    `2025 ${etiket.toLocaleLowerCase("tr")} başı`,
-    `2026 ${etiket.toLocaleLowerCase("tr")} başı (31.07)`];
+    `2023 ${etiket.toLocaleLowerCase("tr")} başı yıllık`,
+    `2024 ${etiket.toLocaleLowerCase("tr")} başı yıllık`,
+    `2025 ${etiket.toLocaleLowerCase("tr")} başı yıllık`,
+    `2026 ${etiket.toLocaleLowerCase("tr")} başı 7 aylık (31.07)`];
   const o = [bas, ...l.map(x=>[x.ad,x.plaka,x.nokta,
     x["2023"],x["2024"],x["2025"],x["2026"],
     x.v2023,x.v2024,x.v2025,x.v2026])];
@@ -1507,8 +1507,8 @@ function cizVerim(){
     });
 
   const etiket = VERIM_ROL === "satis" ? "bayi" : "servis";
-  $("#verimBaslik").textContent =
-    VERIM_ROL === "satis" ? "Bayi başına satış" : "Servis başına satış";
+  $("#verimBaslik").textContent = VERIM_ROL === "satis"
+    ? "Bayi başına yıllık satış" : "Servis başına yıllık satış";
 
   const topN = l.reduce((a,x)=>a+x.nokta,0);
   const top24 = l.reduce((a,x)=>a+x["2024"],0);
@@ -1517,9 +1517,9 @@ function cizVerim(){
   $("#verimNot").innerHTML =
     `<b>${bicim(topN)}</b> ${etiket} noktası · 2024'te <b>${bicim(top24)}</b>, ` +
     `2025'te <b>${bicim(top25)}</b> motosiklet satıldı · ` +
-    `Türkiye ortalaması ${etiket} başına <b>${topN?Math.round(top24/topN):0}</b> (2024), ` +
+    `Türkiye ortalaması ${etiket} başına <b>${topN?Math.round(top24/topN):0}</b> adet/yıl (2024), ` +
     `<b>${topN?Math.round(top25/topN):0}</b> (2025), ` +
-    `<b>${topN?Math.round(top26/topN):0}</b> (2026*) adet. ` +
+    `<b>${topN?Math.round(top26/topN):0}</b> adet (2026* — 7 aylık). ` +
     `<span style="color:var(--celik)">Satış adetleri TÜİK. ` +
     `<b>*2026 rakamı 31.07 itibarıyladır</b>, yıl tamamlanmadığı için ` +
     `diğer yıllarla doğrudan kıyaslanamaz.</span>`;
