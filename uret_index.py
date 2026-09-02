@@ -212,8 +212,13 @@ a{color:var(--vurgu)}
 .serit b{color:var(--murekkep);font-weight:600}
 .seritust{display:flex;gap:16px;align-items:center;flex-wrap:wrap;
   justify-content:center;text-align:center}
+/* Beş sekme dar ekrana sığmıyordu (360px'de 21px taşma). Şerit kendi
+   içinde yatay kaydırılabilir; sayfa yatay kaymıyor. */
 .sek{display:flex;gap:6px;justify-content:center;width:100%;
-  border-top:1px solid var(--hat2);padding-top:4px}
+  border-top:1px solid var(--hat2);padding-top:4px;
+  overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.sek::-webkit-scrollbar{display:none}
+.sek button{flex:0 0 auto;white-space:nowrap}
 .sek button{background:none;border:0;border-bottom:3px solid transparent;
   color:var(--celik);border-radius:0;padding:6px 14px 7px;cursor:pointer;
   font-size:14.5px;font-weight:600;font-family:var(--d);letter-spacing:-.01em}
@@ -377,6 +382,15 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   padding:9px 10px;border:1px solid var(--hat2);border-radius:7px;
   font-size:14.5px;font-family:inherit;color:var(--murekkep);font-weight:400}
 .dzbtn{display:flex;gap:8px;margin-top:6px}
+/* --- "Bu bayi ayrıca şu markaların da bayisi" satırı --- */
+.k4{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:5px 0 0}
+.k4 .dmet{font-size:11px;color:var(--celik);margin-right:2px}
+.dmarka{background:var(--hat2);border:1px solid transparent;color:var(--murekkep);
+  border-radius:5px;padding:2px 7px;font-size:11px;font-weight:600;
+  cursor:pointer;font-family:inherit;line-height:1.5}
+.dmarka:hover{background:var(--murekkep);color:#fff}
+@media (max-width:620px){ .k4 .dmet{font-size:10px} .dmarka{font-size:10px;padding:2px 6px} }
+
 /* --- Cari kod rozeti --- */
 .carikod{font-family:var(--m);font-size:10.5px;font-weight:700;
   background:var(--murekkep);color:#fff;border-radius:4px;
@@ -417,6 +431,8 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .sar{padding-bottom:var(--altozet-y,150px)}
 @media (max-width:620px){
   /* Dikeyde büyüt, yatayda daralt: rakamlar okunaklı olsun */
+  .sek{gap:2px;justify-content:flex-start}
+  .sek button{padding:6px 9px 7px;font-size:13.5px}
   .altozet{gap:6px;padding:10px 6px 12px}
   .altozet .baslik{font-size:13px}
   .altozet .satir{gap:4px}
@@ -606,6 +622,8 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <button id="sekOzet">Özet</button>
     <button id="sekIl" class="aktif">İller</button>
     <button id="sekMarka">Markalar</button>
+    <button id="sekBayi">Bayiler</button>
+    <button id="sekServis">Servisler</button>
   </nav>
 </div>
 
@@ -712,6 +730,27 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
       <button class="btn" id="btnMarkaYaz">Yazdır / PDF</button>
     </div>
     <div class="liste" id="mdListe"></div>
+  </section>
+
+  <!-- FİRMA EKRANI: Bayiler / Servisler sekmeleri.
+       Marka değil FİRMA merkezli: aynı cari kod tek satır, yanında
+       hangi markaların bayisi/servisi olduğu. 5000+ kart olduğu için
+       kademeli çiziliyor. -->
+  <section id="vFirma" style="display:none">
+    <h2 id="firmaBaslik">Bayiler</h2>
+    <p class="notm" id="firmaNot"></p>
+    <div class="altbar">
+      <button class="btn ana" id="btnFirmaXls">Excel indir</button>
+    </div>
+    <div class="yapiskan">
+      <input class="ara" id="araFirma" type="search"
+             placeholder="Firma adı, il, ilçe veya marka ara" autocomplete="off">
+    </div>
+    <div class="liste" id="firmaListe"></div>
+    <div class="bos" id="firmaBos" style="display:none">Sonuç bulunamadı.</div>
+    <div style="text-align:center;margin:12px 0 4px">
+      <button class="btn" id="btnDahaFirma" style="display:none">Daha fazla göster</button>
+    </div>
   </section>
 
   <section id="vTumMarka" style="display:none">
@@ -834,6 +873,26 @@ function rolBagla(hedef, ciz){
 }
 const bicim = n => (n||0).toLocaleString("tr-TR");
 
+/* ---------- firma → hangi markaların bayisi ----------
+   Aynı cari kod, aynı fiziksel firma demek. Bir firma birden çok
+   markaya bayilik yapabiliyor (rekor: 14 marka). Kartta "bu bayi
+   şunların da bayisi" satırı için markaları koda göre topluyoruz. */
+const FIRMA_MARKA = (() => {
+  const g = {};
+  D.bayiler.forEach(b => {
+    const k = b[B_KOD];
+    if (!k) return;
+    (g[k] ||= new Set()).add(b[B_MARKA]);
+  });
+  return g;
+})();
+
+function digerMarkalar(x){
+  const s = FIRMA_MARKA[x[B_KOD]];
+  if (!s || s.size < 2) return [];
+  return [...s].filter(m => m !== x[B_MARKA]).sort((a,b)=>a.localeCompare(b,"tr"));
+}
+
 /* ---------- alt özet: TEKİL BAYİ sayıları ----------
    D.bayiler marka×nokta tutuyor. Aynı fiziksel bayi birden çok markanın
    kaydında geçiyor (bir firma 14 markaya kadar bayilik yapabiliyor).
@@ -888,12 +947,15 @@ function ekran(v, gecmis=true){
   // ilçe çipleri, rol süzgeci). Geçişte yeniden ölçüyoruz ki sütun
   // başlığı hep o bloğun ALTINA yapışsın.
   setTimeout(seritOlc, 0);
-  ["vOzet","vIl","vMarkalar","vTumMarka","vMarkaDetay"].forEach(x=>$("#"+x).style.display="none");
+  ["vOzet","vIl","vMarkalar","vTumMarka","vMarkaDetay","vFirma"].forEach(x=>$("#"+x).style.display="none");
   $("#"+v).style.display="block";
-  $("#sar").classList.toggle("genis", v==="vTumMarka"||v==="vMarkaDetay"||v==="vOzet");
+  $("#sar").classList.toggle("genis", v==="vTumMarka"||v==="vMarkaDetay"||
+                                      v==="vOzet"||v==="vFirma");
   $("#sekOzet").classList.toggle("aktif", v==="vOzet");
   $("#sekIl").classList.toggle("aktif", v==="vIl"||v==="vMarkalar");
   $("#sekMarka").classList.toggle("aktif", v==="vTumMarka"||v==="vMarkaDetay");
+  $("#sekBayi").classList.toggle("aktif", v==="vFirma" && FIRMA_ROL==="satis");
+  $("#sekServis").classList.toggle("aktif", v==="vFirma" && FIRMA_ROL==="servis");
   window.scrollTo(0,0);
   if(gecmis) durumYaz(v);
 }
@@ -951,6 +1013,12 @@ $("#sekIl").onclick    = () => {
   if(IL){ ekran("vMarkalar"); } else { cizIl(); ekran("vIl"); }
 };
 $("#sekMarka").onclick = () => { cizTum(); ekran("vTumMarka"); };
+$("#sekBayi").onclick   = () => { FIRMA_ROL="satis";  FIRMA_LIMIT=FIRMA_SAYFA;
+                                  $("#araFirma").value=""; cizFirma(); ekran("vFirma"); };
+$("#sekServis").onclick = () => { FIRMA_ROL="servis"; FIRMA_LIMIT=FIRMA_SAYFA;
+                                  $("#araFirma").value=""; cizFirma(); ekran("vFirma"); };
+$("#araFirma").oninput   = () => { FIRMA_LIMIT=FIRMA_SAYFA; cizFirma(); };
+$("#btnDahaFirma").onclick = () => { FIRMA_LIMIT += FIRMA_SAYFA*2; cizFirma(); };
 $("#geri").onclick     = () => { IL=null; ILCE=""; ROL="tum"; $("#araMarka").value=""; ekran("vIl"); };
 $("#geriMarka").onclick= () => { ROL="tum"; cizTum();
   altOzetGuncelle("Türkiye geneli", D.bayiler); ekran("vTumMarka"); };
@@ -1265,10 +1333,103 @@ function kayitHtml(x, no, duzenlenebilir=false){
     </div>
     <div class="k2">${esc(x[B_ADRES])}${x[B_ADRES]?" · ":""}<span class="ilcerz">${
       esc([x[B_ILCE],x[B_IL]].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(" / "))}</span></div>
+    ${(()=>{const d=digerMarkalar(x); return d.length
+      ? `<div class="k4"><span class="dmet">Bu bayi ayrıca:</span>${
+          d.map(m=>`<button class="dmarka" data-git="${esc(m)}">${esc(m)}</button>`).join("")}</div>`
+      : "";})()}
     <div class="k3">
       <span class="tel">${x[B_TEL]?`<a href="tel:${esc(x[B_TEL].replace(/\s/g,""))}">${esc(x[B_TEL])}</a>`:"—"}</span>
       ${x[B_GIRIS]?`<a class="giris" href="${esc(x[B_GIRIS])}" target="_blank" rel="noopener">Marka sayfasına git ↗</a>`:""}
     </div></div>`;
+}
+
+/* ================= FİRMA EKRANI (Bayiler / Servisler) =================
+   Marka merkezli değil FİRMA merkezli görünüm. Aynı cari kod = aynı
+   fiziksel firma; kaç markaya bayilik/servislik yaptığı tek satırda.
+   5200 bayi / 5393 servis kartı var, hepsini birden çizmek telefonda
+   ~1 sn sürüyor; bu yüzden 150'şer kademeli çiziliyor. */
+const FIRMA_SAYFA = 150;
+let FIRMA_ROL = "satis";     // "satis" | "servis"
+let FIRMA_LIMIT = FIRMA_SAYFA;
+
+const FIRMALAR = (() => {
+  const g = new Map();
+  D.bayiler.forEach(b => {
+    const k = b[B_KOD] || ("x|" + b[B_AD] + "|" + b[B_IL] + "|" + b[B_ILCE]);
+    let o = g.get(k);
+    if (!o) {
+      o = {kod: b[B_KOD] || "", ad: b[B_AD], il: b[B_IL], ilce: b[B_ILCE],
+           adres: b[B_ADRES], tel: b[B_TEL],
+           satis: new Set(), servis: new Set()};
+      g.set(k, o);
+    }
+    // En uzun ad genelde tam ticari unvan
+    if ((b[B_AD] || "").length > o.ad.length) o.ad = b[B_AD];
+    if ((b[B_ADRES] || "").length > (o.adres || "").length) o.adres = b[B_ADRES];
+    const r = b[B_ROL];
+    if (r === "satis" || r === "satis_servis") o.satis.add(b[B_MARKA]);
+    if (r === "servis" || r === "satis_servis") o.servis.add(b[B_MARKA]);
+  });
+  return [...g.values()];
+})();
+
+function firmaSuzgec(){
+  const q = kat($("#araFirma").value);
+  const alan = FIRMA_ROL === "satis" ? "satis" : "servis";
+  let l = FIRMALAR.filter(f => f[alan].size > 0);
+  if (q) l = l.filter(f => kat(
+      f.ad + " " + f.il + " " + f.ilce + " " + [...f.satis, ...f.servis].join(" ")
+    ).includes(q));
+  // Çok markalı firmalar üstte; sonra alfabetik
+  return l.sort((a, b) => b[alan].size - a[alan].size ||
+                          a.ad.localeCompare(b.ad, "tr"));
+}
+
+function firmaKart(f, no){
+  const bu   = FIRMA_ROL === "satis" ? f.satis : f.servis;
+  const oteki= FIRMA_ROL === "satis" ? f.servis : f.satis;
+  const etiket = FIRMA_ROL === "satis" ? "Bayilik" : "Servislik";
+  const oEtiket= FIRMA_ROL === "satis" ? "Ayrıca servis:" : "Ayrıca bayi:";
+  const sirala = x => [...x].sort((a,b)=>a.localeCompare(b,"tr"));
+  const rozet = m => `<button class="dmarka" data-git="${esc(m)}">${esc(m)}</button>`;
+  const dis = sirala(oteki).filter(m => !bu.has(m));
+  return `<div class="kayit ${FIRMA_ROL==="satis"?"satis":"servis"}">
+    <div class="k1"><span class="sirano kno">${no}</span>${
+      f.kod?`<span class="carikod" title="Cari kod">${esc(f.kod)}</span>`:""}
+      <span class="kad">${esc(f.ad)}</span>
+      <span class="rol ${FIRMA_ROL==="satis"?"satis":"servis"}">${etiket} ${bu.size}</span>
+    </div>
+    <!-- Bu ekranda adres GÖSTERİLMİYOR: amaç firmanın hangi markalara
+         hizmet verdiğini görmek, adres bilgisi kartı uzatıyor. Adres
+         İller / Markalar / Özet ekranlarında duruyor. -->
+    <div class="k2"><span class="ilcerz">${
+      esc([f.ilce,f.il].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(" / "))}</span></div>
+    <div class="k4"><span class="dmet">${etiket}:</span>${sirala(bu).map(rozet).join("")}</div>
+    ${dis.length?`<div class="k4"><span class="dmet">${oEtiket}</span>${dis.map(rozet).join("")}</div>`:""}
+    <div class="k3"><span class="tel">${f.tel?
+      `<a href="tel:${esc(f.tel.replace(/\s/g,""))}">${esc(f.tel)}</a>`:"—"}</span></div>
+  </div>`;
+}
+
+function cizFirma(){
+  const l = firmaSuzgec();
+  const alan = FIRMA_ROL === "satis" ? "satis" : "servis";
+  $("#firmaBaslik").textContent = FIRMA_ROL === "satis" ? "Bayiler" : "Servisler";
+  const cok = l.filter(f => f[alan].size > 1).length;
+  $("#firmaNot").innerHTML =
+    `<b>${bicim(l.length)}</b> firma · <b>${bicim(cok)}</b> tanesi birden çok ` +
+    `markaya ${FIRMA_ROL==="satis"?"bayilik":"servislik"} yapıyor`;
+  $("#firmaBos").style.display = l.length ? "none" : "block";
+
+  const goster = l.slice(0, FIRMA_LIMIT);
+  $("#firmaListe").innerHTML = goster.map((f,i)=>firmaKart(f,i+1)).join("");
+  const d = $("#btnDahaFirma");
+  d.style.display = l.length > FIRMA_LIMIT ? "inline-block" : "none";
+  d.textContent = `Daha fazla göster (${bicim(l.length - FIRMA_LIMIT)} firma daha)`;
+  altOzetGuncelle(FIRMA_ROL === "satis" ? "Bayiler" : "Servisler",
+                  D.bayiler.filter(b => FIRMA_ROL === "satis"
+                    ? (b[B_ROL]==="satis"||b[B_ROL]==="satis_servis")
+                    : (b[B_ROL]==="servis"||b[B_ROL]==="satis_servis")));
 }
 
 /* ---------- ilin markaları ---------- */
@@ -1479,6 +1640,14 @@ function dzKaydet(){
   duzenleKapat();
   cizMD();
 }
+
+/* "Bu bayi ayrıca" rozetine tıklayınca o markanın sayfasına git */
+document.addEventListener("click", e=>{
+  const d = e.target.closest(".dmarka");
+  if(!d) return;
+  e.stopPropagation();
+  markaAc(d.dataset.git);
+});
 
 $("#mdListe").addEventListener("click", e=>{
   if(!MD || !MD.elle) return;
