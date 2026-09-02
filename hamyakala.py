@@ -220,6 +220,10 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "kawasaki-satis":  ("https://www.kawasaki.com.tr/Home/YetkiliSatici", "html"),
     "kawasaki-servis": ("https://www.kawasaki.com.tr/Home/YetkiliServis", "html"),
 
+    # Abush: NUR MOTOR "İLBADE MAH." adresiyle İstanbul'a atanmış,
+    # İlbade Trabzon'da bir mahalle — il ataması doğrulanacak
+    "abush-liste":     ("https://abush.com.tr/tr/bayiler", "html"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
