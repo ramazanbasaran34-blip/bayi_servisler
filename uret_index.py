@@ -1165,7 +1165,7 @@ function cizOzet(){
   const f = tekilSay(D.bayiler);
   $("#kutular").innerHTML=`
     <div class="kutu toplam"><span class="n">${bicim(f.toplam)}</span>
-      <span class="e">Firma sayısı<br>1 işyeri 1 adet</span></div>
+      <span class="e">Satış + Servis Toplamı<br>1 işyeri 1 adet</span></div>
     <div class="kutu satis"><span class="n">${bicim(f.satisNoktasi)}</span>
       <span class="e">Toplam satış noktası<br>${bicim(f.yalnizSatis)} sadece bayi + ${bicim(f.ikisi)} bayi ve servis</span></div>
     <div class="kutu servis"><span class="n">${bicim(f.servisNoktasi)}</span>
@@ -2063,7 +2063,7 @@ try{ history.replaceState({ekran:'vOzet'},''); }catch(e){}
       1 adet sayıldı; şubeler ayrı adresteyse ayrı işyeri.</span>
   </div>
   <div class="satir">
-    <span class="kutu toplamf"><b id="aoToplam">—</b><i>Firma</i></span>
+    <span class="kutu toplamf"><b id="aoToplam">—</b><i>Satış+<br>Servis</i></span>
     <span class="kutu vurgu"><b id="aoSatisNok">—</b><i>Toplam<br>satış noktası</i></span>
     <span class="kutu"><b id="aoServisNok">—</b><i>Toplam<br>servis noktası</i></span>
     <span class="kutu"><b id="aoSatis">—</b><i>Sadece<br>bayi</i></span>
