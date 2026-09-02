@@ -1012,9 +1012,10 @@ function ekran(v, gecmis=true){
   $("#"+v).style.display="block";
   $("#sar").classList.toggle("genis", v==="vTumMarka"||v==="vMarkaDetay"||
                                       v==="vOzet"||v==="vFirma"||v==="vVerim");
-  // Özet ekranında sayılar zaten üstteki kutularda; alt çubuk gereksiz.
+  // Özet ve Satışa Oran ekranlarında sayılar kendi bölümlerinde;
+  // alt çubuk hem gereksiz hem de yanıltıcı oluyordu.
   const ao = $("#altOzet");
-  if(ao) ao.style.display = (v==="vOzet") ? "none" : "flex";
+  if(ao) ao.style.display = (v==="vOzet"||v==="vVerim") ? "none" : "flex";
   $("#sekOzet").classList.toggle("aktif", v==="vOzet");
   $("#sekIl").classList.toggle("aktif", v==="vIl"||v==="vMarkalar");
   $("#sekMarka").classList.toggle("aktif", v==="vTumMarka"||v==="vMarkaDetay");
@@ -1520,7 +1521,8 @@ function cizVerim(){
   const top25 = l.reduce((a,x)=>a+x["2025"],0);
   const top26 = l.reduce((a,x)=>a+x["2026"],0);
   $("#verimNot").innerHTML =
-    `<b>${bicim(topN)}</b> ${etiket} noktası · 2024'te <b>${bicim(top24)}</b>, ` +
+    `<b>${bicim(topN)}</b> ${etiket} noktası (ili belirli olanlar) · ` +
+    `2024'te <b>${bicim(top24)}</b>, ` +
     `2025'te <b>${bicim(top25)}</b> motosiklet satıldı · ` +
     `Türkiye ortalaması ${etiket} başına <b>${topN?Math.round(top24/topN):0}</b> adet/yıl (2024), ` +
     `<b>${topN?Math.round(top25/topN):0}</b> (2025), ` +
@@ -1545,10 +1547,9 @@ function cizVerim(){
         <span class="sayi k gen vurgu">${bicim(x.v2026)}</span>
         <span class="ok">›</span></span></button>`).join("");
   basligiIsaretle("verimListe");
-  altOzetGuncelle(VERIM_ROL === "satis" ? "Bayiler" : "Servisler",
-    D.bayiler.filter(b => VERIM_ROL === "satis"
-      ? (b[B_ROL]==="satis"||b[B_ROL]==="satis_servis")
-      : (b[B_ROL]==="servis"||b[B_ROL]==="satis_servis")));
+  // Alt çubuk BU EKRANDA gösterilmiyor. Süzülmüş veri gönderilince
+  // "Sadece servis: 0" gibi anlamsız sayılar çıkıyordu; ekranın kendi
+  // özet satırı zaten doğru toplamları veriyor.
 }
 
 /* ================= FİRMA EKRANI (Bayiler / Servisler) =================
