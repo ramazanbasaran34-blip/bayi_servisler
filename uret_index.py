@@ -476,6 +476,12 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 #ilceAc[aria-expanded="true"]{border-color:var(--murekkep)}
 /* z-index 35 iken alt özet çubuğu (45) menünün "Kapat" düğmesini
    örtüyordu; telefonda düğmeye hiç ulaşılamıyordu. */
+/* KRİTİK: [hidden] öğeye display:none verir, ama aşağıdaki display:flex
+   kuralı onu ezip paneli "kapalıyken" bile ekranda tutuyordu. Panel
+   görünmez oluyor ama tam ekranı kaplayıp dokunuşları yutuyordu —
+   "Tamam'a bastım, liste gelmedi" sorununun sebebi buydu.
+   Bu kural her zaman en sonda kalmalı. */
+.ilcemenu[hidden]{display:none !important}
 .ilcemenu{position:absolute;z-index:55;left:0;right:0;top:calc(100% + 4px);
   background:#fff;border:1px solid var(--hat2);border-radius:9px;
   box-shadow:0 12px 28px -12px rgba(16,32,56,.45);padding:8px}
@@ -493,31 +499,23 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .ilceust .btn{padding:7px 13px;font-size:13px;flex:0 0 auto}
 
 @media (max-width:620px){
-  /* Telefonda menü sayfanın içinde açılınca alt kısmı ekran dışında
-     kalıyordu. Alttan açılan panel yapıyoruz: liste kaydırılır,
-     arama ve düğmeler sabit kalır. */
-  .ilcemenu{position:fixed;left:0;right:0;bottom:0;top:auto;
-    border-radius:14px 14px 0 0;padding:10px 12px 14px;
-    box-shadow:0 -14px 34px -14px rgba(16,32,56,.5);
-    max-height:78vh;display:flex;flex-direction:column}
-  .ilcemenu::before{content:"";display:block;width:38px;height:4px;
-    background:var(--hat2);border-radius:3px;margin:0 auto 8px}
-  #ilceListesi{max-height:none;flex:1 1 auto;min-height:0}
-  .ilcesatir{padding:11px 6px;font-size:15px}
-  .ilceust{padding-bottom:9px;margin-bottom:9px}
-  .ilceust .btn{padding:9px 14px;font-size:14px}
-  /* Panel açıkken arkadaki sayfa kaymasın */
+  /* TELEFONDA TAM EKRAN.
+     Önce sayfa içinde açılan panel denendi: alt özet çubuğu düğmeleri
+     örtüyordu, sonra katman bağlamı sorunu çıktı, sonra da "Tamam"
+     gerçek cihazda kapatmıyordu. Tam ekran modal bu sınıfın tamamını
+     ortadan kaldırıyor — sayfadaki düzenleme penceresi de böyle
+     çalışıyor ve sorunsuz. */
+  .ilcemenu{position:fixed;inset:0;top:0;left:0;right:0;bottom:0;
+    border-radius:0;padding:12px;max-height:none;
+    display:flex;flex-direction:column;z-index:70}
+  #ilceListesi{max-height:none;flex:1 1 auto;min-height:0;
+    -webkit-overflow-scrolling:touch}
+  .ilcesatir{padding:13px 6px;font-size:15.5px}
+  .ilceust{padding-bottom:10px;margin-bottom:10px}
+  .ilceust .btn{padding:10px 16px;font-size:14.5px}
   body.ilcepanel{overflow:hidden}
 }
-.ilceortu{position:fixed;inset:0;background:rgba(16,32,56,.4);z-index:54;
-  display:none}
-body.ilcepanel .ilceortu{display:block}
-
-/* Menü .yapiskan bloğunun içinde. O blok position:sticky + z-index:30
-   olduğu için KENDİ katman bağlamını kuruyor: içerideki z-index:55
-   dışarıdaki alt çubukla (45) kıyaslanmıyor ve panel arkada kalıyordu.
-   Panel açıkken bloğun kendi katmanını yukarı alıyoruz. */
-body.ilcepanel .yapiskan{z-index:56}
+.ilceortu{display:none}
 
 /* Verim ekranı seçim düğmeleri.
    DİKKAT: .sirala kullanılamaz — o sınıf mobilde gizli. */
