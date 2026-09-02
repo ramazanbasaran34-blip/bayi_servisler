@@ -1399,10 +1399,7 @@ function firmaKart(f, no){
       <span class="kad">${esc(f.ad)}</span>
       <span class="rol ${FIRMA_ROL==="satis"?"satis":"servis"}">${etiket} ${bu.size}</span>
     </div>
-    <!-- Bu ekranda adres GÖSTERİLMİYOR: amaç firmanın hangi markalara
-         hizmet verdiğini görmek, adres bilgisi kartı uzatıyor. Adres
-         İller / Markalar / Özet ekranlarında duruyor. -->
-    <div class="k2"><span class="ilcerz">${
+    <div class="k2">${esc(f.adres||"")}${f.adres?" · ":""}<span class="ilcerz">${
       esc([f.ilce,f.il].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(" / "))}</span></div>
     <div class="k4"><span class="dmet">${etiket}:</span>${sirala(bu).map(rozet).join("")}</div>
     ${dis.length?`<div class="k4"><span class="dmet">${oEtiket}</span>${dis.map(rozet).join("")}</div>`:""}
