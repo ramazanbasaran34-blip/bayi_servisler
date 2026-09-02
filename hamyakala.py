@@ -216,6 +216,10 @@ HEDEFLER: dict[str, tuple[str, str]] = {
     "sym-bayiler":     ("https://www.sym-tr.com/bayiler/", "html"),
     "sym-servis":      ("https://www.sym-tr.com/servis/", "html"),
 
+    # Kawasaki: 85 kaydın 79'unda il yanlış (İstanbul'dakiler Ankara görünüyor)
+    "kawasaki-satis":  ("https://www.kawasaki.com.tr/Home/YetkiliSatici", "html"),
+    "kawasaki-servis": ("https://www.kawasaki.com.tr/Home/YetkiliServis", "html"),
+
     # --- spormoto ---
     "ktm-servis":       ("https://spormoto.com/ktm/ktm-servisler/", "html"),
     "ktm-satis":        ("https://spormoto.com/ktm/bayiler/", "html"),
