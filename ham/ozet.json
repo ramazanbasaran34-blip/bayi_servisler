@@ -1231,5 +1231,21 @@
   "boyut": 234782,
   "tel_toplam": 377,
   "tel_script_ici": 0
+ },
+ "kawasaki-satis": {
+  "url": "https://www.kawasaki.com.tr/Home/YetkiliSatici",
+  "kod": 200,
+  "son_url": "https://www.kawasaki.com.tr/Home/YetkiliSatici",
+  "boyut": 72031,
+  "tel_toplam": 69,
+  "tel_script_ici": 0
+ },
+ "kawasaki-servis": {
+  "url": "https://www.kawasaki.com.tr/Home/YetkiliServis",
+  "kod": 200,
+  "son_url": "https://www.kawasaki.com.tr/Home/YetkiliServis",
+  "boyut": 139688,
+  "tel_toplam": 170,
+  "tel_script_ici": 0
  }
 }
