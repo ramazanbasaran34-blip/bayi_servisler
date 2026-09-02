@@ -691,7 +691,6 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
 <div class="serit">
   <div class="seritust">
     <span>Veri: <b id="veriTarih">—</b></span>
-    <span id="veriOzet" class="genisgor"></span>
   </div>
   <nav class="sek">
     <button id="sekOzet">Özet</button>
@@ -926,12 +925,6 @@ const VAR_VERI = D.bayiler.length > 0;
 $("#veriTarih").textContent = new Date(D.olusturma)
   .toLocaleString("tr-TR",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
 (function(){
-  const s={satis:0,servis:0,satis_servis:0};
-  D.bayiler.forEach(b=>s[b[B_ROL]]=(s[b[B_ROL]]||0)+1);
-  $("#veriOzet").innerHTML = VAR_VERI
-    ? `<b>${s.satis}</b> satış · <b>${s.servis}</b> servis · `
-      + `<b>${s.satis_servis}</b> satış+servis · toplam <b>${D.bayiler.length}</b>`
-    : "";
 })();
 if(VAR_VERI) $("#sayiUyari").style.display="none";
 
