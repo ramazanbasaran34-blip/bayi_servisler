@@ -391,6 +391,38 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   padding:9px 10px;border:1px solid var(--hat2);border-radius:7px;
   font-size:14.5px;font-family:inherit;color:var(--murekkep);font-weight:400}
 .dzbtn{display:flex;gap:8px;margin-top:6px}
+/* Altı sayı sütunlu tablolar (Toplam servis nok. eklendikten sonra):
+   dar ekranda ad alanı eziliyordu, il adları kaybolup sadece plaka
+   kalıyordu. Sayı sütunlarını daraltıp ada yer açıyoruz. */
+@media (max-width:620px){
+  #ilListe .sag .k, #ozetIl .sag .k, #ozetMarka .sag .k,
+  #ozetIlce .sag .k, #tumListe .sag .k,
+  .baslikcubuk[data-tablo="ilListe"] .k,
+  .baslikcubuk[data-tablo="ozetIl"] .k,
+  .baslikcubuk[data-tablo="ozetMarka"] .k,
+  .baslikcubuk[data-tablo="ozetIlce"] .k,
+  .baslikcubuk[data-tablo="tumListe"] .k{min-width:30px;padding:0 2px;font-size:12px}
+  .baslikcubuk[data-tablo="ilListe"] .k,
+  .baslikcubuk[data-tablo="ozetIl"] .k,
+  .baslikcubuk[data-tablo="ozetMarka"] .k,
+  .baslikcubuk[data-tablo="ozetIlce"] .k,
+  .baslikcubuk[data-tablo="tumListe"] .k{font-size:8px;letter-spacing:0;
+    /* "Sadece" kelimesi ortadan bölünüp "Sadec e" görünüyordu */
+    overflow-wrap:normal;word-break:keep-all;hyphens:none;line-height:1.2}
+  #ilListe .sag, #ozetIl .sag, #ozetMarka .sag, #ozetIlce .sag, #tumListe .sag,
+  .baslikcubuk[data-tablo="ilListe"] .sagb,
+  .baslikcubuk[data-tablo="ozetIl"] .sagb,
+  .baslikcubuk[data-tablo="ozetMarka"] .sagb,
+  .baslikcubuk[data-tablo="ozetIlce"] .sagb,
+  .baslikcubuk[data-tablo="tumListe"] .sagb{gap:3px}
+  /* Plaka rozeti yer kaplıyor; sıra numarası zaten var */
+  #ilListe .men{display:none}
+  #ilListe .sat, #ozetIl .sat, #ozetMarka .sat,
+  #ozetIlce .sat, #tumListe .sat{gap:5px;padding-left:7px;padding-right:7px}
+  #ilListe .sirano, #ozetIl .sirano, #ozetMarka .sirano,
+  #ozetIlce .sirano, #tumListe .sirano{flex-basis:16px;font-size:9.5px}
+}
+
 /* Verim tablosunda 7 sayı sütunu var (3 yıl × satış+verim, artı nokta).
    Dar ekranda sığması için bu tabloya özel daraltma. */
 #verimListe .sag .k,
@@ -492,6 +524,9 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 @media (max-width:620px){ .sirano{flex-basis:20px;font-size:10px} }
 .sayi.vurgu{font-weight:700;color:var(--satis);
   background:var(--satis-z);border-radius:5px;padding:1px 5px}
+/* Toplam servis noktası — satışın turuncusundan ayrılsın diye turkuaz */
+.sayi.vurguserv{font-weight:700;color:var(--servis);
+  background:var(--servis-z);border-radius:5px;padding:1px 5px}
 .kutu.toplam{border-color:var(--hat);background:#fbfcfe}
 .kutu.toplam .n{font-weight:700}
 @media (max-width:620px){
@@ -692,21 +727,21 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
       <div>
         <h3 class="bslk">İllere göre <span id="ilAdet"></span></h3>
         <div class="liste">
-          <div class="baslikcubuk sirali" data-tablo="ozetIl"><span class="ilkkol sirakol" data-s="ad">İl</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+          <div class="baslikcubuk sirali" data-tablo="ozetIl"><span class="ilkkol sirakol" data-s="ad">İl</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="servisNoktasi" class="sirakol k gen" style="color:var(--servis)">Toplam<br>servis nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
           <div id="ozetIl"></div>
         </div>
       </div>
       <div>
         <h3 class="bslk">Markalara göre <span id="mrkAdet"></span></h3>
         <div class="liste">
-          <div class="baslikcubuk sirali" data-tablo="ozetMarka"><span class="ilkkol sirakol" data-s="ad">Marka</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+          <div class="baslikcubuk sirali" data-tablo="ozetMarka"><span class="ilkkol sirakol" data-s="ad">Marka</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="servisNoktasi" class="sirakol k gen" style="color:var(--servis)">Toplam<br>servis nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
           <div id="ozetMarka"></div>
         </div>
       </div>
     </div>
     <h3 class="bslk" style="margin-top:20px">İlçe dağılımı <span id="ilceAdet"></span></h3>
     <div class="liste">
-      <div class="baslikcubuk sirali" data-tablo="ozetIlce"><span class="ilkkol sirakol" data-s="ad">İl / İlçe</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="marka" class="sirakol k">Marka</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+      <div class="baslikcubuk sirali" data-tablo="ozetIlce"><span class="ilkkol sirakol" data-s="ad">İl / İlçe</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="servisNoktasi" class="sirakol k gen" style="color:var(--servis)">Toplam<br>servis nok.</span><span data-s="marka" class="sirakol k">Marka</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
       <div id="ozetIlce"></div>
     </div>
   </section>
@@ -720,7 +755,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <div class="yapiskan">
       <input class="ara" id="araIl" type="search" placeholder="İl adı veya plaka kodu" autocomplete="off">
     </div>
-    <div class="baslikcubuk sirali" data-tablo="ilListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+    <div class="baslikcubuk sirali" data-tablo="ilListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="servisNoktasi" class="sirakol k gen" style="color:var(--servis)">Toplam<br>servis nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
     <div class="liste" id="ilListe"></div>
     <div class="bos" id="ilBos" style="display:none">Bu isimde il yok.</div>
   </section>
@@ -787,7 +822,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <div class="yapiskan">
       <input class="ara" id="araVerim" type="search" placeholder="İl ara" autocomplete="off">
     </div>
-    <div class="baslikcubuk sirali" data-tablo="verimListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="nokta" class="sirakol k">Nokta</span><span data-s="2024" class="sirakol k">2024<br>satış</span><span data-s="v2024" class="sirakol k">2024<br>yıllık<br>nokta başı</span><span data-s="2025" class="sirakol k">2025<br>satış</span><span data-s="v2025" class="sirakol k">2025<br>yıllık<br>nokta başı</span><span data-s="2026" class="sirakol k">2026*<br>satış</span><span data-s="v2026" class="sirakol k gen">2026*<br>7 aylık<br>nokta başı</span><span class="okbos"></span></span></div>
+    <div class="baslikcubuk sirali" data-tablo="verimListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="nokta" class="sirakol k" id="verimNoktaBas">Nokta</span><span data-s="2024" class="sirakol k">2024<br>satış</span><span data-s="v2024" class="sirakol k">2024<br>yıllık<br>nokta başı</span><span data-s="2025" class="sirakol k">2025<br>satış</span><span data-s="v2025" class="sirakol k">2025<br>yıllık<br>nokta başı</span><span data-s="2026" class="sirakol k">2026*<br>satış</span><span data-s="v2026" class="sirakol k gen">2026*<br>7 aylık<br>nokta başı</span><span class="okbos"></span></span></div>
     <div class="liste" id="verimListe"></div>
     <div class="bos" id="verimBos" style="display:none">Sonuç bulunamadı.</div>
   </section>
@@ -834,7 +869,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
       <input class="ara" id="araTum" type="search" placeholder="Marka ara" autocomplete="off">
     </div>
     <div class="liste">
-      <div class="baslikcubuk sirali" data-tablo="tumListe"><span class="ilkkol sirakol" data-s="ad">Marka</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+      <div class="baslikcubuk sirali" data-tablo="tumListe"><span class="ilkkol sirakol" data-s="ad">Marka</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="servisNoktasi" class="sirakol k gen" style="color:var(--servis)">Toplam<br>servis nok.</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
       <div id="tumListe"></div>
     </div>
     <div class="bos" id="tumBos" style="display:none">Sonuç yok.</div>
@@ -1210,6 +1245,7 @@ function cizOzet(){
           <span class="sayi k" style="color:var(--servis)">${c.yalnizServis}</span>
           <span class="sayi k" style="color:var(--ikisi)">${c.ikisi}</span>
           <span class="sayi k gen vurgu">${c.satisNoktasi}</span>
+        <span class="sayi k gen vurguserv">${c.servisNoktasi}</span>
           <span class="sayi k" style="font-weight:700">${c.toplam}</span>
           <span class="ok">›</span></span></button>`;}).join("");
   }
@@ -1310,6 +1346,7 @@ function cizOzet(){
         <span class="sayi k" style="color:var(--servis)">${c.yalnizServis}</span>
         <span class="sayi k" style="color:var(--ikisi)">${c.ikisi}</span>
         <span class="sayi k gen vurgu">${c.satisNoktasi}</span>
+        <span class="sayi k gen vurguserv">${c.servisNoktasi}</span>
         <span class="sayi k">${new Set(v.map(x=>x[B_MARKA])).size}</span>
         <span class="sayi k" style="font-weight:700">${c.toplam}</span>
         <span class="ok">›</span></span></button>`;}).join(""); }
@@ -1410,6 +1447,7 @@ function cizIl(){
         <span class="sayi k" style="color:var(--servis)">${c.yalnizServis}</span>
         <span class="sayi k" style="color:var(--ikisi)">${c.ikisi}</span>
         <span class="sayi k gen vurgu">${c.satisNoktasi}</span>
+        <span class="sayi k gen vurguserv">${c.servisNoktasi}</span>
         <span class="sayi k" style="font-weight:700">${c.toplam}</span>
         <span class="ok">›</span></span></button>`;}).join("");
   basligiIsaretle("ilListe");
@@ -1515,6 +1553,12 @@ function cizVerim(){
   const etiket = VERIM_ROL === "satis" ? "bayi" : "servis";
   $("#verimBaslik").textContent = VERIM_ROL === "satis"
     ? "Bayi başına yıllık satış" : "Servis başına yıllık satış";
+  // Sütun başlığı hangi noktaya göre hesaplandığını açıkça söylesin.
+  // Servis kipinde SADECE servis değil, TOPLAM servis noktası
+  // (sadece servis + bayi ve servis) kullanılıyor.
+  const nb = $("#verimNoktaBas");
+  if(nb) nb.innerHTML = VERIM_ROL === "satis"
+    ? "Toplam<br>satış nok." : "Toplam<br>servis nok.";
 
   const topN = l.reduce((a,x)=>a+x.nokta,0);
   const top24 = l.reduce((a,x)=>a+x["2024"],0);
@@ -1743,6 +1787,7 @@ function cizTum(){
         <span class="sayi k ${m.servis?"":"yok"}" style="color:var(--servis)">${m.servis||"—"}</span>
         <span class="sayi k ${m.ikisi?"":"yok"}" style="color:var(--ikisi)">${m.ikisi||"—"}</span>
         <span class="sayi k gen vurgu ${(m.satis+m.ikisi)?"":"yok"}">${(m.satis+m.ikisi)||"—"}</span>
+        <span class="sayi k gen vurguserv ${(m.servis+m.ikisi)?"":"yok"}">${(m.servis+m.ikisi)||"—"}</span>
         <span class="sayi k ${t?"":"yok"}" style="font-weight:700">${m.toplam||"—"}</span>
         <span class="ok">${t?"›":"↗"}</span></span>`;
     return t?`<button class="sat" data-m="${esc(m.ad)}">${ic}</button>`
