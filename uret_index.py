@@ -1625,42 +1625,32 @@ function ilceOzetGuncelle(){
   ILCE = n === 1 ? [...ILCELER][0] : "";   // adres çubuğu için
 }
 
-/* Panel açılıp kapanması. Telefonda alttan açılan panel olduğu için
-   arkadaki sayfanın kaymasını engelliyoruz ve ANDROID GERİ TUŞU
-   sayfadan çıkmak yerine paneli kapatsın diye geçmişe bir adım
-   ekliyoruz — kullanıcı geri basınca seçim kaybolmuyor. */
-let ILCE_GERI = false;
-
+/* Panel açılıp kapanması — sade tutuluyor.
+   Önce geri tuşu için history.pushState/back kullanılmıştı; gerçek
+   cihazda "Tamam"a basınca panel kapanmıyor, liste güncellenmiyordu.
+   Tarayıcı geçmişine dokunmak fayda sağlamadı, kaldırıldı. */
 function ilcePanelAc(){
   $("#ilceMenu").hidden = false;
   $("#ilceAc").setAttribute("aria-expanded", "true");
   document.body.classList.add("ilcepanel");
-  if(!ILCE_GERI){
-    history.pushState({ilcePanel:true}, "");
-    ILCE_GERI = true;
-  }
   if(window.innerWidth > 620) $("#ilceAra").focus();
 }
 
-function ilcePanelKapat(geriden){
+function ilcePanelKapat(){
   $("#ilceMenu").hidden = true;
   $("#ilceAc").setAttribute("aria-expanded", "false");
   document.body.classList.remove("ilcepanel");
-  if(ILCE_GERI && !geriden){
-    ILCE_GERI = false;
-    history.back();          // eklediğimiz adımı geri al
-  } else if(geriden){
-    ILCE_GERI = false;
-  }
+  // Kapanırken listeyi her hâlükârda tazele: seçim onchange ile
+  // uygulanıyor olsa da burada da çağırmak güvenli.
+  ilceOzetGuncelle();
+  cizMarka();
 }
 
-$("#ilceAc").onclick = () => {
+$("#ilceAc").onclick = e => {
+  e.preventDefault(); e.stopPropagation();
   if($("#ilceMenu").hidden) ilcePanelAc(); else ilcePanelKapat();
 };
 $("#ilceOrtu").onclick = () => ilcePanelKapat();
-window.addEventListener("popstate", () => {
-  if(!$("#ilceMenu").hidden) ilcePanelKapat(true);
-});
 $("#ilceAra").oninput = ilceListesiCiz;
 $("#ilceListesi").onchange = e => {
   const k = e.target;
@@ -1671,10 +1661,14 @@ $("#ilceListesi").onchange = e => {
   } else return;
   ilceListesiCiz(); ilceOzetGuncelle(); cizMarka();
 };
-$("#ilceTemizle").onclick = () => {
+$("#ilceTemizle").onclick = e => {
+  e.preventDefault(); e.stopPropagation();
   ILCELER.clear(); ilceListesiCiz(); ilceOzetGuncelle(); cizMarka();
 };
-$("#ilceUygula").onclick = () => ilcePanelKapat();
+$("#ilceUygula").onclick = e => {
+  e.preventDefault(); e.stopPropagation();
+  ilcePanelKapat();
+};
 // Dışına tıklayınca kapansın (masaüstü)
 document.addEventListener("click", e => {
   if(e.target.closest(".ilcekutu") || e.target.closest(".ilceortu")) return;
