@@ -174,6 +174,12 @@ SABLON = r"""<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Telefon tarayıcıları sayfayı agresif önbelleğe alıp güncellemeleri
+     günlerce göstermiyordu (silinen bölümler ekranda kalıyordu).
+     Bu üç satır tarayıcıya her açılışta sunucuya sormasını söylüyor. -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Motosiklet Bayi ve Servis Ağı</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
