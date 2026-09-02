@@ -454,7 +454,9 @@ markalar:
 
   # 33. KAWASAKI  ·  Japonya  ·  www.kawasaki.com.tr
   "Kawasaki":
-    mode: browser
+    # ozel/kawasaki.py: il bilgisi adresin sonunda ve kart id'sinde.
+    # Eski tarama 85 kaydın 79'una yanlış il atıyordu.
+    ozel: kawasaki
     kaynaklar:
       - rol: satis
         url: "https://www.kawasaki.com.tr/Home/YetkiliSatici"
