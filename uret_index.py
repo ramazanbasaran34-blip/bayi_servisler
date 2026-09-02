@@ -89,6 +89,14 @@ def uret(cikti="index.html", markalar_json="markalar.json", db_yolu="bayiler.db"
         # elle: true olan markalar taranmıyor; sayfada düzenlenebilir olsun
         m["elle"] = bool((tarif.get(m["ad"]) or {}).get("elle"))
 
+    # İl bazlı satış adetleri (TÜİK). Bayi başına verim raporunda
+    # kullanılıyor. Dosya yoksa rapor sekmesi boş görünür, sayfa çalışır.
+    try:
+        il_satis = json.loads(
+            Path("veri/il_satis.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        il_satis = {"iller": {}, "_yillar": []}
+
     # Cari kod: aynı fiziksel firma (telefon+ilçe) tek kod taşır.
     # Bir firma birden çok markanın bayisi olabildiği için kod, kayıtları
     # tekilleştirip "kaç ayrı bayi var" sorusuna cevap veriyor.
@@ -148,6 +156,7 @@ def uret(cikti="index.html", markalar_json="markalar.json", db_yolu="bayiler.db"
                      for m in sorted(markalar, key=lambda m: fold(m["ad"]))],
         "bayiler": satirlar,
         "rol_adi": ROL_ADI,
+        "il_satis": il_satis,
     }
 
     html = (SABLON
@@ -382,6 +391,12 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   padding:9px 10px;border:1px solid var(--hat2);border-radius:7px;
   font-size:14.5px;font-family:inherit;color:var(--murekkep);font-weight:400}
 .dzbtn{display:flex;gap:8px;margin-top:6px}
+/* Verim ekranı seçim düğmeleri.
+   DİKKAT: .sirala kullanılamaz — o sınıf mobilde gizli. */
+.secimler{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
+#verimSecim .btn.secili{background:var(--murekkep);color:#fff;
+  border-color:var(--murekkep);font-weight:600}
+
 /* --- "Bu bayi ayrıca şu markaların da bayisi" satırı --- */
 .k4{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:5px 0 0}
 .k4 .dmet{font-size:11px;color:var(--celik);margin-right:2px}
@@ -624,6 +639,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <button id="sekMarka">Markalar</button>
     <button id="sekBayi">Bayiler</button>
     <button id="sekServis">Servisler</button>
+    <button id="sekVerim">Satış / Bayi</button>
   </nav>
 </div>
 
@@ -729,6 +745,27 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
       <button class="btn" id="btnMarkaYaz">Yazdır / PDF</button>
     </div>
     <div class="liste" id="mdListe"></div>
+  </section>
+
+  <!-- VERİM EKRANI: il bazında satış adedi ve nokta başına verim.
+       Satış adetleri TÜİK; bayi/servis sayıları bizim veritabanımızdan
+       (firma bazlı, tekilleştirilmiş). -->
+  <section id="vVerim" style="display:none">
+    <h2 id="verimBaslik">Bayi başına satış</h2>
+    <p class="notm" id="verimNot"></p>
+    <div class="secimler" id="verimSecim">
+      <button class="btn secili" data-v="satis">Bayi başına</button>
+      <button class="btn" data-v="servis">Servis başına</button>
+    </div>
+    <div class="altbar">
+      <button class="btn ana" id="btnVerimXls">Excel indir</button>
+    </div>
+    <div class="yapiskan">
+      <input class="ara" id="araVerim" type="search" placeholder="İl ara" autocomplete="off">
+    </div>
+    <div class="baslikcubuk sirali" data-tablo="verimListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="nokta" class="sirakol k">Nokta</span><span data-s="2024" class="sirakol k">2024<br>satış</span><span data-s="v2024" class="sirakol k">2024<br>nokta başı</span><span data-s="2025" class="sirakol k">2025<br>satış</span><span data-s="v2025" class="sirakol k gen">2025<br>nokta başı</span><span class="okbos"></span></span></div>
+    <div class="liste" id="verimListe"></div>
+    <div class="bos" id="verimBos" style="display:none">Sonuç bulunamadı.</div>
   </section>
 
   <!-- FİRMA EKRANI: Bayiler / Servisler sekmeleri.
@@ -946,10 +983,11 @@ function ekran(v, gecmis=true){
   // ilçe çipleri, rol süzgeci). Geçişte yeniden ölçüyoruz ki sütun
   // başlığı hep o bloğun ALTINA yapışsın.
   setTimeout(seritOlc, 0);
-  ["vOzet","vIl","vMarkalar","vTumMarka","vMarkaDetay","vFirma"].forEach(x=>$("#"+x).style.display="none");
+  ["vOzet","vIl","vMarkalar","vTumMarka","vMarkaDetay","vFirma","vVerim"]
+    .forEach(x=>$("#"+x).style.display="none");
   $("#"+v).style.display="block";
   $("#sar").classList.toggle("genis", v==="vTumMarka"||v==="vMarkaDetay"||
-                                      v==="vOzet"||v==="vFirma");
+                                      v==="vOzet"||v==="vFirma"||v==="vVerim");
   // Özet ekranında sayılar zaten üstteki kutularda; alt çubuk gereksiz.
   const ao = $("#altOzet");
   if(ao) ao.style.display = (v==="vOzet") ? "none" : "flex";
@@ -958,6 +996,7 @@ function ekran(v, gecmis=true){
   $("#sekMarka").classList.toggle("aktif", v==="vTumMarka"||v==="vMarkaDetay");
   $("#sekBayi").classList.toggle("aktif", v==="vFirma" && FIRMA_ROL==="satis");
   $("#sekServis").classList.toggle("aktif", v==="vFirma" && FIRMA_ROL==="servis");
+  $("#sekVerim").classList.toggle("aktif", v==="vVerim");
   window.scrollTo(0,0);
   if(gecmis) durumYaz(v);
 }
@@ -1020,6 +1059,52 @@ $("#sekBayi").onclick   = () => { FIRMA_ROL="satis";  FIRMA_LIMIT=FIRMA_SAYFA;
 $("#sekServis").onclick = () => { FIRMA_ROL="servis"; FIRMA_LIMIT=FIRMA_SAYFA;
                                   $("#araFirma").value=""; cizFirma(); ekran("vFirma"); };
 $("#araFirma").oninput   = () => { FIRMA_LIMIT=FIRMA_SAYFA; cizFirma(); };
+$("#sekVerim").onclick   = () => { $("#araVerim").value=""; cizVerim(); ekran("vVerim"); };
+$("#araVerim").oninput   = () => cizVerim();
+$("#btnVerimXls").onclick = async e => {
+  const btn = e.target, eski = btn.textContent;
+  btn.disabled = true; btn.textContent = "Hazırlanıyor…";
+  // XLSX kütüphanesi ihtiyaç anında indiriliyor (sayfa hafif kalsın diye)
+  if(!(await xlsxYukle())){
+    btn.textContent = "İnternet gerekiyor";
+    setTimeout(()=>{btn.textContent=eski; btn.disabled=false;}, 2500);
+    return;
+  }
+  const l = verimVeri().sort((a,b)=>b.v2025-a.v2025);
+  const etiket = VERIM_ROL==="satis" ? "Bayi" : "Servis";
+  const bas = ["İl","Plaka",`${etiket} noktası`,
+    "2023 satış","2024 satış","2025 satış","2026 satış (31.07)",
+    `2023 ${etiket.toLocaleLowerCase("tr")} başı`,
+    `2024 ${etiket.toLocaleLowerCase("tr")} başı`,
+    `2025 ${etiket.toLocaleLowerCase("tr")} başı`,
+    `2026 ${etiket.toLocaleLowerCase("tr")} başı (31.07)`];
+  const o = [bas, ...l.map(x=>[x.ad,x.plaka,x.nokta,
+    x["2023"],x["2024"],x["2025"],x["2026"],
+    x.v2023,x.v2024,x.v2025,x.v2026])];
+  const wb = XLSX.utils.book_new();
+  sayfaEkle(wb, `${etiket} basina satis`, o,
+    [{wch:16},{wch:7},{wch:14},{wch:13},{wch:13},{wch:13},{wch:18},
+     {wch:15},{wch:15},{wch:15},{wch:20}]);
+  indir(new Blob([XLSX.write(wb,{bookType:"xlsx",type:"array"})],
+    {type:"application/octet-stream"}),
+    dosyaAdi(etiket.toLocaleLowerCase("tr")+"-basina-satis","xlsx"));
+  btn.textContent = eski; btn.disabled = false;
+};
+$("#verimSecim").onclick = e => {
+  const b=e.target.closest("button"); if(!b) return;
+  VERIM_ROL=b.dataset.v;
+  [...$("#verimSecim").querySelectorAll("button")].forEach(x=>
+    x.classList.toggle("secili", x===b));
+  cizVerim();
+};
+// İl satırına tıklayınca o ilin marka listesine git
+$("#verimListe").onclick = e => {
+  const b=e.target.closest(".sat"); if(!b) return;
+  IL=D.iller.find(x=>x.ad===b.dataset.il); if(!IL) return;
+  ILCE=""; ROL="tum";
+  $("#kod").textContent=IL.plaka; $("#ilAdi").textContent=IL.ad;
+  cizIlce(); cizMarka(); ekran("vMarkalar");
+};
 $("#btnDahaFirma").onclick = () => { FIRMA_LIMIT += FIRMA_SAYFA*2; cizFirma(); };
 $("#geri").onclick     = () => { IL=null; ILCE=""; ROL="tum"; $("#araMarka").value=""; ekran("vIl"); };
 $("#geriMarka").onclick= () => { ROL="tum"; cizTum();
@@ -1165,6 +1250,7 @@ function cizOzet(){
         if(OZET_VERI[tablo]) ozetCiz(tablo);
         else if(tablo==="tumListe") cizTum();
         else if(tablo==="ilListe") cizIl();
+        else if(tablo==="verimListe") cizVerim();
       };
     });
   }
@@ -1349,6 +1435,90 @@ function kayitHtml(x, no, duzenlenebilir=false){
       <span class="tel">${x[B_TEL]?`<a href="tel:${esc(x[B_TEL].replace(/\s/g,""))}">${esc(x[B_TEL])}</a>`:"—"}</span>
       ${x[B_GIRIS]?`<a class="giris" href="${esc(x[B_GIRIS])}" target="_blank" rel="noopener">Marka sayfasına git ↗</a>`:""}
     </div></div>`;
+}
+
+/* ================= VERİM EKRANI (Satış / Bayi) =================
+   Her il için: kaç nokta var, o ilde kaç motosiklet satılmış ve
+   nokta başına kaç adet düşüyor. Satış adetleri TÜİK verisi;
+   nokta sayıları bizim veritabanımızdan ve FİRMA bazlı (aynı firma
+   birden çok markaya bayilik yapsa da bir kez sayılır).
+
+   2026 rakamı 31.07 itibarıyla, yıl tamamlanmadı — kıyaslarken
+   ayrı değerlendirilmeli, bu yüzden ekranda ayrıca işaretleniyor. */
+let VERIM_ROL = "satis";
+
+/* 153.438 gibi sayılar dar sütuna sığmayıp kırpılıyordu ("11.…").
+   Bin ve milyon kısaltmasıyla tek bakışta okunur hale getiriyoruz.
+   Tam değer, satırın title'ında ve Excel çıktısında duruyor. */
+function kisa(n){
+  n = n || 0;
+  if (n >= 1000000) return (n/1000000).toFixed(1).replace(".",",") + "M";
+  if (n >= 10000)   return Math.round(n/1000) + "B";
+  if (n >= 1000)    return (n/1000).toFixed(1).replace(".",",") + "B";
+  return String(n);
+}
+
+function verimVeri(){
+  const sat = (D.il_satis && D.il_satis.iller) || {};
+  const alan = VERIM_ROL === "satis" ? "satisNoktasi" : "servisNoktasi";
+  return D.iller.map(i => {
+    const c = tekilSay(D.bayiler.filter(b => b[B_IL] === i.ad));
+    const nokta = c[alan] || 0;
+    const s = sat[i.ad] || {};
+    const o = {ad: i.ad, plaka: i.plaka, nokta,
+               "2023": s["2023"]||0, "2024": s["2024"]||0,
+               "2025": s["2025"]||0, "2026": s["2026"]||0};
+    ["2023","2024","2025","2026"].forEach(y =>
+      o["v"+y] = nokta ? Math.round(o[y] / nokta) : 0);
+    return o;
+  }).filter(x => x.nokta > 0 || x["2024"] > 0);
+}
+
+function cizVerim(){
+  const q = kat($("#araVerim").value);
+  let l = verimVeri().filter(x => !q || kat(x.ad).includes(q) || x.plaka.startsWith(q));
+
+  const d = SIRA_DURUM["verimListe"] || {anahtar:"v2025", yon:-1};
+  if(d.anahtar === "ad")
+    l.sort((a,b)=>(d.yon<0?-1:1)*a.ad.localeCompare(b.ad,"tr"));
+  else
+    l.sort((a,b)=>{
+      const fa=a[d.anahtar]||0, fb=b[d.anahtar]||0;
+      return (d.yon<0 ? fb-fa : fa-fb) || a.ad.localeCompare(b.ad,"tr");
+    });
+
+  const etiket = VERIM_ROL === "satis" ? "bayi" : "servis";
+  $("#verimBaslik").textContent =
+    VERIM_ROL === "satis" ? "Bayi başına satış" : "Servis başına satış";
+
+  const topN = l.reduce((a,x)=>a+x.nokta,0);
+  const top24 = l.reduce((a,x)=>a+x["2024"],0);
+  const top25 = l.reduce((a,x)=>a+x["2025"],0);
+  $("#verimNot").innerHTML =
+    `<b>${bicim(topN)}</b> ${etiket} noktası · 2024'te <b>${bicim(top24)}</b>, ` +
+    `2025'te <b>${bicim(top25)}</b> motosiklet satıldı · ` +
+    `Türkiye ortalaması ${etiket} başına <b>${topN?Math.round(top24/topN):0}</b> (2024), ` +
+    `<b>${topN?Math.round(top25/topN):0}</b> (2025) adet. ` +
+    `<span style="color:var(--celik)">Satış adetleri TÜİK. 2026 rakamı 31.07 itibarıyladır.</span>`;
+
+  $("#verimBos").style.display = l.length ? "none" : "block";
+  $("#verimListe").innerHTML = l.map((x,ix)=>`
+    <button class="sat" data-il="${esc(x.ad)}">
+      <span class="sirano">${ix+1}</span>
+      <span class="govde"><span class="ustsatir"><span class="ad">${esc(x.ad)}</span>
+        <span class="men">${x.plaka}</span></span></span>
+      <span class="sag">
+        <span class="sayi k">${bicim(x.nokta)}</span>
+        <span class="sayi k" title="${bicim(x["2024"])}">${kisa(x["2024"])}</span>
+        <span class="sayi k" style="color:var(--satis)">${bicim(x.v2024)}</span>
+        <span class="sayi k" title="${bicim(x["2025"])}">${kisa(x["2025"])}</span>
+        <span class="sayi k gen vurgu">${bicim(x.v2025)}</span>
+        <span class="ok">›</span></span></button>`).join("");
+  basligiIsaretle("verimListe");
+  altOzetGuncelle(VERIM_ROL === "satis" ? "Bayiler" : "Servisler",
+    D.bayiler.filter(b => VERIM_ROL === "satis"
+      ? (b[B_ROL]==="satis"||b[B_ROL]==="satis_servis")
+      : (b[B_ROL]==="servis"||b[B_ROL]==="satis_servis")));
 }
 
 /* ================= FİRMA EKRANI (Bayiler / Servisler) =================
