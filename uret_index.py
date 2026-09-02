@@ -478,6 +478,8 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   border-radius:5px;padding:2px 7px;font-size:11px;font-weight:600;
   cursor:pointer;font-family:inherit;line-height:1.5}
 .dmarka:hover{background:var(--murekkep);color:#fff}
+/* Şu an bakılan marka — listede ilk ve vurgulu */
+.dmarka.bumarka{background:var(--murekkep);color:#fff;border-color:var(--murekkep)}
 @media (max-width:620px){ .k4 .dmet{font-size:10px} .dmarka{font-size:10px;padding:2px 6px} }
 
 /* --- Cari kod rozeti --- */
@@ -1001,9 +1003,17 @@ const FIRMA_MARKA = (() => {
 })();
 
 function digerMarkalar(x){
+  /* Bu bayinin çalıştığı TÜM markalar — bakılan marka da dahil.
+     Önceden bakılan marka listeden çıkarılıyordu; Falcon sayfasında
+     "Bu bayi ayrıca: Arora, Hero, Mobilette" yazıp Falcon'u
+     göstermeyince kartın tamamına bakınca eksik görünüyordu.
+     Bakılan marka en başta ve vurgulu duruyor. */
   const s = FIRMA_MARKA[x[B_KOD]];
   if (!s || s.size < 2) return [];
-  return [...s].filter(m => m !== x[B_MARKA]).sort((a,b)=>a.localeCompare(b,"tr"));
+  const bu = x[B_MARKA];
+  const digerleri = [...s].filter(m => m !== bu)
+                          .sort((a,b)=>a.localeCompare(b,"tr"));
+  return [bu, ...digerleri];
 }
 
 /* ---------- alt özet: TEKİL BAYİ sayıları ----------
@@ -1527,8 +1537,8 @@ function kayitHtml(x, no, duzenlenebilir=false){
     <div class="k2">${esc(x[B_ADRES])}${x[B_ADRES]?" · ":""}<span class="ilcerz">${
       esc([x[B_ILCE],x[B_IL]].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(" / "))}</span></div>
     ${(()=>{const d=digerMarkalar(x); return d.length
-      ? `<div class="k4"><span class="dmet">Bu bayi ayrıca:</span>${
-          d.map(m=>`<button class="dmarka" data-git="${esc(m)}">${esc(m)}</button>`).join("")}</div>`
+      ? `<div class="k4"><span class="dmet">Çalıştığı markalar:</span>${
+          d.map((m,i)=>`<button class="dmarka${i===0?" bumarka":""}" data-git="${esc(m)}">${esc(m)}</button>`).join("")}</div>`
       : "";})()}
     <div class="k3">
       <span class="tel">${x[B_TEL]?`<a href="tel:${esc(x[B_TEL].replace(/\s/g,""))}">${esc(x[B_TEL])}</a>`:"—"}</span>
