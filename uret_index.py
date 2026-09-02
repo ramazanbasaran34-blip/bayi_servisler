@@ -474,7 +474,9 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   cursor:pointer;box-shadow:var(--golge)}
 #ilceAc .ok2{color:var(--celik);font-size:12px}
 #ilceAc[aria-expanded="true"]{border-color:var(--murekkep)}
-.ilcemenu{position:absolute;z-index:35;left:0;right:0;top:calc(100% + 4px);
+/* z-index 35 iken alt özet çubuğu (45) menünün "Kapat" düğmesini
+   örtüyordu; telefonda düğmeye hiç ulaşılamıyordu. */
+.ilcemenu{position:absolute;z-index:55;left:0;right:0;top:calc(100% + 4px);
   background:#fff;border:1px solid var(--hat2);border-radius:9px;
   box-shadow:0 12px 28px -12px rgba(16,32,56,.45);padding:8px}
 .ilcemenu .ara{margin-bottom:6px}
@@ -485,6 +487,33 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .ilcesatir input{width:16px;height:16px;flex:0 0 auto;accent-color:var(--murekkep)}
 .ilcealt{display:flex;gap:6px;justify-content:flex-end;
   border-top:1px solid var(--hat2);padding-top:7px;margin-top:5px}
+
+@media (max-width:620px){
+  /* Telefonda menü sayfanın içinde açılınca alt kısmı ekran dışında
+     kalıyordu. Alttan açılan panel yapıyoruz: liste kaydırılır,
+     arama ve düğmeler sabit kalır. */
+  .ilcemenu{position:fixed;left:0;right:0;bottom:0;top:auto;
+    border-radius:14px 14px 0 0;padding:10px 12px 14px;
+    box-shadow:0 -14px 34px -14px rgba(16,32,56,.5);
+    max-height:78vh;display:flex;flex-direction:column}
+  .ilcemenu::before{content:"";display:block;width:38px;height:4px;
+    background:var(--hat2);border-radius:3px;margin:0 auto 8px}
+  #ilceListesi{max-height:none;flex:1 1 auto;min-height:0}
+  .ilcesatir{padding:11px 6px;font-size:15px}
+  .ilcealt{position:sticky;bottom:0;background:#fff;padding-bottom:2px}
+  .ilcealt .btn{flex:1 1 auto;padding:10px}
+  /* Panel açıkken arkadaki sayfa kaymasın */
+  body.ilcepanel{overflow:hidden}
+}
+.ilceortu{position:fixed;inset:0;background:rgba(16,32,56,.4);z-index:54;
+  display:none}
+body.ilcepanel .ilceortu{display:block}
+
+/* Menü .yapiskan bloğunun içinde. O blok position:sticky + z-index:30
+   olduğu için KENDİ katman bağlamını kuruyor: içerideki z-index:55
+   dışarıdaki alt çubukla (45) kıyaslanmıyor ve panel arkada kalıyordu.
+   Panel açıkken bloğun kendi katmanını yukarı alıyoruz. */
+body.ilcepanel .yapiskan{z-index:56}
 
 /* Verim ekranı seçim düğmeleri.
    DİKKAT: .sirala kullanılamaz — o sınıf mobilde gizli. */
@@ -799,6 +828,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
         </div>
       </div>
     </div>
+    <div class="ilceortu" id="ilceOrtu"></div>
     <h3 class="bslk" style="margin-top:20px">İlçe dağılımı <span id="ilceAdet"></span></h3>
     <div class="liste">
       <div class="baslikcubuk sirali" data-tablo="ozetIlce"><span class="ilkkol sirakol" data-s="ad">İl / İlçe</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış nok.</span><span data-s="servisNoktasi" class="sirakol k gen" style="color:var(--servis)">Toplam<br>servis nok.</span><span data-s="marka" class="sirakol k">Marka</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
@@ -841,7 +871,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
           <div id="ilceListesi"></div>
           <div class="ilcealt">
             <button class="btn" id="ilceTemizle">Temizle</button>
-            <button class="btn ana" id="ilceUygula">Kapat</button>
+            <button class="btn ana" id="ilceUygula">Tamam</button>
           </div>
         </div>
       </div>
@@ -1565,6 +1595,7 @@ function cizIlce(){
   ilceOzetGuncelle();
   $("#ilceMenu").hidden = true;
   $("#ilceAc").setAttribute("aria-expanded", "false");
+  document.body.classList.remove("ilcepanel");
   $("#ilceAc").style.display = ILCE_LISTE.length ? "" : "none";
 }
 
@@ -1587,12 +1618,42 @@ function ilceOzetGuncelle(){
   ILCE = n === 1 ? [...ILCELER][0] : "";   // adres çubuğu için
 }
 
+/* Panel açılıp kapanması. Telefonda alttan açılan panel olduğu için
+   arkadaki sayfanın kaymasını engelliyoruz ve ANDROID GERİ TUŞU
+   sayfadan çıkmak yerine paneli kapatsın diye geçmişe bir adım
+   ekliyoruz — kullanıcı geri basınca seçim kaybolmuyor. */
+let ILCE_GERI = false;
+
+function ilcePanelAc(){
+  $("#ilceMenu").hidden = false;
+  $("#ilceAc").setAttribute("aria-expanded", "true");
+  document.body.classList.add("ilcepanel");
+  if(!ILCE_GERI){
+    history.pushState({ilcePanel:true}, "");
+    ILCE_GERI = true;
+  }
+  if(window.innerWidth > 620) $("#ilceAra").focus();
+}
+
+function ilcePanelKapat(geriden){
+  $("#ilceMenu").hidden = true;
+  $("#ilceAc").setAttribute("aria-expanded", "false");
+  document.body.classList.remove("ilcepanel");
+  if(ILCE_GERI && !geriden){
+    ILCE_GERI = false;
+    history.back();          // eklediğimiz adımı geri al
+  } else if(geriden){
+    ILCE_GERI = false;
+  }
+}
+
 $("#ilceAc").onclick = () => {
-  const m = $("#ilceMenu");
-  m.hidden = !m.hidden;
-  $("#ilceAc").setAttribute("aria-expanded", String(!m.hidden));
-  if(!m.hidden) $("#ilceAra").focus();
+  if($("#ilceMenu").hidden) ilcePanelAc(); else ilcePanelKapat();
 };
+$("#ilceOrtu").onclick = () => ilcePanelKapat();
+window.addEventListener("popstate", () => {
+  if(!$("#ilceMenu").hidden) ilcePanelKapat(true);
+});
 $("#ilceAra").oninput = ilceListesiCiz;
 $("#ilceListesi").onchange = e => {
   const k = e.target;
@@ -1606,17 +1667,11 @@ $("#ilceListesi").onchange = e => {
 $("#ilceTemizle").onclick = () => {
   ILCELER.clear(); ilceListesiCiz(); ilceOzetGuncelle(); cizMarka();
 };
-$("#ilceUygula").onclick = () => {
-  $("#ilceMenu").hidden = true;
-  $("#ilceAc").setAttribute("aria-expanded", "false");
-};
-// Dışına tıklayınca kapansın
+$("#ilceUygula").onclick = () => ilcePanelKapat();
+// Dışına tıklayınca kapansın (masaüstü)
 document.addEventListener("click", e => {
-  if(!e.target.closest(".ilcekutu")) {
-    const m = $("#ilceMenu");
-    if(m && !m.hidden){ m.hidden = true;
-      $("#ilceAc").setAttribute("aria-expanded","false"); }
-  }
+  if(e.target.closest(".ilcekutu") || e.target.closest(".ilceortu")) return;
+  if(!$("#ilceMenu").hidden) ilcePanelKapat();
 });
 
 /* ---------- kayıt kartı ---------- */
