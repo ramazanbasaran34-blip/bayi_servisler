@@ -850,7 +850,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
 
   <section id="vTumMarka" style="display:none">
     <h2>Marka listesi</h2>
-    <p class="notm"><span id="mSay2">0</span> marka · <span id="mBayi">0</span> nokta</p>
+
     <div class="sirala" id="mrkSirala">
       <span class="et">Sırala</span>
       <button data-s="sayi" class="secili">Nokta sayısına göre</button>
@@ -923,8 +923,6 @@ let basligiIsaretle = () => {};
 const VAR_VERI = D.bayiler.length > 0;
 
 /* ---------- üst bilgiler ---------- */
-$("#mSay2").textContent = D.markalar.length;
-$("#mBayi").textContent = D.bayiler.length.toLocaleString("tr-TR");
 $("#veriTarih").textContent = new Date(D.olusturma)
   .toLocaleString("tr-TR",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
 (function(){
