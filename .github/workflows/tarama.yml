@@ -20,8 +20,16 @@ on:
   # başlarına kurduğu için o anlar en yoğun olanlar.
   #
   # elle: true işaretli markalar (Hero, Harley-Davidson) atlanır.
+  # ÜÇ FARKLI SAAT — GitHub zamanlamayı garanti etmiyor.
+  # 1 ve 2 Eylül gecelerinde tek cron ile hiç çalışmadı; GitHub yoğun
+  # saatlerde işi saatlerce erteliyor, bazen o günü tamamen atlıyor.
+  # Yedek saatler koyuyoruz: hangisi çalışırsa iş yapılır, sonrakiler
+  # "periyodu dolmadı" diyip kendiliğinden atlıyor (tarama_gerekiyor_mu),
+  # yani çift tarama olmuyor.
   schedule:
-    - cron: "7 2 * * *"
+    - cron: "7 2 * * *"      # 05:07 TR
+    - cron: "23 5 * * *"     # 08:23 TR — ilki kaçarsa
+    - cron: "41 9 * * *"     # 12:41 TR — ikisi de kaçarsa
   workflow_dispatch:
     inputs:
       markalar:
