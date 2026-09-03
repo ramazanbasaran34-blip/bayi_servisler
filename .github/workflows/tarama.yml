@@ -124,7 +124,12 @@ jobs:
             echo "::error::Hiç parça gelmedi — tarama çalışmamış."
             exit 1
           fi
-          python birlestir.py parcalar bayiler.db
+          # TARAMA ARTIK CANLI VERİYE YAZMIYOR.
+          # Sonuç bayiler_yeni.db'ye gidiyor; canlı sayfa dokunulmadan
+          # kalıyor. Kullanıcı önizlemeyi kontrol edip onaylayınca
+          # "Onayla" akışı bayiler_yeni.db -> bayiler.db kopyalıyor.
+          cp bayiler.db bayiler_yeni.db
+          python birlestir.py parcalar bayiler_yeni.db
       - name: Durum özeti
         run: python cli.py durum || true
       - name: Denetim
@@ -152,7 +157,7 @@ jobs:
           tail -n 400 gunluk/tarama-gunlugu.txt > /tmp/g.txt \
             && mv /tmp/g.txt gunluk/tarama-gunlugu.txt
 
-          git add -f bayiler.db gunluk/tarama-gunlugu.txt
+          git add -f bayiler_yeni.db gunluk/tarama-gunlugu.txt
           git diff --staged --quiet && { echo "Değişiklik yok"; exit 0; }
           git commit -m "Veri güncellendi: $(date -u +'%Y-%m-%d %H:%M UTC')"
           for i in 1 2 3 4 5; do
