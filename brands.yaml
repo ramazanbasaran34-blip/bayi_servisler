@@ -171,7 +171,10 @@ markalar:
       yetkiler: {sel: "div.text-item div:nth-of-type(2) p"}
     kayit_suzgeci:
       alan: yetkiler
-      icermeli: ["RKS Motor"]
+      # "RKS Motor" tek başına yetmiyordu: sitede bazı noktalar yalnızca
+      # "RKS E-Scooter Servisi" olarak geçiyor ve eleniyorlardı
+      # (ör. Alanya / Özyiğit Motor - Ahmet Özyiğit). İkisi de RKS.
+      icermeli: ["RKS Motor", "RKS E-Scooter", "RKS Elektrikli"]
     beklenen: [500, 1200]
     kaynaklar:
       - rol: satis
