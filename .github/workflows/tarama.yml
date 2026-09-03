@@ -130,6 +130,16 @@ jobs:
           # "Onayla" akışı bayiler_yeni.db -> bayiler.db kopyalıyor.
           cp bayiler.db bayiler_yeni.db
           python birlestir.py parcalar bayiler_yeni.db
+
+      - name: Özel modüllü markalar
+        run: |
+          # SYM, Kawasaki, Bajaj, Kanuni genel taramaya girmiyor:
+          # cli.py "ozel:" alanını tanımıyor ve onları eski tarifle
+          # tarayıp her ile bir kez yazıyordu (SYM 295 -> 2.886).
+          # Kendi modülleriyle burada taranıyorlar; böylece gece
+          # taraması yine 62 markanın tamamını kapsıyor.
+          pip install playwright && playwright install --with-deps chromium
+          python ozel_tara.py --db bayiler_yeni.db || true
       - name: Durum özeti
         run: python cli.py durum || true
       - name: Denetim
