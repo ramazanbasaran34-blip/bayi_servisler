@@ -110,6 +110,25 @@ TAKMA_AD = {
 }
 
 # Hızlı arama için katlanmış anahtarlar
+# KAYNAK VERİDE ı/i BOZULMASI VAR.
+# turkiye paketinden gelen listede merkez ilçeler "Afyonkarahısar",
+# "Osmanıye", "Sıvas", "Sıırt" gibi yazılmış (büyük I küçük ı'ya
+# çevrilmiş). Bu yüzden 226 kaydın ilçesi bozuk yazımla eşleşiyor,
+# 115 kayıt da hiç tanınmıyordu ("Denizli" listede "Denizlı" idi).
+#
+# Merkez ilçe adı ilin kendi adıdır; fold ile eşleşen öğeyi ilin
+# doğru yazımıyla değiştiriyoruz.
+def _merkez_onar(harita: dict) -> dict:
+    for il, ilceler in harita.items():
+        f_il = fold(il)
+        harita[il] = [il if fold(x) == f_il else x for x in ilceler]
+        if f_il not in {fold(x) for x in harita[il]}:
+            harita[il].append(il)          # merkez ilçe hiç yoksa ekle
+    return harita
+
+
+IL_ILCE = _merkez_onar(IL_ILCE)
+
 ILCE_FOLD = {}
 for _il, _liste in IL_ILCE.items():
     for _i in _liste:
