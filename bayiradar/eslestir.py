@@ -66,6 +66,18 @@ def _ortak_oran(a: str, b: str) -> float:
     return len(A & B) / len(A | B)
 
 
+# Şirket eklerini eleyip ayırt edici kelimeleri bırakır.
+_GENEL_EK = {
+    "san", "sanayi", "tic", "ticaret", "ltd", "limited", "sti", "sirketi",
+    "as", "ve", "insaat", "taahhut", "turizm", "pazarlama", "otomotiv",
+    "motor", "motorlu", "araclar", "motosiklet", "bisiklet", "grup",
+}
+
+
+def _ayirt_edici(ad: str) -> set:
+    return {k for k in fold(ad).split() if len(k) > 2 and k not in _GENEL_EK}
+
+
 def ayni_firma_mi(a: dict, b: dict) -> tuple[bool, str]:
     """İki kayıt aynı firma mı? (evet_mi, gerekçe)"""
     # 1. Telefon — güçlü kanıt AMA tek başına yetmiyor.
@@ -87,6 +99,14 @@ def ayni_firma_mi(a: dict, b: dict) -> tuple[bool, str]:
         ia = fold(a.get("ilce", "") or "")
         ib = fold(b.get("ilce", "") or "")
         if ia and ib and ia == ib:
+            # Aynı numarayı FARKLI firmalar da kullanabiliyor. Niğde'de
+            # "HAFIZLAR OTOMOTİV" ile "MERTAS PAZARLAMA" aynı numarada
+            # ve tek firmaya iniyorlardı. Adlar hiç ortak kelime
+            # taşımıyorsa ayrı işyeri sayıyoruz.
+            ka = _ayirt_edici(a.get("bayi_adi", ""))
+            kb = _ayirt_edici(b.get("bayi_adi", ""))
+            if ka and kb and not (ka & kb):
+                return False, "aynı telefon, farklı firma adı"
             return True, "telefon + aynı ilçe"
 
         # FARKLI ilçede aynı numara → zincir bayinin ayrı şubesi.
