@@ -482,7 +482,7 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
    "Tamam'a bastım, liste gelmedi" sorununun sebebi buydu.
    Bu kural her zaman en sonda kalmalı. */
 .ilcemenu[hidden]{display:none !important}
-.ilcemenu{position:absolute;z-index:55;left:0;right:0;top:calc(100% + 4px);
+.ilcemenu{position:absolute;z-index:90;left:0;right:0;top:calc(100% + 4px);
   background:#fff;border:1px solid var(--hat2);border-radius:9px;
   box-shadow:0 12px 28px -12px rgba(16,32,56,.45);padding:8px}
 .ilcemenu .ara{margin-bottom:6px}
@@ -505,14 +505,17 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
      gerçek cihazda kapatmıyordu. Tam ekran modal bu sınıfın tamamını
      ortadan kaldırıyor — sayfadaki düzenleme penceresi de böyle
      çalışıyor ve sorunsuz. */
-  .ilcemenu{position:fixed;inset:0;top:0;left:0;right:0;bottom:0;
-    border-radius:0;padding:12px;max-height:none;
-    display:flex;flex-direction:column;z-index:70}
+  .ilcemenu{position:fixed;inset:0;border-radius:0;padding:10px 12px;
+    max-height:none;display:flex;flex-direction:column;z-index:90}
   #ilceListesi{max-height:none;flex:1 1 auto;min-height:0;
     -webkit-overflow-scrolling:touch}
-  .ilcesatir{padding:13px 6px;font-size:15.5px}
-  .ilceust{padding-bottom:10px;margin-bottom:10px}
-  .ilceust .btn{padding:10px 16px;font-size:14.5px}
+  /* Satırlar daraltıldı: ekranda iki kat fazla ilçe görünüyor */
+  .ilcesatir{padding:8px 6px;font-size:14.5px;gap:10px}
+  .ilcesatir input{width:19px;height:19px}
+  .ilcemenu .ara{padding:8px 10px;font-size:14px;margin-bottom:6px}
+  .ilceust{padding-bottom:9px;margin-bottom:8px}
+  .ilceust .btn{padding:9px 15px;font-size:14.5px}
+  .ilcebaslik{font-size:15px}
   body.ilcepanel{overflow:hidden}
 }
 .ilceortu{display:none}
@@ -1628,7 +1631,14 @@ function ilceOzetGuncelle(){
    cihazda "Tamam"a basınca panel kapanmıyor, liste güncellenmiyordu.
    Tarayıcı geçmişine dokunmak fayda sağlamadı, kaldırıldı. */
 function ilcePanelAc(){
-  $("#ilceMenu").hidden = false;
+  const m = $("#ilceMenu");
+  /* Panel .yapiskan bloğunun içindeydi. O blok position:sticky +
+     z-index taşıdığı için KENDİ katman bağlamını kuruyor ve panelin
+     z-index'i dışarıdaki sekme şeridiyle kıyaslanmıyordu: panelin üst
+     şeridi (Temizle/Tamam) şeridin arkasında kalıyordu.
+     Açarken doğrudan <body>'ye taşıyoruz — sorun kökten bitiyor. */
+  if(m.parentElement !== document.body) document.body.appendChild(m);
+  m.hidden = false;
   $("#ilceAc").setAttribute("aria-expanded", "true");
   document.body.classList.add("ilcepanel");
   if(window.innerWidth > 620) $("#ilceAra").focus();
@@ -1669,7 +1679,8 @@ $("#ilceUygula").onclick = e => {
 };
 // Dışına tıklayınca kapansın (masaüstü)
 document.addEventListener("click", e => {
-  if(e.target.closest(".ilcekutu") || e.target.closest(".ilceortu")) return;
+  // Panel artık <body> altında; .ilcekutu içinde değil.
+  if(e.target.closest(".ilcekutu") || e.target.closest(".ilcemenu")) return;
   if(!$("#ilceMenu").hidden) ilcePanelKapat();
 });
 
