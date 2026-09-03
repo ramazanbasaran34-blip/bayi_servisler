@@ -766,6 +766,11 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
 </head>
 <body>
 
+<div id="onizlemeBant" style="display:none;background:#B45309;color:#fff;
+  font-family:var(--d);font-size:13px;padding:7px 12px;text-align:center;
+  font-weight:600">
+  ÖNİZLEME — son taramanın sonucu. Onaylanmadan canlıya alınmaz.
+</div>
 <header class="tepe">
   <a href="#" id="anaSayfa" title="Ana sayfaya dön"><img src="__LOGO_SOL__" alt="Kuralkan"></a>
   <div class="orta">
@@ -1040,6 +1045,10 @@ let basligiIsaretle = () => {};
 const VAR_VERI = D.bayiler.length > 0;
 
 /* ---------- üst bilgiler ---------- */
+// Adres /onizleme/ ile bitiyorsa uyarı bandını göster
+if(location.pathname.includes("/onizleme")){
+  const b = $("#onizlemeBant"); if(b) b.style.display = "block";
+}
 $("#veriTarih").textContent = new Date(D.olusturma)
   .toLocaleString("tr-TR",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
 (function(){
@@ -2353,5 +2362,10 @@ try{ history.replaceState({ekran:'vOzet'},''); }catch(e){}
 
 if __name__ == "__main__":
     cikti = sys.argv[1] if len(sys.argv) > 1 else "site/index.html"
-    yol, adet, markali = uret(cikti)
+    # --db ile başka bir veritabanından üretilebilir (önizleme sayfası
+    # son taramanın sonucundan, canlı sayfa onaylanmış veriden üretiliyor)
+    db_yolu = "bayiler.db"
+    if "--db" in sys.argv:
+        db_yolu = sys.argv[sys.argv.index("--db") + 1]
+    yol, adet, markali = uret(cikti, db_yolu=db_yolu)
     print(f"✓ {yol}  ·  {adet} kayıt  ·  {markali} markada veri var")
