@@ -254,7 +254,14 @@ def marka_tara(mod_ad: str, log=print) -> dict[str, list[dict]]:
 
 def main() -> None:
     kuru = "--kuru" in sys.argv
-    istenen = [a for a in sys.argv[1:] if not a.startswith("-")]
+    # --db ile başka veritabanına yazılabilir. Gece taraması sonucu
+    # canlıya değil bayiler_yeni.db'ye gidiyor; önizlemede kontrol
+    # edildikten sonra canlıya alınıyor.
+    db_yolu = "bayiler.db"
+    if "--db" in sys.argv:
+        db_yolu = sys.argv[sys.argv.index("--db") + 1]
+    istenen = [a for a in sys.argv[1:]
+               if not a.startswith("-") and a != db_yolu]
     moduller = istenen or MODULLER
 
     rapor: dict = {}
@@ -274,7 +281,7 @@ def main() -> None:
             r = {"kayit": len(kayitlar), "il": len(iller),
                  "ilsiz": sum(1 for k in kayitlar if not k.get("il"))}
             if not kuru and kayitlar:
-                with db() as con:
+                with db(db_yolu) as con:
                     r["db"] = str(commit_tarama(con, marka, kayitlar, 1.0, basladi))[:180]
             rapor[marka] = r
             print(f"  → {marka}: {json.dumps(r, ensure_ascii=False)[:150]}")
