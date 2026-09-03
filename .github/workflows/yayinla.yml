@@ -32,8 +32,18 @@ jobs:
 
       - name: Sayfayı üret
         run: |
-          mkdir -p site
+          mkdir -p site site/onizleme
+          # CANLI: onaylanmış veri
           python uret_index.py site/index.html
+          # ÖNİZLEME: son taramanın sonucu. bayiler_yeni.db henüz yoksa
+          # canlının kopyası konuyor ki adres 404 vermesin.
+          if [ -f bayiler_yeni.db ]; then
+            python uret_index.py site/onizleme/index.html --db bayiler_yeni.db
+          else
+            cp site/index.html site/onizleme/index.html
+          fi
+          test -s site/onizleme/index.html || { echo "önizleme üretilemedi"; exit 1; }
+          echo "önizleme boyutu: $(du -h site/onizleme/index.html | cut -f1)"
 
       - name: Çıktıyı doğrula
         run: |
