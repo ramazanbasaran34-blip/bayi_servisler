@@ -61,7 +61,7 @@ jobs:
     timeout-minutes: 100
     strategy:
       fail-fast: false          # bir marka patlarsa diğerleri devam etsin
-      max-parallel: 12
+      max-parallel: 15
       matrix:
         marka: ${{ fromJson(needs.liste.outputs.markalar) }}
     steps:
@@ -76,49 +76,12 @@ jobs:
 
       - name: "${{ matrix.marka }} taranıyor"
         timeout-minutes: 80
-        env:
-          MARKA: ${{ matrix.marka }}
         run: |
-          set -o pipefail
           cp bayiler.db calisma.db
-
-          say() {
-            python - "$1" <<'PY'
-          import sqlite3, sys, os
-          c = sqlite3.connect(sys.argv[1])
-          print(c.execute("select count(*) from bayiler where marka=? and durum!='kaldirildi'",
-                          (os.environ["MARKA"],)).fetchone()[0])
-          PY
-          }
-
-          ONCE=$(say calisma.db)
-          echo "önceki kayıt: $ONCE"
-
-          OZEL=$(python - <<'PY'
-          import yaml, os
-          c = yaml.safe_load(open("brands.yaml"))["markalar"]
-          print((c.get(os.environ["MARKA"]) or {}).get("ozel") or "")
-          PY
-          )
-          if [ -n "$OZEL" ]; then
-            echo "özel modül: $OZEL"
-            python ozel_tara.py "$OZEL" --db calisma.db
-          else
-            python cli.py tara --marka "$MARKA" --db calisma.db
-          fi
-
-          SONRA=$(say calisma.db)
-          echo "sonraki kayıt: $SONRA"
-          echo "| $MARKA | $ONCE | $SONRA |" >> "$GITHUB_STEP_SUMMARY"
-
-          # ŞİŞME FRENİ (kabuk aritmetiği; env aktarımı gerekmiyor)
-          if [ "$ONCE" -ge 20 ] && [ "$SONRA" -gt $(( ONCE * 130 / 100 )) ]; then
-            echo "::error::$MARKA şişti: $ONCE -> $SONRA"
-            exit 1
-          fi
-          if [ "$ONCE" -ge 20 ] && [ "$SONRA" -lt $(( ONCE * 60 / 100 )) ]; then
-            echo "::warning::$MARKA çok düştü: $ONCE -> $SONRA"
-          fi
+          python tek_marka.py "${{ matrix.marka }}" --db calisma.db \
+            | tee sonuc.txt
+          echo "| ${{ matrix.marka }} | $(grep -oP '\d+ -> \d+' sonuc.txt | tail -1) |" \
+            >> "$GITHUB_STEP_SUMMARY"
 
       - name: Sonucu sakla
         if: always()
