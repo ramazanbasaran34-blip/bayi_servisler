@@ -303,8 +303,10 @@ markalar:
 
   # 18. FALCON  ·  Türkiye-Çin  ·  falconmotosiklet.com
   "Falcon":
-    etkilesim: il_secimi
-    mode: browser
+    # ozel/falcon.py: tek JSON isteğiyle tüm ağ.
+    # Tarayıcıyla 81 il × 2 rol geziliyordu ve 80 dakikalık
+    # sınıra takılıp her turda zaman aşımına uğruyordu.
+    ozel: falcon
     kaynaklar:
       - rol: satis
         url: "https://falconmotosiklet.com/bayi-servis-agi/motosiklet"
