@@ -125,8 +125,12 @@ jobs:
           print(f"canlı {ct} ({cm} marka) -> yeni {yt} ({ym} marka)")
           with open("özet.txt", "w") as f:
               f.write(f"{ct} -> {yt}\n")
+          # Şişme varsa DURDURMUYORUZ, uyarıyoruz: sonucu önizlemeye
+          # yazmazsak neyin şiştiğini göremiyoruz. Canlıya geçişi
+          # zaten "Önizlemeyi canlıya al" akışındaki fren engelliyor.
           if yt > ct * 1.25:
-              sys.exit(f"TOPLAM ŞİŞME: {ct} -> {yt}")
+              print(f"::warning::TOPLAM ŞİŞME: {ct} -> {yt} "
+                    f"(%{100*yt//ct-100}) — önizlemede incele, canlıya alma")
           PY
 
       - name: Depoya yaz
