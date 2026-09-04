@@ -65,6 +65,21 @@ def main() -> int:
 
     sonra = say(a.db, a.marka)
     print(f"[{a.marka}] sonraki kayıt: {sonra}", flush=True)
+
+    # SADECE BU MARKAYI BIRAK.
+    # Her iş bayiler.db'nin kopyasıyla başlıyor, yani dosya 62 markanın
+    # hepsini içeriyor. Parçalar birleştirilirken aynı kayıtlar 62 kez
+    # üst üste biniyordu. Diğer markaları atıyoruz ki her parça yalnızca
+    # kendi markasının güncel hâlini taşısın.
+    con = sqlite3.connect(a.db)
+    try:
+        n = con.execute("delete from bayiler where marka<>?", (a.marka,)).rowcount
+        con.execute("delete from marka_durum where marka<>?", (a.marka,))
+        con.commit()
+        con.execute("vacuum")
+        print(f"[{a.marka}] parçadan çıkarılan diğer marka kaydı: {n}", flush=True)
+    finally:
+        con.close()
     print(f"{a.marka}: {once} -> {sonra}")
 
     # ŞİŞME FRENİ — küçük markalarda oynama normal, 20 altına bakmıyoruz
