@@ -167,17 +167,41 @@ jobs:
           tail -n 400 gunluk/tarama-gunlugu.txt > /tmp/g.txt \
             && mv /tmp/g.txt gunluk/tarama-gunlugu.txt
 
+          # ÖNCE dosya gerçekten var mı — yoksa sessizce boş commit atıp
+          # "başarılı" görünüyordu, tarama sonucu kayboluyordu.
+          test -s bayiler_yeni.db || { echo "::error::bayiler_yeni.db yok/boş"; exit 1; }
+          python - <<'PY'
+          import sqlite3, sys
+          c = sqlite3.connect("bayiler_yeni.db")
+          n = c.execute("select count(*) from bayiler where durum!='kaldirildi'").fetchone()[0]
+          m = c.execute("select count(distinct marka) from bayiler where durum!='kaldirildi'").fetchone()[0]
+          print(f"yazılacak: {n} kayıt, {m} marka")
+          if n < 1000: sys.exit(f"kayıt sayısı şüpheli: {n}")
+          PY
+
           git add -f bayiler_yeni.db gunluk/tarama-gunlugu.txt
           git diff --staged --quiet && { echo "Değişiklik yok"; exit 0; }
-          git commit -m "Veri güncellendi: $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git commit -m "Tarama sonucu (önizleme): $(date -u +'%Y-%m-%d %H:%M UTC')"
+          # PUSH: çakışmada BİZİM bayiler_yeni.db'miz kazanmalı.
+          # rebase --skip kullanılıyordu ve çakışmada değişikliği
+          # sessizce atıyordu; tarama sonucu kayboluyordu.
           for i in 1 2 3 4 5; do
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              echo "yazıldı"; exit 0
+            fi
+            echo "çakışma, yeniden deneniyor ($i)"
             git fetch origin "${GITHUB_REF_NAME}"
-            git rebase -X ours "origin/${GITHUB_REF_NAME}" || git rebase --skip
-            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
-            sleep 5
+            git checkout --ours bayiler_yeni.db 2>/dev/null || true
+            git merge -X ours "origin/${GITHUB_REF_NAME}" -m "birleştirme" || {
+              git checkout --ours bayiler_yeni.db
+              git add -f bayiler_yeni.db
+              git commit -m "birleştirme (bizim veri korundu)" || true
+            }
+            sleep 6
           done
-          echo "::error::Veri kaydedilemedi"
+          echo "::error::Tarama sonucu yazılamadı"
           exit 1
+
       - uses: actions/upload-pages-artifact@v3
         with: { path: site }
 
