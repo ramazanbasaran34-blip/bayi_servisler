@@ -97,7 +97,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
+      # ref: main ŞART — varsayılan checkout ayrık HEAD'e geçiyor ve
+      # push/merge zinciri çakışmada kilitleniyordu ("Depoya yaz" adımı
+      # sürekli kırılıyordu). Dal üzerinde çalışınca sorun bitiyor.
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with: { python-version: "3.11" }
       - run: pip install -r requirements.txt
@@ -134,17 +140,48 @@ jobs:
           PY
 
       - name: Depoya yaz
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config user.name  "bayi-radar-bot"
-          git config user.email "bot@users.noreply.github.com"
+          # git push YERİNE GitHub Contents API.
+          # push zinciri (checkout ayrık HEAD + fetch + rebase/merge)
+          # sürekli kilitleniyor, "Depoya yaz" her turda kırılıyordu.
+          # API tek istekte yazıyor; çakışma olursa sha'yı tazeleyip
+          # yeniden deniyoruz.
           test -s bayiler_yeni.db || { echo "::error::sonuç yok"; exit 1; }
-          git add -f bayiler_yeni.db
-          git diff --staged --quiet && { echo "değişiklik yok"; exit 0; }
-          git commit -m "Marka marka tarama: $(date -u +'%Y-%m-%d %H:%M UTC')"
-          for i in 1 2 3 4 5; do
-            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
-            git fetch origin "${GITHUB_REF_NAME}"
-            git merge -X ours "origin/${GITHUB_REF_NAME}" -m "birleştirme" || true
-            sleep 6
-          done
-          exit 1
+          python - <<'PY'
+          import base64, json, os, sys, time, urllib.request
+
+          REPO = os.environ["GITHUB_REPOSITORY"]
+          TOKEN = os.environ["GH_TOKEN"]
+          YOL = "bayiler_yeni.db"
+          API = f"https://api.github.com/repos/{REPO}/contents/{YOL}"
+
+          def istek(yontem, url, govde=None):
+              d = json.dumps(govde).encode() if govde else None
+              r = urllib.request.Request(url, data=d, method=yontem)
+              r.add_header("Authorization", f"Bearer {TOKEN}")
+              r.add_header("Accept", "application/vnd.github+json")
+              with urllib.request.urlopen(r) as y:
+                  return json.loads(y.read() or "{}")
+
+          icerik = base64.b64encode(open(YOL, "rb").read()).decode()
+          mesaj = "Marka marka tarama: " + time.strftime("%Y-%m-%d %H:%M UTC",
+                                                          time.gmtime())
+          for deneme in range(1, 6):
+              try:
+                  sha = istek("GET", API + "?ref=main").get("sha")
+              except Exception:
+                  sha = None
+              govde = {"message": mesaj, "content": icerik, "branch": "main"}
+              if sha:
+                  govde["sha"] = sha
+              try:
+                  c = istek("PUT", API, govde)
+                  print("yazıldı:", c.get("commit", {}).get("sha", "")[:8])
+                  sys.exit(0)
+              except Exception as e:
+                  print(f"deneme {deneme} başarısız: {e}")
+                  time.sleep(6)
+          sys.exit("::error::Tarama sonucu yazılamadı")
+          PY

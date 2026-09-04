@@ -82,10 +82,16 @@ def main() -> int:
         con.close()
     print(f"{a.marka}: {once} -> {sonra}")
 
-    # ŞİŞME FRENİ — küçük markalarda oynama normal, 20 altına bakmıyoruz
+    # ŞİŞME UYARISI — işi KIRMIYOR.
+    #
+    # Önce hata veriyordu ve şişen markanın parçası yine yüklenmesine
+    # rağmen akış kırmızı görünüyordu; "tarama hatası" ile "şişme"
+    # ayırt edilemiyordu. Artık şişme sadece uyarı: iş yeşil kalıyor,
+    # sonuç önizlemeye gidiyor, orada inceleyip karar veriyoruz.
+    # Canlıya geçişi "Önizlemeyi canlıya al" akışındaki fren engelliyor.
     if once >= 20 and sonra > once * a.sisme:
-        print(f"::error::{a.marka} ŞİŞTİ: {once} -> {sonra} ({sonra/once:.1f} kat)")
-        return 1
+        print(f"::warning::{a.marka} ŞİŞTİ: {once} -> {sonra} "
+              f"({sonra/once:.1f} kat) — önizlemede incele")
     if once >= 20 and sonra < once * 0.6:
         print(f"::warning::{a.marka} çok düştü: {once} -> {sonra}")
     return 0
