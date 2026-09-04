@@ -97,7 +97,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
+      # ref: main ŞART — varsayılan checkout ayrık HEAD'e geçiyor ve
+      # push/merge zinciri çakışmada kilitleniyordu ("Depoya yaz" adımı
+      # sürekli kırılıyordu). Dal üzerinde çalışınca sorun bitiyor.
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with: { python-version: "3.11" }
       - run: pip install -r requirements.txt
@@ -138,13 +144,22 @@ jobs:
           git config user.name  "bayi-radar-bot"
           git config user.email "bot@users.noreply.github.com"
           test -s bayiler_yeni.db || { echo "::error::sonuç yok"; exit 1; }
-          git add -f bayiler_yeni.db
-          git diff --staged --quiet && { echo "değişiklik yok"; exit 0; }
-          git commit -m "Marka marka tarama: $(date -u +'%Y-%m-%d %H:%M UTC')"
+
           for i in 1 2 3 4 5; do
-            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
-            git fetch origin "${GITHUB_REF_NAME}"
-            git merge -X ours "origin/${GITHUB_REF_NAME}" -m "birleştirme" || true
-            sleep 6
+            # Uzaktaki son hâlin ÜZERİNE yaz: rebase/merge çakışması
+            # yaşamadan, bizim dosyamız korunarak.
+            git fetch origin main
+            git reset --soft origin/main
+            git add -f bayiler_yeni.db
+            if git diff --staged --quiet; then
+              echo "değişiklik yok"; exit 0
+            fi
+            git commit -m "Marka marka tarama: $(date -u +'%Y-%m-%d %H:%M UTC')"
+            if git push origin HEAD:main; then
+              echo "yazıldı"; exit 0
+            fi
+            echo "çakışma, yeniden deneniyor ($i)"
+            sleep 8
           done
+          echo "::error::Tarama sonucu yazılamadı"
           exit 1
