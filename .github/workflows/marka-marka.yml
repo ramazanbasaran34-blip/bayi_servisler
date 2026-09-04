@@ -26,12 +26,14 @@ permissions:
   contents: write
 
 concurrency:
-  group: bayi-tarama
+  # Toplu taramadan AYRI grup: birbirlerini beklemesin/iptal etmesin.
+  group: bayi-marka-marka
   cancel-in-progress: false
 
 jobs:
   liste:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     outputs:
       markalar: ${{ steps.cikar.outputs.markalar }}
     steps:
@@ -54,6 +56,9 @@ jobs:
   tara:
     needs: liste
     runs-on: ubuntu-latest
+    # Bir marka takılırsa 100 dakikada kesilir; diğerleri etkilenmez.
+    # GitHub'ın varsayılanı 6 saat ve takılan iş tüm akışı bekletiyordu.
+    timeout-minutes: 100
     strategy:
       fail-fast: false          # bir marka patlarsa diğerleri devam etsin
       max-parallel: 12
@@ -71,6 +76,7 @@ jobs:
 
       - name: "${{ matrix.marka }} taranıyor"
         id: tara
+        timeout-minutes: 80
         run: |
           set -o pipefail
           cp bayiler.db calisma.db
@@ -134,6 +140,7 @@ jobs:
     needs: tara
     if: always()
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
