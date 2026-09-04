@@ -251,6 +251,23 @@ def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
                                      "sehir merkezi", "merkezi") and il_ad:
         ilce_ad = il_ad
 
+    # ADRESTEKİ İL, SEÇİLEN İLDEN ÖNCELİKLİ.
+    #
+    # İl seçmeli sitelerde sayfa çoğu zaman filtre uygulamadan TAM listeyi
+    # döndürüyor. Tarama her il için istek attığından aynı bayi 43 ayrı ile
+    # yazılıyordu (Voge 138 -> 1.136, Volta 152 -> 754). Adresin sonunda
+    # gerçek il yazıyorsa onu kullanıyoruz; böylece aynı bayi hangi il
+    # sorgusunda gelirse gelsin tek ve doğru ile düşüyor, kopya oluşmuyor.
+    adres_ham = rec.get("adres", "") or ""
+    if adres_ham:
+        son = re.split(r"[/,]", adres_ham)[-1].strip()
+        adres_il = il_ara(son)
+        if adres_il and fold(adres_il) != fold(il_ad or ""):
+            il_ad = adres_il
+            # İl değişti; eski ilçe artık geçersiz. Adresten yenisini çıkar.
+            if not ilce_ad or not ilce_mi(ilce_ad, il_ad):
+                ilce_ad = adresten_ilce(adres_ham, il_ad) or ""
+
     # SON KONTROL: il alanı gerçek bir il mi?
     #
     # Bazı siteler il alanına İLÇE yazıyor (Yuki'de "Antakya", "İzmit").
