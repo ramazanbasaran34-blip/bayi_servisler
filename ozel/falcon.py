@@ -1,49 +1,72 @@
-"""Falcon — tek JSON ucu.
+"""Falcon — tek JSON isteğiyle tüm ağ.
 
-Site üçlü seçim gösteriyor ama arkada tek bir uç var ve ülkenin tamamını
-veriyor: /api/bayiler.php → {"tumBayiler": [...]}
+NEDEN ÖZEL MODÜL
+Falcon tarayıcı ile ve il seçerek taranıyordu: 81 il × 2 rol = 162
+sayfa yükleme. Bu 80 dakikalık sınıra takılıp her turda zaman aşımına
+uğruyordu ("Falcon taranıyor has timed out after 80 minutes").
 
-Rol ayrımı `typeModel` alanında:
-    mb = motosiklet bayi      → satış
-    ms = motosiklet servis    → servis
-    yp = yedek parça          → motosiklet noktası DEĞİL, elenir
+Oysa sitenin kendi JSON ucu var ve TÜM ağı tek istekte veriyor:
+    https://falconmotosiklet.com/api/bayiler.php
+    {"tumBayiler":[{"Unvani":..,"Il":..,"Ilce":..,"Adres":..,"Gsm":..,
+                    "typeModel":{"mb":bool,"yp":bool,"ms":bool}}, ...]}
 
-3737 kaydın 2313'ünde hiçbir bayrak yok (yedek parça / diğer cari);
-sadece mb veya ms işaretli olanlar alınıyor → ~1215 kayıt.
+typeModel alanı rolü söylüyor:
+    ms = motosiklet servisi   → servis
+    mb / yp = bayi            → satış
+İkisi de doğruysa satış + servis.
 """
 
 from __future__ import annotations
 
 import json
+import re
 
 MARKA = "Falcon"
-UC = "https://falconmotosiklet.com/api/bayiler.php"
 
-KAYNAKLAR = {"hepsi": UC}
+KAYNAKLAR = {"hepsi": "https://falconmotosiklet.com/api/bayiler.php"}
 TEST = {("Falcon", "hepsi"): "falcon-api.json"}
 
 
-def coz(rol: str, govde: str, url: str) -> list[dict]:
-    d = json.loads(govde) if isinstance(govde, str) else govde
-    out = []
-    for x in d.get("tumBayiler") or []:
-        if not x.get("isAktif", True):
-            continue
-        tm = x.get("typeModel") or {}
-        bayi, servis = bool(tm.get("mb")), bool(tm.get("ms"))
-        if not (bayi or servis):
-            continue  # yalnızca yedek parça ya da alakasız cari
-        rol_ = "satis_servis" if (bayi and servis) else ("satis" if bayi else "servis")
+def _rol(t: dict) -> str:
+    if not isinstance(t, dict):
+        return "satis"
+    servis = bool(t.get("ms"))
+    satis = bool(t.get("mb")) or bool(t.get("yp"))
+    if satis and servis:
+        return "satis_servis"
+    if servis:
+        return "servis"
+    return "satis"
 
-        tel = (x.get("Tel") or x.get("Gsm") or "").strip()
+
+def coz(rol: str, govde: str, url: str) -> list[dict]:
+    # Yanıtın başında/sonunda fazladan metin olabiliyor
+    m = re.search(r'\{.*"tumBayiler".*\}', govde, re.S)
+    ham = m.group(0) if m else govde
+    try:
+        d = json.loads(ham)
+    except json.JSONDecodeError:
+        return []
+
+    out: list[dict] = []
+    gorulen: set[tuple] = set()
+    for b in d.get("tumBayiler") or []:
+        ad = (b.get("Unvani") or "").strip()
+        if not ad:
+            continue
+        tel = (b.get("Gsm") or b.get("Tel") or "").strip()
+        anahtar = (ad.casefold(), tel)
+        if anahtar in gorulen:
+            continue
+        gorulen.add(anahtar)
         out.append({
-            "bayi_adi": (x.get("Unvani") or "").strip(),
-            "il": (x.get("Il") or "").strip(),
-            "ilce": (x.get("Ilce") or "").strip(),
-            "adres": (x.get("Adres") or "").strip(),
+            "bayi_adi": ad,
+            "il": (b.get("Il") or "").strip(),
+            "ilce": (b.get("Ilce") or "").strip(),
+            "adres": (b.get("Adres") or "").strip(),
             "telefon": tel,
-            "email": "",
+            "email": (b.get("Email") or "").strip(),
             "website": "",
-            "rol": rol_,
+            "rol": _rol(b.get("typeModel")),
         })
     return out
