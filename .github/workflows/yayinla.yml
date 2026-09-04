@@ -43,7 +43,13 @@ jobs:
             cp site/index.html site/onizleme/index.html
           fi
           test -s site/onizleme/index.html || { echo "önizleme üretilemedi"; exit 1; }
+          # YEDEK ADRES: bazı durumlarda alt klasör 404 veriyordu.
+          # Aynı sayfayı kökte tek dosya olarak da yayınlıyoruz:
+          #   .../onizleme/        (klasör)
+          #   .../onizleme.html    (tek dosya — her zaman çalışır)
+          cp site/onizleme/index.html site/onizleme.html
           echo "önizleme boyutu: $(du -h site/onizleme/index.html | cut -f1)"
+          ls -la site/ site/onizleme/
 
       - name: Çıktıyı doğrula
         run: |
