@@ -1,0 +1,184 @@
+name: Marka marka tara (teşhis)
+
+# NEDEN AYRI AYRI
+#
+# Toplu tarama 10 grupta çalışıyor ve bir markadaki bozukluk grubun
+# içinde kayboluyordu: hangi markanın kayıt sayısını şişirdiğini ancak
+# tarama bittikten sonra veritabanına bakarak anlıyorduk.
+#
+# Burada her marka KENDİ İŞİNDE çalışıyor:
+#   · logu ayrı, hata veren marka listede kırmızı görünüyor
+#   · biri patlarsa diğerleri etkilenmiyor
+#   · her iş kendi özetini yazıyor: kaç kayıt buldu, öncekine göre fark
+#
+# Sonuçlar tek tek birleştirilip bayiler_yeni.db'ye yazılıyor; canlı
+# veriye dokunulmuyor.
+
+on:
+  workflow_dispatch:
+    inputs:
+      markalar:
+        description: "Sadece belirli markalar (virgülle; boş = hepsi)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bayi-tarama
+  cancel-in-progress: false
+
+jobs:
+  liste:
+    runs-on: ubuntu-latest
+    outputs:
+      markalar: ${{ steps.cikar.outputs.markalar }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install pyyaml
+      - id: cikar
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os, yaml
+          c = yaml.safe_load(open("brands.yaml"))["markalar"]
+          istenen = [x.strip() for x in os.environ.get("SECILEN", "").split(",") if x.strip()]
+          markalar = istenen or sorted(c)
+          print("markalar=" + json.dumps(markalar))
+          PY
+        env:
+          SECILEN: ${{ inputs.markalar }}
+
+  tara:
+    needs: liste
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false          # bir marka patlarsa diğerleri devam etsin
+      max-parallel: 12
+      matrix:
+        marka: ${{ fromJson(needs.liste.outputs.markalar) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+
+      - name: Bağımlılıklar
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium || true
+
+      - name: "${{ matrix.marka }} taranıyor"
+        id: tara
+        run: |
+          set -o pipefail
+          cp bayiler.db calisma.db
+          ONCE=$(python - <<'PY'
+          import sqlite3, os
+          c = sqlite3.connect("calisma.db")
+          print(c.execute("select count(*) from bayiler where marka=? and durum!='kaldirildi'",
+                          (os.environ["MARKA"],)).fetchone()[0])
+          PY
+          )
+          echo "önceki kayıt: $ONCE"
+
+          # Özel modüllü marka mı?
+          OZEL=$(python - <<'PY'
+          import yaml, os
+          c = yaml.safe_load(open("brands.yaml"))["markalar"]
+          print((c.get(os.environ["MARKA"]) or {}).get("ozel") or "")
+          PY
+          )
+          if [ -n "$OZEL" ]; then
+            echo "özel modül: $OZEL"
+            python ozel_tara.py "$OZEL" --db calisma.db
+          else
+            python cli.py tara --marka "$MARKA" --db calisma.db
+          fi
+
+          SONRA=$(python - <<'PY'
+          import sqlite3, os
+          c = sqlite3.connect("calisma.db")
+          print(c.execute("select count(*) from bayiler where marka=? and durum!='kaldirildi'",
+                          (os.environ["MARKA"],)).fetchone()[0])
+          PY
+          )
+          echo "sonraki kayıt: $SONRA"
+          echo "### $MARKA: $ONCE → $SONRA" >> "$GITHUB_STEP_SUMMARY"
+
+          # ŞİŞME FRENİ — marka bazında
+          python - <<'PY'
+          import os, sys
+          o, s = int(os.environ["ONCE"]), int(os.environ["SONRA"])
+          if o >= 20 and s > o * 1.3:
+              print(f"::error::{os.environ['MARKA']} şişti: {o} -> {s}")
+              sys.exit(1)
+          if o >= 20 and s < o * 0.6:
+              print(f"::warning::{os.environ['MARKA']} çok düştü: {o} -> {s}")
+          PY
+        env:
+          MARKA: ${{ matrix.marka }}
+          ONCE: ${{ env.ONCE }}
+          SONRA: ${{ env.SONRA }}
+
+      - name: Sonucu sakla
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: marka-${{ strategy.job-index }}
+          path: calisma.db
+          retention-days: 1
+
+  birlestir:
+    needs: tara
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -r requirements.txt
+
+      - uses: actions/download-artifact@v4
+        with: { path: indirilen, merge-multiple: false }
+
+      - name: Birleştir ve önizlemeye yaz
+        run: |
+          mkdir -p parcalar
+          find indirilen -name "*.db" -print0 | while IFS= read -r -d '' f; do
+            cp "$f" "parcalar/$(echo "$f" | md5sum | cut -c1-8).db"
+          done
+          ls -la parcalar/
+          cp bayiler.db bayiler_yeni.db
+          python birlestir.py parcalar bayiler_yeni.db
+
+          python - <<'PY'
+          import sqlite3, sys
+          def say(y):
+              c = sqlite3.connect(y)
+              return (c.execute("select count(*) from bayiler where durum!='kaldirildi'").fetchone()[0],
+                      c.execute("select count(distinct marka) from bayiler where durum!='kaldirildi'").fetchone()[0])
+          ct, cm = say("bayiler.db"); yt, ym = say("bayiler_yeni.db")
+          print(f"canlı {ct} ({cm} marka) -> yeni {yt} ({ym} marka)")
+          with open("özet.txt", "w") as f:
+              f.write(f"{ct} -> {yt}\n")
+          if yt > ct * 1.25:
+              sys.exit(f"TOPLAM ŞİŞME: {ct} -> {yt}")
+          PY
+
+      - name: Depoya yaz
+        run: |
+          git config user.name  "bayi-radar-bot"
+          git config user.email "bot@users.noreply.github.com"
+          test -s bayiler_yeni.db || { echo "::error::sonuç yok"; exit 1; }
+          git add -f bayiler_yeni.db
+          git diff --staged --quiet && { echo "değişiklik yok"; exit 0; }
+          git commit -m "Marka marka tarama: $(date -u +'%Y-%m-%d %H:%M UTC')"
+          for i in 1 2 3 4 5; do
+            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            git fetch origin "${GITHUB_REF_NAME}"
+            git merge -X ours "origin/${GITHUB_REF_NAME}" -m "birleştirme" || true
+            sleep 6
+          done
+          exit 1
