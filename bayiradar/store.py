@@ -145,10 +145,16 @@ def tekil_key(rec: dict) -> str:
     İstanbul/Mustafa Oktay, Denizli/Yiğitler).
     """
     marka = fold(rec["marka"])
-    ilce = fold(rec.get("ilce", ""))
+    # İLÇE DEĞİL ADRES: il seçmeli siteler filtreyi uygulamadan tüm listeyi
+    # döndürüyor, aynı bayi her il turunda tekrar geliyor ve ilçesi her
+    # turda farklı doluyor (çoğu zaman il adıyla). İmza değişince kayıt
+    # yeni sanılıyordu — RKS "Özer Center" 8 kez, Kuba 1009 bayi 1727
+    # satır. Adres şubeden şubeye gerçekten değişir ama il sorgusuna göre
+    # değişmez, dolayısıyla yukarıdaki Bajaj şubelerini de ayrı tutar.
+    adres = fold(rec.get("adres", ""))[:80]
     if rec.get("telefon"):
-        return f"{marka}|{rec['telefon']}|{ilce}"
-    return f"{marka}|{fold(rec['bayi_adi'])}|{ilce}"
+        return f"{marka}|{rec['telefon']}|{adres}"
+    return f"{marka}|{fold(rec['bayi_adi'])}|{adres}"
 
 
 def _log_degisim(con, marka, tip, rec, detay=""):
