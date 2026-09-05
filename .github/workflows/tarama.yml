@@ -26,10 +26,17 @@ on:
   # Yedek saatler koyuyoruz: hangisi çalışırsa iş yapılır, sonrakiler
   # "periyodu dolmadı" diyip kendiliğinden atlıyor (tarama_gerekiyor_mu),
   # yani çift tarama olmuyor.
-  schedule:
-    - cron: "7 2 * * *"      # 05:07 TR
-    - cron: "23 5 * * *"     # 08:23 TR — ilki kaçarsa
-    - cron: "41 9 * * *"     # 12:41 TR — ikisi de kaçarsa
+  # ZAMANLAMA GEÇİCİ OLARAK KAPALI — 5 Eylül 2026
+  # Bu akış ve "Marka marka tara" aynı bayiler_yeni.db'ye yazıyor.
+  # Ayrı eşzamanlılık gruplarındayken 08:11'de zamanlanmış koşu,
+  # 07:26'da yazılmış marka-marka sonucunun üstüne yazdı: önizlemede
+  # 2 Eylül tarihli veri kaldı, Falcon ve Nanok hiç taranmamış göründü.
+  # Şişme düzeltmeleri bitip önizleme onaylanınca cron'lar geri açılacak.
+  # (Aşağıdaki eşzamanlılık grubu artık ortak, o da ikinci koruma.)
+  # schedule:
+  #   - cron: "7 2 * * *"      # 05:07 TR
+  #   - cron: "23 5 * * *"     # 08:23 TR — ilki kaçarsa
+  #   - cron: "41 9 * * *"     # 12:41 TR — ikisi de kaçarsa
   workflow_dispatch:
     inputs:
       markalar:
@@ -47,7 +54,10 @@ permissions:
   id-token: write
 
 concurrency:
-  group: bayi-tarama
+  # ORTAK GRUP: bayiler_yeni.db'ye yazan her akış aynı kuyruğa girsin.
+  # Ayrı gruplardayken iki tarama aynı anda koşup birbirinin sonucunu
+  # eziyordu. cancel-in-progress kapalı: iptal etme, SIRAYA AL.
+  group: bayi-onizleme-yazma
   cancel-in-progress: false
 
 jobs:
