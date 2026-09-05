@@ -49,7 +49,8 @@ def veritabanindan_oku(db_yolu="bayiler.db"):
     if not Path(db_yolu).exists():
         return [], {}
     from bayiradar.store import db, marka_durumu, sorgula
-    with db(db_yolu) as con:
+    # salt_oku: sayfa üretimi veriyi DEĞİŞTİRMEZ (canlı dosyaya dokunma)
+    with db(db_yolu, salt_oku=True) as con:
         kayitlar = sorgula(con)
         durum = {m["marka"]: m for m in marka_durumu(con)}
     return kayitlar, durum
