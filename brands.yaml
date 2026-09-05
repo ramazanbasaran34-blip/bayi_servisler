@@ -506,6 +506,24 @@ markalar:
   "Regal Raptor":
     etkilesim: il_secimi
     mode: browser
+    # TARİF ŞART: tarif yokken otomatik yapı tespiti devreye giriyordu ve
+    # karttaki "Adres" / "Telefon" ETİKETLERİNİ bayi adı sanıyordu.
+    # 456 kaydın 75'inin adı "Telefon", adresi de telefon numarasıydı.
+    # Kart yapısı: div.col-address > b.title (ad) + li'ler (adres, telefon).
+    # Ad "ATALAY YIĞMAN Bayi" diye geliyor; rol zaten ayrı alanda, eki atıyoruz.
+    row: "div.col-address"
+    fields:
+      bayi_adi:
+        sel: "b.title"
+        regex: "^(.*?)\\s*(?:Bayi|Servis)\\s*$"
+      adres:
+        sel: "li"
+        index: 0
+        regex: "^Adres\\s*(.*)$"
+      telefon:
+        sel: "a[href^='tel:']"
+        attr: "href"
+        regex: "tel:\\s*([0-9+ ()]+)"
     kaynaklar:
       - rol: satis
         url: "https://regalraptor.com.tr/tr/bayiler"
