@@ -32,7 +32,8 @@ DOLGU = {
 ADRES_DOLGU = {
     "mah", "mahalle", "mahallesi", "cad", "cadde", "caddesi", "sok", "sokak",
     "no", "blv", "bulvar", "bulvari", "apt", "kat", "d", "ic", "kapi",
-    "osb", "sanayi", "sitesi", "blok", "cars", "carsi", "merkez",
+    "osb", "sanayi", "sitesi", "site", "blok", "daire", "plaza",
+    "apartmani", "apartman", "merkezi", "is", "cars", "carsi", "merkez",
 }
 
 
@@ -113,8 +114,11 @@ def kapi_no(adres: str) -> str:
 
 def adres_belirtecleri(adres: str) -> set:
     """Adresin ayırt edici kelimeleri (mah/cad/sok gibi dolgular atılır)."""
-    d = _RAKAM_HARF.sub(lambda m: " ".join(x for x in m.groups() if x),
-                        asil_adres(adres))
+    # İki kez: "4A11" tek geçişte "4 A11" oluyor, ikinci geçiş "4 A 11"
+    # yapıyor; karşı taraftaki "NO: 4A BLOK DAİRE: 11" ile eşleşsin.
+    d = asil_adres(adres)
+    for _ in range(2):
+        d = _RAKAM_HARF.sub(lambda m: " ".join(x for x in m.groups() if x), d)
     return {k for k in fold(d).split()
             if k not in ADRES_DOLGU and len(k) > 1}
 
@@ -138,7 +142,12 @@ def adres_benzer(a: str, b: str, esik: float = 0.5) -> bool:
         return True
     if A <= B or B <= A:
         return True
-    return len(A & B) / len(A | B) >= esik
+    # KAPSAMA oranı (kesişim / kısa adres), birleşim değil. Aynı adres
+    # bir yerde ayrıntılı yazılıyor ("... ZEREN SANAYİ SİTESİ NO: 4A
+    # BLOK DAİRE: 11"), başka yerde sade ("... No: 4A11 Urla/İzmir").
+    # Birleşime bölünce fazladan kelimeler oranı düşürüp aynı yeri iki
+    # ayrı adres gösteriyordu. Farklı kapı numarası zaten yukarıda elendi.
+    return len(A & B) / min(len(A), len(B)) >= 0.6
 
 
 def ayni_firma_mi(a: dict, b: dict) -> tuple[bool, str]:
