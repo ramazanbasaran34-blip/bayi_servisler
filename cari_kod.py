@@ -27,6 +27,7 @@ kod verilir. Böylece bir bayinin kodu zamanla değişmez.
 from __future__ import annotations
 
 import json
+import re
 import random
 import sqlite3
 import sys
@@ -56,22 +57,9 @@ def _ad_kelimeleri(ad: str) -> set:
             if len(k) > 2 and k not in _GENEL}
 
 
-def _adres_kelimeleri(adres: str) -> set:
-    _DOLGU = {"mah", "mahalle", "mahallesi", "cad", "cadde", "caddesi",
-              "sok", "sokak", "no", "blv", "bulvar", "bulvari", "apt",
-              "kat", "ic", "kapi", "sitesi", "blok", "carsi", "merkez"}
-    return {k for k in anahtar(adres or "").split()
-            if len(k) > 1 and k not in _DOLGU}
-
-
-def ayni_adres_mi(a: str, b: str, esik: float = 0.5) -> bool:
-    """Aynı yeri gösteriyor mu? Yazım farkı bölmesin diye benzerlik."""
-    A, B = _adres_kelimeleri(a), _adres_kelimeleri(b)
-    if not A or not B:
-        return True
-    if A <= B or B <= A:
-        return True
-    return len(A & B) / len(A | B) >= esik
+# TEK KAYNAK: adres karşılaştırması bayiradar/eslestir.py'de.
+# Burada ikinci bir kopyası vardı ve farklı sonuç veriyordu.
+from bayiradar.eslestir import adres_benzer as ayni_adres_mi  # noqa: E402
 
 
 def firma_anahtari(tel: str, il: str, ilce: str, ad: str,
@@ -109,113 +97,161 @@ def _kod_uret(rnd: random.Random) -> str:
     return "".join(rnd.choice(ALFABE) for _ in range(4))
 
 
-def main() -> None:
-    con = sqlite3.connect(DB)
+def _kayitlar(db: str) -> list[dict]:
+    con = sqlite3.connect(db)
     con.row_factory = sqlite3.Row
-    # KAPALI/KALDIRILMIŞ KAYITLAR DA KOD ALIYOR. Süzgeç varken bir bayi
-    # kapandığında kodsuz kalıyordu; sonra geri açılınca yeni kod alıp
-    # geçmişiyle bağı kopuyordu. Açılışta da kapanışta da kodu olsun.
-    rows = [dict(r) for r in con.execute(
-        "SELECT bayi_adi, il, ilce, telefon, adres FROM bayiler")]
+    # KAPALI KAYITLAR DA DAHİL: bayi kapanınca kodsuz kalmasın, geri
+    # açılınca aynı kodu bulsun. Eskiden durum süzgeci vardı.
+    r = [dict(x) for x in con.execute(
+        "SELECT bayi_adi, il, ilce, telefon, adres, durum FROM bayiler")]
     con.close()
+    return r
 
-    anahtarlar = {firma_anahtari(r["telefon"], r["il"], r["ilce"],
-                                 r["bayi_adi"], r.get("adres", ""))
-                  for r in rows}
 
-    # ---- Aynı işyerinin farklı yazımlarını tek koda bağla ----
-    #
-    # Aynı telefon+il+ilçe bir "kova". Kova içinde adlar ORTAK AYIRT
-    # EDİCİ KELİME taşıyorsa aynı işyeri sayılıyor:
-    #   "MANAVGAT MOTOR / YASİN AĞGEDİK" ~ "YASİN AĞGEDİK"   → birleşir
-    #   "HAFIZLAR OTOMOTİV"  ~  "MERTAS PAZARLAMA"           → ayrı kalır
-    # İkincisi gerçek bir hataydı: Hafızlar'ın kartında Hero rozeti
-    # çıkıyordu, oysa Hero bayisi olan Mertaş'tı.
+def esleme_uret(kayitlar: list[dict]) -> dict:
+    """anahtar -> kod. Aynı işyerinin yazım farkları tek kodda toplanır.
+
+    İKİ TUZAK VAR, ikisi de yaşandı:
+
+    1. Gruplarken HAM adres karşılaştırılmalı. Anahtardaki adres
+       normalleştirilip 60 karaktere kırpılıyor; onunla karşılaştırınca
+       kapı numarası kesilip ayrı işyerleri tek koda iniyordu.
+
+    2. Aday, grubun TEK temsilci adresiyle değil BÜTÜN adresleriyle
+       karşılaştırılmalı. Adresi boş bir kayıt gruba ilk düşerse boş
+       adres her şeye benzediği için grup mıknatıs gibi büyüyordu.
+       Bu yüzden üyeler önce adres uzunluğuna göre sıralanıyor: dolu
+       adresli kayıtlar grubu kuruyor, boşlar sonra yerleşiyor.
+    """
+    anahtar_ad, ham_adres = {}, {}
+    for r in kayitlar:
+        a = firma_anahtari(r["telefon"], r["il"], r["ilce"],
+                           r["bayi_adi"], r.get("adres", ""))
+        anahtar_ad.setdefault(a, r)
+        if len(r.get("adres") or "") > len(ham_adres.get(a, "")):
+            ham_adres[a] = r.get("adres") or ""
+
     kovalar: dict[tuple, list] = {}
-    for a in anahtarlar:
-        if not a.startswith("T:"):
-            continue
+    for a in anahtar_ad:
         p = a.split("|")
         kovalar.setdefault((p[0], p[1], p[2]), []).append(a)
 
-    birlesik: dict[str, str] = {}          # anahtar -> grup temsilcisi
-    for kova, uyeler in kovalar.items():
-        gruplar: list[list[str]] = []      # her grup: [anahtar, ...]
-        kelime: list[set] = []             # grubun kelime havuzu
-        adresler: list[str] = []           # grubun temsilci adresi
-        for a in sorted(uyeler):
-            parca = a.split("|")
-            ad = parca[3] if len(parca) > 3 else ""
-            adr = parca[4] if len(parca) > 4 else ""
+    temsilci: dict[str, str] = {}
+    for uyeler in kovalar.values():
+        gruplar: list[list[str]] = []
+        kelimeler: list[set] = []
+        adresler: list[list[str]] = []
+        for a in sorted(uyeler, key=lambda x: (-len(ham_adres.get(x, "")), x)):
+            p = a.split("|")
+            ad = p[3] if len(p) > 3 else ""
+            adr = ham_adres.get(a, "")
             k = {w for w in ad.split() if len(w) > 2 and w not in _GENEL}
-            for i, hav in enumerate(kelime):
-                # Ad ortak kelime taşıyor AMA adres başkaysa ayrı şube:
-                # aynı koda bağlamıyoruz.
-                if (not k or not hav or (k & hav)) and \
-                        ayni_adres_mi(adr, adresler[i]):
+            for i in range(len(gruplar)):
+                ad_uyar = (not k or not kelimeler[i] or (k & kelimeler[i]))
+                if ad_uyar and all(ayni_adres_mi(adr, x) for x in adresler[i]):
                     gruplar[i].append(a)
-                    kelime[i] |= k
+                    kelimeler[i] |= k
+                    if adr:
+                        adresler[i].append(adr)
                     break
             else:
-                gruplar.append([a]); kelime.append(set(k)); adresler.append(adr)
+                gruplar.append([a])
+                kelimeler.append(set(k))
+                adresler.append([adr] if adr else [])
         for g in gruplar:
-            temsil = g[0]
             for a in g:
-                birlesik[a] = temsil
+                temsilci[a] = g[0]
 
-    eslesme: dict[str, str] = {}
-    if DOSYA.exists():
-        eslesme = json.loads(DOSYA.read_text(encoding="utf-8"))
-
-    # ESKİ KODLARI KORU: format değişti (ada da bakılıyor). Eski
-    # "T:tel|il|ilce" anahtarının kodunu, o kovanın ilk grubuna taşı.
-    for eski_a, k in list(eslesme.items()):
-        if not eski_a.startswith("T:") or eski_a.count("|") != 2:
-            continue
-        for a, temsil in birlesik.items():
-            if a.startswith(eski_a + "|") and temsil not in eslesme:
-                eslesme[temsil] = k
-                break
-
-    kullanilan = set(eslesme.values())
-    # Grup üyelerinin hepsi temsilcinin kodunu alacak; kod yalnızca
-    # temsilciler için üretiliyor.
-    temsilciler = {birlesik.get(a, a) for a in anahtarlar}
-    eksik = sorted(temsilciler - set(eslesme))
-
-    if "--rapor" in sys.argv:
-        print(f"firma: {len(anahtarlar)} | kodlu: {len(anahtarlar) - len(eksik)} "
-              f"| kodsuz: {len(eksik)}")
-        return
-
-    # Sabit tohum: aynı veriyle aynı kodlar
-    rnd = random.Random(20260901)
-    kapasite = len(ALFABE) ** 4
-    if len(anahtarlar) > kapasite * 0.6:
-        print(f"UYARI: {len(anahtarlar)} firma, 4 haneli kod kapasitesi "
-              f"{kapasite}. Çakışma denemeleri artabilir.")
-
-    for a in eksik:
+    rnd = random.Random(20260905)
+    kod_of, kullanilan = {}, set()
+    for t in sorted(set(temsilci.values())):
         for _ in range(10000):
             k = _kod_uret(rnd)
             if k not in kullanilan:
                 kullanilan.add(k)
-                eslesme[a] = k
+                kod_of[t] = k
                 break
         else:
             raise SystemExit("kod havuzu tükendi")
+    return {a: kod_of[t] for a, t in temsilci.items()}
 
-    # Grup üyelerini temsilcinin koduna bağla
-    for a, temsil in birlesik.items():
-        if temsil in eslesme:
-            eslesme[a] = eslesme[temsil]
 
-    # Artık kullanılmayan firmaların kodunu SİLMİYORUZ: bayi geri
-    # gelirse eski kodunu alsın.
+def denetle(eslesme: dict, kayitlar: list[dict]) -> list[str]:
+    """Üretilen eşlemeyi sınar. Boş liste dönerse kayıt güvenli."""
+    import collections
+    hata = []
+
+    def anah(r):
+        return firma_anahtari(r["telefon"], r["il"], r["ilce"],
+                              r["bayi_adi"], r.get("adres", ""))
+
+    kodsuz = [r for r in kayitlar if anah(r) not in eslesme]
+    if kodsuz:
+        hata.append(f"kodsuz kayıt: {len(kodsuz)} (ör. {kodsuz[0]['bayi_adi']})")
+
+    kapali = [r for r in kayitlar
+              if r.get("durum") != "aktif" and anah(r) not in eslesme]
+    if kapali:
+        hata.append(f"kapalı ama kodsuz: {len(kapali)}")
+
+    kod_adres = collections.defaultdict(set)
+    for r in kayitlar:
+        k = eslesme.get(anah(r))
+        if k and (r.get("adres") or "").strip():
+            kod_adres[k].add(r["adres"])
+    karisik = []
+    for k, adr in kod_adres.items():
+        adr = list(adr)
+        for i in range(len(adr)):
+            for j in range(i + 1, len(adr)):
+                if not ayni_adres_mi(adr[i], adr[j]):
+                    karisik.append((k, adr[i], adr[j]))
+    if karisik:
+        hata.append(f"aynı kodda farklı adres: {len(karisik)} "
+                    f"(ör. {karisik[0][0]}: {karisik[0][1][:34]} / "
+                    f"{karisik[0][2][:34]})")
+
+    bozuk = [k for k in set(eslesme.values())
+             if len(k) != 4 or any(c not in ALFABE for c in k)]
+    if bozuk:
+        hata.append(f"biçimi bozuk kod: {len(bozuk)}")
+    return hata
+
+
+def main() -> None:
+    """Kodları üretir, DENETLER, denetim geçerse yazar.
+
+    Eski davranış eski kodları korumaya çalışıyordu. Artık korumuyoruz:
+    o kodlar adres içermeyen bozuk anahtarla verilmişti, taşımak
+    karışıklığı sürdürürdü.
+    """
+    db = DB
+    for i, a in enumerate(sys.argv):
+        if a == "--db" and i + 1 < len(sys.argv):
+            db = sys.argv[i + 1]
+
+    kayitlar = _kayitlar(db)
+    eslesme = esleme_uret(kayitlar)
+    print(f"kayıt: {len(kayitlar)}  ·  ayrı işyeri: {len(set(eslesme.values()))}"
+          f"  ·  anahtar: {len(eslesme)}")
+
+    if "--rapor" in sys.argv:
+        return
+
+    hata = denetle(eslesme, kayitlar)
+    if hata:
+        print("DENETİM KALDI — dosya yazılmadı:")
+        for h in hata:
+            print("  ✗", h)
+        raise SystemExit(1)
+
+    for satir in ("her kaydın kodu var", "kapalı kayıtlar da kodlu",
+                  "hiçbir kod birden çok adrese dağılmıyor",
+                  "kod biçimi doğru"):
+        print("  ✓", satir)
     DOSYA.write_text(json.dumps(eslesme, ensure_ascii=False, indent=0,
                                 sort_keys=True), encoding="utf-8")
-    print(f"firma: {len(anahtarlar)} | yeni kod: {len(eksik)} "
-          f"| dosyadaki toplam: {len(eslesme)}")
+    print(f"yazıldı: {DOSYA}")
 
 
 if __name__ == "__main__":
