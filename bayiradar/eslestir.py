@@ -221,9 +221,14 @@ def ayni_firma_mi(a: dict, b: dict) -> tuple[bool, str]:
     if ia and ib and ia != ib:
         return False, ""
 
-    # 2. Ad çekirdeği birebir + aynı ilçe
+    # 2. Ad çekirdeği birebir + aynı ilçe + ADRES ÇELİŞMİYOR
+    #    Adres şartı olmadan aynı ilçedeki ŞUBELER birleşiyordu: KOÇ
+    #    MOTOR'un Hendek/Pamukova şubeleri, Bayhas Motors gibi. Aynı ad
+    #    aynı ilçede iki ayrı kapı numarası varsa iki ayrı bayidir.
     if ca == cb and ia and ia == ib:
-        return True, "ad+ilçe"
+        if adres_benzer(a.get("adres", ""), b.get("adres", "")):
+            return True, "ad+ilçe"
+        return False, "aynı ad ve ilçe, farklı adres"
 
     # 3. Ad çok benzer + adres benzer
     ad_oran = _ortak_oran(ca, cb)
