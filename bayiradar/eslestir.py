@@ -89,6 +89,17 @@ _KAPI = re.compile(r"\bno\s*[:.]?\s*(\d{1,4})|\b(\d{1,4})\s*/\s*[a-zA-Z]\b", re.
 _RAKAM_HARF = re.compile(r"(\d)([a-z])|([a-z])(\d)", re.I)
 
 
+# Adres alanına ikinci bir adres iliştirilebiliyor:
+# "... NO: 42 AA SEVKİYAT ADRESİ: ECE MAH. ..." — karşılaştırmada asıl
+# adresi kullanıyoruz, yoksa aynı firma iki ayrı yer sanılıyor.
+_EK_ADRES = re.compile(
+    r"\s*(sevkiyat|teslimat|fatura|kargo)\s*adres[iı]?\s*:.*$", re.I | re.S)
+
+
+def asil_adres(adres: str) -> str:
+    return _EK_ADRES.sub("", adres or "").strip()
+
+
 def kapi_no(adres: str) -> str:
     """Adresteki kapı numarası.
 
@@ -96,14 +107,14 @@ def kapi_no(adres: str) -> str:
     işyeri. Yalnız kelime örtüşmesine bakınca bunlar aynı sanılıyordu
     (Çakmakçı, Remzi Özsoy, Ethemoğlu tek koda düşmüştü).
     """
-    m = _KAPI.search(adres or "")
+    m = _KAPI.search(asil_adres(adres))
     return (m.group(1) or m.group(2)) if m else ""
 
 
 def adres_belirtecleri(adres: str) -> set:
     """Adresin ayırt edici kelimeleri (mah/cad/sok gibi dolgular atılır)."""
     d = _RAKAM_HARF.sub(lambda m: " ".join(x for x in m.groups() if x),
-                        adres or "")
+                        asil_adres(adres))
     return {k for k in fold(d).split()
             if k not in ADRES_DOLGU and len(k) > 1}
 
