@@ -183,6 +183,69 @@ def kayit_suzgeci(kayitlar: list[dict], cfg: dict) -> list[dict]:
             if any(g in fold(str(k.get(alan, ""))) for g in gerekli)]
 
 
+# --------------------------------------------- genel tabela adlarını yerelleştir
+# Ad, hizmet listesiyle uzayabiliyor:
+#   "Fabrika Satış Mağazası / Satış / Teslimat Noktası / Yedek Parça"
+# Bu ekler rolde ve diğer alanlarda zaten var; addan tamamını temizliyoruz.
+_ROL_EKI = re.compile(
+    r"(?:\s*/\s*(?:satış|satis|servis|bayi|bayii|teslimat\s*noktası|"
+    r"teslimat\s*noktasi|yedek\s*parça|yedek\s*parca|aksesuar))+\s*$", re.I)
+_MAHALLE = re.compile(
+    r"^\s*([^,/]{2,30}?)\s*(?:mah\.?|mahallesi|mh\.?)\b", re.I)
+
+
+def _mahalle(adres: str) -> str:
+    m = _MAHALLE.match(adres or "")
+    return clean_text(m.group(1)) if m else ""
+
+
+def genel_adlari_yerellestir(kayitlar: list[dict], cfg: dict) -> list[dict]:
+    """Marka geneli tek tabela adı kullanan noktaları ayırt edilir yapar.
+
+    Volta'nın kendi mağazaları listede hep "Fabrika Satış Mağazası / Satış"
+    adıyla geliyor: 32 ayrı nokta, 32 kez aynı isim. Telefonu, adresi ve
+    ili farklı olduğu için bunlar gerçek ayrı bayiler; sorun yalnızca
+    isimlendirmede. Başına yer adını koyuyoruz:
+        "Fabrika Satış Mağazası / Satış"  ->  "Develi Fabrika Satış Mağazası"
+
+    İlçe çoğu kayıtta boş geldiğinden ilçe yoksa il kullanılıyor. Aynı
+    yerde birden çok nokta varsa (İstanbul'da 7 tane) mahalle adıyla
+    ayrılıyor, yoksa hepsi yine aynı isme düşerdi.
+
+    Tarif: genel_adlar: ["Fabrika Satış Mağazası", "Benzinli Araç Servisi"]
+    """
+    kaliplar = [fold(x) for x in (cfg.get("genel_adlar") or []) if x]
+    if not kaliplar:
+        return kayitlar
+
+    hedef = []
+    for r in kayitlar:
+        ad = fold(r.get("bayi_adi", ""))
+        if any(k in ad for k in kaliplar):
+            hedef.append(r)
+    if not hedef:
+        return kayitlar
+
+    # 1. tur: yer adını başa al
+    for r in hedef:
+        temel = _ROL_EKI.sub("", clean_text(r.get("bayi_adi", "")))
+        yer = clean_text(r.get("ilce", "")) or clean_text(r.get("il", ""))
+        r["_yeni_ad"] = f"{yer} {temel}".strip() if yer else temel
+
+    # 2. tur: aynı ada düşenleri mahalleyle ayır
+    sayac: dict[str, int] = {}
+    for r in hedef:
+        sayac[r["_yeni_ad"]] = sayac.get(r["_yeni_ad"], 0) + 1
+    for r in hedef:
+        ad = r.pop("_yeni_ad")
+        if sayac.get(ad, 0) > 1:
+            mah = _mahalle(r.get("adres", ""))
+            if mah:
+                ad = f"{ad} ({mah})"
+        r["bayi_adi"] = ad
+    return kayitlar
+
+
 # ------------------------------------------------------------- son rötuşlar
 def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
     """Ham kaydı standart şemaya oturtur. Adı olmayan kaydı çöpe atar."""
