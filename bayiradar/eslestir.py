@@ -84,16 +84,44 @@ def adres_belirtecleri(adres: str) -> set:
             if k not in ADRES_DOLGU and len(k) > 1}
 
 
+_KAPI = re.compile(r"\bno\s*[:.]?\s*(\d{1,4})|\b(\d{1,4})\s*/\s*[a-zA-Z]\b", re.I)
+# "431A" ile "431 A" aynı sayılsın diye rakam-harf sınırına boşluk koyuyoruz
+_RAKAM_HARF = re.compile(r"(\d)([a-z])|([a-z])(\d)", re.I)
+
+
+def kapi_no(adres: str) -> str:
+    """Adresteki kapı numarası.
+
+    En güçlü ayırt edici: "NO: 20" ile "NO: 10" aynı sokakta ama AYRI
+    işyeri. Yalnız kelime örtüşmesine bakınca bunlar aynı sanılıyordu
+    (Çakmakçı, Remzi Özsoy, Ethemoğlu tek koda düşmüştü).
+    """
+    m = _KAPI.search(adres or "")
+    return (m.group(1) or m.group(2)) if m else ""
+
+
+def adres_belirtecleri(adres: str) -> set:
+    """Adresin ayırt edici kelimeleri (mah/cad/sok gibi dolgular atılır)."""
+    d = _RAKAM_HARF.sub(lambda m: " ".join(x for x in m.groups() if x),
+                        adres or "")
+    return {k for k in fold(d).split()
+            if k not in ADRES_DOLGU and len(k) > 1}
+
+
 def adres_benzer(a: str, b: str, esik: float = 0.5) -> bool:
     """İki adres aynı yeri mi gösteriyor?
 
+    TEK KAYNAK: hem kayıt eşleştirme hem cari kod üretimi bu fonksiyonu
+    kullanıyor. İkisi ayrı ayrı yazılıydı ve farklı sonuç veriyordu.
+
     Katı eşitlik işe yaramıyor: aynı yer sayfadan sayfaya farklı yazılıyor
     ("... NO:2/B ATAŞEHİR/İSTANBUL" ile "... NO:2/B ATAŞEHİR"). Eşitlik
-    arayınca 45 kayıt boş yere ikiye bölünüyordu.
-
-    Bu yüzden kelime örtüşmesine bakıyoruz. Biri diğerinin alt kümesiyse
-    (fazladan il yazılmış) aynı sayılıyor. Adres bilinmiyorsa ayırmıyoruz.
+    arayınca 45 kayıt boş yere ikiye bölünüyordu. Bu yüzden önce kapı
+    numarasına, sonra kelime örtüşmesine bakıyoruz.
     """
+    ka, kb = kapi_no(a), kapi_no(b)
+    if ka and kb and ka != kb:
+        return False
     A, B = adres_belirtecleri(a), adres_belirtecleri(b)
     if not A or not B:
         return True
