@@ -56,7 +56,26 @@ def _ad_kelimeleri(ad: str) -> set:
             if len(k) > 2 and k not in _GENEL}
 
 
-def firma_anahtari(tel: str, il: str, ilce: str, ad: str) -> str:
+def _adres_kelimeleri(adres: str) -> set:
+    _DOLGU = {"mah", "mahalle", "mahallesi", "cad", "cadde", "caddesi",
+              "sok", "sokak", "no", "blv", "bulvar", "bulvari", "apt",
+              "kat", "ic", "kapi", "sitesi", "blok", "carsi", "merkez"}
+    return {k for k in anahtar(adres or "").split()
+            if len(k) > 1 and k not in _DOLGU}
+
+
+def ayni_adres_mi(a: str, b: str, esik: float = 0.5) -> bool:
+    """Aynı yeri gösteriyor mu? Yazım farkı bölmesin diye benzerlik."""
+    A, B = _adres_kelimeleri(a), _adres_kelimeleri(b)
+    if not A or not B:
+        return True
+    if A <= B or B <= A:
+        return True
+    return len(A & B) / len(A | B) >= esik
+
+
+def firma_anahtari(tel: str, il: str, ilce: str, ad: str,
+                   adres: str = "") -> str:
     """Aynı fiziksel işyerini tanımlayan anahtar.
 
     Telefon güçlü kanıt AMA tek başına yetmiyor: farklı firmalar aynı
@@ -76,9 +95,14 @@ def firma_anahtari(tel: str, il: str, ilce: str, ad: str) -> str:
         # anahtar üretir ama main() onları AYNI koda bağlar. "Alfabetik
         # ilk kelime" denendi ve kararsız çıktı (705 grup yanlış ayrıldı):
         # bir kayıttaki fazladan kelime sırayı değiştiriyordu.
-        return f"T:{t}|{anahtar(il)}|{anahtar(ilce)}|{anahtar(ad)}"
-    # Telefonsuz kayıtlar ada göre ayrılıyor
-    return f"A:{anahtar(ad)}|{anahtar(il)}|{anahtar(ilce)}"
+        # ADRES DE ANAHTARDA: aynı numarayı paylaşan AYRI şubeler ayrı
+        # firma. CFMoto/Edremit'te Özdemir Mağazaları'nın Altınkum ve
+        # Camivasat şubeleri, Bayhas Motors'un şubeleri böyle. Aynı koda
+        # düşerlerse birbirine karışıyorlar.
+        return (f"T:{t}|{anahtar(il)}|{anahtar(ilce)}|{anahtar(ad)}"
+                f"|{anahtar(adres)[:60]}")
+    # Telefonsuz kayıtlar ad + adrese göre ayrılıyor
+    return f"A:{anahtar(ad)}|{anahtar(il)}|{anahtar(ilce)}|{anahtar(adres)[:60]}"
 
 
 def _kod_uret(rnd: random.Random) -> str:
@@ -88,11 +112,15 @@ def _kod_uret(rnd: random.Random) -> str:
 def main() -> None:
     con = sqlite3.connect(DB)
     con.row_factory = sqlite3.Row
+    # KAPALI/KALDIRILMIŞ KAYITLAR DA KOD ALIYOR. Süzgeç varken bir bayi
+    # kapandığında kodsuz kalıyordu; sonra geri açılınca yeni kod alıp
+    # geçmişiyle bağı kopuyordu. Açılışta da kapanışta da kodu olsun.
     rows = [dict(r) for r in con.execute(
-        "SELECT bayi_adi, il, ilce, telefon FROM bayiler WHERE durum!='kapali'")]
+        "SELECT bayi_adi, il, ilce, telefon, adres FROM bayiler")]
     con.close()
 
-    anahtarlar = {firma_anahtari(r["telefon"], r["il"], r["ilce"], r["bayi_adi"])
+    anahtarlar = {firma_anahtari(r["telefon"], r["il"], r["ilce"],
+                                 r["bayi_adi"], r.get("adres", ""))
                   for r in rows}
 
     # ---- Aynı işyerinin farklı yazımlarını tek koda bağla ----
@@ -114,16 +142,22 @@ def main() -> None:
     for kova, uyeler in kovalar.items():
         gruplar: list[list[str]] = []      # her grup: [anahtar, ...]
         kelime: list[set] = []             # grubun kelime havuzu
+        adresler: list[str] = []           # grubun temsilci adresi
         for a in sorted(uyeler):
-            ad = a.split("|", 3)[3]
+            parca = a.split("|")
+            ad = parca[3] if len(parca) > 3 else ""
+            adr = parca[4] if len(parca) > 4 else ""
             k = {w for w in ad.split() if len(w) > 2 and w not in _GENEL}
             for i, hav in enumerate(kelime):
-                if not k or not hav or (k & hav):
+                # Ad ortak kelime taşıyor AMA adres başkaysa ayrı şube:
+                # aynı koda bağlamıyoruz.
+                if (not k or not hav or (k & hav)) and \
+                        ayni_adres_mi(adr, adresler[i]):
                     gruplar[i].append(a)
                     kelime[i] |= k
                     break
             else:
-                gruplar.append([a]); kelime.append(set(k))
+                gruplar.append([a]); kelime.append(set(k)); adresler.append(adr)
         for g in gruplar:
             temsil = g[0]
             for a in g:
