@@ -156,8 +156,23 @@ jobs:
         run: python denetle.py || true
       - name: Siteyi üret
         run: |
-          mkdir -p site
+          # ÖNİZLEME DE ÜRETİLMELİ. Burada yalnızca index.html üretiliyordu;
+          # bu akış Pages'e yayınlayınca siteyi baştan kuruyor ve
+          # .../onizleme/ adresi siliniyordu — önizleme linkleri 404
+          # veriyordu. yayinla.yml ikisini de üretiyor, burası üretmiyordu.
+          mkdir -p site site/onizleme
+          # CANLI: yalnızca onaylanmış veri
           python uret_index.py site/index.html
+          # ÖNİZLEME: son taramanın sonucu
+          if [ -f bayiler_yeni.db ]; then
+            python uret_index.py site/onizleme/index.html --db bayiler_yeni.db
+          else
+            cp site/index.html site/onizleme/index.html
+          fi
+          test -s site/onizleme/index.html || { echo "::error::önizleme üretilemedi"; exit 1; }
+          # Yedek adres: alt klasör bazı durumlarda 404 veriyordu
+          cp site/onizleme/index.html site/onizleme.html
+          ls -la site/ site/onizleme/
       - name: Veritabanını depoya yaz
         run: |
           git config user.name  "bayi-radar-bot"
