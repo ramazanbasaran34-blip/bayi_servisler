@@ -24,8 +24,8 @@ from .fetch import Fetcher
 from .koordinat import sorgu_noktalari
 from .normalize import IL_KODU, ILLER, fold
 from .otomatik import il_baglantilari, il_secicileri_bul, json_gomulu
-from .parse import (finalize, kayit_suzgeci, parse_gomulu, parse_html,
-                    parse_json, parse_oto)
+from .parse import (finalize, genel_adlari_yerellestir, kayit_suzgeci,
+                    parse_gomulu, parse_html, parse_json, parse_oto)
 from .store import commit_tarama, db, marka_bilgi, now, tarama_hatasi
 
 
@@ -377,6 +377,9 @@ def tara_marka(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=None):
             continue
         hepsi.extend(kay)
         kapsamlar.append(kap)
+    # Tek noktada: tüm kaynaklar toplandıktan sonra, çünkü aynı ada düşen
+    # kayıtları ayırmak için markanın tamamını görmek gerekiyor.
+    hepsi = genel_adlari_yerellestir(hepsi, cfg)
     return hepsi, (sum(kapsamlar) / len(kapsamlar) if kapsamlar else 0.0)
 
 
