@@ -78,6 +78,30 @@ def _ayirt_edici(ad: str) -> set:
     return {k for k in fold(ad).split() if len(k) > 2 and k not in _GENEL_EK}
 
 
+def adres_belirtecleri(adres: str) -> set:
+    """Adresin ayırt edici kelimeleri (mah/cad/sok gibi dolgular atılır)."""
+    return {k for k in fold(adres or "").split()
+            if k not in ADRES_DOLGU and len(k) > 1}
+
+
+def adres_benzer(a: str, b: str, esik: float = 0.5) -> bool:
+    """İki adres aynı yeri mi gösteriyor?
+
+    Katı eşitlik işe yaramıyor: aynı yer sayfadan sayfaya farklı yazılıyor
+    ("... NO:2/B ATAŞEHİR/İSTANBUL" ile "... NO:2/B ATAŞEHİR"). Eşitlik
+    arayınca 45 kayıt boş yere ikiye bölünüyordu.
+
+    Bu yüzden kelime örtüşmesine bakıyoruz. Biri diğerinin alt kümesiyse
+    (fazladan il yazılmış) aynı sayılıyor. Adres bilinmiyorsa ayırmıyoruz.
+    """
+    A, B = adres_belirtecleri(a), adres_belirtecleri(b)
+    if not A or not B:
+        return True
+    if A <= B or B <= A:
+        return True
+    return len(A & B) / len(A | B) >= esik
+
+
 def ayni_firma_mi(a: dict, b: dict) -> tuple[bool, str]:
     """İki kayıt aynı firma mı? (evet_mi, gerekçe)"""
     # 1. Telefon — güçlü kanıt AMA tek başına yetmiyor.
@@ -107,7 +131,14 @@ def ayni_firma_mi(a: dict, b: dict) -> tuple[bool, str]:
             kb = _ayirt_edici(b.get("bayi_adi", ""))
             if ka and kb and not (ka & kb):
                 return False, "aynı telefon, farklı firma adı"
-            return True, "telefon + aynı ilçe"
+            # ADRES BELİRLEYİCİ: aynı ilçede, aynı numarayla çalışan iki
+            # AYRI şube olabiliyor. CFMoto/Edremit'te Özdemir Mağazaları
+            # hem Altınkum hem Camivasat şubesiyle listede; Bayhas Motors
+            # da böyle. Bunlar ayrı bayi sayılmalı.
+            # Yazım farkı bölmesin diye eşitlik değil benzerlik arıyoruz.
+            if not adres_benzer(a.get("adres", ""), b.get("adres", "")):
+                return False, "aynı telefon, farklı adres"
+            return True, "telefon + aynı ilçe + aynı adres"
 
         # FARKLI ilçede aynı numara → zincir bayinin ayrı şubesi.
         # Bajaj'da 7 gerçek nokta bu yüzden tek kayda iniyordu.
