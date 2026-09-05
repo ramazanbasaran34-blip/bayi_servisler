@@ -10,9 +10,12 @@ import re
 from bs4 import BeautifulSoup
 
 from .ilceler import adresten_ilce, ilce_mi, ilceden_il
-from .normalize import (clean_adres, clean_phone, clean_text, fold, il_ara, resolve_il,
+from .normalize import (ILLER, clean_adres, clean_phone, clean_text, fold, il_ara, resolve_il,
                          split_il_ilce, title_tr)
 from .otomatik import cikar as otomatik_cikar
+
+# İl adlarının sadeleştirilmiş hali (ad/adres kayması onarımı için)
+IL_FOLD = {fold(i) for i in ILLER}
 
 ALANLAR = ["bayi_adi", "il", "ilce", "adres", "telefon", "email", "website"]
 
@@ -246,9 +249,45 @@ def genel_adlari_yerellestir(kayitlar: list[dict], cfg: dict) -> list[dict]:
     return kayitlar
 
 
+# ------------------------------------------- ad/adres kayması onarımı
+_AD_ADRES_IZI = re.compile(
+    r"\b(mah|mahalle|mahallesi|cad|cadde|caddesi|sok|sokak|blv|bulvar|"
+    r"bulvari|no\s*:|osb|apt)\b", re.I)
+
+
+def _ad_adres_kaymasi(rec: dict) -> None:
+    """Bayi adı yerine ilçe/il adı yazılmışsa firma adını adresten alır.
+
+    Bazı sitelerde kartın başlığı İLÇE, firma adı ise bir alt satırda.
+    Tarif yoksa otomatik tespit başlığı ad sanıyor ve firma adı adres
+    alanına kayıyor. Mondial'da "SEYHAN", Apachi'de "ÇUKUROVA",
+    FCM'de "MERKEZ" 29 kez böyle yazılmıştı.
+
+    Onarım muhafazakâr: yalnızca ad GERÇEKTEN bir il/ilçe adıysa ve
+    adresin ilk parçası adres işareti (mah/cad/sok/no) TAŞIMIYORSA
+    devreye giriyor. Aksi hâlde dokunmuyor.
+    """
+    ad = (rec.get("bayi_adi") or "").strip()
+    adres = (rec.get("adres") or "").strip()
+    if not ad or not adres:
+        return
+    if fold(ad) not in IL_FOLD and not ilce_mi(ad):
+        return
+    parcalar = [p.strip() for p in re.split(r"\s{2,}|\n", adres) if p.strip()]
+    ilk = parcalar[0] if parcalar else ""
+    if len(ilk) < 6 or _AD_ADRES_IZI.search(ilk):
+        return
+    rec["bayi_adi"] = ilk[:120]
+    rec["adres"] = adres[len(ilk):].strip(" -,;\u00b7")
+    if not (rec.get("ilce") or "").strip():
+        rec["ilce"] = ad
+
+
+
 # ------------------------------------------------------------- son rötuşlar
 def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
     """Ham kaydı standart şemaya oturtur. Adı olmayan kaydı çöpe atar."""
+    _ad_adres_kaymasi(rec)
     ad = clean_text(rec.get("bayi_adi", ""))
     if not ad:
         return None
