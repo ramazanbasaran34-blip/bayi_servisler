@@ -316,7 +316,21 @@ markalar:
   # 19. VOLTA  ·  Türkiye-Çin  ·  volta.com.tr
   "Volta":
     mode: browser
-    beklenen: [140, 360]   # saha: ~100 bayi, ~200 servis
+    # Eski aralık (140-360) tarama eksik toplarken konmuştu: servis
+    # sayfasından yalnızca 39 kayıt geliyordu, tam tarama 480 buluyor.
+    # Volta kendi sitesinde "600'den fazla yetkili servis ve bayi
+    # noktası" diyor; toplam 643 çıkıyor, aralık ona göre.
+    beklenen: [500, 800]
+    # Volta'nın kendi mağazaları listede hep aynı tabela adıyla geliyor
+    # ("Fabrika Satış Mağazası / Satış", 32 kez). Telefon, adres ve il
+    # farklı olduğundan bunlar ayrı bayiler; adın başına yer adını
+    # koyup ayırt edilir yapıyoruz:
+    #   -> "Develi Fabrika Satış Mağazası"
+    # Aynı yerde birden çok nokta varsa mahalle adı parantezle ekleniyor.
+    genel_adlar:
+      - "Fabrika Satış Mağazası"
+      - "Benzinli Araç Servisi"
+      - "Elektrikli Bisiklet Servisi"
     kaynaklar:
       - rol: satis
         url: "https://volta.com.tr/pages/bayiler"
