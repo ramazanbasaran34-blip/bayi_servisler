@@ -127,7 +127,7 @@ def _goc(con, anahtar_gocu=True):
         _anahtar_gocu(con)
 
 
-ANAHTAR_SURUM = 2          # 1: marka|tel[|ilce]   2: marka|tel|adres
+ANAHTAR_SURUM = 3          # 1: marka|tel[|ilce]  2: +adres  3: +ad
 
 
 def _anahtar_gocu(con):
@@ -222,9 +222,17 @@ def tekil_key(rec: dict) -> str:
     # satır. Adres şubeden şubeye gerçekten değişir ama il sorgusuna göre
     # değişmez, dolayısıyla yukarıdaki Bajaj şubelerini de ayrı tutar.
     adres = fold(rec.get("adres", ""))[:80]
+    # AD DA ANAHTARDA: aynı adreste, aynı telefonla ÇALIŞAN İKİ AYRI FİRMA
+    # olabiliyor. Niğde'de birkaç bayi aynı otomotiv sitesinin adresini
+    # yazıyor; Hero'nun Nazilli kaydında EYMEN MOTOR ile ÖNDER MOTOR aynı
+    # adres ve numarayı paylaşıyor. Ad anahtarda olmazsa bunlar tek kayda
+    # iniyordu. Hero elle giriliyor, o yapı bozulmamalı.
+    # Aynı firmanın yazım farkları (MOYO MOTOR / MOYO MOTORLU ARAÇLAR)
+    # buradan kaçarsa _ayni_firmayi_bul benzerlikten yakalıyor.
+    ad = fold(rec.get("bayi_adi", ""))[:40]
     if rec.get("telefon"):
-        return f"{marka}|{rec['telefon']}|{adres}"
-    return f"{marka}|{fold(rec['bayi_adi'])}|{adres}"
+        return f"{marka}|{rec['telefon']}|{adres}|{ad}"
+    return f"{marka}|{ad}|{adres}"
 
 
 def _log_degisim(con, marka, tip, rec, detay=""):
