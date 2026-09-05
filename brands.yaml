@@ -210,6 +210,7 @@ markalar:
     ekstra_alanlar:
       konum: "div.points-card-city"
   "Yuki":
+    ozel: yuki
     mode: browser
     kaynaklar:
       - rol: satis
@@ -226,6 +227,7 @@ markalar:
 
   # 12. PIAGGIO  ·  İtalya  ·  www.piaggio.com.tr
   "Piaggio":
+    ozel: piaggio
     mode: browser
     beklenen: [42, 120]   # Vespa ile aynı distribütör, benzer ağ varsayıldı
     kaynaklar:
@@ -236,6 +238,7 @@ markalar:
 
   # 13. VESPA  ·  İtalya  ·  www.vespa.com.tr
   "Vespa":
+    ozel: vespa
     mode: browser
     beklenen: [42, 120]   # saha ~40 bayi ~60 servis · motorcular.com: 32 bayi 54 servis
     kaynaklar:
@@ -246,6 +249,7 @@ markalar:
 
   # 14. KYMCO  ·  Tayvan  ·  www.kymco.com.tr
   "Kymco":
+    ozel: kymco
     # Tarayıcı ve il seçimi GEREKMİYOR. Sayfa bütün ağı tek tırnaklı bir JS
     # nesnesi (GeoJSON) olarak kaynağa basıyor; harita onu okuyor. Tek GET
     # ile 75 kaydın hepsi geliyor, rol ayrımı da veride hazır.
@@ -271,6 +275,7 @@ markalar:
 
   # 15. APRILIA  ·  İtalya-Çin  ·  www.aprilia.com.tr
   "Aprilia":
+    ozel: aprilia
     mode: browser
     beklenen: [28, 78]   # Vespa/Piaggio'dan küçük ağ varsayıldı
     kaynaklar:
@@ -295,6 +300,7 @@ markalar:
 
   # 17. BMW  ·  Almanya-Çin  ·  www.bmw-motorrad.com.tr
   "BMW":
+    ozel: bmw
     beklenen: [10, 44]   # saha: 14 satış, 18 servis
     mode: browser
     kaynaklar:
@@ -351,6 +357,7 @@ markalar:
 
   # 21. SUZUKI  ·  Japonya  ·  www.suzuki.com.tr
   "Suzuki":
+    ozel: suzuki
     mode: browser
     kaynaklar:
       - rol: satis
@@ -396,6 +403,7 @@ markalar:
 
   # 25. MOTOLUX  ·  Türkiye-Çin  ·  motolux.com.tr
   "Motolux":
+    ozel: motolux
     beklenen: [210, 450]   # saha: ~300 bayi, ~300 servis
     bekleme: 2.0
     kaynaklar:
@@ -406,6 +414,7 @@ markalar:
 
   # 26. KRAL  ·  Türkiye-Çin  ·  kralmotor.tr
   "Kral":
+    ozel: kral
     etkilesim: il_secimi
     mode: browser
     kaynaklar:
@@ -416,6 +425,7 @@ markalar:
 
   # 27. ALTAI  ·  Türkiye-Çin  ·  www.altai.com.tr
   "Altai":
+    ozel: altai
     etkilesim: il_secimi
     mode: browser
     kaynaklar:
@@ -465,6 +475,7 @@ markalar:
 
   # 32. CSN  ·  Türkiye-Çin  ·  csnmotor.com.tr
   "CSN":
+    ozel: csn
     kaynaklar:
       - rol: satis
         url: "https://csnmotor.com.tr/satis-noktalarimiz/"
@@ -484,6 +495,7 @@ markalar:
 
   # 34. STMAX  ·  Türkiye-Çin  ·  stmax.com.tr
   "STMax":
+    ozel: stmax
     etkilesim: il_secimi
     mode: browser
     kaynaklar:
@@ -504,6 +516,7 @@ markalar:
 
   # 36. REGAL RAPTOR  ·  Çin  ·  regalraptor.com.tr
   "Regal Raptor":
+    ozel: regal
     etkilesim: il_secimi
     mode: browser
     # TARİF ŞART: tarif yokken otomatik yapı tespiti devreye giriyordu ve
@@ -543,6 +556,7 @@ markalar:
 
   # 38. INDIAN  ·  ABD  ·  www.indianmotorcycle.com.tr
   "Indian":
+    ozel: indian
     mode: browser
     kaynaklar:
       - rol: satis
@@ -561,6 +575,7 @@ markalar:
 
   # 40. REWACO  ·  Almanya  ·  rewaco.com.tr
   "Rewaco":
+    ozel: rewaco
     mode: browser
     kaynaklar:
       - rol: satis
@@ -570,6 +585,7 @@ markalar:
 
   # 41. NANOK  ·  Türkiye-Çin  ·  nanok.com.tr
   "Nanok":
+    ozel: nanok
     tur_suzgeci:
       secici: "select[name=service]"
       degerler:
@@ -618,6 +634,7 @@ markalar:
 
   # 46. MUSATTI  ·  Türkiye-Çin  ·  musattimotor.com
   "Musatti":
+    ozel: musatti
     etkilesim: il_secimi
     mode: browser
     beklenen: [210, 720]   # saha: ~300 bayi, ~300 servis
@@ -636,6 +653,7 @@ markalar:
 
   # 48. MEKA MOTOR  ·  Türkiye-Çin  ·  www.mekamotor.com.tr
   "Meka Motor":
+    ozel: meka
     tur_suzgeci:
       secici: "input"
       degerler:
@@ -649,6 +667,7 @@ markalar:
 
   # 49. ZELSUN  ·  Türkiye-Çin  ·  www.zelsunmotor.com
   "Zelsun":
+    ozel: zelsun
     etkilesim: il_secimi
     mode: browser
     kaynaklar:
@@ -702,6 +721,7 @@ markalar:
 
   # 54. YİBEN  ·  Türkiye-Çin  ·  yibenmotosiklet.com.tr
   "Yiben":
+    ozel: yiben
     mode: browser
     kaynaklar:
       - rol: satis
@@ -711,6 +731,7 @@ markalar:
 
   # 55. KİMMİ  ·  Türkiye-Çin  ·  www.kimmimotor.com
   "Kimmi":
+    ozel: kimmi_lifan
     mode: browser
     kaynaklar:
       - rol: satis
@@ -733,6 +754,7 @@ markalar:
 
   # 57. REBAT  ·  Türkiye-Çin  ·  rebatmotor.com
   "Rebat":
+    ozel: rebat
     mode: browser
     kaynaklar:
       - rol: satis_servis
@@ -740,6 +762,7 @@ markalar:
 
   # 58. LİFAN  ·  Türkiye-Çin  ·  www.lifanmotor.com.tr
   "Lifan":
+    ozel: kimmi_lifan
     mode: browser
     kaynaklar:
       - rol: satis
@@ -768,6 +791,7 @@ markalar:
         url: "https://arnicamotor.com/servisler?lang=tr&sehir_id={sayi}"
         iterate: {type: sayi, bitis: 81}
   "Leksas":
+    ozel: leksas
     tur_suzgeci:
       secici: "select[name=f-type]"
       degerler:
