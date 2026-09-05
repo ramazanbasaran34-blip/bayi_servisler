@@ -1,5 +1,5 @@
 {
- "_aciklama": "Hero Türkiye bayi ve servis ağı. Site Cloudflare korumalı ve GitHub Actions IP'lerinden 403 dönüyor; otomatik taranamıyor. Veri, sitenin kendi arama formu kullanılarak kullanıcının kendi tarayıcı oturumundan toplandı (hero-konsol3.js). Güncelleme aynı yolla yapılır.",
+ "_aciklama": "Hero Türkiye bayi ve servis ağı. Site Cloudflare korumalı ve GitHub Actions IP'lerinden 403 dönüyor; otomatik taranamıyor. Veri, sitenin kendi arama formu kullanılarak kullanıcının kendi tarayıcı oturumundan toplandı (hero-konsol3.js). Güncelleme aynı yolla yapılır. Aynı numarayı paylaşan farklı adresteki noktalar AYRI bayidir (KOÇ MOTOR'un 3 şubesi, ARMA MOTOR'S'un 2 şubesi gibi). Önder Motor'un numarasını paylaşan bağımsız isimli kayıtların yanına parantez içinde (Önder Motor) yazılıyor.",
  "_kaynak": [
   "https://www.heromotor.com.tr/bayiler/",
   "https://www.heromotor.com.tr/servisler/"
@@ -252,7 +252,7 @@
   {
    "marka": "Hero",
    "rol": "satis",
-   "bayi_adi": "EYMEN MOTOR",
+   "bayi_adi": "EYMEN MOTOR (Önder Motor)",
    "il": "Aydın",
    "ilce": "NAZİLLİ",
    "adres": "ŞİRİNEVLER MAH. HÜRRİYET CAD. NO:261 (4 YOL KAVŞAĞI) NAZİLLİ / AYDIN",
