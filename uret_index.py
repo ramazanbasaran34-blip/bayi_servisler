@@ -127,7 +127,8 @@ def uret(cikti="index.html", markalar_json="markalar.json", db_yolu="bayiler.db"
         kod = ""
         if firma_anahtari:
             kod = kod_esleme.get(firma_anahtari(
-                k.get("telefon", ""), k["il"], k["ilce"], k["bayi_adi"]), "")
+                k.get("telefon", ""), k["il"], k["ilce"], k["bayi_adi"],
+                k.get("adres", "")), "")
         satirlar.append([
             k["marka"], k["bayi_adi"], k["il"], k["ilce"], k["adres"],
             phone_display(k.get("telefon", "")), k.get("veri_durumu", "Güncel"),
