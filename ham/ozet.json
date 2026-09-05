@@ -1271,5 +1271,37 @@
   "boyut": 153133,
   "tel_toplam": 4,
   "tel_script_ici": 1
+ },
+ "m-apachi": {
+  "url": "https://www.isildar.com.tr/Bayiler",
+  "kod": 200,
+  "son_url": "https://www.isildar.com.tr/Bayiler",
+  "boyut": 340324,
+  "tel_toplam": 1,
+  "tel_script_ici": 0
+ },
+ "m-apachi-ana": {
+  "url": "https://apachi.com.tr/",
+  "kod": 200,
+  "son_url": "https://apachi.com.tr/",
+  "boyut": 231673,
+  "tel_toplam": 37,
+  "tel_script_ici": 0
+ },
+ "m-mondial": {
+  "url": "https://www.mondialmotor.com.tr/bayilerimiz",
+  "kod": 200,
+  "son_url": "https://www.mondialmotor.com.tr/bayilerimiz",
+  "boyut": 31058,
+  "tel_toplam": 1,
+  "tel_script_ici": 0
+ },
+ "m-mondial-ana": {
+  "url": "https://www.mondialmotor.com.tr/",
+  "kod": 200,
+  "son_url": "https://www.mondialmotor.com.tr/",
+  "boyut": 25969,
+  "tel_toplam": 8,
+  "tel_script_ici": 0
  }
 }
