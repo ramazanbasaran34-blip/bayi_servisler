@@ -22,9 +22,9 @@
    "ham": 7,
    "gecerli": 7,
    "ornek_kayit": [
-    "ASİL GRUP MOTOSİKLET | Ankara/Yenimahalle | +905425193613",
-    "BAYHAS HKN MOTOR TİC. LTD. Ş | Ankara/Keçiören | +905433067540",
-    "BAYHAS MBK MOTOR TİC. LTD. Ş | Ankara/ | +905443971539"
+    "ASİL GRUP MOTOSİKLET | Ankara/Ankara | +905425193613",
+    "BAYHAS HKN MOTOR TİC. LTD. Ş | Ankara/Ankara | +905433067540",
+    "BAYHAS MBK MOTOR TİC. LTD. Ş | Ankara/Ankara | +905443971539"
    ]
   },
   "servis": {
@@ -48,9 +48,9 @@
    "ham": 5,
    "gecerli": 5,
    "ornek_kayit": [
-    "BAYHAS HKN MOTOR TİC. LTD. Ş | Ankara/Keçiören | +905433067540",
-    "BAYHAS MOTORS OTO. VE DAY. T | Ankara/Sincan | +905464117041",
-    "BELGİN EROĞLU - GARAGE MOTO | Ankara/Çankaya | +905393964986"
+    "BAYHAS HKN MOTOR TİC. LTD. Ş | Ankara/Ankara | +905433067540",
+    "BAYHAS MOTORS OTO. VE DAY. T | Ankara/Ankara | +905464117041",
+    "BELGİN EROĞLU - GARAGE MOTO | Ankara/Ankara | +905393964986"
    ]
   }
  },
@@ -73,13 +73,13 @@
      "Amasya"
     ]
    ],
-   "yanit_boyut": 118034,
+   "yanit_boyut": 118042,
    "ham": 11,
    "gecerli": 11,
    "ornek_kayit": [
-    "ATALAY YIĞMAN Bayi | Ankara/Çubuk | +905417189373",
-    "DOĞRU MOTORS - BUKET DOĞRU B | Ankara/Yenimahalle | +905325811283",
-    "ELMACIOĞLU MOTOR Bayi | Ankara/Etimesgut | +905447469823"
+    "ATALAY YIĞMAN Bayi | Ankara/Ankara | +905417189373",
+    "DOĞRU MOTORS - BUKET DOĞRU B | Ankara/Ankara | +905325811283",
+    "ELMACIOĞLU MOTOR Bayi | Ankara/Ankara | +905447469823"
    ]
   },
   "servis": {
@@ -99,13 +99,13 @@
      "Afyonkarahisar"
     ]
    ],
-   "yanit_boyut": 133993,
+   "yanit_boyut": 134001,
    "ham": 23,
    "gecerli": 23,
    "ornek_kayit": [
-    "ADK MOTORULU ARAÇLAR Servis | Ankara/Gölbaşı | +905453246783",
-    "BEKİR ÇAKIR Servis | Ankara/Yenimahalle | +905437851386",
-    "BUMERANG MOTO GARAGE / ERTUG | Ankara/Yenimahalle | +905551590424"
+    "ADK MOTORULU ARAÇLAR Servis | Ankara/Ankara | +905453246783",
+    "BEKİR ÇAKIR Servis | Ankara/Ankara | +905437851386",
+    "BUMERANG MOTO GARAGE / ERTUG | Ankara/Ankara | +905551590424"
    ]
   }
  }

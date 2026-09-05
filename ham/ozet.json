@@ -1255,5 +1255,21 @@
   "boyut": 367219,
   "tel_toplam": 1,
   "tel_script_ici": 0
+ },
+ "m-fcm": {
+  "url": "https://fcmmotor.com/bayiler",
+  "kod": 200,
+  "son_url": "https://fcmmotor.com/bayiler",
+  "boyut": 739637,
+  "tel_toplam": 566,
+  "tel_script_ici": 1
+ },
+ "m-fcm-ana": {
+  "url": "https://fcmmotor.com/",
+  "kod": 200,
+  "son_url": "https://fcmmotor.com/",
+  "boyut": 153133,
+  "tel_toplam": 4,
+  "tel_script_ici": 1
  }
 }

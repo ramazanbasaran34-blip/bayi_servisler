@@ -23,7 +23,7 @@
    "https://www.yamaha-motor.eu/tr/tr/dealer-locator/"
   ],
   "model_kok_kod": 200,
-  "model_kok_boyut": 16245,
+  "model_kok_boyut": 16216,
   "model_kok_uclar": [
    "https://core.dxpapi.com/api/v1/core/",
    "https://suggest.dxpapi.com/api/v2/suggest/"
