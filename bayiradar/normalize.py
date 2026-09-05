@@ -114,10 +114,41 @@ def clean_adres(s: str) -> str:
     return s.strip(" ·-–,")
 
 
+# Bir hücrede birden çok numara olabiliyor:
+#   "0539 874 04 74 - 0552 390 04 74"   "0326 512 15 80 / 0535 878 41 87"
+# Ayırıcı hiç olmadan da yapışabiliyor (Volta): 22 hanelik tek dize.
+_COK_NUMARA = re.compile(r"[-/,;]|\bve\b|\bveya\b", re.I)
+
+
+def ilk_numara(s: str) -> str:
+    """Birden çok numara varsa ilkini döner.
+
+    Yapışık numara imzayı bozuyordu: Volta'da aynı mağaza bir kayıtta
+    +905060407627, diğerinde 0506040762705321727627 olarak geldiği için
+    iki ayrı bayi sanılıyordu. 10 markada 147 kayıt bu durumdaydı.
+    """
+    if not s:
+        return ""
+    parca = _COK_NUMARA.split(s)[0].strip()
+    # Tek numaralık uzunluktaysa doğrudan kullan. Üst sınır şart: ayırıcısı
+    # olmayan yapışık numaralarda ilk parça bütün dize oluyor.
+    if 10 <= len(re.sub(r"\D", "", parca)) <= 13:
+        return parca
+    # Ayırıcı yok: haneleri sayıp ilk numarayı kes
+    d = re.sub(r"\D", "", s)
+    for uzunluk in (12, 11, 10):        # +90..., 0..., alan koduyla
+        if len(d) >= uzunluk * 2 - 2 and len(d) % uzunluk == 0:
+            return d[:uzunluk]
+    if len(d) > 13:
+        return d[:11] if d.startswith("0") else d[:10]
+    return s
+
+
 def clean_phone(s: str) -> str:
     """Telefonu +90XXXXXXXXXX formatına indirger. Tekilleştirme için kritik."""
     if not s:
         return ""
+    s = ilk_numara(s)
     d = re.sub(r"\D", "", s)
     if len(d) == 10:
         d = "90" + d
