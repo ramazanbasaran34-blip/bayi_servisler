@@ -16,7 +16,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: bayi-tarama          # tarama ile aynı grup: çakışmasın
+  group: bayi-onizleme-yazma  # taramalarla aynı grup: çakışmasın
   cancel-in-progress: false
 
 jobs:
