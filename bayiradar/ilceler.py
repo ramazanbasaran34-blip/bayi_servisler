@@ -198,6 +198,11 @@ def adresten_ilce(adres: str, il: str = "") -> str:
     f = " " + fold(adres) + " "
     il_f = fold(il) if il else ""
     en_iyi, en_sag = "", -1
+    # İl adının kendisi son çare: "... Alanya/Antalya" adresinde en sağdaki
+    # eşleşme "Antalya" oluyor ve gerçek ilçe "Alanya" atlanıyordu. Bazı
+    # illerde merkez ilçe il adını taşıdığı için tamamen elemiyoruz,
+    # sadece geriye atıyoruz.
+    yedek, yedek_sag = "", -1
     for anahtar, adaylar in _SIRALI:
         if len(anahtar) < 4:
             continue
@@ -212,6 +217,12 @@ def adresten_ilce(adres: str, il: str = "") -> str:
                         break
             elif len({a[0] for a in adaylar}) == 1:
                 secim = adaylar[0][1]
-            if secim and m.start() > en_sag:
+            if not secim:
+                continue
+            if il_f and fold(secim) == il_f:
+                if m.start() > yedek_sag:
+                    yedek, yedek_sag = secim, m.start()
+                continue
+            if m.start() > en_sag:
                 en_iyi, en_sag = secim, m.start()
-    return en_iyi
+    return en_iyi or yedek
