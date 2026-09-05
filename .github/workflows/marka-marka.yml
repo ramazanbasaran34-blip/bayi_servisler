@@ -26,8 +26,9 @@ permissions:
   contents: write
 
 concurrency:
-  # Toplu taramadan AYRI grup: birbirlerini beklemesin/iptal etmesin.
-  group: bayi-marka-marka
+  # Toplu tarama ile AYNI grup: ikisi de bayiler_yeni.db'ye yazıyor,
+  # aynı anda koşarlarsa son biten diğerinin sonucunu eziyor.
+  group: bayi-onizleme-yazma
   cancel-in-progress: false
 
 jobs:
