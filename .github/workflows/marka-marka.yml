@@ -113,13 +113,26 @@ jobs:
         with: { path: indirilen, merge-multiple: false }
 
       - name: Birleştir ve önizlemeye yaz
+        env:
+          SECILEN: ${{ inputs.markalar }}
         run: |
           mkdir -p parcalar
           find indirilen -name "*.db" -print0 | while IFS= read -r -d '' f; do
             cp "$f" "parcalar/$(echo "$f" | md5sum | cut -c1-8).db"
           done
           ls -la parcalar/
-          cp bayiler.db bayiler_yeni.db
+          # TABAN SEÇİMİ — kısmi tarama önizlemeyi SIFIRLAMASIN.
+          # Birleştirme her seferinde canlının kopyasıyla başlıyordu.
+          # Tek marka tarayınca (örn. "Regal Raptor") diğer 61 markanın
+          # önceki tarama sonuçları siliniyordu: önizleme 15.917'den
+          # 14.061'e düştü. Kısmi taramada taban, canlı değil MEVCUT
+          # ÖNİZLEME olmalı; tam taramada yine canlıdan başlıyoruz.
+          if [ -n "${SECILEN}" ] && [ -f bayiler_yeni.db ]; then
+            echo "kısmi tarama (${SECILEN}) — taban: mevcut önizleme"
+          else
+            echo "tam tarama — taban: canlı bayiler.db"
+            cp bayiler.db bayiler_yeni.db
+          fi
           python birlestir.py parcalar bayiler_yeni.db
 
           python - <<'PY'
