@@ -676,6 +676,18 @@ markalar:
 
   # 52. FCM  ·  Türkiye-Çin  ·  fcmmotor.com
   "FCM":
+    # TARİF ŞART: kartta önce semt etiketi (HURMALI, MERKEZ, EMİRDAĞ),
+    # sonra firma adı geliyor. Tarif yokken otomatik tespit ilk <p>'yi ad
+    # sanıyordu: 407 kaydın 57'sinin adı ilçe/semt adıydı ("MERKEZ" 29 kez)
+    # ve gerçek firma adı adres alanına düşüyordu.
+    row: "div.card"
+    fields:
+      bayi_adi: "p.text-black"
+      adres: "p.c-7a"
+      telefon:
+        sel: "a[href^='tel:']"
+        attr: "href"
+        regex: "tel:\\s*([0-9+ ()]+)"
     kaynaklar:
       - rol: satis
         url: "https://fcmmotor.com/bayiler"
