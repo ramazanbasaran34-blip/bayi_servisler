@@ -118,6 +118,70 @@ def _goc(con):
         if ad not in var:
             con.execute(f"ALTER TABLE bayiler ADD COLUMN {ad} {tanim}")
     con.execute("CREATE INDEX IF NOT EXISTS ix_rol ON bayiler(rol)")
+    _anahtar_gocu(con)
+
+
+ANAHTAR_SURUM = 2          # 1: marka|tel[|ilce]   2: marka|tel|adres
+
+
+def _anahtar_gocu(con):
+    """tekil_key tanımı değişince eski satırların anahtarını yeniler.
+
+    Anahtar tanımını değiştirmek tek başına yetmiyor: depodaki satırlar
+    eski anahtarla duruyor, tarama yeni anahtarı üretiyor, ikisi
+    tutmayınca çakışma görülmüyor ve aynı bayi ikinci kez ekleniyor.
+    RKS "Özer Center" bu yüzden düzeltmeden sonra da 8 satırdı.
+
+    Yeni anahtarda çakışan satırlar tek satıra indiriliyor: rol
+    birleştiriliyor (satis + servis = satis_servis), en eski ilk_gorulme
+    ve en yeni son_gorulme korunuyor, boş alanlar dolu olandan alınıyor.
+    """
+    try:
+        surum = con.execute("PRAGMA user_version").fetchone()[0]
+    except sqlite3.Error:
+        return
+    if surum >= ANAHTAR_SURUM:
+        return
+
+    cur = con.execute("SELECT * FROM bayiler")
+    sutun = [c[0] for c in cur.description]
+    satirlar = [dict(zip(sutun, r)) for r in cur.fetchall()]
+
+    gruplar = {}
+    for s in satirlar:
+        gruplar.setdefault(tekil_key(s), []).append(s)
+
+    silinen = 0
+    for k, grup in gruplar.items():
+        # Kalacak satır: en eski kayıt (ilk_gorulme'si en erken olan)
+        grup.sort(key=lambda s: (s.get("ilk_gorulme") or "9999", s["id"]))
+        kalan = grup[0]
+        roller = {s.get("rol") for s in grup if s.get("rol")}
+        rol = ("satis_servis"
+               if ("satis_servis" in roller
+                   or ({"satis", "servis"} <= roller)) else
+               (kalan.get("rol") or (roller.pop() if roller else "satis")))
+        for alan in ("bayi_adi", "il", "ilce", "adres", "telefon", "email",
+                     "website", "kaynak_satis", "kaynak_servis"):
+            if not kalan.get(alan):
+                for s in grup[1:]:
+                    if s.get(alan):
+                        kalan[alan] = s[alan]
+                        break
+        son = max((s.get("son_gorulme") or "") for s in grup)
+        con.execute(
+            "UPDATE bayiler SET tekil_key=?, rol=?, son_gorulme=?, "
+            "bayi_adi=?, il=?, ilce=?, adres=?, telefon=? WHERE id=?",
+            (k, rol, son, kalan["bayi_adi"], kalan["il"], kalan["ilce"],
+             kalan["adres"], kalan["telefon"], kalan["id"]))
+        for s in grup[1:]:
+            con.execute("DELETE FROM bayiler WHERE id=?", (s["id"],))
+            silinen += 1
+
+    con.execute(f"PRAGMA user_version = {ANAHTAR_SURUM}")
+    if silinen:
+        print(f"anahtar göçü: {len(satirlar)} satır -> {len(gruplar)} "
+              f"({silinen} tekrar birleştirildi)")
 
 
 @contextmanager
