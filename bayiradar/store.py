@@ -109,8 +109,13 @@ EK_SUTUNLAR = [
 ]
 
 
-def _goc(con):
-    """Eksik sütunları ekler ve indeksleri kurar."""
+def _goc(con, anahtar_gocu=True):
+    """Eksik sütunları ekler ve indeksleri kurar.
+
+    anahtar_gocu=False: sadece okuma amaçlı açılışlarda (sayfa üretimi)
+    veriye dokunulmasın diye anahtar göçü atlanır. Canlı veritabanı
+    yalnızca onay akışıyla değişmeli.
+    """
     var = {r[1] for r in con.execute("PRAGMA table_info(bayiler)")}
     if not var:
         return          # tablo henüz yok, SCHEMA zaten kuracak
@@ -118,7 +123,8 @@ def _goc(con):
         if ad not in var:
             con.execute(f"ALTER TABLE bayiler ADD COLUMN {ad} {tanim}")
     con.execute("CREATE INDEX IF NOT EXISTS ix_rol ON bayiler(rol)")
-    _anahtar_gocu(con)
+    if anahtar_gocu:
+        _anahtar_gocu(con)
 
 
 ANAHTAR_SURUM = 2          # 1: marka|tel[|ilce]   2: marka|tel|adres
@@ -185,12 +191,12 @@ def _anahtar_gocu(con):
 
 
 @contextmanager
-def db(path=DB_PATH):
+def db(path=DB_PATH, salt_oku=False):
     con = sqlite3.connect(path)
     con.row_factory = sqlite3.Row
     try:
         con.executescript(SCHEMA)
-        _goc(con)
+        _goc(con, anahtar_gocu=not salt_oku)
         con.commit()
         yield con
         con.commit()
