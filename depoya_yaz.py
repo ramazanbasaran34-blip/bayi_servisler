@@ -47,9 +47,14 @@ def yontem_git(yol: str, mesaj: str) -> tuple[bool, str]:
         k = lambda *a: subprocess.run(a, capture_output=True, text=True)
         k("git", "config", "user.name", "bayi-radar-bot")
         k("git", "config", "user.email", "bot@users.noreply.github.com")
+        import shutil
+        yedek = yol + ".yedek"
+        shutil.copy2(yol, yedek)
         k("git", "fetch", "origin", DAL)
         k("git", "checkout", "-B", DAL, f"origin/{DAL}")
-        # Dosyayı fetch sonrası tekrar yaz (checkout üzerine yazmış olabilir)
+        # checkout dosyayi origin surumuyle ezmis olabilir: yedegi geri koy
+        shutil.copy2(yedek, yol)
+        os.remove(yedek)
         k("git", "add", "-f", yol)
         if k("git", "diff", "--staged", "--quiet").returncode == 0:
             return True, "değişiklik yok"
@@ -118,6 +123,31 @@ def yontem_gitdata(yol: str, mesaj: str) -> tuple[bool, str]:
         return False, f"{type(e).__name__}: {e}"
 
 
+def yerel_blob_sha(yol: str) -> str:
+    import hashlib
+    d = open(yol, "rb").read()
+    return hashlib.sha1(b"blob %d\0" % len(d) + d).hexdigest()
+
+
+def uzak_blob_sha(yol: str) -> str:
+    """Daldaki dosyanin git blob sha'si. Yazmanin gercekten olup olmadigini
+    'basarili' dedigine bakarak degil, uzaktan okuyarak dogruluyoruz."""
+    try:
+        t = api("GET", f"https://api.github.com/repos/{REPO}/git/trees/{DAL}")
+        for e in t.get("tree", []):
+            if e["path"] == yol:
+                return e["sha"]
+    except Exception as e:  # noqa: BLE001
+        return f"HATA:{type(e).__name__}"
+    return "YOK"
+
+
+def not_dus(msg: str) -> None:
+    """::notice:: satiri is uyarilarina dusuyor; gunluge erisemedigimizde
+    tek okunabilir kanal bu."""
+    print(f"::notice::[yazma] {msg}")
+
+
 def main() -> int:
     if len(sys.argv) < 2:
         print("kullanım: depoya_yaz.py <dosya> [mesaj]")
@@ -140,21 +170,32 @@ def main() -> int:
     sira = ([yontem_gitdata, yontem_git, yontem_contents] if mb > 1
             else [yontem_contents, yontem_gitdata, yontem_git])
 
+    hedef = yerel_blob_sha(yol)
+    not_dus(f"{yol} {mb:.1f} MB, hedef blob {hedef[:8]}, "
+            f"uzakta su an {uzak_blob_sha(yol)[:8]}")
+
     raporlar = []
     for tur in range(1, 3):                 # her yöntem için 2 tur
         for f in sira:
             ok, mesaj_sonuc = f(yol, mesaj)
             etiket = f.__name__.replace("yontem_", "")
             if ok:
-                print(f"✓ BAŞARILI ({etiket}): {mesaj_sonuc}")
-                return 0
-            raporlar.append(f"  {etiket} (tur {tur}): {mesaj_sonuc}")
+                # "basarili" demesi yetmez: uzakta gercekten duruyor mu?
+                time.sleep(3)
+                simdi = uzak_blob_sha(yol)
+                if simdi == hedef:
+                    not_dus(f"{etiket} DOGRULANDI: {mesaj_sonuc}")
+                    print(f"✓ BAŞARILI ({etiket}): {mesaj_sonuc}")
+                    return 0
+                mesaj_sonuc = (f"'{mesaj_sonuc}' dedi ama uzakta {simdi[:8]} "
+                               f"duruyor, olmasi gereken {hedef[:8]}")
+                ok = False
+            raporlar.append(f"{etiket} (tur {tur}): {mesaj_sonuc}")
+            not_dus(f"× {etiket} tur{tur}: {mesaj_sonuc}")
             print(f"  × {etiket}: {mesaj_sonuc}")
         time.sleep(8)
 
-    print("::error::Hiçbir yöntem yazamadı")
-    for r in raporlar:
-        print(r)
+    print("::error::Hicbir yontem yazamadi -- " + " | ".join(raporlar)[:800])
     return 1
 
 
