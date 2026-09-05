@@ -270,6 +270,9 @@ def commit_tarama(con, marka: str, kayitlar: list[dict], kapsam: float,
 
     yeni, guncel, gorulen = _upsert(con, kayitlar, marka, t)
 
+    if elenen_rolsuz:
+        print(f"  {marka}: {elenen_rolsuz} kayıt rolü belirsiz olduğu için "
+              f"yazılmadı (yedek parça / tanınmayan kategori)")
     supheli = 0
     if saglikli:
         supheli = _eksikleri_isaretle(con, marka, gorulen)
@@ -352,7 +355,14 @@ def _ayni_firmayi_bul(con, rec, marka):
 def _upsert(con, kayitlar, marka, t):
     yeni = guncel = birlesen = 0
     gorulen = set()
+    elenen_rolsuz = 0
     for rec in kayitlar:
+        # SON EMNİYET: rolü belli olmayan kayıt yazılmaz. Ayrıştırıcılar
+        # yedek parça noktalarını ve tanımadıkları kategorileri boş rolle
+        # eliyor; buraya sızarsa eskisi gibi sessizce satış sayılmasın.
+        if rec.get("rol") not in ("satis", "servis", "satis_servis"):
+            elenen_rolsuz += 1
+            continue
         k = tekil_key(rec)
         gorulen.add(k)
         row = con.execute(
