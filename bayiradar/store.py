@@ -278,9 +278,6 @@ def commit_tarama(con, marka: str, kayitlar: list[dict], kapsam: float,
 
     yeni, guncel, gorulen = _upsert(con, kayitlar, marka, t)
 
-    if elenen_rolsuz:
-        print(f"  {marka}: {elenen_rolsuz} kayıt rolü belirsiz olduğu için "
-              f"yazılmadı (yedek parça / tanınmayan kategori)")
     supheli = 0
     if saglikli:
         supheli = _eksikleri_isaretle(con, marka, gorulen)
@@ -415,6 +412,9 @@ def _upsert(con, kayitlar, marka, t):
                 vals + (k, t, t, rol, ks, kv))
             _log_degisim(con, marka, "eklendi", rec)
             yeni += 1
+    if elenen_rolsuz:
+        print(f"  {marka}: {elenen_rolsuz} kayıt rolü belirsiz olduğu için "
+              f"yazılmadı (yedek parça / tanınmayan kategori)")
     return yeni, guncel, gorulen
 
 
