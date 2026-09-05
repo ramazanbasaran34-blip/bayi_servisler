@@ -339,6 +339,16 @@ def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
     if not ilce_ad:
         ilce_ad = adresten_ilce(rec.get("adres", ""), il_ad)
 
+    # Kaynak ilçe alanına İL ADINI yazmış olabilir: RKS/Kuba gibi il
+    # seçmeli siteler her turda ilçeyi il adıyla dolduruyor. Adreste
+    # gerçek ilçe varsa onu tercih ediyoruz ("... Alanya/Antalya" ->
+    # Alanya). Adreste yoksa il adı kalır; bazı illerde merkez ilçe
+    # gerçekten il adını taşıyor.
+    if ilce_ad and il_ad and fold(ilce_ad) == fold(il_ad):
+        adresten = adresten_ilce(rec.get("adres", ""), il_ad)
+        if adresten and fold(adresten) != fold(il_ad):
+            ilce_ad = adresten
+
     if ilce_ad and not il_ad:                              # 4
         il_ad = ilceden_il(ilce_ad)
 
