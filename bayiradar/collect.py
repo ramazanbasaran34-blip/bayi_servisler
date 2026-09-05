@@ -170,7 +170,19 @@ def tara_marka_tek(marka: str, cfg: dict, fetcher: Fetcher, max_age=3600, log=No
             rec = finalize(r, marka, url, cfg)
             if not rec:
                 continue
-            imza = (rec["bayi_adi"], rec["telefon"], rec["ilce"])
+            # İMZADA İLÇE DEĞİL ADRES.
+            #
+            # İl seçmeli sitelerin çoğu filtre uygulamadan tam listeyi
+            # döndürüyor. Tarama 81 il için istek attığından aynı bayi
+            # tekrar tekrar geliyordu; ilçe her turda farklı atandığı
+            # için (çoğu zaman il adıyla dolduruluyor) imza değişiyor ve
+            # kayıt yeni sanılıyordu: Voge 138 -> 1.136, Volta 152 -> 754.
+            #
+            # Adres şubeden şubeye gerçekten değişir, il sorgusuna göre
+            # değişmez. Bajaj'ın aynı telefonu paylaşan şubeleri farklı
+            # adreste olduğu için yine ayrı kalıyor.
+            imza = (fold(rec["bayi_adi"]), rec["telefon"],
+                    fold(rec.get("adres", ""))[:60])
             if imza in gorulen:
                 continue
             gorulen.add(imza)
