@@ -120,6 +120,9 @@ def coz(rol: str, govde: str, url: str, il: str | None = None) -> list[dict]:
         # "Satış Mağazası" / "Servis" gibi kart etiketi adresin başında
         adres = re.sub(r"^\s*(Satış Mağazası|Servis Noktası|Servis|Bayi)\s*",
                        "", adres, flags=re.I)
+        # Kartta alanlar "Adres ..." / "Telefon ..." diye etiketli geliyor;
+        # etiket adresin başında kalıyordu.
+        adres = re.sub(r"^\s*(Adres|Adresi)\s*:?\s*", "", adres, flags=re.I)
         adres = re.sub(r"\s+", " ", adres).strip(" -–|·,")
 
         anahtar = (ad.casefold(), tel)
@@ -128,7 +131,8 @@ def coz(rol: str, govde: str, url: str, il: str | None = None) -> list[dict]:
         gorulen.add(anahtar)
 
         out.append({
-            "bayi_adi": ad,
+            # Ad "ATALAY YIĞMAN Bayi" diye geliyor; rol zaten ayrı alanda.
+            "bayi_adi": re.sub(r"\s*(?:Bayi|Bayii|Servis)\s*$", "", ad).strip(),
             "il": il or "",
             "ilce": "",
             "adres": adres[:220],
