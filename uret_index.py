@@ -483,6 +483,15 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
    görünmez oluyor ama tam ekranı kaplayıp dokunuşları yutuyordu —
    "Tamam'a bastım, liste gelmedi" sorununun sebebi buydu.
    Bu kural her zaman en sonda kalmalı. */
+/* Marka detayındaki il/ilçe seçicileri: sade, akış içinde, konumlandırma
+   yok. Kasıtlı olarak position/z-index kullanılmıyor. */
+.mdsecim{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.mdsecim select{flex:1 1 140px;min-width:0;background:#fff;
+  border:1px solid var(--hat2);border-radius:7px;padding:9px 10px;
+  font-size:14px;font-family:inherit;color:var(--murekkep);
+  box-shadow:var(--golge)}
+.mdsecim select:disabled{opacity:.55}
+
 .ilcemenu[hidden]{display:none !important}
 .ilcemenu{position:absolute;z-index:90;left:0;right:0;top:calc(100% + 4px);
   background:#fff;border:1px solid var(--hat2);border-radius:9px;
@@ -916,6 +925,15 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
       <button class="btn" id="btnElleSifirla">Düzeltmeleri sıfırla</button>
     </div>
     <div class="yapiskan">
+      <!-- İl / ilçe seçimi YEREL <select> ile. İl ekranındaki açılır
+           panel (.ilcemenu) burada BİLEREK kullanılmadı: o panel geçmişte
+           kapalıyken ekranı kaplayıp dokunuşları yutmuş ve "Tamam"
+           düğmesi alt çubuğun altında kalmıştı. Yerel select telefonun
+           kendi seçicisini açar; katman sorunu oluşamaz. -->
+      <div class="mdsecim">
+        <select id="mdIl" aria-label="İl seç"></select>
+        <select id="mdIlce" aria-label="İlçe seç"></select>
+      </div>
       <div class="rolsuz" id="mdRolSuzgec"></div>
     </div>
     <div class="altbar">
@@ -2024,12 +2042,38 @@ $("#tumListe").onclick=e=>{const b=e.target.closest("button.sat"); if(b) markaAc
 /* ---------- marka detayı ---------- */
 function markaAc(ad){
   MD=OZET.find(m=>m.ad===ad); if(!MD)return;
-  ROL="tum"; $("#mdAd").textContent=ad; cizMD(); ekran("vMarkaDetay");
+  ROL="tum"; MD_IL=""; MD_ILCE="";
+  $("#mdAd").textContent=ad; cizMD(); ekran("vMarkaDetay");
 }
+let MD_IL="", MD_ILCE="";
+
+function mdSeciciDoldur(tum){
+  const iller=[...new Set(tum.map(x=>x[B_IL]).filter(Boolean))]
+    .sort((a,c)=>a.localeCompare(c,"tr"));
+  if(MD_IL && !iller.includes(MD_IL)) MD_IL="";
+  $("#mdIl").innerHTML = `<option value="">Tüm iller (${iller.length})</option>`
+    + iller.map(i=>`<option value="${esc(i)}"${i===MD_IL?" selected":""}>${esc(i)}</option>`).join("");
+
+  const ilceler = MD_IL
+    ? [...new Set(tum.filter(x=>x[B_IL]===MD_IL).map(x=>x[B_ILCE]).filter(Boolean))]
+        .sort((a,c)=>a.localeCompare(c,"tr"))
+    : [];
+  if(MD_ILCE && !ilceler.includes(MD_ILCE)) MD_ILCE="";
+  const ilceSec=$("#mdIlce");
+  ilceSec.disabled = !MD_IL || !ilceler.length;
+  ilceSec.innerHTML = MD_IL
+    ? `<option value="">Tüm ilçeler (${ilceler.length})</option>`
+      + ilceler.map(i=>`<option value="${esc(i)}"${i===MD_ILCE?" selected":""}>${esc(i)}</option>`).join("")
+    : `<option value="">Önce il seçin</option>`;
+}
+
 function cizMD(){
   const tum=D.bayiler.filter(x=>x[B_MARKA]===MD.ad);
   rolSuzgecCiz("#mdRolSuzgec", tum);
-  const b=tum.filter(rolGecer);
+  mdSeciciDoldur(tum);
+  const b=tum.filter(rolGecer)
+    .filter(x=>!MD_IL || x[B_IL]===MD_IL)
+    .filter(x=>!MD_ILCE || x[B_ILCE]===MD_ILCE);
   const c=sayRol(tum);
   $("#mdOzet").innerHTML =
     `Sadece satış <b>${MD.satis}</b> · sadece servis <b>${MD.servis}</b> · `
@@ -2049,6 +2093,8 @@ function cizMD(){
   altOzetGuncelle(MD.ad, tum);
 }
 rolBagla("#mdRolSuzgec", cizMD);
+$("#mdIl").onchange = e => { MD_IL = e.target.value; MD_ILCE = ""; cizMD(); };
+$("#mdIlce").onchange = e => { MD_ILCE = e.target.value; cizMD(); };
 
 /* ---------- elle girilen markalarda düzeltme ----------
    Bu markalar taranmıyor (siteleri erişilemiyor), veri elle
