@@ -462,6 +462,16 @@ markalar:
         url: "https://korlas.com.tr/servis/"
 
   # 29. TRIUMPH  ·  İngiltere  ·  korlas.com.tr
+  "TVS":
+    # Bayi bulucu ayrı bir uygulamada (location.tvsmotor.com); veri resmî
+    # API'den geliyor, modül POST atıyor. Üç kategoriden yalnızca satış ve
+    # servis alınıyor, TWO_WHEELER_APS (yedek parça) listeye girmez.
+    ozel: tvs
+    beklenen: [200, 450]
+    kaynaklar:
+      - rol: satis_servis
+        url: "https://apim.tvsmotor.com/location-master/api/v1/dealer-search"
+
   "Triumph":
     # korlas.com.tr Cloudflare korumalı; GitHub Actions IP'lerinden 403
     # dönüyor ve her tarama 0 kayıt çekip markayı "hatali" yapıyordu.
