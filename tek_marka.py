@@ -32,9 +32,18 @@ def say(db: str, marka: str) -> int:
         con.close()
 
 
-def ozel_modul(marka: str) -> str:
+def _cfg(marka: str) -> dict:
     c = yaml.safe_load(open("brands.yaml", encoding="utf-8"))["markalar"]
-    return (c.get(marka) or {}).get("ozel") or ""
+    return c.get(marka) or {}
+
+
+def ozel_modul(marka: str) -> str:
+    return _cfg(marka).get("ozel") or ""
+
+
+def ozel_betik(marka: str) -> str:
+    """Kendi başına çalışan tarayıcı betiği (ör. yamaha_tara.py)."""
+    return _cfg(marka).get("betik") or ""
 
 
 def main() -> int:
@@ -47,8 +56,11 @@ def main() -> int:
     once = say(a.db, a.marka)
     print(f"[{a.marka}] önceki kayıt: {once}", flush=True)
 
-    ozel = ozel_modul(a.marka)
-    if ozel:
+    betik = ozel_betik(a.marka)
+    if betik:
+        print(f"[{a.marka}] özel betik: {betik}", flush=True)
+        komut = [sys.executable, betik, "--db", a.db]
+    elif (ozel := ozel_modul(a.marka)):
         print(f"[{a.marka}] özel modül: {ozel}", flush=True)
         komut = [sys.executable, "ozel_tara.py", ozel, "--db", a.db]
     else:
