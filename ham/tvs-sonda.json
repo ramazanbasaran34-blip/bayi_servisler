@@ -3,8 +3,8 @@
  "yanitlar": [
   {
    "dosya": "tvs-json-01.json",
-   "url": "https://c.go-mpulse.net/api/config.json?key=EGEBZ-7JSVJ-UMG3N-2MS6D-RA25G&d=location.tvsmotor.com&t=5962327&v=1.720.0&if=&sl=0&si=a3f9ebec-f6c4-4d6e-b459-275e10eac1b1-tky0ba&plugin",
-   "boyut": 611,
+   "url": "https://c.go-mpulse.net/api/config.json?key=EGEBZ-7JSVJ-UMG3N-2MS6D-RA25G&d=location.tvsmotor.com&t=5962328&v=1.720.0&if=&sl=0&si=2422824d-772a-4b7f-8557-5d2b64becad3-tky0ho&plugin",
+   "boyut": 768,
    "ipucu": []
   },
   {
@@ -41,7 +41,81 @@
     "city",
     "phone"
    ]
+  },
+  {
+   "dosya": "tvs-json-06.json",
+   "url": "https://apim.tvsmotor.com/location-master/api/v1/dealer-search",
+   "boyut": 226690,
+   "ipucu": [
+    "dealer",
+    "latitude",
+    "longitude",
+    "address",
+    "city",
+    "phone"
+   ]
+  },
+  {
+   "dosya": "tvs-json-07.json",
+   "url": "https://apim.tvsmotor.com/location-master/api/v1/dealer-search",
+   "boyut": 983,
+   "ipucu": [
+    "dealer",
+    "latitude",
+    "longitude",
+    "address",
+    "city",
+    "phone"
+   ]
+  },
+  {
+   "dosya": "tvs-json-08.json",
+   "url": "https://maps.googleapis.com/$rpc/google.internal.maps.mapsjs.v1.MapsJsInternalService/GetViewportInfo",
+   "boyut": 43577,
+   "ipucu": []
   }
  ],
- "sayfa_boyut": 1804134
+ "istekler": [
+  {
+   "url": "https://apim.tvsmotor.com/location-master/api/v1/country/TR/filter-config?locale=en",
+   "method": "GET",
+   "basliklar": {}
+  },
+  {
+   "url": "https://apim.tvsmotor.com/location-master/api/v1/country/TR/provinces?locale=en",
+   "method": "GET",
+   "basliklar": {}
+  },
+  {
+   "url": "https://apim.tvsmotor.com/location-master/api/v1/dealer-search",
+   "method": "POST",
+   "govde": "{\"countryCode\":\"TR\",\"dealerFilterType\":\"TWO_WHEELER_SALES\"}",
+   "basliklar": {
+    "content-type": "application/json"
+   }
+  },
+  {
+   "url": "https://apim.tvsmotor.com/location-master/api/v1/dealer-search",
+   "method": "POST",
+   "govde": "{\"countryCode\":\"TR\",\"dealerFilterType\":\"TWO_WHEELER_SERVICE\"}",
+   "basliklar": {
+    "content-type": "application/json"
+   }
+  },
+  {
+   "url": "https://apim.tvsmotor.com/location-master/api/v1/dealer-search",
+   "method": "POST",
+   "govde": "{\"countryCode\":\"TR\",\"dealerFilterType\":\"TWO_WHEELER_APS\"}",
+   "basliklar": {
+    "content-type": "application/json"
+   }
+  }
+ ],
+ "tiklanan": [
+  "Servis",
+  "Service",
+  "Yedek",
+  "Spares"
+ ],
+ "sayfa_boyut": 79556
 }
