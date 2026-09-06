@@ -1,0 +1,47 @@
+{
+ "url": "https://location.tvsmotor.com/#/dealer-locator?country=TR",
+ "yanitlar": [
+  {
+   "dosya": "tvs-json-01.json",
+   "url": "https://c.go-mpulse.net/api/config.json?key=EGEBZ-7JSVJ-UMG3N-2MS6D-RA25G&d=location.tvsmotor.com&t=5962327&v=1.720.0&if=&sl=0&si=a3f9ebec-f6c4-4d6e-b459-275e10eac1b1-tky0ba&plugin",
+   "boyut": 611,
+   "ipucu": []
+  },
+  {
+   "dosya": "tvs-json-02.json",
+   "url": "https://apim.tvsmotor.com/location-master/api/v1/country/TR/filter-config?locale=en",
+   "boyut": 814,
+   "ipucu": [
+    "dealer",
+    "latitude",
+    "longitude"
+   ]
+  },
+  {
+   "dosya": "tvs-json-03.json",
+   "url": "https://maps.googleapis.com/$rpc/google.internal.maps.mapsjs.v1.MapsJsInternalService/GetViewportInfo",
+   "boyut": 49574,
+   "ipucu": []
+  },
+  {
+   "dosya": "tvs-json-04.json",
+   "url": "https://apim.tvsmotor.com/location-master/api/v1/country/TR/provinces?locale=en",
+   "boyut": 6504,
+   "ipucu": []
+  },
+  {
+   "dosya": "tvs-json-05.json",
+   "url": "https://apim.tvsmotor.com/location-master/api/v1/dealer-search",
+   "boyut": 139686,
+   "ipucu": [
+    "dealer",
+    "latitude",
+    "longitude",
+    "address",
+    "city",
+    "phone"
+   ]
+  }
+ ],
+ "sayfa_boyut": 1804134
+}
