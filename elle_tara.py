@@ -61,7 +61,13 @@ def dosyayi_oku(yol: Path) -> tuple[dict[str, list[dict]], str]:
 
 def main() -> None:
     kuru = "--kuru" in sys.argv
-    istenen = [a.lower() for a in sys.argv[1:] if not a.startswith("-")]
+    # --db ŞART: bu betik varsayılan olarak CANLI bayiler.db'ye yazıyordu.
+    # Tarama önizlemeye yazmalı; canlıya yalnızca onay akışı dokunmalı.
+    db_yolu = "bayiler.db"
+    if "--db" in sys.argv:
+        db_yolu = sys.argv[sys.argv.index("--db") + 1]
+    istenen = [a.lower() for a in sys.argv[1:]
+               if not a.startswith("-") and a != db_yolu]
 
     dosyalar = sorted(KLASOR.glob("*.json"))
     if istenen:
@@ -82,7 +88,7 @@ def main() -> None:
                             "kaynak": kaynak}
             if kuru:
                 continue
-            with db() as con:
+            with db(db_yolu) as con:
                 sonuc = commit_tarama(con, marka, kayitlar, 1.0, basladi)
             rapor[marka]["db"] = str(sonuc)[:200]
             print(f"             db: {rapor[marka]['db']}")
