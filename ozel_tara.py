@@ -42,6 +42,8 @@ GEZINME = {
     "kral": "tek", "vespa": "tek", "suzuki": "tek", "isotlar": "tek",
     # Akeso: Elementor akordeonu, il başlıkları altında düz h2 satırları
     "akeso": "tek",
+    # Voge: tek sayfa, il grupları ve kart sınıfında rol
+    "voge": "tek",
     "zelsun": "il_adi", "motolux": "il_adi", "csn": "il_adi",
     "musatti": "il_kodu",
     "leksas": "tek", "indian": "tek",
