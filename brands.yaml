@@ -371,6 +371,7 @@ markalar:
 
   # 22. PEUGEOT  ·  Fransa  ·  www.isotlarmotor.com
   "Peugeot":
+    ozel: isotlar
     mode: browser
     tur_suzgeci:
       secici: "input"
@@ -383,6 +384,7 @@ markalar:
 
   # 23. HORWIN  ·  Çin  ·  www.isotlarmotor.com
   "Horwin":
+    ozel: isotlar
     mode: browser
     tur_suzgeci:
       secici: "input"
@@ -395,6 +397,7 @@ markalar:
 
   # 24. LAMBRETTA  ·  İtalya  ·  www.isotlarmotor.com
   "Lambretta":
+    ozel: isotlar
     mode: browser
     tur_suzgeci:
       secici: "input"
@@ -440,6 +443,11 @@ markalar:
 
   # 28. DUCATI  ·  İtalya  ·  korlas.com.tr
   "Ducati":
+    # korlas.com.tr Cloudflare korumalı; GitHub Actions IP'lerinden 403
+    # dönüyor ve her tarama 0 kayıt çekip markayı "hatali" yapıyordu.
+    # Veri sitenin resmi sayfalarından elle/korlas.json'a alınıyor.
+    elle: true
+    elle_dosya: korlas
     beklenen: [18, 60]   # saha: 12 satış, 31 servis
     mode: browser
     kaynaklar:
@@ -450,6 +458,11 @@ markalar:
 
   # 29. TRIUMPH  ·  İngiltere  ·  korlas.com.tr
   "Triumph":
+    # korlas.com.tr Cloudflare korumalı; GitHub Actions IP'lerinden 403
+    # dönüyor ve her tarama 0 kayıt çekip markayı "hatali" yapıyordu.
+    # Veri sitenin resmi sayfalarından elle/korlas.json'a alınıyor.
+    elle: true
+    elle_dosya: korlas
     beklenen: [18, 60]   # saha: 12 satış, 31 servis
     mode: browser
     kaynaklar:
