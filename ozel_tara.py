@@ -40,6 +40,8 @@ PLAKA = {ad: f"{i + 1:02d}" for i, ad in enumerate(ILLER)}
 GEZINME = {
     "falcon": "tek", "nanok": "tek", "meka": "tek",
     "kral": "tek", "vespa": "tek", "suzuki": "tek", "isotlar": "tek",
+    # Akeso: Elementor akordeonu, il başlıkları altında düz h2 satırları
+    "akeso": "tek",
     "zelsun": "il_adi", "motolux": "il_adi", "csn": "il_adi",
     "musatti": "il_kodu",
     "leksas": "tek", "indian": "tek",
