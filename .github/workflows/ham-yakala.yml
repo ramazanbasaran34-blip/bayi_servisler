@@ -33,7 +33,7 @@ jobs:
         run: pip install requests
 
       - name: Tarayıcı kur
-        if: contains(inputs.hedefler, 'tarayici')
+        if: contains(inputs.hedefler, 'tarayici') || contains(inputs.hedefler, 'tvs')
         run: |
           pip install playwright
           python -m playwright install --with-deps chromium
@@ -41,6 +41,10 @@ jobs:
       - name: Yamaha tarayıcı sondası
         if: contains(inputs.hedefler, 'tarayici')
         run: python yamaha_tarayici.py || true
+
+      - name: TVS sondası
+        if: contains(inputs.hedefler, 'tvs')
+        run: python tvs_sonda.py || true
 
       - name: Yakala
         run: |
