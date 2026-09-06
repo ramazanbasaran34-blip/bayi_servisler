@@ -75,8 +75,19 @@ _GENEL_EK = {
 }
 
 
+# Parantez içi AÇIKLAMA, firma adının parçası değil: "EYMEN MOTOR
+# (Önder Motor)" kaydı, hangi merkeze bağlı olduğunu belirtmek için
+# böyle yazılıyor. Eşleştirmede sayılırsa "Önder Motor Merkez 1" ile
+# ortak kelime çıkıp iki AYRI firma birleşiyordu.
+_PARANTEZ = re.compile(r"\([^)]*\)")
+
+
 def _ayirt_edici(ad: str) -> set:
-    return {k for k in fold(ad).split() if len(k) > 2 and k not in _GENEL_EK}
+    cekirdek = _PARANTEZ.sub(" ", ad or "")
+    k = {w for w in fold(cekirdek).split() if len(w) > 2 and w not in _GENEL_EK}
+    # Parantez dışında hiçbir şey kalmadıysa parantez içini kullan
+    return k or {w for w in fold(ad or "").split()
+                 if len(w) > 2 and w not in _GENEL_EK}
 
 
 def adres_belirtecleri(adres: str) -> set:
