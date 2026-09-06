@@ -456,6 +456,7 @@ markalar:
 
   # 30. KTM  ·  Avusturya  ·  www.spormoto.com
   "KTM":
+    ozel: spormoto
     beklenen: [20, 95]   # saha: 34 satış, 34 servis
     kaynaklar:
       - rol: satis
@@ -465,6 +466,7 @@ markalar:
 
   # 31. HUSQVARNA  ·  Avusturya  ·  www.spormoto.com
   "Husqvarna":
+    ozel: spormoto
     beklenen: [20, 95]   # saha: 34 satış, 34 servis
     mode: browser
     kaynaklar:
