@@ -1319,5 +1319,21 @@
   "boyut": 191025,
   "tel_toplam": 40,
   "tel_script_ici": 2
+ },
+ "m-voge": {
+  "url": "https://www.vogeturkiye.com.tr/yetkili-satici/",
+  "kod": 200,
+  "son_url": "https://www.vogeturkiye.com.tr/yetkili-satici/",
+  "boyut": 289668,
+  "tel_toplam": 390,
+  "tel_script_ici": 5
+ },
+ "m-voge-ana": {
+  "url": "https://www.vogeturkiye.com.tr/",
+  "kod": 200,
+  "son_url": "https://www.vogeturkiye.com.tr/",
+  "boyut": 155929,
+  "tel_toplam": 16,
+  "tel_script_ici": 6
  }
 }
