@@ -44,6 +44,8 @@ GEZINME = {
     "akeso": "tek",
     # Voge: tek sayfa, il grupları ve kart sınıfında rol
     "voge": "tek",
+    # FCM: il il sekmeler, il bilgisi sekme başlığında
+    "fcm": "tek",
     "zelsun": "il_adi", "motolux": "il_adi", "csn": "il_adi",
     "musatti": "il_kodu",
     "leksas": "tek", "indian": "tek",
