@@ -721,6 +721,7 @@ markalar:
 
   # 52. FCM  ·  Türkiye-Çin  ·  fcmmotor.com
   "FCM":
+    ozel: fcm
     # TARİF ŞART: kartta önce semt etiketi (HURMALI, MERKEZ, EMİRDAĞ),
     # sonra firma adı geliyor. Tarif yokken otomatik tespit ilk <p>'yi ad
     # sanıyordu: 407 kaydın 57'sinin adı ilçe/semt adıydı ("MERKEZ" 29 kez)
