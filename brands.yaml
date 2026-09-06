@@ -569,6 +569,8 @@ markalar:
 
   # 37. HARLEY DAVIDSON  ·  ABD  ·  www.harley-davidson.com
   "Harley-Davidson":
+    # Veri elle/harley-davidson.json'dan geliyor
+    elle_dosya: harley-davidson
     # TARANMIYOR. Site Cloudflare korumalı ve GitHub Actions IP'lerinden
     # 403 dönüyor. Veri elle/harley-davidson.json dosyasında tutuluyor ve
     # elle_tara.py ile işleniyor. Güncelleme sayfadaki düzenleme
