@@ -224,6 +224,7 @@ markalar:
 
   # 11. VOGE  ·  Çin  ·  www.vogeturkiye.com.tr
   "Voge":
+    ozel: voge
     mode: browser
     kaynaklar:
       - rol: satis_servis
