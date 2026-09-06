@@ -1859,13 +1859,19 @@ function firmaSuzgec(){
 }
 
 function firmaKart(f, no){
+  /* FİRMANIN TAMAMI GÖRÜNSÜN.
+     Önceden ikinci satır, birinci satırda geçen markaları eliyordu
+     (dis = oteki.filter(m => !bu.has(m))). Bir firma Bajaj'ın hem
+     bayisi hem servisiyse yalnızca "Bayilik: Bajaj" yazıyor,
+     servisliği hiç görünmüyordu. Artık hangi sekmeden girilirse
+     girilsin iki liste de TAM yazılıyor: çalıştığı bayilikler ve
+     çalıştığı servisler. */
   const bu   = FIRMA_ROL === "satis" ? f.satis : f.servis;
-  const oteki= FIRMA_ROL === "satis" ? f.servis : f.satis;
   const etiket = FIRMA_ROL === "satis" ? "Bayilik" : "Servislik";
-  const oEtiket= FIRMA_ROL === "satis" ? "Ayrıca servis:" : "Ayrıca bayi:";
   const sirala = x => [...x].sort((a,b)=>a.localeCompare(b,"tr"));
   const rozet = m => `<button class="dmarka" data-git="${esc(m)}">${esc(m)}</button>`;
-  const dis = sirala(oteki).filter(m => !bu.has(m));
+  const bayilik = sirala(f.satis);
+  const servis  = sirala(f.servis);
   return `<div class="kayit ${FIRMA_ROL==="satis"?"satis":"servis"}">
     <div class="k1"><span class="sirano kno">${no}</span>${
       f.kod?`<span class="carikod" title="Cari kod">${esc(f.kod)}</span>`:""}
@@ -1874,8 +1880,8 @@ function firmaKart(f, no){
     </div>
     <div class="k2">${esc(f.adres||"")}${f.adres?" · ":""}<span class="ilcerz">${
       esc([f.ilce,f.il].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(" / "))}</span></div>
-    <div class="k4"><span class="dmet">${etiket}:</span>${sirala(bu).map(rozet).join("")}</div>
-    ${dis.length?`<div class="k4"><span class="dmet">${oEtiket}</span>${dis.map(rozet).join("")}</div>`:""}
+    ${bayilik.length?`<div class="k4"><span class="dmet">Çalıştığı bayilikler:</span>${bayilik.map(rozet).join("")}</div>`:""}
+    ${servis.length?`<div class="k4"><span class="dmet">Çalıştığı servisler:</span>${servis.map(rozet).join("")}</div>`:""}
     <div class="k3"><span class="tel">${f.tel?
       `<a href="tel:${esc(f.tel.replace(/\s/g,""))}">${esc(f.tel)}</a>`:"—"}</span></div>
   </div>`;
