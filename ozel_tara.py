@@ -56,6 +56,9 @@ GEZINME = {
     "bmw": "adres_listesi",
     # Kuralkan tek sayfada hem Bajaj hem Kanuni ağını veriyor
     "kuralkan": "cok_marka",
+    # Spormoto: KTM + Husqvarna. Bayiler gömülü JS dizisinde, servisler
+    # düz HTML tabloda; ikisi de tek sayfa, il gezmiyor.
+    "spormoto": "marka_bazli",
     # STMax: seçenek değeri zaten tam adres
     "stmax": "adres_listesi",
     # ASP.NET WebForms: il seçimi URL'e yansımıyor, ViewState ile POST
@@ -82,6 +85,15 @@ def _hedefler(mod_ad: str, mod) -> list[tuple[str, str, str, str]]:
                 out.append((anahtar, "hepsi", url, ""))
             else:
                 out.append((mod.MARKA, anahtar, url, ""))
+        return out
+
+    if bicim == "marka_bazli":
+        # Birden çok marka, HER MARKANIN KENDİ adresleri:
+        #   KAYNAKLAR = {"KTM": {"satis": url, "servis": url}, ...}
+        # cok_marka biçimi tek kaynağı paylaştırıyor, burada olmaz.
+        for marka, roller in mod.KAYNAKLAR.items():
+            for rol, url in roller.items():
+                out.append((marka, rol, url, ""))
         return out
 
     if bicim == "cok_marka":
