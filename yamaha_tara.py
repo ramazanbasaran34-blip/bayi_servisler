@@ -140,6 +140,12 @@ def cevir(ham: list[dict]) -> list[dict]:
 
 def main() -> None:
     kuru = "--kuru" in sys.argv
+    # --db ŞART: bu betik varsayılan olarak CANLI bayiler.db'ye yazıyordu.
+    # Tarama önizlemeye (bayiler_yeni.db) yazmalı, canlıya yalnızca onay
+    # akışı dokunmalı.
+    db_yolu = "bayiler.db"
+    if "--db" in sys.argv:
+        db_yolu = sys.argv[sys.argv.index("--db") + 1]
     basladi = now()
 
     ham = hepsini_cek()
@@ -159,7 +165,7 @@ def main() -> None:
     if kuru:
         print("(kuru çalışma — veritabanına yazılmadı)")
     else:
-        with db() as con:
+        with db(db_yolu) as con:
             sonuc = commit_tarama(con, MARKA, kayitlar, 1.0, basladi)
         rapor["db"] = str(sonuc)[:200]
         print("db:", rapor["db"])
