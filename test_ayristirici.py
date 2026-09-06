@@ -320,6 +320,32 @@ for metin, bek in [
         print(f"  ✗ '{metin[:34]}': {bek} beklendi, {g} geldi")
 print(f"  ✓ telefon tanıma ({_t}/14)")
 
+# ------------------------------------------- 15. Türkçe karakter onarımı
+# Sahada ÜÇ AYRI bozulma türü görüldü ve her biri ayrı ayrı önümüze geldi.
+# Bu test üçünü birden bekçiliyor, tekrar sızmasınlar.
+print("\n15. Türkçe karakter onarımı — üç bozulma türü")
+from bayiradar.normalize import clean_text as _ct
+_ornek = [
+    ("\u00c5\u009eEH\u00c4\u00b0T AL\u00c4\u00b0 BEY", "ŞEHİT ALİ BEY"),   # UTF-8'i latin-1 sanmak
+    ("PAZAR MAH. PTT ÜZERÝ", "PAZAR MAH. PTT ÜZERİ"),                          # latin-5'i latin-1 sanmak
+    ("ÝHSANÝYE MAH.ERTUÐRUL", "İHSANİYE MAH.ERTUĞRUL"),
+    ("ASYA MOTOR&#039;S", "ASYA MOTOR'S"),                                      # HTML varlığı
+    ("Kadıköy / İstanbul", "Kadıköy / İstanbul"),                               # sağlam: dokunma
+    ("Normal Türkçe çğıöşü", "Normal Türkçe çğıöşü"),
+]
+_k = 0
+for _ham, _bek in _ornek:
+    _c = _ct(_ham)
+    if _c == _bek:
+        _k += 1
+    else:
+        print(f"  ✗ {_ham!r} -> {_c!r}, beklenen {_bek!r}")
+        BASARISIZ.append((f"karakter: {_ham[:24]}", [f"{_bek!r} beklendi, {_c!r} geldi"], []))
+if _k == len(_ornek):
+    BASARILI.append("karakter onarımı")
+print(f"  ✓ karakter onarımı ({_k}/{len(_ornek)})")
+
+
 # ---------------------------------------------------------------- özet
 print("\n" + "=" * 60)
 print(f"GEÇEN: {len(BASARILI)}   KALAN: {len(BASARISIZ)}")
