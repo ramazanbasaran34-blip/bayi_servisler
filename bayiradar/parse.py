@@ -10,8 +10,9 @@ import re
 from bs4 import BeautifulSoup
 
 from .ilceler import adresten_ilce, ilce_mi, ilceden_il
-from .normalize import (ILLER, clean_adres, clean_phone, clean_text, fold, il_ara, resolve_il,
-                         split_il_ilce, title_tr)
+from .normalize import (ILLER, clean_adres, clean_phone, clean_text,
+                         firma_adi, fold, il_ara, resolve_il, split_il_ilce,
+                         title_tr)
 from .otomatik import cikar as otomatik_cikar
 
 # İl adlarının sadeleştirilmiş hali (ad/adres kayması onarımı için)
@@ -288,7 +289,9 @@ def _ad_adres_kaymasi(rec: dict) -> None:
 def finalize(rec: dict, marka: str, kaynak_url: str, cfg: dict) -> dict | None:
     """Ham kaydı standart şemaya oturtur. Adı olmayan kaydı çöpe atar."""
     _ad_adres_kaymasi(rec)
-    ad = clean_text(rec.get("bayi_adi", ""))
+    # Görüntü tutarlılığı: kaynakların çoğu adı TAMAMEN BÜYÜK yazıyor.
+    # Tekilleştirme fold() ile yapıldığı için bu anahtarı değiştirmez.
+    ad = firma_adi(clean_text(rec.get("bayi_adi", "")))
     if not ad:
         return None
 
