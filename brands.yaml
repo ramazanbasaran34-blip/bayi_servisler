@@ -467,7 +467,9 @@ markalar:
     # API'den geliyor, modül POST atıyor. Üç kategoriden yalnızca satış ve
     # servis alınıyor, TWO_WHEELER_APS (yedek parça) listeye girmez.
     ozel: tvs
-    beklenen: [200, 450]
+    # İlk tam tarama 655 kayıt verdi (263 satış, 528 servis; kesişim
+    # 136 satış+servis). Aralık ona göre.
+    beklenen: [500, 800]
     kaynaklar:
       - rol: satis_servis
         url: "https://apim.tvsmotor.com/location-master/api/v1/dealer-search"
