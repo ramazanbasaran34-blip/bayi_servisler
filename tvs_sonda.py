@@ -63,9 +63,38 @@ def main() -> None:
                 "ipucu": ipucu,
             })
 
+        # İSTEK gövdesi de lazım: kategori (SALES/SERVICE/SPARES) burada
+        # belirtiliyor ve tarama bunu taklit edecek.
+        def istek_izle(i):
+            if "apim.tvsmotor.com" not in i.url:
+                return
+            k = {"url": i.url[:200], "method": i.method}
+            try:
+                if i.post_data:
+                    k["govde"] = i.post_data[:600]
+                k["basliklar"] = {a: b for a, b in (i.headers or {}).items()
+                                  if a.lower() in ("content-type", "authorization",
+                                                   "x-api-key", "apikey", "origin")}
+            except Exception:                                   # noqa: BLE001
+                pass
+            rapor.setdefault("istekler", []).append(k)
+
+        s.on("request", istek_izle)
         s.on("response", yanit_izle)
         s.goto(URL, wait_until="networkidle", timeout=90000)
         s.wait_for_timeout(6000)
+
+        # Servis ve Yedek Parça sekmelerine de bas: her birinin isteği
+        # kaydedilsin, kategorinin nasıl gönderildiğini görelim.
+        for etiket in ("Servis", "Service", "Yedek", "Spares"):
+            try:
+                el = s.get_by_text(etiket, exact=False).first
+                if el and el.is_visible():
+                    el.click(timeout=4000)
+                    s.wait_for_timeout(3500)
+                    rapor.setdefault("tiklanan", []).append(etiket)
+            except Exception:                                   # noqa: BLE001
+                continue
 
         icerik = s.content()
         (CIKTI / "tvs-sayfa.html.gz").write_bytes(
