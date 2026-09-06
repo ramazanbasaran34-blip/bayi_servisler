@@ -49,6 +49,8 @@ GEZINME = {
     "akeso": "tek",
     # Voge: tek sayfa, il grupları ve kart sınıfında rol
     "voge": "tek",
+    # TVS: modül kendi POST isteğini atıyor (getir)
+    "tvs": "tek",
     # FCM: il il sekmeler, il bilgisi sekme başlığında
     "fcm": "tek",
     "zelsun": "il_adi", "motolux": "il_adi", "csn": "il_adi",
@@ -232,6 +234,19 @@ def marka_tara(mod_ad: str, log=print) -> dict[str, list[dict]]:
     toplam: dict[str, list[dict]] = {}
     denendi = basarili = 0
     ilk_il_kotu = 0
+
+    # KENDİ İSTEĞİNİ ATAN MODÜL: bazı uçlar GET değil POST + JSON gövde
+    # istiyor (TVS'nin dealer-search ucu kategoriyi gövdede alıyor).
+    # Modül getir(oturum) tanımladıysa çekme işi ona bırakılıyor.
+    if hasattr(mod, "getir"):
+        marka = getattr(mod, "MARKA", mod_ad)
+        try:
+            kayitlar = mod.getir(oturum)
+            log(f"    → {marka}: {len(kayitlar)} kayıt (modül kendi çekti)")
+            return {marka: kayitlar}
+        except Exception as e:  # noqa: BLE001
+            log(f"    ✗ {marka}: {str(e)[:80]}")
+            return {}
 
     for marka, rol, url, il in _hedefler(mod_ad, mod):
         denendi += 1
