@@ -46,6 +46,12 @@ def ozel_betik(marka: str) -> str:
     return _cfg(marka).get("betik") or ""
 
 
+def elle_dosya(marka: str) -> str:
+    """Elle hazırlanmış veri dosyası (Cloudflare korumalı siteler)."""
+    c = _cfg(marka)
+    return c.get("elle_dosya") or "" if c.get("elle") else ""
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("marka")
@@ -56,8 +62,10 @@ def main() -> int:
     once = say(a.db, a.marka)
     print(f"[{a.marka}] önceki kayıt: {once}", flush=True)
 
-    betik = ozel_betik(a.marka)
-    if betik:
+    if (ed := elle_dosya(a.marka)):
+        print(f"[{a.marka}] elle veri: elle/{ed}.json", flush=True)
+        komut = [sys.executable, "elle_tara.py", ed, "--db", a.db]
+    elif (betik := ozel_betik(a.marka)):
         print(f"[{a.marka}] özel betik: {betik}", flush=True)
         komut = [sys.executable, betik, "--db", a.db]
     elif (ozel := ozel_modul(a.marka)):
