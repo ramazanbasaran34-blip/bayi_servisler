@@ -25,6 +25,11 @@ import requests
 
 from bayiradar.normalize import ILLER, fold, tr_upper
 from bayiradar.parse import finalize
+# Kodlama secimi TEK NOKTADAN: bu dosya kendi cekme kodunu kullaniyordu
+# ve requests'in varsayilani (baslikta charset yoksa ISO-8859-1) Turkce
+# harfleri bozuyordu. 29 ozel modullu marka fetch.py'deki duzeltmeyi
+# hic gormuyordu.
+from bayiradar.fetch import _en_iyi_coz
 from bayiradar.store import commit_tarama, db, now
 
 BASLIK = {
@@ -115,7 +120,7 @@ def _hedefler(mod_ad: str, mod) -> list[tuple[str, str, str, str]]:
         for rol, kok in mod.KAYNAKLAR.items():
             try:
                 y = _r.get(kok, headers=BASLIK, timeout=45)
-                iller = mod.il_sluglari(y.text)
+                iller = mod.il_sluglari(_en_iyi_coz(y, None))
             except Exception:  # noqa: BLE001
                 iller = []
             for adres, ad in iller:
@@ -129,7 +134,7 @@ def _hedefler(mod_ad: str, mod) -> list[tuple[str, str, str, str]]:
         for rol, kok in mod.KAYNAKLAR.items():
             try:
                 y = _r.get(kok, headers=BASLIK, timeout=45)
-                iller = mod.il_sluglari(y.text)
+                iller = mod.il_sluglari(_en_iyi_coz(y, None))
             except Exception:  # noqa: BLE001
                 iller = []
             for slug, ad in iller:
@@ -146,7 +151,7 @@ def _hedefler(mod_ad: str, mod) -> list[tuple[str, str, str, str]]:
                 kok = kalip.format(taban=taban, slug="").rstrip("/")
                 try:
                     y = _r.get(kok + "/", headers=BASLIK, timeout=45)
-                    iller = mod.il_sluglari(y.text)
+                    iller = mod.il_sluglari(_en_iyi_coz(y, None))
                 except Exception:  # noqa: BLE001
                     iller = []
                 for slug, ad in iller:
@@ -184,7 +189,7 @@ def _postback_tara(mod_ad: str, mod, log=print) -> tuple[dict, float]:
         try:
             ilk = oturum.get(url, timeout=60)
             ilk.raise_for_status()
-            govde = ilk.text
+            govde = _en_iyi_coz(ilk, None)
         except Exception as e:  # noqa: BLE001
             log(f"    ✗ {mod.MARKA}/{rol}: {str(e)[:60]}")
             continue
@@ -195,7 +200,7 @@ def _postback_tara(mod_ad: str, mod, log=print) -> tuple[dict, float]:
                 y = oturum.post(url, data=mod.post_govdesi(govde, deger),
                                 timeout=60, headers={"Referer": url})
                 y.raise_for_status()
-                govde = y.text          # zincir: sonraki ViewState
+                govde = _en_iyi_coz(y, None)   # zincir: sonraki ViewState
                 basarili += 1
             except Exception as e:  # noqa: BLE001
                 log(f"    ✗ {mod.MARKA}/{rol}/{il_adi}: {str(e)[:50]}")
@@ -234,7 +239,7 @@ def marka_tara(mod_ad: str, log=print) -> dict[str, list[dict]]:
             y = oturum.get(url, timeout=60)
             if y.status_code >= 400:
                 raise RuntimeError(f"HTTP {y.status_code}")
-            govde = y.content.decode(kodlama, "replace") if kodlama else y.text
+            govde = _en_iyi_coz(y, kodlama)
         except Exception as e:  # noqa: BLE001
             log(f"    ✗ {marka}/{rol}/{il or '-'}: {str(e)[:50]}")
             ilk_il_kotu += 1
