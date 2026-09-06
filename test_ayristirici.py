@@ -346,6 +346,40 @@ if _k == len(_ornek):
 print(f"  ✓ karakter onarımı ({_k}/{len(_ornek)})")
 
 
+# --------------------------------------- 16. Kodlama seçimi (kök sebep)
+# Türkçe karakter bozulmalarının kaynağı buydu: apparent_encoding
+# (istatistiksel tahmin) sayfanın <meta charset> bildiriminden ÖNCE
+# geliyordu ve Türkçe metinde sık sık latin-1 diye yanlış tahmin ediyordu.
+print("\n16. Kodlama seçimi — beş senaryo")
+from bayiradar.fetch import _en_iyi_coz as _coz
+
+class _SahteYanit:
+    def __init__(self, icerik, ctype="", apparent="ISO-8859-1"):
+        self.content = icerik
+        self.headers = {"content-type": ctype}
+        self.apparent_encoding = apparent
+
+_m = "ŞEHİT ALİ BEY MAHALLESİ ERTUĞRUL SOKAK ÜZERİ ÇİÇEK"
+_senaryo = [
+    ("utf-8 gövde + meta utf-8", b'<meta charset="utf-8">' + _m.encode("utf-8"), "text/html"),
+    ("cp1254 gövde + meta cp1254", b'<meta charset="windows-1254">' + _m.encode("cp1254"), "text/html"),
+    ("cp1254 gövde ama meta YANLIŞ utf-8 diyor", b'<meta charset="utf-8">' + _m.encode("cp1254"), "text/html"),
+    ("başlıkta charset, meta yok", _m.encode("utf-8"), "text/html; charset=utf-8"),
+    ("hiç bildirim yok", _m.encode("utf-8"), "text/html"),
+]
+_k = 0
+for _ad, _icerik, _ctype in _senaryo:
+    _c = _coz(_SahteYanit(_icerik, _ctype), None)
+    if "ŞEHİT" in _c and "ERTUĞRUL" in _c and "ÜZERİ" in _c:
+        _k += 1
+    else:
+        print(f"  ✗ {_ad}: {_c[-30:]!r}")
+        BASARISIZ.append((f"kodlama: {_ad}", ["Türkçe harfler bozuk çözüldü"], []))
+if _k == len(_senaryo):
+    BASARILI.append("kodlama seçimi")
+print(f"  ✓ kodlama seçimi ({_k}/{len(_senaryo)})")
+
+
 # ---------------------------------------------------------------- özet
 print("\n" + "=" * 60)
 print(f"GEÇEN: {len(BASARILI)}   KALAN: {len(BASARISIZ)}")
