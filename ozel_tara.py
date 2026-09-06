@@ -241,12 +241,19 @@ def marka_tara(mod_ad: str, log=print) -> dict[str, list[dict]]:
     if hasattr(mod, "getir"):
         marka = getattr(mod, "MARKA", mod_ad)
         try:
-            kayitlar = mod.getir(oturum)
-            log(f"    → {marka}: {len(kayitlar)} kayıt (modül kendi çekti)")
-            return {marka: kayitlar}
+            ham = mod.getir(oturum)
         except Exception as e:  # noqa: BLE001
             log(f"    ✗ {marka}: {str(e)[:80]}")
             return {}
+        # FINALIZE ŞART: normalleştirme, il/ilçe çözümü, metin temizliği ve
+        # telefon biçimi burada yapılıyor. Atlanırsa yazma aşaması patlıyor.
+        kayitlar = []
+        for r in ham:
+            k = finalize(dict(r), marka, getattr(mod, "UC", ""), {})
+            if k:
+                kayitlar.append(k)
+        log(f"    → {marka}: {len(kayitlar)} kayıt (modül kendi çekti)")
+        return {marka: kayitlar} if kayitlar else {}
 
     for marka, rol, url, il in _hedefler(mod_ad, mod):
         denendi += 1
