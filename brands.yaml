@@ -48,6 +48,10 @@ markalar:
 
   #  2. YAMAHA  ·  Japonya  ·  www.yamaha-motor.eu
   "Yamaha":
+    # Bayi bulucu React uygulaması; liste HTML'de yok, resmi GraphQL
+    # ucundan geliyor. Genel ayrıştırıcı hiç kayıt çıkaramıyor ve marka
+    # sürekli "hatali" damgası alıyordu. Betik ucu doğrudan okuyor.
+    betik: yamaha_tara.py
     beklenen: [27, 125]   # saha: 45 satış, 45 servis
     # Sitede satış ve servis ayrı listelenmiyor; her nokta ikisini de
     # yapıyor. Kayıtlar "Satış + Servis" olarak işaretleniyor.
