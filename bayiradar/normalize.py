@@ -76,6 +76,68 @@ def title_tr(s: str) -> str:
     return " ".join(parts)
 
 
+# Kurumsal kısaltmalar: başlığa çevrilmemeli ("San.Tic.Ltd.Şti." değil
+# "SAN.TİC.LTD.ŞTİ."). Kısa markalar da öyle: RKS, DÇ, MJ, TSG, BMW.
+_KISALTMA = {
+    "LTD", "STI", "ŞTİ", "SAN", "TİC", "TIC", "AŞ", "A.Ş", "AS", "DTM",
+    "PAZ", "İNŞ", "INS", "TUR", "OTO", "MOT", "TAŞ", "TAS", "İTH", "ITH",
+    "İHR", "IHR", "TÜK", "TUK", "MAL", "DAY", "SShoW", "VE", "İLET", "ILET",
+    "GIDA", "NAK", "MÜH", "MUH", "ELK", "BİL", "BIL", "KOM", "ŞB", "SB",
+}
+# Küçük kalması gereken bağlaçlar
+_BAGLAC = {"ve", "ile", "veya"}
+
+
+def firma_adi(s: str) -> str:
+    """Firma adını görüntü için tutarlı hâle getirir.
+
+    Kaynakların çoğu adı TAMAMEN BÜYÜK yazıyor (11.335 kayıt), bir kısmı
+    karışık (4.117). Liste bu yüzden alacalı görünüyordu. Artık tek
+    noktadan düzeltiliyor.
+
+    Körlemesine başlığa çevirmek zarar verirdi: "RKS" -> "Rks",
+    "SAN.TİC.LTD.ŞTİ." -> "San.Tic.Ltd.Şti.". Bu yüzden:
+      · Zaten karışık yazılmış ad OLDUĞU GİBİ bırakılır (insan eli değmiş)
+      · 3 harfe kadar parçalar büyük kalır (RKS, DÇ, MJ, BMW)
+      · Kurumsal kısaltmalar büyük kalır
+      · Bağlaçlar küçük olur
+
+    NOT: Tekilleştirme anahtarı fold() kullandığı için bu değişiklik
+    eşleştirmeyi ETKİLEMEZ; yalnızca görüntüyü düzeltir.
+    """
+    if not s:
+        return ""
+    harfler = [c for c in s if c.isalpha()]
+    if not harfler or not all(c.isupper() for c in harfler):
+        return s                      # karışık yazım: dokunma
+
+    # Türkçe harf hiç yoksa kaynak ASCII'ye düşürmüş demektir: orada
+    # I -> ı yapmak "ŞAHİNLER"i "Sahınler" yapıyordu, I -> i daha doğru.
+    turkce_var = any(c in "çğıöşüÇĞİÖŞÜ" for c in s)
+    SESLI = set("aeıioöuüAEIİOÖUÜ")
+
+    def kucult(p: str) -> str:
+        return tr_lower(p) if turkce_var else p.lower()
+
+    def parca(p: str) -> str:
+        if not p or not any(c.isalpha() for c in p):
+            return p
+        # Sesli harfi olmayan parça kısaltmadır: RKS, DÇ, MJ, BMW, TSG.
+        # "ÇAY", "CAN" gibi gerçek kelimeler sesli taşıdığı için düzelir.
+        if p.upper() in _KISALTMA or not any(c in SESLI for c in p):
+            return p
+        alt = kucult(p)
+        if alt in _BAGLAC:
+            return alt
+        return alt[0].translate(_TR_UPPER).upper() + alt[1:]
+
+    kelimeler = []
+    for k in s.split():
+        # "SAN.TİC.LTD.ŞTİ." gibi noktalı yığınları parça parça işle
+        kelimeler.append(re.sub(r"[^.\-/]+", lambda m: parca(m.group(0)), k))
+    return " ".join(kelimeler)
+
+
 def clean_text(s: str) -> str:
     """HTML'den gelen metni temizler ve BOZUK TÜRKÇEYİ ONARIR.
 
