@@ -734,6 +734,7 @@ markalar:
 
   # 53. AKESO  ·  Türkiye-Çin  ·  www.akesomotors.com
   "Akeso":
+    ozel: akeso
     kaynaklar:
       - rol: satis_servis
         url: "https://www.akesomotors.com/bayilerimiz/"
