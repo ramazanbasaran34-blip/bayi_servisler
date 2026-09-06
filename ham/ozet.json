@@ -1303,5 +1303,21 @@
   "boyut": 25969,
   "tel_toplam": 8,
   "tel_script_ici": 0
+ },
+ "m-akeso": {
+  "url": "https://www.akesomotors.com/bayilerimiz/",
+  "kod": 200,
+  "son_url": "https://www.akesomotors.com/bayilerimiz/",
+  "boyut": 128562,
+  "tel_toplam": 28,
+  "tel_script_ici": 2
+ },
+ "m-akeso-ana": {
+  "url": "https://www.akesomotors.com/",
+  "kod": 200,
+  "son_url": "https://www.akesomotors.com/",
+  "boyut": 191025,
+  "tel_toplam": 40,
+  "tel_script_ici": 2
  }
 }

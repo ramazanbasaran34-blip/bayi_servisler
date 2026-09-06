@@ -22,8 +22,8 @@
    "ham": 7,
    "gecerli": 7,
    "ornek_kayit": [
-    "ASİL GRUP MOTOSİKLET | Ankara/Ankara | +905425193613",
-    "BAYHAS HKN MOTOR TİC. LTD. Ş | Ankara/Ankara | +905433067540",
+    "ASİL GRUP MOTOSİKLET | Ankara/Yenimahalle | +905425193613",
+    "BAYHAS HKN MOTOR TİC. LTD. Ş | Ankara/Keçiören | +905433067540",
     "BAYHAS MBK MOTOR TİC. LTD. Ş | Ankara/Ankara | +905443971539"
    ]
   },
@@ -48,9 +48,9 @@
    "ham": 5,
    "gecerli": 5,
    "ornek_kayit": [
-    "BAYHAS HKN MOTOR TİC. LTD. Ş | Ankara/Ankara | +905433067540",
-    "BAYHAS MOTORS OTO. VE DAY. T | Ankara/Ankara | +905464117041",
-    "BELGİN EROĞLU - GARAGE MOTO | Ankara/Ankara | +905393964986"
+    "BAYHAS HKN MOTOR TİC. LTD. Ş | Ankara/Keçiören | +905433067540",
+    "BAYHAS MOTORS OTO. VE DAY. T | Ankara/Sincan | +905464117041",
+    "BELGİN EROĞLU - GARAGE MOTO | Ankara/Çankaya | +905393964986"
    ]
   }
  },
@@ -74,12 +74,12 @@
     ]
    ],
    "yanit_boyut": 118042,
-   "ham": 11,
-   "gecerli": 11,
+   "ham": 9,
+   "gecerli": 9,
    "ornek_kayit": [
-    "ATALAY YIĞMAN | Ankara/Ankara | +905417189373",
-    "DOĞRU MOTORS - BUKET DOĞRU | Ankara/Ankara | +905325811283",
-    "ELMACIOĞLU MOTOR | Ankara/Ankara | +905447469823"
+    "ATALAY YIĞMAN | Ankara/Çubuk | +905417189373",
+    "DOĞRU MOTORS - BUKET DOĞRU | Ankara/Yenimahalle | +905325811283",
+    "ELMACIOĞLU MOTOR | Ankara/Etimesgut | +905447469823"
    ]
   },
   "servis": {
@@ -100,12 +100,12 @@
     ]
    ],
    "yanit_boyut": 134001,
-   "ham": 23,
-   "gecerli": 23,
+   "ham": 21,
+   "gecerli": 21,
    "ornek_kayit": [
-    "ADK MOTORULU ARAÇLAR | Ankara/Ankara | +905453246783",
-    "BEKİR ÇAKIR | Ankara/Ankara | +905437851386",
-    "BUMERANG MOTO GARAGE / ERTUG | Ankara/Ankara | +905551590424"
+    "ADK MOTORULU ARAÇLAR | Ankara/Gölbaşı | +905453246783",
+    "BEKİR ÇAKIR | Ankara/Yenimahalle | +905437851386",
+    "BUMERANG MOTO GARAGE / ERTUG | Ankara/Yenimahalle | +905551590424"
    ]
   }
  }
