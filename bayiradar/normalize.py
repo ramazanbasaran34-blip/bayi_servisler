@@ -6,6 +6,7 @@ vs "Afyonkarahisar", "İçel" vs "Mersin". Hepsini tek bir anahtara indirgemeden
 filtreleme çalışmaz.
 """
 
+import html
 import re
 import unicodedata
 
@@ -28,6 +29,19 @@ def tr_upper(s: str) -> str:
     if not s:
         return ""
     return s.translate(_TR_UPPER).upper()
+
+
+# ISO-8859-9 (Türkçe latin-5) baytlarını latin-1 sanan siteler: Türkçe
+# harfler İzlandaca harflere dönüşüyor. STMax'ta 13 adres böyleydi
+# ("PTT ÜZERÝ" = "PTT ÜZERİ", "ERTUÐRUL" = "ERTUĞRUL").
+_LATIN5 = str.maketrans({"ý": "ı", "þ": "ş", "ð": "ğ",
+                         "Ý": "İ", "Þ": "Ş", "Ð": "Ğ"})
+
+
+def latin5_onar(metin: str) -> str:
+    if not metin or not any(c in metin for c in "ýþðÝÞÐ"):
+        return metin
+    return metin.translate(_LATIN5)
 
 
 def mojibake_onar(metin: str) -> str:
@@ -149,7 +163,15 @@ def clean_text(s: str) -> str:
     """
     if not s:
         return ""
+    # SIRA ÖNEMLİ: önce HTML varlıkları çözülür, sonra kodlama onarımları.
+    # Üç ayrı bozulma türü var ve her biri ayrı ayrı önümüze geliyordu:
+    #   1. UTF-8'i latin-1 sanmak  : "Ä°stanbul"  -> mojibake_onar
+    #   2. latin-5'i latin-1 sanmak: "ÜZERÝ"     -> latin5_onar
+    #   3. çözülmemiş HTML varlığı : "MOTOR&#039;S" -> html.unescape
+    if "&" in s and ("&#" in s or ";" in s):
+        s = html.unescape(s)
     s = mojibake_onar(s)
+    s = latin5_onar(s)
     s = s.replace("\xa0", " ").replace("\u200b", "")
     # Türkçe "İ" sonrası kalan birleştirici nokta (U+0307) — casefold
     # artığı; anahtar üretiminde sessizce eşleşmeyi bozuyordu.
