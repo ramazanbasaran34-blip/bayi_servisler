@@ -18,6 +18,7 @@ import json
 
 MARKA = "Acco"
 UC = "https://actiomobilite.com/store/dealers"
+JSON_UC = True          # uç JSON; Accept başlığı istenir
 KAYNAKLAR = {"satis_servis": UC}
 TEST = {("Acco", "satis_servis"): "acco-json-02.json"}
 
