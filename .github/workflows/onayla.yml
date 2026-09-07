@@ -64,7 +64,12 @@ jobs:
           git config user.email "bot@users.noreply.github.com"
           cp bayiler_yeni.db bayiler.db
           python cari_kod.py || true
-          git add -f bayiler.db cari_kodlar.json
+          # DONDURULMUŞ CANLI SAYFAYI YENİLE. Canlı sayfa yalnızca burada
+          # güncelleniyor: hem veri hem görünüm bu anda sabitleniyor.
+          mkdir -p canli
+          python uret_index.py canli/index.html
+          test -s canli/index.html || { echo "canlı sayfa üretilemedi"; exit 1; }
+          git add -f bayiler.db cari_kodlar.json canli/index.html
           git diff --staged --quiet && { echo "değişiklik yok"; exit 0; }
           git commit -m "Önizleme canlıya alındı: $(date -u +'%Y-%m-%d %H:%M UTC')"
           for i in 1 2 3 4 5; do

@@ -161,8 +161,12 @@ jobs:
           # .../onizleme/ adresi siliniyordu — önizleme linkleri 404
           # veriyordu. yayinla.yml ikisini de üretiyor, burası üretmiyordu.
           mkdir -p site site/onizleme
-          # CANLI: yalnızca onaylanmış veri
-          python uret_index.py site/index.html
+          # CANLI SAYFA DONDURULMUŞTUR — bkz. yayinla.yml.
+          if [ -f canli/index.html ]; then
+            cp canli/index.html site/index.html
+          else
+            python uret_index.py site/index.html
+          fi
           # ÖNİZLEME: son taramanın sonucu
           if [ -f bayiler_yeni.db ]; then
             python uret_index.py site/onizleme/index.html --db bayiler_yeni.db

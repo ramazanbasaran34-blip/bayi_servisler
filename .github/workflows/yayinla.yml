@@ -33,8 +33,18 @@ jobs:
       - name: Sayfayı üret
         run: |
           mkdir -p site site/onizleme
-          # CANLI: onaylanmış veri
-          python uret_index.py site/index.html
+          # CANLI SAYFA DONDURULMUŞTUR.
+          # Onaylanmış hâli canli/index.html'de saklanıyor ve olduğu gibi
+          # kopyalanıyor. Böylece görünüm değişiklikleri (renk, sütun,
+          # yazı boyutu) canlıya SIZMAZ; yalnızca "Önizlemeyi canlıya al"
+          # akışı bu kopyayı yeniler. Kopya yoksa (ilk kurulum) üretilir.
+          if [ -f canli/index.html ]; then
+            cp canli/index.html site/index.html
+            echo "canlı sayfa dondurulmuş kopyadan alındı"
+          else
+            python uret_index.py site/index.html
+            echo "canlı sayfa üretildi (dondurulmuş kopya yok)"
+          fi
           # ÖNİZLEME: son taramanın sonucu. bayiler_yeni.db henüz yoksa
           # canlının kopyası konuyor ki adres 404 vermesin.
           if [ -f bayiler_yeni.db ]; then
