@@ -242,6 +242,8 @@ def marka_tara(mod_ad: str, log=print) -> dict[str, list[dict]]:
     if getattr(mod, "JSON_UC", False):
         oturum.headers.update({"Accept": "application/json, text/plain, */*",
                                "X-Requested-With": "XMLHttpRequest"})
+    # Modülün istediği ek başlıklar (ör. Acco'nun genel mağaza anahtarı)
+    oturum.headers.update(getattr(mod, "BASLIKLAR", {}) or {})
 
     toplam: dict[str, list[dict]] = {}
     denendi = basarili = 0
