@@ -1,0 +1,15 @@
+{
+ "url": "https://www.rutec.com.tr/satis-noktalari.html",
+ "yanitlar": [
+  {
+   "dosya": "rutec-json-01.json",
+   "url": "https://team.cetur.com.tr/api/Rutec/GetSatisNoktalari",
+   "boyut": 28054,
+   "ipucu": []
+  }
+ ],
+ "tiklanan": [
+  "Servis"
+ ],
+ "sayfa_boyut": 149337
+}

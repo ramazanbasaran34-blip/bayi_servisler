@@ -1,0 +1,62 @@
+{
+ "url": "https://actiomobilite.com/bayiler",
+ "yanitlar": [
+  {
+   "dosya": "acco-json-01.json",
+   "url": "https://actiomobilite.com/store/menus?type=header_menu",
+   "boyut": 3126,
+   "ipucu": []
+  },
+  {
+   "dosya": "acco-json-02.json",
+   "url": "https://actiomobilite.com/store/dealers",
+   "boyut": 2107,
+   "ipucu": [
+    "dealer",
+    "latitude",
+    "longitude",
+    "address",
+    "city",
+    "phone"
+   ]
+  },
+  {
+   "dosya": "acco-json-03.json",
+   "url": "https://actiomobilite.com/store/site-settings",
+   "boyut": 723,
+   "ipucu": [
+    "address",
+    "phone"
+   ]
+  },
+  {
+   "dosya": "acco-json-04.json",
+   "url": "https://actiomobilite.com/store/menus?type=footer_corporate_menu",
+   "boyut": 1377,
+   "ipucu": []
+  },
+  {
+   "dosya": "acco-json-05.json",
+   "url": "https://actiomobilite.com/store/menus?type=footer_quick_menu",
+   "boyut": 981,
+   "ipucu": []
+  },
+  {
+   "dosya": "acco-json-06.json",
+   "url": "https://actiomobilite.com/store/menus?type=footer_support_menu",
+   "boyut": 999,
+   "ipucu": []
+  },
+  {
+   "dosya": "acco-json-07.json",
+   "url": "https://actiomobilite.com/store/menus?type=footer_legal_menu",
+   "boyut": 1000,
+   "ipucu": []
+  }
+ ],
+ "tiklanan": [
+  "Servis",
+  "Yedek"
+ ],
+ "sayfa_boyut": 108513
+}

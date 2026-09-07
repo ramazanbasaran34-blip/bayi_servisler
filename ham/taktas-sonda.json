@@ -1,0 +1,16 @@
+{
+ "url": "https://taktas.com.tr/bayi-ve-servis",
+ "yanitlar": [
+  {
+   "dosya": "taktas-json-01.json",
+   "url": "https://taktas.com.tr/turkiyemap/turkiyemap.json",
+   "boyut": 8715,
+   "ipucu": []
+  }
+ ],
+ "tiklanan": [
+  "Servis",
+  "Yedek"
+ ],
+ "sayfa_boyut": 434188
+}
