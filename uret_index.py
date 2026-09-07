@@ -626,8 +626,7 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   background:var(--satis-z);border-radius:5px;padding:1px 5px}
 /* Kapsam sütunları (kaç il · kaç ilçe): iki satır yazı taşıdıkları için
    biraz daha geniş ve küçük punto. Sayı sütunlarıyla aynı hizada dursun. */
-.sayi.kapsam{font-size:11.5px;line-height:1.25;font-weight:600;
-  white-space:nowrap;opacity:.92}
+.sayi.kapsam{font-weight:600;opacity:.9}
 .sayi.kapsam.yok{opacity:.45;font-weight:400}
 
 /* Toplam servis noktası — satışın turuncusundan ayrılsın diye turkuaz */
@@ -1013,7 +1012,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
       <input class="ara" id="araTum" type="search" placeholder="Marka ara" autocomplete="off">
     </div>
     <div class="liste">
-      <div class="baslikcubuk sirali" data-tablo="tumListe"><span class="ilkkol sirakol" data-s="ad">Marka</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış noktası</span><span data-s="satisKapsam" class="sirakol k gen" style="color:var(--satis)">Satış<br>il · ilçe</span><span data-s="servisNoktasi" class="sirakol k gen" style="color:var(--servis)">Toplam<br>servis noktası</span><span data-s="servisKapsam" class="sirakol k gen" style="color:var(--servis)">Servis<br>il · ilçe</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+      <div class="baslikcubuk sirali" data-tablo="tumListe"><span class="ilkkol sirakol" data-s="ad">Marka</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış noktası</span><span data-s="satisIl" class="sirakol k" style="color:var(--satis)">Satış<br>il</span><span data-s="satisIlce" class="sirakol k" style="color:var(--satis)">Satış<br>ilçe</span><span data-s="servisNoktasi" class="sirakol k gen" style="color:var(--servis)">Toplam<br>servis noktası</span><span data-s="servisIl" class="sirakol k" style="color:var(--servis)">Servis<br>il</span><span data-s="servisIlce" class="sirakol k" style="color:var(--servis)">Servis<br>ilçe</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
       <div id="tumListe"></div>
     </div>
     <div class="bos" id="tumBos" style="display:none">Sonuç yok.</div>
@@ -2026,7 +2025,8 @@ function cizTum(){
             yalnizSatis:m=>m.satis, yalnizServis:m=>m.servis,
             ikisi:m=>m.ikisi, satisNoktasi:m=>m.satis+m.ikisi,
             servisNoktasi:m=>m.servis+m.ikisi,
-            satisKapsam:m=>m.satisIl.size, servisKapsam:m=>m.servisIl.size};
+            satisIl:m=>m.satisIl.size, satisIlce:m=>m.satisIlce.size,
+            servisIl:m=>m.servisIl.size, servisIlce:m=>m.servisIlce.size};
   const bd = SIRA_DURUM["tumListe"] || null;
   const anahtar = bd ? bd.anahtar : SIRA;
   const yon = bd ? bd.yon : -1;
@@ -2045,11 +2045,11 @@ function cizTum(){
         <span class="sayi k ${m.servis?"":"yok"}" style="color:var(--servis)">${m.servis||"—"}</span>
         <span class="sayi k ${m.ikisi?"":"yok"}" style="color:var(--ikisi)">${m.ikisi||"—"}</span>
         <span class="sayi k gen vurgu ${(m.satis+m.ikisi)?"":"yok"}">${(m.satis+m.ikisi)||"—"}</span>
-        <span class="sayi k gen kapsam ${m.satisIl.size?"":"yok"}">${
-          m.satisIl.size?`${m.satisIl.size} il<br>${m.satisIlce.size} ilçe`:"—"}</span>
+        <span class="sayi k kapsam ${m.satisIl.size?"":"yok"}">${m.satisIl.size||"—"}</span>
+        <span class="sayi k kapsam ${m.satisIlce.size?"":"yok"}">${m.satisIlce.size||"—"}</span>
         <span class="sayi k gen vurguserv ${(m.servis+m.ikisi)?"":"yok"}">${(m.servis+m.ikisi)||"—"}</span>
-        <span class="sayi k gen kapsam ${m.servisIl.size?"":"yok"}">${
-          m.servisIl.size?`${m.servisIl.size} il<br>${m.servisIlce.size} ilçe`:"—"}</span>
+        <span class="sayi k kapsam ${m.servisIl.size?"":"yok"}">${m.servisIl.size||"—"}</span>
+        <span class="sayi k kapsam ${m.servisIlce.size?"":"yok"}">${m.servisIlce.size||"—"}</span>
         <span class="sayi k ${t?"":"yok"}" style="font-weight:700">${m.toplam||"—"}</span>
         <span class="ok">${t?"›":"↗"}</span></span>`;
     return t?`<button class="sat" data-m="${esc(m.ad)}">${ic}</button>`
