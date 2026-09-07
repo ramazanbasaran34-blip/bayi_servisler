@@ -965,7 +965,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <div class="yapiskan">
       <input class="ara" id="araVerim" type="search" placeholder="İl ara" autocomplete="off">
     </div>
-    <div class="baslikcubuk sirali" data-tablo="verimListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="nokta" class="sirakol k" id="verimNoktaBas">Nokta</span><span data-s="2024" class="sirakol k">2024<br>satış</span><span data-s="v2024" class="sirakol k">2024<br>yıllık<br>nokta başı</span><span data-s="2025" class="sirakol k">2025<br>satış</span><span data-s="v2025" class="sirakol k">2025<br>yıllık<br>nokta başı</span><span data-s="2026" class="sirakol k">2026*<br>satış</span><span data-s="v2026" class="sirakol k gen">2026*<br>7 aylık<br>nokta başı</span><span class="okbos"></span></span></div>
+    <div class="baslikcubuk sirali" data-tablo="verimListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="nokta" class="sirakol k" id="verimNoktaBas">Nokta</span><span data-s="2024" class="sirakol k">2024<br>satış</span><span data-s="v2024" class="sirakol k gen">2024<br>bayi başı<br>satış adedi</span><span data-s="2025" class="sirakol k">2025<br>satış</span><span data-s="v2025" class="sirakol k gen">2025<br>bayi başı<br>satış adedi</span><span data-s="2026" class="sirakol k">2026*<br>satış</span><span data-s="v2026" class="sirakol k gen">2026*<br>7 aylık bayi başı<br>aylık satış adedi</span><span class="okbos"></span></span></div>
     <div class="liste" id="verimListe"></div>
     <div class="bos" id="verimBos" style="display:none">Sonuç bulunamadı.</div>
   </section>
@@ -1012,7 +1012,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
       <input class="ara" id="araTum" type="search" placeholder="Marka ara" autocomplete="off">
     </div>
     <div class="liste">
-      <div class="baslikcubuk sirali" data-tablo="tumListe"><span class="ilkkol sirakol" data-s="ad">Marka</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış noktası</span><span data-s="satisIl" class="sirakol k" style="color:var(--satis)">Satış<br>il</span><span data-s="satisIlce" class="sirakol k" style="color:var(--satis)">Satış<br>ilçe</span><span data-s="servisNoktasi" class="sirakol k gen" style="color:var(--servis)">Toplam<br>servis noktası</span><span data-s="servisIl" class="sirakol k" style="color:var(--servis)">Servis<br>il</span><span data-s="servisIlce" class="sirakol k" style="color:var(--servis)">Servis<br>ilçe</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
+      <div class="baslikcubuk sirali" data-tablo="tumListe"><span class="ilkkol sirakol" data-s="ad">Marka</span><span class="sagb"><span data-s="yalnizSatis" class="sirakol k">Sadece<br>bayi</span><span data-s="yalnizServis" class="sirakol k">Sadece<br>servis</span><span data-s="ikisi" class="sirakol k">Bayi ve<br>servis</span><span data-s="satisNoktasi" class="sirakol k gen" style="color:var(--satis)">Toplam<br>satış noktası</span><span data-s="satisIl" class="sirakol k gen" style="color:var(--satis)">Satış noktası<br>bulunan<br>il sayısı</span><span data-s="satisIlce" class="sirakol k gen" style="color:var(--satis)">Satış noktası<br>bulunan<br>ilçe sayısı</span><span data-s="servisNoktasi" class="sirakol k gen" style="color:var(--servis)">Toplam<br>servis noktası</span><span data-s="servisIl" class="sirakol k gen" style="color:var(--servis)">Servis<br>bulunan<br>il sayısı</span><span data-s="servisIlce" class="sirakol k gen" style="color:var(--servis)">Servis<br>bulunan<br>ilçe sayısı</span><span data-s="toplam" class="sirakol k">Toplam<br>nokta</span><span class="okbos"></span></span></div>
       <div id="tumListe"></div>
     </div>
     <div class="bos" id="tumBos" style="display:none">Sonuç yok.</div>
@@ -1827,9 +1827,9 @@ function cizVerim(){
       <span class="sag">
         <span class="sayi k">${bicim(x.nokta)}</span>
         <span class="sayi k" title="${bicim(x["2024"])}">${kisa(x["2024"])}</span>
-        <span class="sayi k" style="color:var(--satis)">${bicim(x.v2024)}</span>
+        <span class="sayi k gen" style="color:var(--satis)">${bicim(x.v2024)}</span>
         <span class="sayi k" title="${bicim(x["2025"])}">${kisa(x["2025"])}</span>
-        <span class="sayi k" style="color:var(--satis)">${bicim(x.v2025)}</span>
+        <span class="sayi k gen" style="color:var(--satis)">${bicim(x.v2025)}</span>
         <span class="sayi k" title="${bicim(x["2026"])}">${kisa(x["2026"])}</span>
         <span class="sayi k gen vurgu">${bicim(x.v2026)}</span>
         <span class="ok">›</span></span></button>`).join("");
@@ -2045,11 +2045,11 @@ function cizTum(){
         <span class="sayi k ${m.servis?"":"yok"}" style="color:var(--servis)">${m.servis||"—"}</span>
         <span class="sayi k ${m.ikisi?"":"yok"}" style="color:var(--ikisi)">${m.ikisi||"—"}</span>
         <span class="sayi k gen vurgu ${(m.satis+m.ikisi)?"":"yok"}">${(m.satis+m.ikisi)||"—"}</span>
-        <span class="sayi k kapsam ${m.satisIl.size?"":"yok"}">${m.satisIl.size||"—"}</span>
-        <span class="sayi k kapsam ${m.satisIlce.size?"":"yok"}">${m.satisIlce.size||"—"}</span>
+        <span class="sayi k gen kapsam ${m.satisIl.size?"":"yok"}">${m.satisIl.size||"—"}</span>
+        <span class="sayi k gen kapsam ${m.satisIlce.size?"":"yok"}">${m.satisIlce.size||"—"}</span>
         <span class="sayi k gen vurguserv ${(m.servis+m.ikisi)?"":"yok"}">${(m.servis+m.ikisi)||"—"}</span>
-        <span class="sayi k kapsam ${m.servisIl.size?"":"yok"}">${m.servisIl.size||"—"}</span>
-        <span class="sayi k kapsam ${m.servisIlce.size?"":"yok"}">${m.servisIlce.size||"—"}</span>
+        <span class="sayi k gen kapsam ${m.servisIl.size?"":"yok"}">${m.servisIl.size||"—"}</span>
+        <span class="sayi k gen kapsam ${m.servisIlce.size?"":"yok"}">${m.servisIlce.size||"—"}</span>
         <span class="sayi k ${t?"":"yok"}" style="font-weight:700">${m.toplam||"—"}</span>
         <span class="ok">${t?"›":"↗"}</span></span>`;
     return t?`<button class="sat" data-m="${esc(m.ad)}">${ic}</button>`
