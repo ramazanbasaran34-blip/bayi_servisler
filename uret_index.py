@@ -243,6 +243,13 @@ a{color:var(--vurgu)}
 .sek button.aktif{color:var(--murekkep);border-bottom-color:var(--vurgu)}
 
 .sar{max-width:1100px;margin:0 auto;padding:20px 18px 70px}
+/* GENİŞ EKRANLAR: Marka listesi ve marka detayı çok sütunlu. Sarmalayıcı
+   1100px'de sabit kalınca sayı sütunları sıkışıyor, marka adı sütunu
+   kalan boşluğu yutuyor ve ad ile "Sadece bayi" arasında kocaman bir
+   boşluk oluşuyordu. JS zaten "genis" sınıfını ekliyordu ama CSS'te
+   karşılığı YOKTU; sütunlar genişleyince kaptan taşıp hizayı bozuyordu. */
+.sar.genis{max-width:1500px}
+@media (min-width:1700px){ .sar.genis{max-width:1660px} }
 h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .notm{color:var(--celik);font-size:12px;margin:0 0 8px}
 
@@ -634,6 +641,30 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   background:var(--servis-z);border-radius:5px;padding:1px 5px}
 .kutu.toplam{border-color:var(--hat);background:#fbfcfe}
 .kutu.toplam .n{font-weight:700}
+/* GENİŞ EKRAN (yatay tablet / masaüstü): sayı sütunları dar kalınca
+   marka adı sütunu bütün boşluğu yutuyor ve ad ile "Sadece bayi"
+   arasında kocaman bir boşluk oluşuyordu. Sütunları genişletip
+   başlıkların da tam yazılmasına yer açıyoruz. Genişlik değişkenleri
+   hem başlık hem satır hücrelerini beslediği için hizalama bozulmaz. */
+@media (min-width:1000px){
+  :root{--kol:60px;--kol-gen:80px}
+  .baslikcubuk .k{font-size:10px;line-height:1.25}
+}
+@media (min-width:1300px){
+  :root{--kol:76px;--kol-gen:102px}
+  .baslikcubuk .k{font-size:11px}
+}
+@media (min-width:1600px){
+  :root{--kol:88px;--kol-gen:118px}
+  .baslikcubuk .k{font-size:11.5px}
+}
+@media (min-width:1700px){
+  /* Kap 1660px'e açılıyor; fazla yer marka adına değil SÜTUNLARA gitsin,
+     yoksa ad ile ilk sayı sütunu arasındaki boşluk yine büyüyor. */
+  :root{--kol:104px;--kol-gen:140px}
+  .baslikcubuk .k{font-size:12px}
+}
+
 @media (max-width:620px){
   /* Telefonda dikey: sütunlar dar, satır adı kırpılıyor.
      Böylece başlık ile veri hücreleri aynı hizada kalıyor. */
