@@ -31,6 +31,7 @@ UC = "https://apim.tvsmotor.com/location-master/api/v1/dealer-search"
 
 # Bu modül kendi isteğini atıyor (POST + JSON gövde), o yüzden KAYNAKLAR
 # yalnızca kayıt amaçlı; asıl iş getir() içinde.
+JSON_UC = True          # uç JSON; Accept başlığı istenir
 KAYNAKLAR = {"satis_servis": UC}
 
 KATEGORI = {
