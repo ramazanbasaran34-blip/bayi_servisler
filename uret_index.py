@@ -631,16 +631,57 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 @media (max-width:620px){ .sirano{flex-basis:20px;font-size:10px} }
 .sayi.vurgu{font-weight:700;color:var(--satis);
   background:var(--satis-z);border-radius:5px;padding:1px 5px}
-/* Kapsam sütunları (kaç il · kaç ilçe): iki satır yazı taşıdıkları için
-   biraz daha geniş ve küçük punto. Sayı sütunlarıyla aynı hizada dursun. */
-.sayi.kapsam{font-weight:600;opacity:.9}
-.sayi.kapsam.yok{opacity:.45;font-weight:400}
+/* İl/ilçe sayısı sütunları. DİKKAT: sınıf adı "kapsam" OLAMAZ — sayfada
+   zaten margin-bottom taşıyan bir .kapsam kutusu var ve bu hücreler onun
+   stilini miras alınca satırda 7px yukarı kayıyorlardı. */
+.sayi.ilsayi{font-weight:600;opacity:.9}
+.sayi.ilsayi.yok{opacity:.45;font-weight:400}
 
 /* Toplam servis noktası — satışın turuncusundan ayrılsın diye turkuaz */
 .sayi.vurguserv{font-weight:700;color:var(--servis);
   background:var(--servis-z);border-radius:5px;padding:1px 5px}
 .kutu.toplam{border-color:var(--hat);background:#fbfcfe}
 .kutu.toplam .n{font-weight:700}
+
+/* ---- MARKA LİSTESİ: sütunlar IZGARA ile sabitlendi -----------------
+   Başlık ve satırlar esnek kutu (flex) ile yan yana diziliyordu; her
+   hücrenin genişliği ayrı ayrı doğru olsa bile dolgu, yuvarlama ve
+   vurgulu kutular yüzünden sütunlar birbirinden kayabiliyordu (ekranda
+   "77" sayısı kendi başlığının altına değil, bir önceki kutunun yanına
+   düşüyordu). Izgarada sütun şablonu TEK yerde tanımlı; başlık ve satır
+   aynı şablonu kullandığı için kayma matematiksel olarak imkânsız. */
+#vTumMarka .baslikcubuk .sagb,
+#vTumMarka .sat .sag{
+  display:grid;
+  grid-template-columns:
+    var(--kol) var(--kol) var(--kol)                 /* sadece bayi/servis/ikisi */
+    var(--kol-gen) var(--kol-gen) var(--kol-gen)     /* satış: nokta, il, ilçe */
+    var(--kol-gen) var(--kol-gen) var(--kol-gen)     /* servis: nokta, il, ilçe */
+    var(--kol) 12px;                                  /* toplam + ok */
+  gap:8px; align-items:center;
+}
+#vTumMarka .baslikcubuk .sagb{align-items:end}
+/* Izgarada hücreler kendi sütununu doldursun; flex genişlikleri artık
+   geçersiz, aksi hâlde iki sistem çakışıyor. */
+#vTumMarka .sagb>*,#vTumMarka .sag>*{
+  width:auto;min-width:0;flex:none;justify-self:stretch;text-align:right}
+/* Vurgulu kutular sütunu taşırmasın */
+#vTumMarka .sayi.vurgu,#vTumMarka .sayi.vurguserv{
+  display:block;padding:1px 5px;overflow:hidden;text-overflow:ellipsis}
+
+/* Telefonda dikey: 10 sayı sütunu ekrana sığmıyor ve sağdakiler
+   çerçevenin dışında kalıyordu. Yatay kaydırma açılıyor; marka adı
+   sütunu dar tutuluyor ki kaydırma az sürsün. */
+@media (max-width:760px){
+  #vTumMarka .liste{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  #vTumMarka .baslikcubuk,#vTumMarka .sat{min-width:max-content}
+  #vTumMarka .baslikcubuk .ilkkol,#vTumMarka .sat .govde,
+  #vTumMarka .sat>.ad{min-width:104px;max-width:120px}
+  /* Yapışkan başlık yatay kaydırma kabının içinde kalınca listenin
+     ORTASINDA asılı kalıyordu. Telefonda sabitlemeyi bırakıyoruz. */
+  #vTumMarka .baslikcubuk{position:static;top:auto}
+}
+
 /* GENİŞ EKRAN (yatay tablet / masaüstü): sayı sütunları dar kalınca
    marka adı sütunu bütün boşluğu yutuyor ve ad ile "Sadece bayi"
    arasında kocaman bir boşluk oluşuyordu. Sütunları genişletip
@@ -2076,11 +2117,11 @@ function cizTum(){
         <span class="sayi k ${m.servis?"":"yok"}" style="color:var(--servis)">${m.servis||"—"}</span>
         <span class="sayi k ${m.ikisi?"":"yok"}" style="color:var(--ikisi)">${m.ikisi||"—"}</span>
         <span class="sayi k gen vurgu ${(m.satis+m.ikisi)?"":"yok"}">${(m.satis+m.ikisi)||"—"}</span>
-        <span class="sayi k gen kapsam ${m.satisIl.size?"":"yok"}">${m.satisIl.size||"—"}</span>
-        <span class="sayi k gen kapsam ${m.satisIlce.size?"":"yok"}">${m.satisIlce.size||"—"}</span>
+        <span class="sayi k gen ilsayi ${m.satisIl.size?"":"yok"}">${m.satisIl.size||"—"}</span>
+        <span class="sayi k gen ilsayi ${m.satisIlce.size?"":"yok"}">${m.satisIlce.size||"—"}</span>
         <span class="sayi k gen vurguserv ${(m.servis+m.ikisi)?"":"yok"}">${(m.servis+m.ikisi)||"—"}</span>
-        <span class="sayi k gen kapsam ${m.servisIl.size?"":"yok"}">${m.servisIl.size||"—"}</span>
-        <span class="sayi k gen kapsam ${m.servisIlce.size?"":"yok"}">${m.servisIlce.size||"—"}</span>
+        <span class="sayi k gen ilsayi ${m.servisIl.size?"":"yok"}">${m.servisIl.size||"—"}</span>
+        <span class="sayi k gen ilsayi ${m.servisIlce.size?"":"yok"}">${m.servisIlce.size||"—"}</span>
         <span class="sayi k ${t?"":"yok"}" style="font-weight:700">${m.toplam||"—"}</span>
         <span class="ok">${t?"›":"↗"}</span></span>`;
     return t?`<button class="sat" data-m="${esc(m.ad)}">${ic}</button>`
