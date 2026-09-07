@@ -33,7 +33,7 @@ jobs:
         run: pip install requests
 
       - name: Tarayıcı kur
-        if: contains(inputs.hedefler, 'tarayici') || contains(inputs.hedefler, 'tvs')
+        if: contains(inputs.hedefler, 'tarayici') || contains(inputs.hedefler, 'tvs') || contains(inputs.hedefler, 'sonda3')
         run: |
           pip install playwright
           python -m playwright install --with-deps chromium
@@ -45,6 +45,13 @@ jobs:
       - name: TVS sondası
         if: contains(inputs.hedefler, 'tvs')
         run: python tvs_sonda.py || true
+
+      - name: Yenilenen siteler için sonda (Taktas, Rutec, Acco)
+        if: contains(inputs.hedefler, 'sonda3')
+        run: |
+          python tvs_sonda.py taktas https://taktas.com.tr/bayi-ve-servis || true
+          python tvs_sonda.py rutec  https://www.rutec.com.tr/satis-noktalari.html || true
+          python tvs_sonda.py acco   https://actiomobilite.com/bayiler || true
 
       - name: Yakala
         run: |
