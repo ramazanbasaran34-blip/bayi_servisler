@@ -652,6 +652,8 @@ markalar:
 
   # 44. RUTEC  ·  Türkiye-Çin  ·  www.rutec.com.tr
   "Rutec":
+    # Site yenilendi (Eylül 2026): liste JSON ucundan geliyor, bkz. ozel/rutec.py
+    ozel: rutec
     tur_suzgeci:
       secici: "select[name=turSel]"
       degerler:
@@ -666,6 +668,8 @@ markalar:
 
   # 45. ACCO  ·  Türkiye-Çin  ·  actiomobilite.com
   "Acco":
+    # Site yenilendi (Eylül 2026): liste JSON ucundan geliyor, bkz. ozel/acco.py
+    ozel: acco
     kaynaklar:
       - rol: satis_servis
         url: "https://actiomobilite.com/bayiler"
@@ -845,6 +849,8 @@ markalar:
 
   # 62. TAKTAS  ·  Türkiye-Çin  ·  taktas.com.tr
   "Taktas":
+    # Site yenilendi (Eylül 2026): liste JSON ucundan geliyor, bkz. ozel/taktas.py
+    ozel: taktas
     kaynaklar:
       - rol: satis
         url: "https://taktas.com.tr/bayi-ve-servis"
