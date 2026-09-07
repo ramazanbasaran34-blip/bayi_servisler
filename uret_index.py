@@ -56,6 +56,73 @@ def veritabanindan_oku(db_yolu="bayiler.db"):
     return kayitlar, durum
 
 
+def teshis_topla(db_yolu, kayitlar, durum):
+    """Teşhis sekmesi için marka bazlı sorun dökümü.
+
+    Tarama sonrası neyin ters gittiği veritabanında dağınık duruyor:
+    marka_durum (karantina, hata mesajı, son başarılı), tarama_log
+    (denemeler) ve kayıtların tazelik etiketi. Hepsi tek yerde toplanıp
+    sayfaya gömülüyor; kullanıcı önizlemede marka marka takip edebiliyor.
+    """
+    import sqlite3
+    from collections import defaultdict
+    grup = defaultdict(list)
+    for k in kayitlar:
+        grup[k["marka"]].append(k)
+
+    denemeler = defaultdict(list)
+    try:
+        con = sqlite3.connect(db_yolu)
+        con.row_factory = sqlite3.Row
+        for r in con.execute("""SELECT marka, bitis, durum, adet, mesaj
+                                FROM tarama_log ORDER BY rowid DESC"""):
+            if len(denemeler[r["marka"]]) < 5:
+                denemeler[r["marka"]].append({
+                    "t": (r["bitis"] or "")[:16], "d": r["durum"] or "",
+                    "n": r["adet"], "m": (r["mesaj"] or "")[:120]})
+        con.close()
+    except sqlite3.Error:
+        pass
+
+    out = []
+    for marka in sorted(set(grup) | set(durum), key=fold):
+        kay = grup.get(marka, [])
+        d = durum.get(marka) or {}
+        sorunlu = [k for k in kay if k.get("veri_durumu") != "Güncel"]
+        etiketler = defaultdict(int)
+        for k in sorunlu:
+            etiketler[k.get("veri_durumu") or "?"] += 1
+        # Önem: karantina/hatalı > sorunlu kayıt oranı yüksek > temiz
+        if d.get("karantina") or d.get("son_deneme_durum") in ("hatali", "karantina"):
+            onem = 3
+        elif sorunlu and len(sorunlu) / max(len(kay), 1) > 0.05:
+            onem = 2
+        elif sorunlu:
+            onem = 1
+        else:
+            onem = 0
+        out.append({
+            "marka": marka,
+            "onem": onem,
+            "durum": d.get("son_deneme_durum") or ("veri yok" if not kay else "?"),
+            "karantina": 1 if d.get("karantina") else 0,
+            "hata": (d.get("son_hata") or "")[:160],
+            "son_basarili": (d.get("son_basarili") or "")[:16],
+            "son_basarili_adet": d.get("son_basarili_adet"),
+            "son_deneme": (d.get("son_deneme") or "")[:16],
+            "toplam": len(kay),
+            "sorunlu": len(sorunlu),
+            "etiketler": dict(etiketler),
+            "denemeler": denemeler.get(marka, []),
+            # Kayıt dökümü: ad, il, ilçe, rol, etiket, son görülme
+            "kayitlar": [[k["bayi_adi"], k["il"], k.get("ilce", ""),
+                          k.get("rol", ""), k.get("veri_durumu", ""),
+                          (k.get("son_gorulme") or "")[:10]]
+                         for k in sorunlu[:300]],
+        })
+    return out
+
+
 def uret(cikti="index.html", markalar_json="markalar.json", db_yolu="bayiler.db",
          logo_dizin="logolar"):
     markalar = markalari_oku(markalar_json)
@@ -159,6 +226,7 @@ def uret(cikti="index.html", markalar_json="markalar.json", db_yolu="bayiler.db"
         "bayiler": satirlar,
         "rol_adi": ROL_ADI,
         "il_satis": il_satis,
+        "teshis": teshis_topla(db_yolu, kayitlar, durum),
     }
 
     html = (SABLON
@@ -498,6 +566,36 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   font-size:14px;font-family:inherit;color:var(--murekkep);
   box-shadow:var(--golge)}
 .mdsecim select:disabled{opacity:.55}
+
+/* Teşhis sekmesi: yalnızca önizlemede açılır */
+.teshisgor{display:none}
+body.onizleme .teshisgor{display:inline-block}
+.tk{background:var(--kart);border:1px solid var(--hat2);border-radius:10px;
+  padding:12px 14px;margin-bottom:10px;box-shadow:var(--golge)}
+.tk .tkbas{display:flex;align-items:center;gap:10px;flex-wrap:wrap;cursor:pointer}
+.tk .tkad{font-weight:800;font-size:16px;color:var(--murekkep)}
+.tk .roz{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;
+  letter-spacing:.02em;white-space:nowrap}
+.tk .roz.kirmizi{background:#fde2e2;color:#9b1c1c}
+.tk .roz.sari{background:#fff3c4;color:#7a5a00}
+.tk .roz.yesil{background:#dcf5e3;color:#14622e}
+.tk .roz.gri{background:var(--hat2);color:var(--celik)}
+.tk .tkoz{font-size:12.5px;color:var(--celik);margin-top:6px;line-height:1.45}
+.tk .tkoz b{color:var(--murekkep)}
+.tk .tkhata{margin-top:6px;padding:7px 10px;border-radius:7px;background:#fff7f7;
+  border:1px solid #f3c9c9;color:#7a1f1f;font-size:12.5px;line-height:1.4}
+.tk .tkdetay{display:none;margin-top:10px;border-top:1px solid var(--hat2);padding-top:10px}
+.tk.acik .tkdetay{display:block}
+.tk .tkbaslik{font-size:11px;font-weight:800;color:var(--celik);letter-spacing:.06em;margin:8px 0 4px}
+.tk .tkden{font-family:var(--m);font-size:11.5px;color:var(--celik);line-height:1.5}
+.tk .tkden b{color:var(--murekkep);font-weight:600}
+.tk table.tkt{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.tk table.tkt th{text-align:left;font-size:10.5px;color:var(--celik);font-weight:700;
+  padding:4px 6px;border-bottom:1px solid var(--hat2)}
+.tk table.tkt td{padding:4px 6px;border-bottom:1px solid var(--hat);vertical-align:top}
+.tk .tkok{margin-left:auto;color:var(--celik);font-size:12px}
+@media (max-width:620px){ .tk table.tkt{font-size:11px} .tk table.tkt td:nth-child(3){display:none}
+  .tk table.tkt th:nth-child(3){display:none} }
 
 .ilcemenu[hidden]{display:none !important}
 .ilcemenu{position:absolute;z-index:90;left:0;right:0;top:calc(100% + 4px);
@@ -895,6 +993,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <button id="sekBayi">Bayiler</button>
     <button id="sekServis">Servisler</button>
     <button id="sekVerim">Satışa Oran</button>
+    <button id="sekTeshis" class="teshisgor">Teşhis</button>
   </nav>
 </div>
 
@@ -1032,6 +1131,22 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
   <!-- VERİM EKRANI: il bazında satış adedi ve nokta başına verim.
        Satış adetleri TÜİK; bayi/servis sayıları bizim veritabanımızdan
        (firma bazlı, tekilleştirilmiş). -->
+  <!-- TEŞHİS: tarama sonrası marka bazlı sorun dökümü. Yalnızca
+       ÖNİZLEMEDE görünür (adres /onizleme içeriyorsa); canlı sayfada
+       sekme gizli kalır. -->
+  <section id="vTeshis" style="display:none">
+    <h2>Tarama teşhisi</h2>
+    <p class="notm" id="teshisOzet"></p>
+    <div class="secimler" id="teshisSecim">
+      <button class="btn secili" data-t="sorunlu">Sorunlu markalar</button>
+      <button class="btn" data-t="hepsi">Tüm markalar</button>
+    </div>
+    <div class="yapiskan">
+      <input class="ara" id="araTeshis" type="search" placeholder="Marka ara" autocomplete="off">
+    </div>
+    <div id="teshisListe"></div>
+  </section>
+
   <section id="vVerim" style="display:none">
     <h2 id="verimBaslik">Bayi başına satış</h2>
     <p class="notm" id="verimNot"></p>
@@ -1128,6 +1243,7 @@ addEventListener("resize", seritOlc);
 addEventListener("load", seritOlc);
 setTimeout(seritOlc, 0);
 const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
 const [B_MARKA,B_AD,B_IL,B_ILCE,B_ADRES,B_TEL,B_DURUM,B_ROL,B_GIRIS,B_KOD] =
       [0,1,2,3,4,5,6,7,8,9];
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -1153,6 +1269,7 @@ const VAR_VERI = D.bayiler.length > 0;
 // Adres /onizleme/ ile bitiyorsa uyarı bandını göster
 if(location.pathname.includes("/onizleme")){
   const b = $("#onizlemeBant"); if(b) b.style.display = "block";
+  document.body.classList.add("onizleme");   // Teşhis sekmesi buna bağlı
 }
 $("#veriTarih").textContent = new Date(D.olusturma)
   .toLocaleString("tr-TR",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
@@ -1284,21 +1401,22 @@ function ekran(v, gecmis=true){
   // ilçe çipleri, rol süzgeci). Geçişte yeniden ölçüyoruz ki sütun
   // başlığı hep o bloğun ALTINA yapışsın.
   setTimeout(seritOlc, 0);
-  ["vOzet","vIl","vMarkalar","vTumMarka","vMarkaDetay","vFirma","vVerim"]
+  ["vOzet","vIl","vMarkalar","vTumMarka","vMarkaDetay","vFirma","vVerim","vTeshis"]
     .forEach(x=>$("#"+x).style.display="none");
   $("#"+v).style.display="block";
   $("#sar").classList.toggle("genis", v==="vTumMarka"||v==="vMarkaDetay"||
-                                      v==="vOzet"||v==="vFirma"||v==="vVerim");
+                                      v==="vOzet"||v==="vFirma"||v==="vVerim"||v==="vTeshis");
   // Özet ve Satışa Oran ekranlarında sayılar kendi bölümlerinde;
   // alt çubuk hem gereksiz hem de yanıltıcı oluyordu.
   const ao = $("#altOzet");
-  if(ao) ao.style.display = (v==="vOzet"||v==="vVerim") ? "none" : "flex";
+  if(ao) ao.style.display = (v==="vOzet"||v==="vVerim"||v==="vTeshis") ? "none" : "flex";
   $("#sekOzet").classList.toggle("aktif", v==="vOzet");
   $("#sekIl").classList.toggle("aktif", v==="vIl"||v==="vMarkalar");
   $("#sekMarka").classList.toggle("aktif", v==="vTumMarka"||v==="vMarkaDetay");
   $("#sekBayi").classList.toggle("aktif", v==="vFirma" && FIRMA_ROL==="satis");
   $("#sekServis").classList.toggle("aktif", v==="vFirma" && FIRMA_ROL==="servis");
   $("#sekVerim").classList.toggle("aktif", v==="vVerim");
+  const st=$("#sekTeshis"); if(st) st.classList.toggle("aktif", v==="vTeshis");
   window.scrollTo(0,0);
   if(gecmis) durumYaz(v);
 }
@@ -1344,6 +1462,7 @@ function hashUygula(){
     }
   }
   if(v === "vTumMarka"){ cizTum(); ekran("vTumMarka", false); return; }
+  if(v === "vTeshis"){ cizTeshis(); ekran("vTeshis", false); return; }
   if(v === "vIl"){ cizIl(); ekran("vIl", false); return; }
   cizOzet(); ekran("vOzet", false);
 }
@@ -1379,6 +1498,88 @@ $("#sekServis").onclick = () => { FIRMA_ROL="servis"; FIRMA_LIMIT=FIRMA_SAYFA;
                                   $("#araFirma").value=""; cizFirma(); ekran("vFirma"); };
 $("#araFirma").oninput   = () => { FIRMA_LIMIT=FIRMA_SAYFA; cizFirma(); };
 $("#sekVerim").onclick   = () => { $("#araVerim").value=""; cizVerim(); ekran("vVerim"); };
+
+// ================================================================ TEŞHİS
+let TESHIS_SUZ = "sorunlu";
+const TESHIS_ROL = {satis:"Satış", servis:"Servis", satis_servis:"Satış + Servis"};
+
+function teshisRozet(t){
+  if(t.onem===3){
+    const ad = t.karantina ? "KARANTİNA" : (t.durum==="hatali" ? "TARANAMADI" : "SORUNLU");
+    return `<span class="roz kirmizi">${ad}</span>`;
+  }
+  if(t.onem===2) return `<span class="roz sari">KONTROL EDİLMELİ</span>`;
+  if(t.onem===1) return `<span class="roz yesil">KÜÇÜK FARK</span>`;
+  if(!t.toplam)  return `<span class="roz gri">VERİ YOK</span>`;
+  return `<span class="roz yesil">TEMİZ</span>`;
+}
+
+function teshisAciklama(t){
+  // Kullanıcıya "ne oldu, ne yapmalı" tek cümleyle
+  if(t.karantina)
+    return "Kayıt sayısı sert düştü; sistem yeni veriyi kabul etmedi, son doğrulanmış hâli koruyor. Site yapısı değişmiş ya da bir sayfa veri vermemiş olabilir — incelenmeli.";
+  if(t.durum==="hatali")
+    return "Son taramada hiç kayıt çıkmadı. Site erişilemedi ya da ayrıştırıcı sayfayı tanımıyor — incelenmeli.";
+  if(t.durum==="kismi")
+    return "Sayfaların bir kısmı çekilemedi; eksik tarama. Görünmeyen kayıtlara dokunulmadı.";
+  if(t.sorunlu && t.toplam && t.sorunlu/t.toplam>0.05)
+    return "Marka sorunsuz tarandı ama bazı kayıtlar listede çıkmadı. Bayilik düşmüş olabilir — kayıtlar tek tek kontrol edilmeli.";
+  if(t.sorunlu)
+    return "Birkaç kayıt son taramada bulunamadı; doğal bayi değişimi olabilir, birkaç tarama sonra kendiliğinden düşer.";
+  return "Son tarama başarılı, tüm kayıtlar güncel.";
+}
+
+function cizTeshis(){
+  const q=kat($("#araTeshis").value||"");
+  let l=(D.teshis||[]).filter(t=>!q||kat(t.marka).includes(q));
+  if(TESHIS_SUZ==="sorunlu") l=l.filter(t=>t.onem>0 || !t.toplam);
+  l.sort((a,b)=>b.onem-a.onem || b.sorunlu-a.sorunlu || a.marka.localeCompare(b.marka,"tr"));
+
+  const tum=D.teshis||[];
+  const say={3:0,2:0,1:0,0:0}; tum.forEach(t=>say[t.onem]++);
+  const toplamSorunlu=tum.reduce((a,t)=>a+t.sorunlu,0);
+  $("#teshisOzet").innerHTML =
+    `${tum.length} marka · <b style="color:#9b1c1c">${say[3]} kırmızı</b> (karantina / taranamadı) · `
+    + `<b style="color:#7a5a00">${say[2]} sarı</b> (kontrol edilmeli) · `
+    + `<b style="color:#14622e">${say[1]+say[0]} temiz</b> · `
+    + `güncel olmayan kayıt <b>${bicim(toplamSorunlu)}</b>`;
+
+  $("#teshisListe").innerHTML = l.length ? l.map(t=>{
+    const et=Object.entries(t.etiketler||{}).map(([a,n])=>`${bicim(n)} ${esc(a)}`).join(" · ");
+    const den=(t.denemeler||[]).map(d=>
+      `<div><b>${esc(d.t.replace("T"," "))}</b> — ${esc(d.d)}${d.n!=null?` · ${bicim(d.n)} kayıt`:""}${d.m?` · ${esc(d.m)}`:""}</div>`).join("");
+    const kay=(t.kayitlar||[]).length ? `
+      <div class="tkbaslik">GÜNCEL OLMAYAN KAYITLAR (${bicim(t.sorunlu)}${t.sorunlu>300?", ilk 300":""})</div>
+      <table class="tkt"><thead><tr><th>Bayi / Servis</th><th>İl</th><th>İlçe</th><th>Rol</th><th>Durum</th><th>Son görülme</th></tr></thead>
+      <tbody>${t.kayitlar.map(k=>`<tr><td>${esc(k[0])}</td><td>${esc(k[1])}</td><td>${esc(k[2])}</td>
+        <td>${esc(TESHIS_ROL[k[3]]||k[3])}</td><td>${esc(k[4])}</td><td>${esc(k[5])}</td></tr>`).join("")}</tbody></table>` : "";
+    return `<div class="tk" data-m="${esc(t.marka)}">
+      <div class="tkbas">
+        <span class="tkad">${esc(t.marka)}</span>${teshisRozet(t)}
+        <span class="tkok">${t.toplam?bicim(t.toplam)+" kayıt":""}${t.sorunlu?` · <b>${bicim(t.sorunlu)}</b> güncel değil`:""} ▾</span>
+      </div>
+      <div class="tkoz">${esc(teshisAciklama(t))}${et?`<br>${et}`:""}
+        ${t.son_basarili?`<br>Son başarılı tarama: <b>${esc(t.son_basarili.replace("T"," "))}</b>${t.son_basarili_adet!=null?` (${bicim(t.son_basarili_adet)} kayıt)`:""}`:""}
+        ${t.son_deneme?` · Son deneme: <b>${esc(t.son_deneme.replace("T"," "))}</b>`:""}</div>
+      ${t.hata?`<div class="tkhata">${esc(t.hata)}</div>`:""}
+      <div class="tkdetay">
+        ${den?`<div class="tkbaslik">SON DENEMELER</div><div class="tkden">${den}</div>`:""}
+        ${kay}
+      </div>
+    </div>`;
+  }).join("") : `<div class="bos">Bu süzgeçte marka yok.</div>`;
+}
+$("#sekTeshis").onclick = () => { cizTeshis(); ekran("vTeshis"); };
+$("#teshisSecim").addEventListener("click", e=>{
+  const b=e.target.closest("button[data-t]"); if(!b) return;
+  TESHIS_SUZ=b.dataset.t;
+  $$("#teshisSecim button").forEach(x=>x.classList.toggle("secili", x===b));
+  cizTeshis();
+});
+let zT; $("#araTeshis").oninput=()=>{clearTimeout(zT); zT=setTimeout(cizTeshis,110);};
+$("#teshisListe").addEventListener("click", e=>{
+  const k=e.target.closest(".tk"); if(k && e.target.closest(".tkbas")) k.classList.toggle("acik");
+});
 $("#araVerim").oninput   = () => cizVerim();
 $("#btnVerimXls").onclick = async e => {
   const btn = e.target, eski = btn.textContent;
