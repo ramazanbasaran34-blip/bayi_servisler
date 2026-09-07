@@ -590,25 +590,26 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   border-radius:7px;padding:9px 12px;margin:0 0 11px}
 .acikbilgi b{color:var(--murekkep)}
 .altozet .kutu{display:flex;flex-direction:column;align-items:center;
-  line-height:1.2;flex:0 0 auto;padding:2px 6px;border-left:1px solid var(--hat2)}
-.altozet .kutu b{font-size:24px;color:var(--murekkep);
+  line-height:1.15;flex:0 0 auto;padding:1px 5px;border-left:1px solid var(--hat2)}
+/* Rakamlar %30 küçültüldü: alt çubuk ekranın altında çok yer kaplıyordu */
+.altozet .kutu b{font-size:17px;color:var(--murekkep);
   font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 /* Etiketler iki satır: kısaltma yerine tam kelime yazıyoruz, yazıyı
    küçültüp iki mısraya bölerek sığdırıyoruz. */
-.altozet .kutu i{font-style:normal;font-size:10px;color:var(--celik);
-  white-space:nowrap;letter-spacing:0;margin-top:2px;line-height:1.2;
+.altozet .kutu i{font-style:normal;font-size:9px;color:var(--celik);
+  white-space:nowrap;letter-spacing:0;margin-top:1px;line-height:1.15;
   text-align:center;font-family:var(--d)}
 /* İki sayım satırı: hangisinin ne saydığı soldaki etiketten belli olsun */
 .altozet .aoetiket{font-size:9.5px;font-weight:800;letter-spacing:.06em;
   color:var(--celik);align-self:center;min-width:62px;line-height:1.15;
   font-family:var(--m)}
-.altozet .satir+.satir{margin-top:5px}
+.altozet .satir+.satir{margin-top:3px}
 @media (max-width:620px){ .altozet .aoetiket{min-width:46px;font-size:8.5px} }
 
 .altozet .kutu.vurgu b{color:var(--satis)}
-.altozet .kutu.vurgu{background:var(--satis-z);border-radius:7px;padding:4px 8px}
-.altozet .kutu.toplamf{background:var(--murekkep);border-radius:7px;
-  border-left:0;padding:4px 10px}
+.altozet .kutu.vurgu{background:var(--satis-z);border-radius:6px;padding:2px 7px}
+.altozet .kutu.toplamf{background:var(--murekkep);border-radius:6px;
+  border-left:0;padding:2px 8px}
 .altozet .kutu.toplamf b{color:#fff}
 .altozet .kutu.toplamf i{color:#C9DAF0}
 .sar{padding-bottom:var(--altozet-y,150px)}
@@ -616,12 +617,12 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
   /* Dikeyde büyüt, yatayda daralt: rakamlar okunaklı olsun */
   .sek{gap:2px;justify-content:flex-start}
   .sek button{padding:6px 9px 7px;font-size:13.5px}
-  .altozet{gap:6px;padding:10px 6px 12px}
+  .altozet{gap:4px;padding:7px 6px 8px}
   .altozet .baslik{font-size:13px}
   .altozet .satir{gap:4px}
-  .altozet .kutu{padding:2px 4px}
-  .altozet .kutu b{font-size:23px}
-  .altozet .kutu i{font-size:8.5px}
+  .altozet .kutu{padding:1px 3px}
+  .altozet .kutu b{font-size:16px}
+  .altozet .kutu i{font-size:8px}
   .altozet .aonot{font-size:10.5px}
   /* Şeritteki kayıt bazlı özet dar ekranda iki satır kaplıyordu;
      aynı bilgi alt çubukta firma bazlı ve daha doğru veriliyor. */
@@ -2497,10 +2498,6 @@ try{ history.replaceState({ekran:'vOzet'},''); }catch(e){}
 <div class="altozet" id="altOzet">
   <div class="aoust">
     <span class="baslik" id="aoBaslik">Türkiye geneli</span>
-    <span class="aonot">İki ayrı sayım var, karıştırmayın: <b>İŞYERİ</b> =
-      aynı bayi kaç markayla çalışırsa çalışsın 1 adet (şubeler ayrı
-      adresteyse ayrı işyeri). <b>MARKA KAYDI</b> = her marka ayrı ayrı
-      sayılır; yukarıdaki liste ve süzgeçler bu sayımı kullanır.</span>
   </div>
   <div class="satir">
     <span class="aoetiket">İŞYERİ</span>
