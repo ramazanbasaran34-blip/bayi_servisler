@@ -1335,5 +1335,21 @@
   "boyut": 155929,
   "tel_toplam": 16,
   "tel_script_ici": 6
+ },
+ "m-taktas": {
+  "url": "https://taktas.com.tr/bayi-ve-servis",
+  "kod": 200,
+  "son_url": "https://taktas.com.tr/bayi-ve-servis",
+  "boyut": 310420,
+  "tel_toplam": 5,
+  "tel_script_ici": 0
+ },
+ "m-taktas-ana": {
+  "url": "https://taktas.com.tr/index",
+  "kod": 200,
+  "son_url": "https://taktas.com.tr/index",
+  "boyut": 60408,
+  "tel_toplam": 8,
+  "tel_script_ici": 0
  }
 }
