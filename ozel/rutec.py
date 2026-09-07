@@ -22,6 +22,7 @@ import json
 
 MARKA = "Rutec"
 UC = "https://team.cetur.com.tr/api/Rutec/GetSatisNoktalari"
+JSON_UC = True          # uç JSON; Accept başlığı istenir
 KAYNAKLAR = {"satis_servis": UC}
 TEST = {("Rutec", "satis_servis"): "rutec-json-01.json"}
 
