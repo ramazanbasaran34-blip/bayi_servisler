@@ -21,8 +21,12 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
+import sys as _sys
 CIKTI = Path("ham")
-URL = "https://location.tvsmotor.com/#/dealer-locator?country=TR"
+# Komut satırından ad ve adres verilirse o site sondalanır:
+#   python tvs_sonda.py rutec https://www.rutec.com.tr/satis-noktalari.html
+AD = _sys.argv[1] if len(_sys.argv) > 2 else "tvs"
+URL = _sys.argv[2] if len(_sys.argv) > 2 else "https://location.tvsmotor.com/#/dealer-locator?country=TR"
 KULLANICI = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
              "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
 
@@ -51,7 +55,7 @@ def main() -> None:
             if len(metin) < 200:
                 return
             sayac["n"] += 1
-            ad = f"tvs-json-{sayac['n']:02d}.json"
+            ad = f"{AD}-json-{sayac['n']:02d}.json"
             (CIKTI / f"{ad}.gz").write_bytes(
                 gzip.compress(metin.encode("utf-8", "replace")))
             # Bayi verisi mi? İpucu alanları arıyoruz
@@ -86,7 +90,8 @@ def main() -> None:
 
         # Servis ve Yedek Parça sekmelerine de bas: her birinin isteği
         # kaydedilsin, kategorinin nasıl gönderildiğini görelim.
-        for etiket in ("Servis", "Service", "Yedek", "Spares"):
+        # Türkiye haritalı sitelerde (Taktas) bir ile tıklamak gerekiyor
+        for etiket in ("Servis", "Service", "Yedek", "Spares", "İstanbul", "Ankara"):
             try:
                 el = s.get_by_text(etiket, exact=False).first
                 if el and el.is_visible():
@@ -97,13 +102,13 @@ def main() -> None:
                 continue
 
         icerik = s.content()
-        (CIKTI / "tvs-sayfa.html.gz").write_bytes(
+        (CIKTI / f"{AD}-sayfa.html.gz").write_bytes(
             gzip.compress(icerik.encode("utf-8", "replace")))
         rapor["sayfa_boyut"] = len(icerik)
         ctx.close()
         t.close()
 
-    Path("ham/tvs-sonda.json").write_text(
+    Path(f"ham/{AD}-sonda.json").write_text(
         json.dumps(rapor, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps(rapor, ensure_ascii=False, indent=1)[:2500])
 
