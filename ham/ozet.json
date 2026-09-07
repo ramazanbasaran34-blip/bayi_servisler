@@ -1351,5 +1351,87 @@
   "boyut": 60408,
   "tel_toplam": 8,
   "tel_script_ici": 0
+ },
+ "m-acco": {
+  "url": "https://actiomobilite.com/bayiler",
+  "kod": 200,
+  "son_url": "https://actiomobilite.com/bayiler",
+  "boyut": 57282,
+  "tel_toplam": 3,
+  "tel_script_ici": 2
+ },
+ "m-acco-ana": {
+  "url": "https://actiomobilite.com/",
+  "kod": 200,
+  "son_url": "https://actiomobilite.com/",
+  "boyut": 107203,
+  "tel_toplam": 126,
+  "tel_script_ici": 23
+ },
+ "m-rutec": {
+  "url": "https://www.rutec.com.tr/satis-noktalari.html",
+  "kod": 200,
+  "son_url": "https://www.rutec.com.tr/satis-noktalari.html",
+  "boyut": 13385,
+  "tel_toplam": 1,
+  "tel_script_ici": 0
+ },
+ "m-rutec-ana": {
+  "url": "https://www.rutec.com.tr/",
+  "kod": 200,
+  "son_url": "https://www.rutec.com.tr/",
+  "boyut": 58209,
+  "tel_toplam": 4,
+  "tel_script_ici": 1
+ },
+ "m-cfmoto": {
+  "url": "https://www.cfmoto.com.tr/satis-noktalari",
+  "kod": 200,
+  "son_url": "https://www.cfmoto.com.tr/satis-noktalari",
+  "boyut": 67444,
+  "tel_toplam": 0,
+  "tel_script_ici": 0
+ },
+ "m-cfmoto-ana": {
+  "url": "https://www.cfmoto.com.tr",
+  "kod": 200,
+  "son_url": "https://www.cfmoto.com.tr/",
+  "boyut": 103536,
+  "tel_toplam": 0,
+  "tel_script_ici": 0,
+  "yonlendi": true
+ },
+ "m-arora": {
+  "url": "https://arora.com.tr/hizmet-noktalari",
+  "kod": 200,
+  "son_url": "https://arora.com.tr/hizmet-noktalari",
+  "boyut": 624221,
+  "tel_toplam": 3646,
+  "tel_script_ici": 3644
+ },
+ "m-arora-ana": {
+  "url": "https://www.arora.com.tr",
+  "kod": 200,
+  "son_url": "https://arora.com.tr/",
+  "boyut": 266235,
+  "tel_toplam": 2,
+  "tel_script_ici": 1,
+  "yonlendi": true
+ },
+ "m-sfm": {
+  "url": "https://www.sfmmotor.com.tr/bayi-servis/",
+  "kod": 200,
+  "son_url": "https://www.sfmmotor.com.tr/bayi-servis/",
+  "boyut": 482049,
+  "tel_toplam": 413,
+  "tel_script_ici": 0
+ },
+ "m-sfm-ana": {
+  "url": "https://www.sfmmotor.com.tr/",
+  "kod": 200,
+  "son_url": "https://www.sfmmotor.com.tr/",
+  "boyut": 335822,
+  "tel_toplam": 2,
+  "tel_script_ici": 0
  }
 }
