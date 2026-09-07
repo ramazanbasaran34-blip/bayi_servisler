@@ -51,6 +51,8 @@ GEZINME = {
     "voge": "tek",
     # TVS: modül kendi POST isteğini atıyor (getir)
     "tvs": "tek",
+    # Yenilenen siteler: liste artık JSON uçlarından geliyor
+    "rutec": "tek", "acco": "tek", "taktas": "tek",
     # FCM: il il sekmeler, il bilgisi sekme başlığında
     "fcm": "tek",
     "zelsun": "il_adi", "motolux": "il_adi", "csn": "il_adi",
