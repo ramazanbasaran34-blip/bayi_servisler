@@ -150,6 +150,33 @@ jobs:
           # taraması yine 62 markanın tamamını kapsıyor.
           pip install playwright && playwright install --with-deps chromium
           python ozel_tara.py --db bayiler_yeni.db || true
+
+      - name: Kendi betiği ve elle veri dosyası olan markalar
+        run: |
+          # BU ADIM EKSİKTİ. Günlük tarama yalnızca genel taramayı ve
+          # ozel/ modüllerini çalıştırıyordu; brands.yaml'daki "betik:" ve
+          # "elle_dosya:" alanları yalnızca tek_marka.py'de tanımlıydı.
+          # Sonuç: Yamaha 5 Eylül'den beri hiç taranmıyor, "hiç kayıt
+          # çıkmadı" damgası öylece duruyordu; Hero, Harley-Davidson,
+          # Ducati ve Triumph'un elle dosyaları da hiç işlenmiyordu.
+          python - <<'PY' > /tmp/hedefler.txt
+          import yaml
+          c = yaml.safe_load(open("brands.yaml"))["markalar"]
+          for m, v in c.items():
+              if v.get("betik"):
+                  print("betik", v["betik"])
+              elif v.get("elle_dosya"):
+                  print("elle", v["elle_dosya"])
+          PY
+          sort -u /tmp/hedefler.txt | while read TUR AD; do
+            echo "--- $TUR $AD"
+            if [ "$TUR" = "betik" ]; then
+              python "$AD" --db bayiler_yeni.db || true
+            else
+              python elle_tara.py "$AD" --db bayiler_yeni.db || true
+            fi
+          done
+
       - name: Durum özeti
         run: python cli.py durum || true
       - name: Denetim
