@@ -20,6 +20,7 @@ import json
 
 MARKA = "Taktas"
 UC = "https://taktas.com.tr/turkiyemap/turkiyemap.json"
+JSON_UC = True          # uç JSON; Accept başlığı istenir
 KAYNAKLAR = {"satis_servis": UC}
 TEST = {("Taktas", "satis_servis"): "taktas-json-01.json"}
 
