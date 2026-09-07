@@ -69,16 +69,22 @@ def main() -> None:
 
         # İSTEK gövdesi de lazım: kategori (SALES/SERVICE/SPARES) burada
         # belirtiliyor ve tarama bunu taklit edecek.
+        from urllib.parse import urlparse
+        hedef_alan = urlparse(URL).netloc.split(":")[0].removeprefix("www.")
         def istek_izle(i):
-            if "apim.tvsmotor.com" not in i.url:
+            # Hedef sitenin kendi alanına giden istekler (alt alan dahil)
+            alan = urlparse(i.url).netloc.split(":")[0]
+            if hedef_alan not in alan and "apim.tvsmotor.com" not in i.url:
+                return
+            if any(x in i.url for x in ("/_next/static", ".css", ".js", ".png", ".jpg", ".svg", ".woff")):
                 return
             k = {"url": i.url[:200], "method": i.method}
             try:
                 if i.post_data:
                     k["govde"] = i.post_data[:600]
                 k["basliklar"] = {a: b for a, b in (i.headers or {}).items()
-                                  if a.lower() in ("content-type", "authorization",
-                                                   "x-api-key", "apikey", "origin")}
+                                  if a.lower() not in ("user-agent", "accept-encoding",
+                                                       "accept-language", "connection")}
             except Exception:                                   # noqa: BLE001
                 pass
             rapor.setdefault("istekler", []).append(k)
