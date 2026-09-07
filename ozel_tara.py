@@ -222,6 +222,11 @@ def _postback_tara(mod_ad: str, mod, log=print) -> tuple[dict, float]:
     return toplam, (basarili / denendi if denendi else 0.0)
 
 
+def _uyar(metin: str) -> None:
+    """GitHub Actions iş uyarısı: günlüğe erişemediğimizde tek okunur kanal."""
+    print(f"::warning::[ozel_tara] {metin}", flush=True)
+
+
 def marka_tara(mod_ad: str, log=print) -> dict[str, list[dict]]:
     mod = importlib.import_module(f"ozel.{mod_ad}")
     if GEZINME.get(mod_ad) == "postback":
@@ -232,6 +237,11 @@ def marka_tara(mod_ad: str, log=print) -> dict[str, list[dict]]:
     kodlama = getattr(mod, "KODLAMA", None)
     oturum = requests.Session()
     oturum.headers.update(BASLIK)
+    # JSON uçları için: bazı API'ler (Next.js) Accept başlığına göre HTML
+    # ya da JSON döndürüyor. Modül JSON_UC=True derse JSON istiyoruz.
+    if getattr(mod, "JSON_UC", False):
+        oturum.headers.update({"Accept": "application/json, text/plain, */*",
+                               "X-Requested-With": "XMLHttpRequest"})
 
     toplam: dict[str, list[dict]] = {}
     denendi = basarili = 0
@@ -266,6 +276,7 @@ def marka_tara(mod_ad: str, log=print) -> dict[str, list[dict]]:
             govde = _en_iyi_coz(y, kodlama)
         except Exception as e:  # noqa: BLE001
             log(f"    ✗ {marka}/{rol}/{il or '-'}: {str(e)[:50]}")
+            _uyar(f"{marka}/{rol}/{il or '-'} çekilemedi: {str(e)[:120]}")
             ilk_il_kotu += 1
             if ilk_il_kotu > 12:
                 log("    ✗ çok fazla hata, bu marka bırakılıyor")
@@ -281,8 +292,14 @@ def marka_tara(mod_ad: str, log=print) -> dict[str, list[dict]]:
             ham = mod.coz(rol, govde, url, **ek)
         except Exception as e:  # noqa: BLE001
             log(f"    ✗ ayrıştırma {marka}/{il}: {str(e)[:60]}")
+            _uyar(f"{marka}/{il or '-'} ayrıştırma hatası: {str(e)[:120]}")
             continue
 
+        if not ham:
+            # Sayfa geldi ama kayıt çıkmadı: en sık karşılaşılan sessiz hata.
+            # Gövdenin başını uyarıya koyuyoruz ki ne döndüğü görülsün.
+            _uyar(f"{marka}/{rol}/{il or '-'} sayfa geldi ({len(govde)} karakter) ama "
+                  f"kayıt çıkmadı. Başı: {govde[:160]!r}")
         cfg = {"il_ilce_birlesik": "konum"} if ham and "konum" in ham[0] else {}
         for r in ham:
             k = finalize(dict(r), marka, url, cfg)
