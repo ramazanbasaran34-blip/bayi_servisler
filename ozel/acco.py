@@ -19,6 +19,14 @@ import json
 MARKA = "Acco"
 UC = "https://actiomobilite.com/store/dealers"
 JSON_UC = True          # uç JSON; Accept başlığı istenir
+# Uç, tarayıcının gönderdiği genel mağaza anahtarını (Medusa altyapısı,
+# ön yüz paketinde açıkça duran "publishable key") istiyor; onsuz HTTP 400.
+BASLIKLAR = {
+    "x-publishable-api-key":
+        "pk_856e935d5de1cc753b322fc824428ddc379db2c947e8bdc16c52bb05f2362580",
+    "Referer": "https://actiomobilite.com/bayiler",
+    "Origin": "https://actiomobilite.com",
+}
 KAYNAKLAR = {"satis_servis": UC}
 TEST = {("Acco", "satis_servis"): "acco-json-02.json"}
 
