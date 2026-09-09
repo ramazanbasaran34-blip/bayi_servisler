@@ -189,30 +189,15 @@ markalar:
         data: {action: states, city: "{il_adi}", state: "0", category: "Servis"}
 
   "Arora":
-    # Sayfa yapısı 30.08.2026'da yakalanıp doğrulandı: 20 kayıt, hepsinde
-    # il/ilçe/adres/telefon tam. İl seçimi URL'e yansımıyor, bu yüzden
-    # sayfa gerçekten kullanılıyor (listeden seç → sonucu oku).
-    mode: browser
-    beklenen: [400, 900]
-    # Türü kart taşımıyor; sayfadaki onay kutusuyla süzülüyor.
-    # Her tür ayrı ayrı işaretlenip 81 il geziliyor.
-    tur_suzgeci:
-      secici: "input[name=yetkili-servis]"
-      degerler:
-        - {deger: "B",  rol: satis}
-        - {deger: "S",  rol: servis}
-        - {deger: "BS", rol: satis_servis}
+    # 8 Eylül 2026: sayfa il seçimi zorunlu hâle geldi, eski tür onay
+    # kutusu (B/S/BS) kalktı. Genel ayrıştırıcı 0 kayıt çekiyor. Liste
+    # sayfaya gömülü "let bayiler = [...]" dizisinde, tür creator alanında.
+    # Bkz. ozel/arora.py — tek istekle 1.247 kayıt.
+    ozel: arora
+    beklenen: [800, 1600]
     kaynaklar:
       - rol: satis_servis
-        url: "https://www.arora.com.tr/hizmet-noktalari"
-    row: "div.points-card-wrapper"
-    fields:
-      bayi_adi: "h3.points-card-title"
-      adres:    "div.points-card-address"
-      telefon:  {sel: "a.points-card-tel", attr: "href", regex: "tel:(.+)"}
-    il_ilce_birlesik: konum
-    ekstra_alanlar:
-      konum: "div.points-card-city"
+        url: "https://arora.com.tr/hizmet-noktalari"
   "Yuki":
     ozel: yuki
     mode: browser
