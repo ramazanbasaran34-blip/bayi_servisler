@@ -46,7 +46,10 @@ def main() -> None:
                 ct = (y.headers or {}).get("content-type", "")
             except Exception:                                   # noqa: BLE001
                 return
-            if "json" not in ct.lower():
+            # JSON ya da AJAX ile gelen HTML parçası (sayfanın kendisi değil)
+            ana = y.url.split("#")[0].rstrip("/") == URL.split("#")[0].rstrip("/")
+            if "json" not in ct.lower() and not ("html" in ct.lower() and not ana
+                                                  and y.request.resource_type in ("xhr", "fetch")):
                 return
             try:
                 metin = y.text()
@@ -96,6 +99,27 @@ def main() -> None:
 
         # Servis ve Yedek Parça sekmelerine de bas: her birinin isteği
         # kaydedilsin, kategorinin nasıl gönderildiğini görelim.
+        # İl seçimi zorunlu siteler (Arora): <select>'ten bir il seçip
+        # "Ara" düğmesine bas; giden isteği görürüz.
+        try:
+            secim = s.locator("select").first
+            if secim.count() and secim.is_visible():
+                opts = secim.locator("option").all_inner_texts()
+                hedef = next((o for o in opts if "Adana" in o or "İstanbul" in o), None)
+                if hedef:
+                    secim.select_option(label=hedef.strip())
+                    rapor.setdefault("tiklanan", []).append(f"select:{hedef.strip()}")
+                    s.wait_for_timeout(1500)
+                    for dug in ("Ara", "Search", "Bul"):
+                        b = s.get_by_role("button", name=dug)
+                        if b.count() and b.first.is_visible():
+                            b.first.click(timeout=4000)
+                            rapor["tiklanan"].append(f"button:{dug}")
+                            s.wait_for_timeout(4000)
+                            break
+        except Exception as e:                                  # noqa: BLE001
+            rapor["secim_hata"] = str(e)[:120]
+
         # Türkiye haritalı sitelerde (Taktas) bir ile tıklamak gerekiyor
         for etiket in ("Servis", "Service", "Yedek", "Spares", "İstanbul", "Ankara"):
             try:
