@@ -1,6 +1,13 @@
 {
  "url": "https://taktas.com.tr/bayi-ve-servis",
- "yanitlar": [],
+ "yanitlar": [
+  {
+   "dosya": "taktas-json-01.json",
+   "url": "https://taktas.com.tr/turkiyemap/turkiyemap.json",
+   "boyut": 8715,
+   "ipucu": []
+  }
+ ],
  "istekler": [
   {
    "url": "https://taktas.com.tr/bayi-ve-servis",
@@ -11,38 +18,11 @@
     "sec-ch-ua-mobile": "?0",
     "sec-ch-ua-platform": "\"Windows\""
    }
-  },
-  {
-   "url": "https://taktas.com.tr/z0f76a1d14fd21a8fb5fd0d03e0fdc3d3cedae52f?id=a6105c0a611b41b08f1209506350279e&ts=1788810463&wsidchk=6907241&pdata=https%253A%252F%252Ftaktas.com.tr%252Fbayi-ve-servis&cttl=0&fail",
-   "method": "GET",
-   "basliklar": {
-    "sec-ch-ua-platform": "\"Windows\"",
-    "referer": "https://taktas.com.tr/bayi-ve-servis",
-    "sec-ch-ua": "\"Not=A?Brand\";v=\"99\", \"HeadlessChrome\";v=\"151\", \"Chromium\";v=\"151\"",
-    "sec-ch-ua-mobile": "?0"
-   }
-  },
-  {
-   "url": "https://taktas.com.tr/bayi-ve-servis",
-   "method": "GET",
-   "basliklar": {
-    "referer": "https://taktas.com.tr/bayi-ve-servis",
-    "upgrade-insecure-requests": "1",
-    "sec-ch-ua": "\"Not=A?Brand\";v=\"99\", \"HeadlessChrome\";v=\"151\", \"Chromium\";v=\"151\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\""
-   }
-  },
-  {
-   "url": "https://taktas.com.tr/z0f76a1d14fd21a8fb5fd0d03e0fdc3d3cedae52f?id=a6105c0a611b41b08f1209506350279e&ts=1788810469&wsidchk=9791591&pdata=https%253A%252F%252Ftaktas.com.tr%252Fbayi-ve-servis&cttl=0&fail",
-   "method": "GET",
-   "basliklar": {
-    "sec-ch-ua-platform": "\"Windows\"",
-    "referer": "https://taktas.com.tr/bayi-ve-servis",
-    "sec-ch-ua": "\"Not=A?Brand\";v=\"99\", \"HeadlessChrome\";v=\"151\", \"Chromium\";v=\"151\"",
-    "sec-ch-ua-mobile": "?0"
-   }
   }
  ],
- "sayfa_boyut": 11559
+ "tiklanan": [
+  "Servis",
+  "Yedek"
+ ],
+ "sayfa_boyut": 434188
 }

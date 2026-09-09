@@ -507,8 +507,10 @@
   }
  ],
  "tiklanan": [
+  "select:İstanbul",
+  "button:Bul",
   "Servis",
   "Yedek"
  ],
- "sayfa_boyut": 108513
+ "sayfa_boyut": 97472
 }
