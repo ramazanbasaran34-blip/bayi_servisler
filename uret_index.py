@@ -1320,6 +1320,42 @@ const FIRMA_MARKA = (() => {
   return g;
 })();
 
+/* Firma bazında ROL AYRIMLI marka kümeleri: aynı cari kodun hangi
+   markalarda bayilik, hangilerinde servislik yaptığı. Kayıt kartında
+   iki ayrı satır olarak yazılıyor ("Çalıştığı bayilikler" /
+   "Çalıştığı servislikler"), tıpkı firma kartında olduğu gibi. */
+const FIRMA_ROLLER = (() => {
+  const g = {};
+  D.bayiler.forEach(b => {
+    const k = b[B_KOD];
+    if (!k) return;
+    const o = (g[k] ||= {satis: new Set(), servis: new Set()});
+    const rol = b[B_ROL], m = b[B_MARKA];
+    if (rol === "satis" || rol === "satis_servis") o.satis.add(m);
+    if (rol === "servis" || rol === "satis_servis") o.servis.add(m);
+  });
+  return g;
+})();
+
+function firmaRolSatirlari(x){
+  /* Kayıt kartı için iki satır. Bakılan marka başa alınır ve vurgulanır.
+     Firma tek markayla çalışıyorsa bile yazılır: kullanıcı her firmada
+     hangi markaların bayisi/servisi olduğunu görmek istiyor. */
+  const o = FIRMA_ROLLER[x[B_KOD]];
+  const bu = x[B_MARKA];
+  const sirala = s => { const l=[...s].filter(m=>m!==bu).sort((a,b)=>a.localeCompare(b,"tr")); return s.has(bu)?[bu,...l]:l; };
+  const rozet = (m) => `<button class="dmarka${m===bu?" bumarka":""}" data-git="${esc(m)}">${esc(m)}</button>`;
+  const satir = (etiket, l) => l.length ? `<div class="k4"><span class="dmet">${etiket}</span>${l.map(rozet).join("")}</div>` : "";
+  if (!o) {
+    // Kodu olmayan kayıt: yalnızca kendi rolü
+    const r = x[B_ROL];
+    return satir("Çalıştığı bayilikler:", (r==="satis"||r==="satis_servis")?[bu]:[])
+         + satir("Çalıştığı servislikler:", (r==="servis"||r==="satis_servis")?[bu]:[]);
+  }
+  return satir("Çalıştığı bayilikler:", sirala(o.satis))
+       + satir("Çalıştığı servislikler:", sirala(o.servis));
+}
+
 function digerMarkalar(x){
   /* Bu bayinin çalıştığı TÜM markalar — bakılan marka da dahil.
      Önceden bakılan marka listeden çıkarılıyordu; Falcon sayfasında
@@ -2027,10 +2063,7 @@ function kayitHtml(x, no, duzenlenebilir=false){
     </div>
     <div class="k2">${esc(x[B_ADRES])}${x[B_ADRES]?" · ":""}<span class="ilcerz">${
       esc([x[B_ILCE],x[B_IL]].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(" / "))}</span></div>
-    ${(()=>{const d=digerMarkalar(x); return d.length
-      ? `<div class="k4"><span class="dmet">Çalıştığı markalar:</span>${
-          d.map((m,i)=>`<button class="dmarka${i===0?" bumarka":""}" data-git="${esc(m)}">${esc(m)}</button>`).join("")}</div>`
-      : "";})()}
+    ${firmaRolSatirlari(x)}
     <div class="k3">
       <span class="tel">${x[B_TEL]?`<a href="tel:${esc(x[B_TEL].replace(/\s/g,""))}">${esc(x[B_TEL])}</a>`:"—"}</span>
       ${x[B_GIRIS]?`<a class="giris" href="${esc(x[B_GIRIS])}" target="_blank" rel="noopener">Marka sayfasına git ↗</a>`:""}
