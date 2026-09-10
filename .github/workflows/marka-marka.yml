@@ -24,6 +24,7 @@ on:
 
 permissions:
   contents: write
+  actions: write      # tarama bitince yayın akışını tetiklemek için
 
 concurrency:
   # Toplu tarama ile AYNI grup: ikisi de bayiler_yeni.db'ye yazıyor,
@@ -161,3 +162,16 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python depoya_yaz.py bayiler_yeni.db "Marka marka tarama"
+
+      - name: Önizlemeyi yayınla
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Bu akış veriyi yazıyor ama sayfayı üretmiyordu; "veri güncel,
+          # sayfa eski" durumu oluşuyordu (Arora, 9 Eylül). Tarama bitince
+          # yayın akışı tetikleniyor. CANLI SAYFA DEĞİŞMEZ: yayın akışı
+          # canlı sayfayı dondurulmuş kopyadan (canli/index.html) alıyor,
+          # yalnızca önizleme yenileniyor.
+          gh workflow run yayinla.yml --ref main
+          echo "yayın akışı tetiklendi"
