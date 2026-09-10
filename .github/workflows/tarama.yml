@@ -109,7 +109,10 @@ jobs:
     needs: tara
     if: always()
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    # 40 dakika yetmiyordu: 9 Eylül'de üç zamanlanmış tarama da bu işte
+    # "Özel modüllü markalar" adımında tam 40. dakikada iptal oldu. Bu hafta
+    # 6 yeni özel modül eklendi; adım artık ~55-70 dakika sürüyor.
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -138,8 +141,20 @@ jobs:
           # Sonuç bayiler_yeni.db'ye gidiyor; canlı sayfa dokunulmadan
           # kalıyor. Kullanıcı önizlemeyi kontrol edip onaylayınca
           # "Onayla" akışı bayiler_yeni.db -> bayiler.db kopyalıyor.
-          cp bayiler.db bayiler_yeni.db
+          # TABAN: MEVCUT ÖNİZLEME (10 Eylül). Eskiden her tam tarama canlıdan
+          # yeniden kuruyordu; önizlemedeki temizlikler (180 çöp/çift kayıt),
+          # karantina düzeltmeleri ve yeni modül sonuçları her gece siliniyordu.
+          # Onay akışı önizlemeyi canlıya kopyaladığı için önizleme SÜREGELEN
+          # DURUMDUR; canlıdan yalnızca önizleme hiç yoksa başlanır.
+          if [ ! -f bayiler_yeni.db ]; then
+            echo "önizleme yok — canlıdan başlanıyor"; cp bayiler.db bayiler_yeni.db
+          else
+            echo "taban: mevcut önizleme bayiler_yeni.db"
+          fi
           python birlestir.py parcalar bayiler_yeni.db
+          # Otomatik temizlik: artık/çift/taşınmış eski kayıtlar ve yanlış
+          # karantina tabanları. "Sitede bulunamadı"ya dokunmaz.
+          python temizle.py bayiler_yeni.db || true
 
       - name: Özel modüllü markalar
         run: |

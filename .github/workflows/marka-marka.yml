@@ -78,7 +78,8 @@ jobs:
       - name: "${{ matrix.marka }} taranıyor"
         timeout-minutes: 80
         run: |
-          cp bayiler.db calisma.db
+          # Çalışma tabanı önizleme: marka_durum tabanları oradan gelsin
+          cp "$( [ -f bayiler_yeni.db ] && echo bayiler_yeni.db || echo bayiler.db )" calisma.db
           python tek_marka.py "${{ matrix.marka }}" --db calisma.db \
             | tee sonuc.txt
           echo "| ${{ matrix.marka }} | $(grep -oP '\d+ -> \d+' sonuc.txt | tail -1) |" \
@@ -127,13 +128,16 @@ jobs:
           # önceki tarama sonuçları siliniyordu: önizleme 15.917'den
           # 14.061'e düştü. Kısmi taramada taban, canlı değil MEVCUT
           # ÖNİZLEME olmalı; tam taramada yine canlıdan başlıyoruz.
-          if [ -n "${SECILEN}" ] && [ -f bayiler_yeni.db ]; then
-            echo "kısmi tarama (${SECILEN}) — taban: mevcut önizleme"
+          # GÜNCELLEME 10 Eylül: tam taramada da taban ÖNİZLEME (bkz. tarama.yml)
+          if [ -f bayiler_yeni.db ]; then
+            echo "taban: mevcut önizleme (${SECILEN:-tam tarama})"
           else
-            echo "tam tarama — taban: canlı bayiler.db"
-            cp bayiler.db bayiler_yeni.db
+            echo "önizleme yok — canlıdan başlanıyor"; cp bayiler.db bayiler_yeni.db
           fi
           python birlestir.py parcalar bayiler_yeni.db
+          # Otomatik temizlik: artık/çift/taşınmış eski kayıtlar ve yanlış
+          # karantina tabanları. "Sitede bulunamadı"ya dokunmaz.
+          python temizle.py bayiler_yeni.db || true
 
           python - <<'PY'
           import sqlite3, sys
