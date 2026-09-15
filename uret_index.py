@@ -1708,6 +1708,11 @@ function cizTeshis(){
   }).join("") : `<div class="bos">Bu süzgeçte marka yok.</div>`;
 }
 // ========================================================= BAYİ BAŞI ORT.
+// İki ondalıklı, binlik ayraçlı Türkçe biçim (ör. 1.234,56 / 2,70)
+function ond2(n){
+  if(n === null || n === undefined) return "—";
+  return n.toLocaleString("tr-TR", {minimumFractionDigits:2, maximumFractionDigits:2});
+}
 function kiyasHtml(x){
   if(!x.var_ || x.kiyas === null) return "—";
   const p = x.kiyas;
@@ -1732,8 +1737,11 @@ function bayiOrtVeri(){
       s2025:s25, s2026:s26, o2025:o25, o2026:o26,
       // Ortalama aylık: 2026 ilk 7 ayın bayi başı aylık ortalaması
       // Aylık ortalama: 2025 tam yıl → 12'ye, 2026 ilk 7 ay → 7'ye bölünür.
-      ay2025: (var_ && nokta) ? Math.round(s25/nokta/12) : (var_?0:null),
-      ay2026: (var_ && nokta) ? Math.round(s26/nokta/7)  : (var_?0:null),
+      // Aylık ortalama YUVARLANMADAN tutulur: küçük sayılarda yuvarlama
+      // yüzde kıyaslamayı bozuyordu (CFMoto 2,70→3 ve 2,43→2 olunca fark
+      // %10 yerine %33 görünüyordu). Satırda 2 ondalıkla gösteriliyor.
+      ay2025: (var_ && nokta) ? s25/nokta/12 : (var_?0:null),
+      ay2026: (var_ && nokta) ? s26/nokta/7  : (var_?0:null),
       // 2025→2026 aylık satış değişimi (%). Bayi başı aylık üzerinden;
       // 2025 aylık 0 ise oran hesaplanamaz (null).
       kiyas: (function(){
@@ -1763,8 +1771,8 @@ function cizBayiOrt(){
         <span class="sayi k gen vurgu">${x.var_?bicim(x.o2025):yy}</span>
         <span class="sayi k gen">${x.var_?bicim(x.s2026):yy}</span>
         <span class="sayi k gen vurgu">${x.var_?bicim(x.o2026):yy}</span>
-        <span class="sayi k gen vurgu">${x.var_?bicim(x.ay2025):yy}</span>
-        <span class="sayi k gen vurgu">${x.var_?bicim(x.ay2026):yy}</span>
+        <span class="sayi k gen vurgu">${x.var_?ond2(x.ay2025):yy}</span>
+        <span class="sayi k gen vurgu">${x.var_?ond2(x.ay2026):yy}</span>
         <span class="sayi k gen kiyas">${kiyasHtml(x)}</span>
         <span class="okbos"></span>
       </span>
@@ -1789,13 +1797,17 @@ $("#btnBayiOrtXls").onclick = async e => {
   const bas = ["Marka","Toplam satış noktası",
     "2025 toplam satış","2025 bayi başı satış",
     "2026 toplam satış (31.07)","2026 bayi başı satış (31.07)",
-    "2025 bayi başı aylık satış","2026 bayi başı aylık satış (31.07)"];
+    "2025 bayi başı aylık satış","2026 bayi başı aylık satış (31.07)",
+    "2025→2026 aylık satış değişimi (%)"];
+  const iki = n => Math.round(n*100)/100;   // 2 ondalık
   const o = [bas, ...l.map(x => x.var_
-    ? [x.ad, x.nokta, x.s2025, x.o2025, x.s2026, x.o2026, x.ay2025, x.ay2026]
-    : [x.ad, x.nokta, YY, YY, YY, YY, YY, YY])];
+    ? [x.ad, x.nokta, x.s2025, x.o2025, x.s2026, x.o2026,
+       iki(x.ay2025), iki(x.ay2026),
+       x.kiyas===null ? "—" : iki(x.kiyas)]
+    : [x.ad, x.nokta, YY, YY, YY, YY, YY, YY, YY])];
   const wb = XLSX.utils.book_new();
   sayfaEkle(wb, "Bayi basina ort satis", o,
-    [{wch:20},{wch:16},{wch:15},{wch:15},{wch:18},{wch:18},{wch:16},{wch:18}]);
+    [{wch:20},{wch:16},{wch:15},{wch:15},{wch:18},{wch:18},{wch:16},{wch:18},{wch:22}]);
   indir(new Blob([XLSX.write(wb,{bookType:"xlsx",type:"array"})],
     {type:"application/octet-stream"}),
     dosyaAdi("bayi-basina-ortalama-satis","xlsx"));
