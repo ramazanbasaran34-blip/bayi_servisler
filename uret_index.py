@@ -335,7 +335,7 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 #vBayiOrt .baslikcubuk .sagb,
 #vBayiOrt .sat .sag{
   display:grid;
-  grid-template-columns:repeat(7, var(--kol-gen)) 12px;
+  grid-template-columns:repeat(6, var(--kol-gen)) 12px;
   gap:8px; align-items:center;
 }
 #vBayiOrt .baslikcubuk .sagb{align-items:end}
@@ -1194,7 +1194,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <div class="yapiskan">
       <input class="ara" id="araBayiOrt" type="search" placeholder="Marka ara" autocomplete="off">
     </div>
-    <div class="borkaydir"><div class="baslikcubuk sirali" data-tablo="bayiOrtListe"><span class="ilkkol sirakol" data-s="ad"># Marka</span><span class="sagb"><span data-s="nokta" class="sirakol k gen">Toplam<br>satış<br>noktası</span><span data-s="s2025" class="sirakol k gen">2025<br>toplam<br>satış</span><span data-s="o2025" class="sirakol k gen">2025<br>bayi başı<br>satış</span><span data-s="s2026" class="sirakol k gen">2026*<br>toplam<br>satış</span><span data-s="o2026" class="sirakol k gen">2026*<br>bayi başı<br>satış</span><span data-s="ortTop" class="sirakol k gen">Bayi başı<br>ort. toplam<br>satış (25+26)</span><span data-s="ortAy" class="sirakol k gen">Bayi başı<br>ortalama<br>aylık satış</span><span class="okbos"></span></span></div>
+    <div class="borkaydir"><div class="baslikcubuk sirali" data-tablo="bayiOrtListe"><span class="ilkkol sirakol" data-s="ad"># Marka</span><span class="sagb"><span data-s="nokta" class="sirakol k gen">Toplam<br>satış<br>noktası</span><span data-s="s2025" class="sirakol k gen">2025<br>toplam<br>satış</span><span data-s="o2025" class="sirakol k gen">2025<br>bayi başı<br>satış</span><span data-s="s2026" class="sirakol k gen">2026*<br>toplam<br>satış</span><span data-s="o2026" class="sirakol k gen">2026*<br>bayi başı<br>satış</span><span data-s="ortAy" class="sirakol k gen">Bayi başı<br>ortalama<br>aylık satış</span><span class="okbos"></span></span></div>
     <div id="bayiOrtListe"></div></div>
   </section>
 
@@ -1672,8 +1672,6 @@ function bayiOrtVeri(){
     const o26 = (var_ && nokta) ? Math.round(s26/nokta) : (var_?0:null);
     return {ad:m.ad, nokta, var_:var_,
       s2025:s25, s2026:s26, o2025:o25, o2026:o26,
-      // Ort. toplam: 2025 (12 ay) + 2026 (7 ay) toplam satışın bayi başı
-      ortTop: (var_ && nokta) ? Math.round((s25+s26)/nokta) : (var_?0:null),
       // Ortalama aylık: 2026 ilk 7 ayın bayi başı aylık ortalaması
       ortAy: (var_ && nokta) ? Math.round(s26/nokta/7) : (var_?0:null)};
   });
@@ -1697,7 +1695,6 @@ function cizBayiOrt(){
         <span class="sayi k gen vurgu">${x.var_?bicim(x.o2025):yy}</span>
         <span class="sayi k gen">${x.var_?bicim(x.s2026):yy}</span>
         <span class="sayi k gen vurgu">${x.var_?bicim(x.o2026):yy}</span>
-        <span class="sayi k gen vurgu">${x.var_?bicim(x.ortTop):yy}</span>
         <span class="sayi k gen vurgu">${x.var_?bicim(x.ortAy):yy}</span>
         <span class="okbos"></span>
       </span>
