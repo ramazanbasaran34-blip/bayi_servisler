@@ -330,11 +330,17 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .notm{color:var(--celik);font-size:12px;margin:0 0 8px}
 .vyok{color:var(--celik);opacity:.6;font-style:italic;font-size:11px}
 #bayiOrtListe .sayi.vurgu{font-weight:700;color:var(--satis)}
+#bayiOrtListe .sayi.kiyas .kys{font-weight:700;white-space:nowrap}
+#bayiOrtListe .kys.yuk{color:#15803d}   /* yükseliş: yeşil */
+#bayiOrtListe .kys.dus{color:#b91c1c}   /* düşüş: kırmızı */
+#bayiOrtListe .kys.ayni{color:#1d4ed8}  /* aynı: mavi */
+#bayiOrtListe .kyset{font-weight:600;font-size:10px;opacity:.85}
+@media (max-width:760px){ #bayiOrtListe .kyset{display:none} }
 /* Sütunları ızgarayla sabitle: başlık ve satır aynı şablonu kullanır. */
 #vBayiOrt .baslikcubuk .sagb,
 #vBayiOrt .sat .sag{
   display:grid;
-  grid-template-columns:repeat(7, var(--kol-gen)) 12px;
+  grid-template-columns:repeat(7, var(--kol-gen)) var(--kol-kys, 96px) 12px;
   gap:8px; align-items:center;
 }
 #vBayiOrt .baslikcubuk .sagb{align-items:end}
@@ -363,12 +369,18 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 }
 
 #bayiOrtListe .sayi.vurgu{font-weight:700;color:var(--satis)}
+#bayiOrtListe .sayi.kiyas .kys{font-weight:700;white-space:nowrap}
+#bayiOrtListe .kys.yuk{color:#15803d}   /* yükseliş: yeşil */
+#bayiOrtListe .kys.dus{color:#b91c1c}   /* düşüş: kırmızı */
+#bayiOrtListe .kys.ayni{color:#1d4ed8}  /* aynı: mavi */
+#bayiOrtListe .kyset{font-weight:600;font-size:10px;opacity:.85}
+@media (max-width:760px){ #bayiOrtListe .kyset{display:none} }
 /* Sütunları ızgarayla sabitle: başlık ve satır aynı şablonu kullanır,
    marka adı ile ilk sayı arasındaki boşluk kalkar, hizalama kaymaz. */
 #vBayiOrt .baslikcubuk .sagb,
 #vBayiOrt .sat .sag{
   display:grid;
-  grid-template-columns:repeat(7, var(--kol-gen)) 12px;
+  grid-template-columns:repeat(7, var(--kol-gen)) var(--kol-kys, 96px) 12px;
   gap:8px; align-items:center;
 }
 #vBayiOrt .baslikcubuk .sagb{align-items:end}
@@ -1231,7 +1243,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <div class="yapiskan">
       <input class="ara" id="araBayiOrt" type="search" placeholder="Marka ara" autocomplete="off">
     </div>
-    <div class="borbaskap"><div class="baslikcubuk sirali borbas" data-tablo="bayiOrtListe"><span class="ilkkol sirakol" data-s="ad"># Marka</span><span class="sagb"><span data-s="nokta" class="sirakol k gen">Toplam<br>satış<br>noktası</span><span data-s="s2025" class="sirakol k gen">2025<br>toplam<br>satış</span><span data-s="o2025" class="sirakol k gen">2025<br>bayi başı<br>satış</span><span data-s="s2026" class="sirakol k gen">2026*<br>toplam<br>satış</span><span data-s="o2026" class="sirakol k gen">2026*<br>bayi başı<br>satış</span><span data-s="ay2025" class="sirakol k gen">2025<br>bayi başı<br>aylık satış</span><span data-s="ay2026" class="sirakol k gen">2026*<br>bayi başı<br>aylık satış</span><span class="okbos"></span></span></div></div>
+    <div class="borbaskap"><div class="baslikcubuk sirali borbas" data-tablo="bayiOrtListe"><span class="ilkkol sirakol" data-s="ad"># Marka</span><span class="sagb"><span data-s="nokta" class="sirakol k gen">Toplam<br>satış<br>noktası</span><span data-s="s2025" class="sirakol k gen">2025<br>toplam<br>satış</span><span data-s="o2025" class="sirakol k gen">2025<br>bayi başı<br>satış</span><span data-s="s2026" class="sirakol k gen">2026*<br>toplam<br>satış</span><span data-s="o2026" class="sirakol k gen">2026*<br>bayi başı<br>satış</span><span data-s="ay2025" class="sirakol k gen">2025<br>bayi başı<br>aylık satış</span><span data-s="ay2026" class="sirakol k gen">2026*<br>bayi başı<br>aylık satış</span><span data-s="kiyas" class="sirakol k gen">2025→2026<br>aylık satış<br>kıyaslama</span><span class="okbos"></span></span></div></div>
     <div class="borsar"><div id="bayiOrtListe"></div></div>
   </section>
 
@@ -1696,6 +1708,15 @@ function cizTeshis(){
   }).join("") : `<div class="bos">Bu süzgeçte marka yok.</div>`;
 }
 // ========================================================= BAYİ BAŞI ORT.
+function kiyasHtml(x){
+  if(!x.var_ || x.kiyas === null) return "—";
+  const p = x.kiyas;
+  const yuzde = (p>0?"+":"") + p.toFixed(2).replace(".",",") + "%";
+  // Yükseliş yeşil, düşüş kırmızı, aynı (0) mavi
+  const sinif = p > 0.005 ? "yuk" : (p < -0.005 ? "dus" : "ayni");
+  const et = p > 0.005 ? "artış" : (p < -0.005 ? "düşüş" : "aynı");
+  return `<b class="kys ${sinif}">${yuzde}<span class="kyset"> ${et}</span></b>`;
+}
 function bayiOrtVeri(){
   const ms = D.marka_satis || {};
   return OZET.map(m => {
@@ -1712,7 +1733,15 @@ function bayiOrtVeri(){
       // Ortalama aylık: 2026 ilk 7 ayın bayi başı aylık ortalaması
       // Aylık ortalama: 2025 tam yıl → 12'ye, 2026 ilk 7 ay → 7'ye bölünür.
       ay2025: (var_ && nokta) ? Math.round(s25/nokta/12) : (var_?0:null),
-      ay2026: (var_ && nokta) ? Math.round(s26/nokta/7)  : (var_?0:null)};
+      ay2026: (var_ && nokta) ? Math.round(s26/nokta/7)  : (var_?0:null),
+      // 2025→2026 aylık satış değişimi (%). Bayi başı aylık üzerinden;
+      // 2025 aylık 0 ise oran hesaplanamaz (null).
+      kiyas: (function(){
+        if(!(var_ && nokta)) return null;
+        const a25 = s25/nokta/12, a26 = s26/nokta/7;
+        if(a25 === 0) return null;
+        return (a26 - a25) / a25 * 100;
+      })()};
   });
 }
 function cizBayiOrt(){
@@ -1736,6 +1765,7 @@ function cizBayiOrt(){
         <span class="sayi k gen vurgu">${x.var_?bicim(x.o2026):yy}</span>
         <span class="sayi k gen vurgu">${x.var_?bicim(x.ay2025):yy}</span>
         <span class="sayi k gen vurgu">${x.var_?bicim(x.ay2026):yy}</span>
+        <span class="sayi k gen kiyas">${kiyasHtml(x)}</span>
         <span class="okbos"></span>
       </span>
     </div>`).join("");
