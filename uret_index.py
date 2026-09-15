@@ -164,6 +164,13 @@ def uret(cikti="index.html", markalar_json="markalar.json", db_yolu="bayiler.db"
             Path("veri/il_satis.json").read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
         il_satis = {"iller": {}, "_yillar": []}
+    # Marka bazlı satış adetleri (2025 tam yıl, 2026 ilk 7 ay). "Bayi başı
+    # ortalama satış" raporunda kullanılıyor. Yoksa rapor "veri yok" der.
+    try:
+        marka_satis = json.loads(
+            Path("veri/marka_satis.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        marka_satis = {}
 
     # Cari kod: aynı fiziksel firma (telefon+ilçe) tek kod taşır.
     # Bir firma birden çok markanın bayisi olabildiği için kod, kayıtları
@@ -226,6 +233,7 @@ def uret(cikti="index.html", markalar_json="markalar.json", db_yolu="bayiler.db"
         "bayiler": satirlar,
         "rol_adi": ROL_ADI,
         "il_satis": il_satis,
+        "marka_satis": marka_satis,
         "teshis": teshis_topla(db_yolu, kayitlar, durum),
     }
 
@@ -320,6 +328,8 @@ a{color:var(--vurgu)}
 @media (min-width:1700px){ .sar.genis{max-width:1660px} }
 h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .notm{color:var(--celik);font-size:12px;margin:0 0 8px}
+.vyok{color:var(--celik);opacity:.6;font-style:italic;font-size:11px}
+#bayiOrtListe .sayi.vurgu{font-weight:700;color:var(--satis)}
 
 .ara{width:100%;border:1px solid var(--hat2);background:#fff;border-radius:7px;
   padding:9px 12px;outline:none;margin-bottom:12px;font-size:13.5px}
@@ -993,6 +1003,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <button id="sekBayi">Bayiler</button>
     <button id="sekServis">Servisler</button>
     <button id="sekVerim">Satışa Oran</button>
+    <button id="sekBayiOrt">Bayi başı ortalama satış</button>
     <button id="sekTeshis" class="teshisgor">Teşhis</button>
   </nav>
 </div>
@@ -1145,6 +1156,24 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
       <input class="ara" id="araTeshis" type="search" placeholder="Marka ara" autocomplete="off">
     </div>
     <div id="teshisListe"></div>
+  </section>
+
+  <!-- BAYİ BAŞI ORTALAMA SATIŞ: marka bazlı. Satış verisi il bazında
+       tutuluyor ama marka toplamları veri/marka_satis.json'da; nokta
+       sayısı olarak "toplam satış noktası" (sadece bayi + bayi ve
+       servis) kullanılıyor. Geçmiş yılların nokta sayısı yok, bu yüzden
+       satış bugünkü nokta sayısına bölünüyor. -->
+  <section id="vBayiOrt" style="display:none">
+    <h2>Bayi başı ortalama satış</h2>
+    <p class="notm">Her markanın <b>toplam satış (adet)</b> rakamı,
+      bugünkü <b>toplam satış noktası</b> sayısına bölünür
+      (sadece bayi + bayi ve servis). 2026 değeri 31.07 itibarıyla,
+      ilk 7 ay. Satış verisi olmayan markalar için “veri yok”.</p>
+    <div class="yapiskan">
+      <input class="ara" id="araBayiOrt" type="search" placeholder="Marka ara" autocomplete="off">
+    </div>
+    <div class="baslikcubuk sirali" data-tablo="bayiOrtListe"><span class="ilkkol sirakol" data-s="ad"># Marka</span><span class="sagb"><span data-s="nokta" class="sirakol k gen">Toplam<br>satış<br>noktası</span><span data-s="s2025" class="sirakol k gen">2025<br>toplam<br>satış</span><span data-s="o2025" class="sirakol k gen">2025<br>bayi başı<br>satış</span><span data-s="s2026" class="sirakol k gen">2026*<br>toplam<br>satış</span><span data-s="o2026" class="sirakol k gen">2026*<br>bayi başı<br>satış</span><span class="okbos"></span></span></div>
+    <div id="bayiOrtListe"></div>
   </section>
 
   <section id="vVerim" style="display:none">
@@ -1437,15 +1466,15 @@ function ekran(v, gecmis=true){
   // ilçe çipleri, rol süzgeci). Geçişte yeniden ölçüyoruz ki sütun
   // başlığı hep o bloğun ALTINA yapışsın.
   setTimeout(seritOlc, 0);
-  ["vOzet","vIl","vMarkalar","vTumMarka","vMarkaDetay","vFirma","vVerim","vTeshis"]
+  ["vOzet","vIl","vMarkalar","vTumMarka","vMarkaDetay","vFirma","vVerim","vTeshis","vBayiOrt"]
     .forEach(x=>$("#"+x).style.display="none");
   $("#"+v).style.display="block";
   $("#sar").classList.toggle("genis", v==="vTumMarka"||v==="vMarkaDetay"||
-                                      v==="vOzet"||v==="vFirma"||v==="vVerim"||v==="vTeshis");
+                                      v==="vOzet"||v==="vFirma"||v==="vVerim"||v==="vTeshis"||v==="vBayiOrt");
   // Özet ve Satışa Oran ekranlarında sayılar kendi bölümlerinde;
   // alt çubuk hem gereksiz hem de yanıltıcı oluyordu.
   const ao = $("#altOzet");
-  if(ao) ao.style.display = (v==="vOzet"||v==="vVerim"||v==="vTeshis") ? "none" : "flex";
+  if(ao) ao.style.display = (v==="vOzet"||v==="vVerim"||v==="vTeshis"||v==="vBayiOrt") ? "none" : "flex";
   $("#sekOzet").classList.toggle("aktif", v==="vOzet");
   $("#sekIl").classList.toggle("aktif", v==="vIl"||v==="vMarkalar");
   $("#sekMarka").classList.toggle("aktif", v==="vTumMarka"||v==="vMarkaDetay");
@@ -1453,6 +1482,7 @@ function ekran(v, gecmis=true){
   $("#sekServis").classList.toggle("aktif", v==="vFirma" && FIRMA_ROL==="servis");
   $("#sekVerim").classList.toggle("aktif", v==="vVerim");
   const st=$("#sekTeshis"); if(st) st.classList.toggle("aktif", v==="vTeshis");
+  $("#sekBayiOrt").classList.toggle("aktif", v==="vBayiOrt");
   window.scrollTo(0,0);
   if(gecmis) durumYaz(v);
 }
@@ -1499,6 +1529,7 @@ function hashUygula(){
   }
   if(v === "vTumMarka"){ cizTum(); ekran("vTumMarka", false); return; }
   if(v === "vTeshis"){ cizTeshis(); ekran("vTeshis", false); return; }
+  if(v === "vBayiOrt"){ cizBayiOrt(); ekran("vBayiOrt", false); return; }
   if(v === "vIl"){ cizIl(); ekran("vIl", false); return; }
   cizOzet(); ekran("vOzet", false);
 }
@@ -1605,6 +1636,48 @@ function cizTeshis(){
     </div>`;
   }).join("") : `<div class="bos">Bu süzgeçte marka yok.</div>`;
 }
+// ========================================================= BAYİ BAŞI ORT.
+function bayiOrtVeri(){
+  const ms = D.marka_satis || {};
+  return OZET.map(m => {
+    // Toplam satış noktası = sadece bayi + bayi ve servis
+    const nokta = m.satis + m.ikisi;
+    const s = ms[m.ad];
+    const var_ = !!(s && (s["2025"] || s["2026"]));
+    const s25 = var_ ? (s["2025"]||0) : null;
+    const s26 = var_ ? (s["2026"]||0) : null;
+    return {ad:m.ad, nokta, var_:var_,
+      s2025:s25, s2026:s26,
+      o2025: (var_ && nokta) ? Math.round(s25/nokta) : (var_?0:null),
+      o2026: (var_ && nokta) ? Math.round(s26/nokta) : (var_?0:null)};
+  });
+}
+function cizBayiOrt(){
+  const q = kat($("#araBayiOrt").value||"");
+  let l = bayiOrtVeri().filter(x => !q || kat(x.ad).includes(q));
+  const d = SIRA_DURUM["bayiOrtListe"] || {anahtar:"o2025", yon:-1};
+  const gec = x => x.var_ ? (x[d.anahtar]||0) : -1;   // veri yok en sona
+  if(d.anahtar === "ad")
+    l.sort((a,b)=>(d.yon<0?-1:1)*a.ad.localeCompare(b.ad,"tr"));
+  else
+    l.sort((a,b)=> (d.yon<0 ? gec(b)-gec(a) : gec(a)-gec(b)) || a.ad.localeCompare(b.ad,"tr"));
+  const yy = "—";
+  $("#bayiOrtListe").innerHTML = l.map((x,i)=>`
+    <div class="sat" data-ad="${esc(x.ad)}">
+      <span class="ad"><span class="sira">${i+1}</span> ${esc(x.ad)}</span>
+      <span class="sag">
+        <span class="sayi k gen">${bicim(x.nokta)}</span>
+        <span class="sayi k gen">${x.var_?bicim(x.s2025):`<i class="vyok">veri yok</i>`}</span>
+        <span class="sayi k gen vurgu">${x.var_?bicim(x.o2025):yy}</span>
+        <span class="sayi k gen">${x.var_?bicim(x.s2026):yy}</span>
+        <span class="sayi k gen vurgu">${x.var_?bicim(x.o2026):yy}</span>
+        <span class="okbos"></span>
+      </span>
+    </div>`).join("");
+}
+$("#sekBayiOrt").onclick = () => { $("#araBayiOrt").value=""; cizBayiOrt(); ekran("vBayiOrt"); };
+let zBO; $("#araBayiOrt").oninput=()=>{clearTimeout(zBO); zBO=setTimeout(cizBayiOrt,110);};
+
 $("#sekTeshis").onclick = () => { cizTeshis(); ekran("vTeshis"); };
 $("#teshisSecim").addEventListener("click", e=>{
   const b=e.target.closest("button[data-t]"); if(!b) return;
@@ -1808,6 +1881,7 @@ function cizOzet(){
         else if(tablo==="tumListe") cizTum();
         else if(tablo==="ilListe") cizIl();
         else if(tablo==="verimListe") cizVerim();
+        else if(tablo==="bayiOrtListe") cizBayiOrt();
       };
     });
   }
