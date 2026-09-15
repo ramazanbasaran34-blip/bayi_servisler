@@ -345,8 +345,9 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 
 /* Başlık kabı SAYFAYA yapışır (sticky), liste kabı altında ayrı kaydırılır.
    Yatay kaydırmada JS ikisini eşitler (borsar.scroll → borbaskap.scroll). */
-.borbaskap{position:sticky;top:var(--serit-y,0);z-index:22;
-  background:#F0F4FA;overflow:hidden}
+.borbaskap{position:sticky;
+  top:calc(var(--serit-y,0px) + var(--yapiskan-y,0px));
+  z-index:22;background:#F0F4FA;overflow:hidden}
 #vBayiOrt .borbas{background:#F0F4FA}
 .borsar{max-width:100%}
 /* Yapışkan başlık akıştan çıktığı için liste kendi başına yukarı gelir
