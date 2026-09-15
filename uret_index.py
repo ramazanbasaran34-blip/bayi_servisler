@@ -330,6 +330,38 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 .notm{color:var(--celik);font-size:12px;margin:0 0 8px}
 .vyok{color:var(--celik);opacity:.6;font-style:italic;font-size:11px}
 #bayiOrtListe .sayi.vurgu{font-weight:700;color:var(--satis)}
+/* Sütunları ızgarayla sabitle: başlık ve satır aynı şablonu kullanır. */
+#vBayiOrt .baslikcubuk .sagb,
+#vBayiOrt .sat .sag{
+  display:grid;
+  grid-template-columns:repeat(7, var(--kol-gen)) 12px;
+  gap:8px; align-items:center;
+}
+#vBayiOrt .baslikcubuk .sagb{align-items:end}
+#vBayiOrt .sagb>*,#vBayiOrt .sag>*{
+  width:auto;min-width:0;flex:none;justify-self:stretch;text-align:right}
+#vBayiOrt .baslikcubuk .ilkkol,#vBayiOrt .sat>.ad{flex:0 0 auto}
+@media (min-width:1000px){ #vBayiOrt .baslikcubuk .ilkkol,#vBayiOrt .sat>.ad{max-width:260px} }
+
+/* Başlık kabı SAYFAYA yapışır (sticky), liste kabı altında ayrı kaydırılır.
+   Yatay kaydırmada JS ikisini eşitler (borsar.scroll → borbaskap.scroll). */
+.borbaskap{position:sticky;top:var(--serit-y,0);z-index:22;
+  background:#F0F4FA;overflow:hidden}
+#vBayiOrt .borbas{background:#F0F4FA}
+.borsar{max-width:100%}
+/* Yapışkan başlık akıştan çıktığı için liste kendi başına yukarı gelir
+   ve ilk satırlar başlığın arkasına girer. Başlık yüksekliği kadar
+   negatif üst boşlukla listeyi başlığın hemen altına oturtuyoruz. */
+#vBayiOrt .borsar{margin-top:2px}
+@media (max-width:760px){
+  .borbaskap,.borsar{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .borbaskap{scrollbar-width:none}
+  .borbaskap::-webkit-scrollbar{display:none}
+  #vBayiOrt .borbas,#vBayiOrt .sat{min-width:max-content}
+  #vBayiOrt .baslikcubuk .ilkkol,#vBayiOrt .sat>.ad{min-width:96px;max-width:110px}
+}
+
+#bayiOrtListe .sayi.vurgu{font-weight:700;color:var(--satis)}
 /* Sütunları ızgarayla sabitle: başlık ve satır aynı şablonu kullanır,
    marka adı ile ilk sayı arasındaki boşluk kalkar, hizalama kaymaz. */
 #vBayiOrt .baslikcubuk .sagb,
@@ -1197,8 +1229,8 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <div class="yapiskan">
       <input class="ara" id="araBayiOrt" type="search" placeholder="Marka ara" autocomplete="off">
     </div>
-    <div class="borkaydir"><div class="baslikcubuk sirali" data-tablo="bayiOrtListe"><span class="ilkkol sirakol" data-s="ad"># Marka</span><span class="sagb"><span data-s="nokta" class="sirakol k gen">Toplam<br>satış<br>noktası</span><span data-s="s2025" class="sirakol k gen">2025<br>toplam<br>satış</span><span data-s="o2025" class="sirakol k gen">2025<br>bayi başı<br>satış</span><span data-s="s2026" class="sirakol k gen">2026*<br>toplam<br>satış</span><span data-s="o2026" class="sirakol k gen">2026*<br>bayi başı<br>satış</span><span data-s="ay2025" class="sirakol k gen">2025<br>bayi başı<br>aylık satış</span><span data-s="ay2026" class="sirakol k gen">2026*<br>bayi başı<br>aylık satış</span><span class="okbos"></span></span></div>
-    <div id="bayiOrtListe"></div></div>
+    <div class="borbaskap"><div class="baslikcubuk sirali borbas" data-tablo="bayiOrtListe"><span class="ilkkol sirakol" data-s="ad"># Marka</span><span class="sagb"><span data-s="nokta" class="sirakol k gen">Toplam<br>satış<br>noktası</span><span data-s="s2025" class="sirakol k gen">2025<br>toplam<br>satış</span><span data-s="o2025" class="sirakol k gen">2025<br>bayi başı<br>satış</span><span data-s="s2026" class="sirakol k gen">2026*<br>toplam<br>satış</span><span data-s="o2026" class="sirakol k gen">2026*<br>bayi başı<br>satış</span><span data-s="ay2025" class="sirakol k gen">2025<br>bayi başı<br>aylık satış</span><span data-s="ay2026" class="sirakol k gen">2026*<br>bayi başı<br>aylık satış</span><span class="okbos"></span></span></div></div>
+    <div class="borsar"><div id="bayiOrtListe"></div></div>
   </section>
 
   <section id="vVerim" style="display:none">
@@ -1707,6 +1739,15 @@ function cizBayiOrt(){
     </div>`).join("");
 }
 $("#sekBayiOrt").onclick = () => { $("#araBayiOrt").value=""; cizBayiOrt(); ekran("vBayiOrt"); };
+// Liste yatay kaydırılınca başlık da aynı ölçüde kaysın (mobilde)
+(function(){
+  const liste=document.querySelector("#vBayiOrt .borsar");
+  const bas=document.querySelector("#vBayiOrt .borbaskap");
+  if(liste && bas){
+    liste.addEventListener("scroll", ()=>{ bas.scrollLeft = liste.scrollLeft; }, {passive:true});
+    bas.addEventListener("scroll", ()=>{ liste.scrollLeft = bas.scrollLeft; }, {passive:true});
+  }
+})();
 let zBO; $("#araBayiOrt").oninput=()=>{clearTimeout(zBO); zBO=setTimeout(cizBayiOrt,110);};
 
 $("#sekTeshis").onclick = () => { cizTeshis(); ekran("vTeshis"); };
