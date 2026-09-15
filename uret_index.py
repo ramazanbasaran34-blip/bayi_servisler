@@ -1227,6 +1227,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
       <b>ilk 7 ayı</b> (31.07 itibarıyla) kapsadığı için 7'ye bölünür —
       bu yüzden iki yılın aylık ortalaması adil biçimde kıyaslanabilir.
       Satış verisi olmayan markalar için “veri yok”.</p>
+    <div class="secimler"><button class="btn ana" id="btnBayiOrtXls">Excel indir</button></div>
     <div class="yapiskan">
       <input class="ara" id="araBayiOrt" type="search" placeholder="Marka ara" autocomplete="off">
     </div>
@@ -1740,6 +1741,36 @@ function cizBayiOrt(){
     </div>`).join("");
 }
 $("#sekBayiOrt").onclick = () => { $("#araBayiOrt").value=""; cizBayiOrt(); ekran("vBayiOrt"); };
+$("#btnBayiOrtXls").onclick = async e => {
+  const btn = e.target, eski = btn.textContent;
+  btn.disabled = true; btn.textContent = "Hazırlanıyor…";
+  if(!(await xlsxYukle())){
+    btn.textContent = "İnternet gerekiyor";
+    setTimeout(()=>{btn.textContent=eski; btn.disabled=false;}, 2500);
+    return;
+  }
+  // Ekrandaki sıralamayla aynı sırada dışa aktar
+  const d = SIRA_DURUM["bayiOrtListe"] || {anahtar:"o2025", yon:-1};
+  let l = bayiOrtVeri();
+  const gec = x => x.var_ ? (x[d.anahtar]||0) : -1;
+  if(d.anahtar === "ad") l.sort((a,b)=>(d.yon<0?-1:1)*a.ad.localeCompare(b.ad,"tr"));
+  else l.sort((a,b)=> (d.yon<0 ? gec(b)-gec(a) : gec(a)-gec(b)) || a.ad.localeCompare(b.ad,"tr"));
+  const YY = "veri yok";
+  const bas = ["Marka","Toplam satış noktası",
+    "2025 toplam satış","2025 bayi başı satış",
+    "2026 toplam satış (31.07)","2026 bayi başı satış (31.07)",
+    "2025 bayi başı aylık satış","2026 bayi başı aylık satış (31.07)"];
+  const o = [bas, ...l.map(x => x.var_
+    ? [x.ad, x.nokta, x.s2025, x.o2025, x.s2026, x.o2026, x.ay2025, x.ay2026]
+    : [x.ad, x.nokta, YY, YY, YY, YY, YY, YY])];
+  const wb = XLSX.utils.book_new();
+  sayfaEkle(wb, "Bayi basina ort satis", o,
+    [{wch:20},{wch:16},{wch:15},{wch:15},{wch:18},{wch:18},{wch:16},{wch:18}]);
+  indir(new Blob([XLSX.write(wb,{bookType:"xlsx",type:"array"})],
+    {type:"application/octet-stream"}),
+    dosyaAdi("bayi-basina-ortalama-satis","xlsx"));
+  btn.textContent = eski; btn.disabled = false;
+};
 // Liste yatay kaydırılınca başlık da aynı ölçüde kaysın (mobilde)
 (function(){
   const liste=document.querySelector("#vBayiOrt .borsar");
