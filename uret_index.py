@@ -164,7 +164,7 @@ def uret(cikti="index.html", markalar_json="markalar.json", db_yolu="bayiler.db"
             Path("veri/il_satis.json").read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
         il_satis = {"iller": {}, "_yillar": []}
-    # Marka bazlı satış adetleri (2025 tam yıl, 2026 ilk 7 ay). "Bayi başı
+    # Marka bazlı satış adetleri (2025 tam yıl, 2026 ilk 8 ay). "Bayi başı
     # ortalama satış" raporunda kullanılıyor. Yoksa rapor "veri yok" der.
     try:
         marka_satis = json.loads(
@@ -1236,7 +1236,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
       bugünkü <b>toplam satış noktası</b> sayısına bölünür
       (sadece bayi + bayi ve servis). <b>Aylık satış</b> hesaplanırken
       2025 <b>tam yıl</b> olduğu için 12'ye, 2026 ise yalnızca
-      <b>ilk 7 ayı</b> (31.07 itibarıyla) kapsadığı için 7'ye bölünür —
+      <b>ilk 8 ayı</b> (31.08 itibarıyla) kapsadığı için 8'e bölünür —
       bu yüzden iki yılın aylık ortalaması adil biçimde kıyaslanabilir.
       Satış verisi olmayan markalar için “veri yok”.</p>
     <div class="secimler"><button class="btn ana" id="btnBayiOrtXls">Excel indir</button></div>
@@ -1735,18 +1735,18 @@ function bayiOrtVeri(){
     const o26 = (var_ && nokta) ? Math.round(s26/nokta) : (var_?0:null);
     return {ad:m.ad, nokta, var_:var_,
       s2025:s25, s2026:s26, o2025:o25, o2026:o26,
-      // Ortalama aylık: 2026 ilk 7 ayın bayi başı aylık ortalaması
-      // Aylık ortalama: 2025 tam yıl → 12'ye, 2026 ilk 7 ay → 7'ye bölünür.
+      // Ortalama aylık: 2026 ilk 8 ayın bayi başı aylık ortalaması
+      // Aylık ortalama: 2025 tam yıl → 12'ye, 2026 ilk 8 ay → 8'e bölünür.
       // Aylık ortalama YUVARLANMADAN tutulur: küçük sayılarda yuvarlama
       // yüzde kıyaslamayı bozuyordu (CFMoto 2,70→3 ve 2,43→2 olunca fark
       // %10 yerine %33 görünüyordu). Satırda 2 ondalıkla gösteriliyor.
       ay2025: (var_ && nokta) ? s25/nokta/12 : (var_?0:null),
-      ay2026: (var_ && nokta) ? s26/nokta/7  : (var_?0:null),
+      ay2026: (var_ && nokta) ? s26/nokta/8  : (var_?0:null),
       // 2025→2026 aylık satış değişimi (%). Bayi başı aylık üzerinden;
       // 2025 aylık 0 ise oran hesaplanamaz (null).
       kiyas: (function(){
         if(!(var_ && nokta)) return null;
-        const a25 = s25/nokta/12, a26 = s26/nokta/7;
+        const a25 = s25/nokta/12, a26 = s26/nokta/8;
         if(a25 === 0) return null;
         return (a26 - a25) / a25 * 100;
       })()};
@@ -1796,8 +1796,8 @@ $("#btnBayiOrtXls").onclick = async e => {
   const YY = "veri yok";
   const bas = ["Marka","Toplam satış noktası",
     "2025 toplam satış","2025 bayi başı satış",
-    "2026 toplam satış (31.07)","2026 bayi başı satış (31.07)",
-    "2025 bayi başı aylık satış","2026 bayi başı aylık satış (31.07)",
+    "2026 toplam satış (31.08)","2026 bayi başı satış (31.08)",
+    "2025 bayi başı aylık satış","2026 bayi başı aylık satış (31.08)",
     "2025→2026 aylık satış değişimi (%)"];
   const iki = n => Math.round(n*100)/100;   // 2 ondalık
   const o = [bas, ...l.map(x => x.var_
