@@ -336,6 +336,40 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 #bayiOrtListe .kys.ayni{color:#1d4ed8}  /* aynı: mavi */
 #bayiOrtListe .kyset{font-weight:600;font-size:10px;opacity:.85}
 @media (max-width:760px){ #bayiOrtListe .kyset{display:none} }
+/* Satışa Oran: sütunlar ızgarayla sabit (başlık ve satır aynı şablon),
+   9 sütun telefona sığmayınca tek kapta yatay kaydırılır. Marka
+   menüsündeki kanıtlanmış yöntem. */
+#vVerim .baslikcubuk .sagb,
+#vVerim .sat .sag{
+  display:grid;
+  grid-template-columns:repeat(8, var(--kol-gen)) 12px;
+  gap:8px; align-items:center;
+}
+#vVerim .baslikcubuk .sagb{align-items:end}
+#vVerim .sagb>*,#vVerim .sat .sag>*{
+  width:auto;min-width:0;flex:none;justify-self:stretch;text-align:right}
+.vbaskap{position:sticky;top:calc(var(--serit-y,0px) + var(--yapiskan-y,0px));
+  z-index:22;background:#F0F4FA;overflow:hidden}
+.vsar{max-width:100%;margin-top:2px}
+/* İlk kolon (# İl) sabit genişlik: başlıkta tek parça (.ilkkol),
+   satırda iki parça (.sirano + .govde). Toplamları EŞİT olmalı yoksa
+   sayı sütunları başlıktan kayar. Başlık ilkkol = sıra(28) + il adı(120). */
+#vVerim .baslikcubuk .ilkkol{flex:0 0 148px;width:148px}
+#verimListe .sat>.sirano{flex:0 0 28px;width:28px;text-align:right}
+#verimListe .sat>.govde{flex:0 0 120px;width:120px}
+@media (max-width:760px){
+  .vbaskap,.vsar{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .vbaskap{scrollbar-width:none}
+  .vbaskap::-webkit-scrollbar{display:none}
+  #vVerim .baslikcubuk,#verimListe .sat{min-width:max-content}
+  #vVerim .baslikcubuk .ilkkol{flex:0 0 132px;width:132px}
+  #verimListe .sat>.sirano{flex:0 0 24px;width:24px}
+  #verimListe .sat>.govde{flex:0 0 114px;width:114px}
+}
+#verimListe .sayi.kiyas .kys{font-weight:700;white-space:nowrap}
+#verimListe .kys.yuk{color:#15803d} #verimListe .kys.dus{color:#b91c1c} #verimListe .kys.ayni{color:#1d4ed8}
+#verimListe .kyset{font-weight:600;font-size:10px;opacity:.85}
+@media (max-width:760px){ #verimListe .kyset{display:none} }
 /* Sütunları ızgarayla sabitle: başlık ve satır aynı şablonu kullanır. */
 #vBayiOrt .baslikcubuk .sagb,
 #vBayiOrt .sat .sag{
@@ -375,6 +409,40 @@ h2{font-size:17px;font-weight:600;margin:0 0 4px}
 #bayiOrtListe .kys.ayni{color:#1d4ed8}  /* aynı: mavi */
 #bayiOrtListe .kyset{font-weight:600;font-size:10px;opacity:.85}
 @media (max-width:760px){ #bayiOrtListe .kyset{display:none} }
+/* Satışa Oran: sütunlar ızgarayla sabit (başlık ve satır aynı şablon),
+   9 sütun telefona sığmayınca tek kapta yatay kaydırılır. Marka
+   menüsündeki kanıtlanmış yöntem. */
+#vVerim .baslikcubuk .sagb,
+#vVerim .sat .sag{
+  display:grid;
+  grid-template-columns:repeat(8, var(--kol-gen)) 12px;
+  gap:8px; align-items:center;
+}
+#vVerim .baslikcubuk .sagb{align-items:end}
+#vVerim .sagb>*,#vVerim .sat .sag>*{
+  width:auto;min-width:0;flex:none;justify-self:stretch;text-align:right}
+.vbaskap{position:sticky;top:calc(var(--serit-y,0px) + var(--yapiskan-y,0px));
+  z-index:22;background:#F0F4FA;overflow:hidden}
+.vsar{max-width:100%;margin-top:2px}
+/* İlk kolon (# İl) sabit genişlik: başlıkta tek parça (.ilkkol),
+   satırda iki parça (.sirano + .govde). Toplamları EŞİT olmalı yoksa
+   sayı sütunları başlıktan kayar. Başlık ilkkol = sıra(28) + il adı(120). */
+#vVerim .baslikcubuk .ilkkol{flex:0 0 148px;width:148px}
+#verimListe .sat>.sirano{flex:0 0 28px;width:28px;text-align:right}
+#verimListe .sat>.govde{flex:0 0 120px;width:120px}
+@media (max-width:760px){
+  .vbaskap,.vsar{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .vbaskap{scrollbar-width:none}
+  .vbaskap::-webkit-scrollbar{display:none}
+  #vVerim .baslikcubuk,#verimListe .sat{min-width:max-content}
+  #vVerim .baslikcubuk .ilkkol{flex:0 0 132px;width:132px}
+  #verimListe .sat>.sirano{flex:0 0 24px;width:24px}
+  #verimListe .sat>.govde{flex:0 0 114px;width:114px}
+}
+#verimListe .sayi.kiyas .kys{font-weight:700;white-space:nowrap}
+#verimListe .kys.yuk{color:#15803d} #verimListe .kys.dus{color:#b91c1c} #verimListe .kys.ayni{color:#1d4ed8}
+#verimListe .kyset{font-weight:600;font-size:10px;opacity:.85}
+@media (max-width:760px){ #verimListe .kyset{display:none} }
 /* Sütunları ızgarayla sabitle: başlık ve satır aynı şablonu kullanır,
    marka adı ile ilk sayı arasındaki boşluk kalkar, hizalama kaymaz. */
 #vBayiOrt .baslikcubuk .sagb,
@@ -1069,8 +1137,8 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <button id="sekMarka">Markalar</button>
     <button id="sekBayi">Bayiler</button>
     <button id="sekServis">Servisler</button>
-    <button id="sekVerim">Satışa Oran</button>
-    <button id="sekBayiOrt">Bayi başı ortalama satış</button>
+    <button id="sekVerim">İllere göre Bayi<br>Başı Satış Adedi</button>
+    <button id="sekBayiOrt">Markaların Bayi<br>Başı Satış Adedi</button>
     <button id="sekTeshis" class="teshisgor">Teşhis</button>
   </nav>
 </div>
@@ -1231,7 +1299,7 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
        servis) kullanılıyor. Geçmiş yılların nokta sayısı yok, bu yüzden
        satış bugünkü nokta sayısına bölünüyor. -->
   <section id="vBayiOrt" style="display:none">
-    <h2>Bayi başı ortalama satış</h2>
+    <h2>Markaların Bayi Başı Satış Adedi</h2>
     <p class="notm">Her markanın <b>toplam satış (adet)</b> rakamı,
       bugünkü <b>toplam satış noktası</b> sayısına bölünür
       (sadece bayi + bayi ve servis). <b>Aylık satış</b> hesaplanırken
@@ -1260,8 +1328,8 @@ h2{font-size:19px;font-weight:700;text-align:center;letter-spacing:-.01em;
     <div class="yapiskan">
       <input class="ara" id="araVerim" type="search" placeholder="İl ara" autocomplete="off">
     </div>
-    <div class="baslikcubuk sirali" data-tablo="verimListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="nokta" class="sirakol k" id="verimNoktaBas">Nokta</span><span data-s="2024" class="sirakol k">2024<br>satış</span><span data-s="v2024" class="sirakol k gen">2024<br>bayi başı<br>satış adedi</span><span data-s="2025" class="sirakol k">2025<br>satış</span><span data-s="v2025" class="sirakol k gen">2025<br>bayi başı<br>satış adedi</span><span data-s="2026" class="sirakol k">2026*<br>satış</span><span data-s="v2026" class="sirakol k gen">2026*<br>7 aylık bayi başı<br>aylık satış adedi</span><span class="okbos"></span></span></div>
-    <div class="liste" id="verimListe"></div>
+    <div class="vbaskap"><div class="baslikcubuk sirali" data-tablo="verimListe"><span class="ilkkol sirakol" data-s="ad">#  İl</span><span class="sagb"><span data-s="nokta" class="sirakol k" id="verimNoktaBas">Nokta</span><span data-s="2024" class="sirakol k">2024<br>satış</span><span data-s="v2024" class="sirakol k gen">2024<br>bayi başı<br>satış adedi</span><span data-s="2025" class="sirakol k">2025<br>satış</span><span data-s="v2025" class="sirakol k gen">2025<br>bayi başı<br>satış adedi</span><span data-s="2026" class="sirakol k">2026*<br>satış</span><span data-s="v2026" class="sirakol k gen">2026*<br>8 aylık bayi başı<br>aylık satış adedi</span><span data-s="kiyas" class="sirakol k gen">2025→2026<br>aylık satış<br>kıyaslama</span><span class="okbos"></span></span></div></div>
+    <div class="vsar"><div class="liste" id="verimListe"></div></div>
     <div class="bos" id="verimBos" style="display:none">Sonuç bulunamadı.</div>
   </section>
 
@@ -1636,6 +1704,14 @@ $("#sekServis").onclick = () => { FIRMA_ROL="servis"; FIRMA_LIMIT=FIRMA_SAYFA;
                                   $("#araFirma").value=""; cizFirma(); ekran("vFirma"); };
 $("#araFirma").oninput   = () => { FIRMA_LIMIT=FIRMA_SAYFA; cizFirma(); };
 $("#sekVerim").onclick   = () => { $("#araVerim").value=""; cizVerim(); ekran("vVerim"); };
+(function(){
+  const liste=document.querySelector("#vVerim .vsar");
+  const bas=document.querySelector("#vVerim .vbaskap");
+  if(liste && bas){
+    liste.addEventListener("scroll", ()=>{ bas.scrollLeft=liste.scrollLeft; }, {passive:true});
+    bas.addEventListener("scroll", ()=>{ liste.scrollLeft=bas.scrollLeft; }, {passive:true});
+  }
+})();
 
 // ================================================================ TEŞHİS
 let TESHIS_SUZ = "sorunlu";
@@ -1848,18 +1924,21 @@ $("#btnVerimXls").onclick = async e => {
   const l = verimVeri().sort((a,b)=>b.v2025-a.v2025);
   const etiket = VERIM_ROL==="satis" ? "Bayi" : "Servis";
   const bas = ["İl","Plaka",`${etiket} noktası`,
-    "2023 satış","2024 satış","2025 satış","2026 satış (31.07)",
+    "2023 satış","2024 satış","2025 satış","2026 satış (31.08)",
     `2023 ${etiket.toLocaleLowerCase("tr")} başı yıllık`,
     `2024 ${etiket.toLocaleLowerCase("tr")} başı yıllık`,
     `2025 ${etiket.toLocaleLowerCase("tr")} başı yıllık`,
-    `2026 ${etiket.toLocaleLowerCase("tr")} başı 7 aylık (31.07)`];
+    `2026 ${etiket.toLocaleLowerCase("tr")} başı 8 aylık AYLIK (31.08)`,
+    "2025→2026 aylık satış değişimi (%)"];
+  const iki = n => Math.round(n*100)/100;
   const o = [bas, ...l.map(x=>[x.ad,x.plaka,x.nokta,
     x["2023"],x["2024"],x["2025"],x["2026"],
-    x.v2023,x.v2024,x.v2025,x.v2026])];
+    x.v2023,x.v2024,x.v2025,x.v2026,
+    x.kiyas===null ? "—" : iki(x.kiyas)])];
   const wb = XLSX.utils.book_new();
   sayfaEkle(wb, `${etiket} basina satis`, o,
     [{wch:16},{wch:7},{wch:14},{wch:13},{wch:13},{wch:13},{wch:18},
-     {wch:15},{wch:15},{wch:15},{wch:20}]);
+     {wch:15},{wch:15},{wch:15},{wch:22},{wch:22}]);
   indir(new Blob([XLSX.write(wb,{bookType:"xlsx",type:"array"})],
     {type:"application/octet-stream"}),
     dosyaAdi(etiket.toLocaleLowerCase("tr")+"-basina-satis","xlsx"));
@@ -2296,7 +2375,7 @@ function kayitHtml(x, no, duzenlenebilir=false){
    nokta sayıları bizim veritabanımızdan ve FİRMA bazlı (aynı firma
    birden çok markaya bayilik yapsa da bir kez sayılır).
 
-   2026 rakamı 31.07 itibarıyla, yıl tamamlanmadı — kıyaslarken
+   2026 rakamı 31.08 itibarıyla (ilk 8 ay), yıl tamamlanmadı — kıyaslarken
    ayrı değerlendirilmeli, bu yüzden ekranda ayrıca işaretleniyor. */
 let VERIM_ROL = "satis";
 
@@ -2321,8 +2400,17 @@ function verimVeri(){
     const o = {ad: i.ad, plaka: i.plaka, nokta,
                "2023": s["2023"]||0, "2024": s["2024"]||0,
                "2025": s["2025"]||0, "2026": s["2026"]||0};
-    ["2023","2024","2025","2026"].forEach(y =>
+    // Yıllık bayi başı (2023-2025 tam yıl): satış / nokta.
+    // 2026 ilk 8 ay olduğu için AYLIK karşılaştırma: (2026/nokta)/8.
+    // Diğer yıllarda da aylık kıyas için /12 tutuluyor.
+    ["2023","2024","2025"].forEach(y =>
       o["v"+y] = nokta ? Math.round(o[y] / nokta) : 0);
+    // v2026 sütunu AYLIK gösteriliyor (başlık "8 aylık aylık satış"):
+    // 2026 ilk 8 ay olduğu için /nokta/8. Kıyas da bunun aylık karşısı.
+    o.v2026  = nokta ? Math.round(o["2026"]/nokta/8) : 0;
+    o.ay2025 = nokta ? o["2025"]/nokta/12 : 0;
+    o.ay2026 = nokta ? o["2026"]/nokta/8  : 0;
+    o.kiyas = (nokta && o.ay2025>0) ? (o.ay2026-o.ay2025)/o.ay2025*100 : null;
     return o;
   }).filter(x => x.nokta > 0 || x["2024"] > 0);
 }
@@ -2360,10 +2448,11 @@ function cizVerim(){
     `2025'te <b>${bicim(top25)}</b> motosiklet satıldı · ` +
     `Türkiye ortalaması ${etiket} başına <b>${topN?Math.round(top24/topN):0}</b> adet/yıl (2024), ` +
     `<b>${topN?Math.round(top25/topN):0}</b> (2025), ` +
-    `<b>${topN?Math.round(top26/topN):0}</b> adet (2026* — 7 aylık). ` +
+    `<b>${topN?Math.round(top26/topN):0}</b> adet (2026* — 8 aylık). ` +
     `<span style="color:var(--celik)">Satış adetleri TÜİK. ` +
-    `<b>*2026 rakamı 31.07 itibarıyladır</b>, yıl tamamlanmadığı için ` +
-    `diğer yıllarla doğrudan kıyaslanamaz.</span>`;
+    `<b>*2026 rakamı 31.08 itibarıyladır</b> (ilk 8 ay), yıl tamamlanmadığı için ` +
+    `diğer yıllarla doğrudan kıyaslanamaz. En sağdaki kıyaslama, ` +
+    `<b>aylık</b> satışları oranlar: 2025 yıllık ÷12, 2026 ÷8.</span>`;
 
   $("#verimBos").style.display = l.length ? "none" : "block";
   $("#verimListe").innerHTML = l.map((x,ix)=>`
@@ -2379,6 +2468,7 @@ function cizVerim(){
         <span class="sayi k gen" style="color:var(--satis)">${bicim(x.v2025)}</span>
         <span class="sayi k" title="${bicim(x["2026"])}">${kisa(x["2026"])}</span>
         <span class="sayi k gen vurgu">${bicim(x.v2026)}</span>
+        <span class="sayi k gen kiyas">${kiyasHtml({var_:true, kiyas:x.kiyas})}</span>
         <span class="ok">›</span></span></button>`).join("");
   basligiIsaretle("verimListe");
   // Alt çubuk BU EKRANDA gösterilmiyor. Süzülmüş veri gönderilince
