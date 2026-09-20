@@ -120,6 +120,15 @@ def cevir(ham: list[dict]) -> list[dict]:
     cfg: dict = {}
     out = []
     for d in ham:
+        # SADECE MOTOSİKLET. serviceIds kodları kategoriyi belirtir:
+        # MC* = motosiklet (MC satış, MCSER servis, MC125CC, MCPART...),
+        # GC/GCS = golf arabası, ME* = marin. Yamaha listesinde golf ve
+        # marin bayileri de var; kullanıcı yalnızca motosiklet istiyor.
+        # Motosiklet ve scooter/elektrikli ortak bayiler MC kodunu taşıdığı
+        # için tek MC* filtresi hepsini kapsıyor. MC* kodu yoksa elenir.
+        kodlar = [str(x).upper() for x in (d.get("serviceIds") or [])]
+        if not any(k.startswith("MC") for k in kodlar):
+            continue
         ad = re.sub(r"\s+", " ", (d.get("name") or "")).strip()
         rec = {
             "bayi_adi": ad,
