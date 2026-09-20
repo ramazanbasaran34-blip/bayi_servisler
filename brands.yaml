@@ -38,6 +38,8 @@ markalar:
 
   #  1. HONDA  ·  Japonya  ·  www.honda.com.tr
   "Honda":
+    # Site Qwik'e geçti, liste qwik/json durumunda; bkz. ozel/honda.py
+    ozel: honda
     # Sitede satış ve servis ayrı listelenmiyor; her nokta ikisini de
     # yapıyor. Kayıtlar "Satış + Servis" olarak işaretleniyor.
     beklenen: [36, 78]   # saha: ~52 bayi, ~52 servis
