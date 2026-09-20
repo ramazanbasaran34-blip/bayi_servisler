@@ -55,6 +55,8 @@ GEZINME = {
     "rutec": "tek", "acco": "tek", "taktas": "tek",
     # Arora: 8 Eylul'de il secimi zorunlu oldu; liste sayfaya gomulu JSON'da
     "arora": "tek",
+    # Honda: Qwik sayfa durumundan (qwik/json) okunuyor
+    "honda": "tek",
     # FCM: il il sekmeler, il bilgisi sekme başlığında
     "fcm": "tek",
     "zelsun": "il_adi", "motolux": "il_adi", "csn": "il_adi",
