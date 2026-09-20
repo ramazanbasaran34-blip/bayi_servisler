@@ -59,6 +59,41 @@ def dosyayi_oku(yol: Path) -> tuple[dict[str, list[dict]], str]:
     return marka_kayit, kaynak_url
 
 
+def _elle_yaz(con, marka, kayitlar, basladi):
+    """Elle dosya TAM listedir: normal işle, sonra dosyada OLMAYAN eski
+    kayıtları kaldır. Böylece dosyadan bir bayi çıkarılınca sitede de
+    düşer; otomatik taramadan kalan artıklar temizlenir. commit_tarama
+    düşüş korumasıyla karantinaya sokabildiği için, elle veride o koruma
+    istenmez — burada kaldırılanları geri açıp durumu 'başarılı' yaparız.
+    """
+    from bayiradar.store import commit_tarama, now
+    sonuc = commit_tarama(con, marka, kayitlar, 1.0, basladi)
+    # Dosyadaki kayıtların kimlik kümesi (ad+ilçe kaba anahtar)
+    def anah(ad, ilce):
+        return (ad or "").strip().casefold() + "|" + (ilce or "").strip().casefold()
+    dosyada = {anah(k.get("bayi_adi"), k.get("ilce")) for k in kayitlar}
+    t = now()
+    kaldirilan = 0
+    for r in con.execute(
+            "SELECT id, bayi_adi, ilce FROM bayiler "
+            "WHERE marka=? AND durum!='kaldirildi'", (marka,)).fetchall():
+        if anah(r[1], r[2]) not in dosyada:
+            con.execute("UPDATE bayiler SET durum='kaldirildi' WHERE id=?", (r[0],))
+            con.execute(
+                "INSERT INTO degisim_log (tarih,marka,tip,bayi_adi,il,ilce,detay) "
+                "VALUES (?,?,?,?,?,?,?)",
+                (t, marka, "kaldirildi", r[1], "", r[2] or "",
+                 "Elle veri dosyasında yok — otomatik taramadan kalan kayıt"))
+            kaldirilan += 1
+    # Elle veri kesin: düşüş korumasını geç, durumu başarılı yap
+    con.execute(
+        "UPDATE marka_durum SET karantina=0, son_deneme_durum='basarili', "
+        "son_hata='', son_basarili_adet=? WHERE marka=?",
+        (len(kayitlar), marka))
+    con.commit()
+    return {"durum": "basarili", "yazilan": len(kayitlar), "kaldirilan": kaldirilan}
+
+
 def main() -> None:
     kuru = "--kuru" in sys.argv
     # --db ŞART: bu betik varsayılan olarak CANLI bayiler.db'ye yazıyordu.
@@ -89,7 +124,7 @@ def main() -> None:
             if kuru:
                 continue
             with db(db_yolu) as con:
-                sonuc = commit_tarama(con, marka, kayitlar, 1.0, basladi)
+                sonuc = _elle_yaz(con, marka, kayitlar, basladi)
             rapor[marka]["db"] = str(sonuc)[:200]
             print(f"             db: {rapor[marka]['db']}")
 
