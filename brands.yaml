@@ -600,15 +600,11 @@ markalar:
 
   # 40. REWACO  ·  Almanya  ·  rewaco.com.tr
   "Rewaco":
-    ozel: rewaco
-    mode: browser
-    kaynaklar:
-      - rol: satis
-        url: "https://rewaco.com.tr/bayiler/"
-      - rol: servis
-        url: "https://rewaco.com.tr/servis/"
-
-  # 41. NANOK  ·  Türkiye-Çin  ·  nanok.com.tr
+    # Trike markası, Türkiye'de tek temsilci (Aydos Karavan). Otomatik
+    # tarama bölgesel servis ortaklarını da sayıp 10 kayıt çıkarıyordu;
+    # gerçekte 1 satış + 1 servis. Elle dosyadan geliyor.
+    elle: true
+    elle_dosya: rewaco
   "Nanok":
     ozel: nanok
     tur_suzgeci:
