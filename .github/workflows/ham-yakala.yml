@@ -33,7 +33,7 @@ jobs:
         run: pip install requests
 
       - name: Tarayıcı kur
-        if: contains(inputs.hedefler, 'tarayici') || contains(inputs.hedefler, 'tvs') || contains(inputs.hedefler, 'sonda3') || contains(inputs.hedefler, 'arora-sonda')
+        if: contains(inputs.hedefler, 'tarayici') || contains(inputs.hedefler, 'tvs') || contains(inputs.hedefler, 'sonda3') || contains(inputs.hedefler, 'arora-sonda') || contains(inputs.hedefler, 'honda-sonda')
         run: |
           pip install playwright
           python -m playwright install --with-deps chromium
@@ -56,6 +56,10 @@ jobs:
       - name: Arora sondası
         if: contains(inputs.hedefler, 'arora-sonda')
         run: python tvs_sonda.py arora https://arora.com.tr/hizmet-noktalari || true
+
+      - name: Honda sondası
+        if: contains(inputs.hedefler, 'honda-sonda')
+        run: python tvs_sonda.py honda https://www.honda.com.tr/motosiklet/bayiler-ve-servisler || true
 
       - name: Yakala
         run: |
