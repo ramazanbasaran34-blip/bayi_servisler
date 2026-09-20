@@ -129,6 +129,14 @@ def cevir(ham: list[dict]) -> list[dict]:
         kodlar = [str(x).upper() for x in (d.get("serviceIds") or [])]
         if not any(k.startswith("MC") for k in kodlar):
             continue
+        # KKTC/Kıbrıs Türkiye dışı: Yamaha bunları country=TR sayıyor ama
+        # şehir "KIBRIS" ve posta kodu 99xxx. Türkiye listesine girmesin.
+        _sehir = (d.get("city") or "").upper()
+        _zip = (d.get("zipCode") or "").strip()
+        _adr = " ".join(d.get("addressLines") or []).upper()
+        if "KIBRIS" in _sehir or "KKTC" in _sehir or _zip.startswith("99") \
+                or "KIBRIS" in _adr or "K.K.T.C" in _adr:
+            continue
         ad = re.sub(r"\s+", " ", (d.get("name") or "")).strip()
         rec = {
             "bayi_adi": ad,
